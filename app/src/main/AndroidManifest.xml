@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.afterlogic.aurora.drive"
+          android:sharedUserId="com.afterlogic.aurora.app"
+          android:sharedUserLabel="@string/shared_user_label" >
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
+
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.READ_SYNC_STATS"/>
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
+
+
+    <permission android:protectionLevel="signature" android:name="com.afterlogic.aurora.CATCH_LOGIN" />
+
+    <uses-permission android:name="com.afterlogic.aurora.CATCH_LOGIN"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:largeHeap="true"
+        android:name="com.afterlogic.aurora.drive.application.App">
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="e389d068cbb5a55d812a15e7cb135cd85d9cf647" />
+
+        <activity android:name=".presentation.ui.StartActivity"
+                  android:label="@string/app_name"
+                  android:theme="@style/Theme.Transparent"
+                    android:noHistory="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--[START Main process]-->
+        <activity
+            android:name=".presentation.ui.AuroraLoginActivity"
+            android:label="@string/app_name">
+        </activity>
+
+        <activity
+            android:name=".presentation.ui.FilesListActivity"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".presentation.ui.FileViewActivity"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name=".presentation.ui.ChooseFileActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.GET_CONTENT"/>
+                <category android:name="android.intent.category.OPENABLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="*/*"/>
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".presentation.ui.SendFilesActivity"
+                  android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <action android:name="android.intent.action.SEND_MULTIPLE"/>
+                <action android:name="android.intent.action.SENDTO"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="*/*"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".presentation.ui.AccountInfoPreferenceActivity"/>
+
+        <service android:name=".presentation.services.AuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data android:name="android.accounts.AccountAuthenticator"
+                       android:resource="@xml/authentificator" />
+        </service>
+
+        <service android:name=".presentation.services.FileObserverService"
+                 android:exported="false"/>
+
+        <service android:name=".presentation.services.ClearCacheService"
+                 android:exported="false"/>
+
+        <receiver android:name=".presentation.receivers.BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".presentation.receivers.AccountLoginStateReceiver"
+                  android:exported="false"
+                  android:permission="com.afterlogic.aurora.CATCH_LOGIN">
+            <intent-filter>
+                <action android:name="com.afterlogic.aurora.aurorapi.ACTION_AURORA_LOG_IN"/>
+                <action android:name="com.afterlogic.aurora.aurorapi.ACTION_AURORA_LOG_OUT"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".presentation.receivers.SyncResolveReceiver"
+                  android:exported="false">
+            <intent-filter>
+                <action android:name="com.afterlogic.aurora.drive.ACTION_RESOLVE_SYNC_CONFLICT"/>
+                <action android:name="com.afterlogic.aurora.drive.ACTION_RESOLVE_REMOTE_NOT_EXIST"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".presentation.receivers.session.SessionTrackerReceiver"
+                  android:exported="false">
+            <intent-filter>
+                <action android:name="com.afterlogic.aurora.sessiontracker.ACTION_SESSION_CHANGED"/>
+            </intent-filter>
+        </receiver>
+        <!--[END Main process]-->
+
+        <!--[START File load process]-->
+        <service android:name=".presentation.services.FileLoadService"
+                 android:process=":load"
+            android:exported="false"/>
+
+        <receiver android:name=".presentation.receivers.session.SessionChangedReceiver_LoadProcess"
+                  android:process=":load"
+                  android:exported="false">
+            <intent-filter>
+                <action android:name="com.afterlogic.aurora.sessiontracker.ACTION_SESSION_CHANGED"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".presentation.receivers.AccountActionReceiver">
+            <intent-filter>
+                <action android:name="android.accounts.LOGIN_ACCOUNTS_CHANGED"/>
+            </intent-filter>
+        </receiver>
+        <!--[END File load process]-->
+
+        <!--[START Sync process]-->
+        <service
+            android:name=".presentation.services.SyncService"
+            android:exported="true"
+            android:process=":sync">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+            <meta-data android:name="android.content.SyncAdapter"
+                       android:resource="@xml/syncadapter" />
+        </service>
+
+        <receiver android:name=".presentation.receivers.session.SessionChangedReceiver_SyncProcess"
+                  android:process=":sync"
+                  android:exported="false">
+            <intent-filter>
+                <action android:name="com.afterlogic.aurora.sessiontracker.ACTION_SESSION_CHANGED"/>
+            </intent-filter>
+        </receiver>
+        <!--[END Sync process]-->
+
+        <provider
+            android:name=".data.modules.stubProvider.StubContentProvider"
+            android:authorities="com.afterlogic.aurora.filesync.provider"
+            android:exported="false"
+            android:syncable="true"/>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_path"/>
+        </provider>
+
+    </application>
+
+</manifest>

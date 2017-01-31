@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceScreen
+        android:title="@string/prompt_authenticator_accont_info"
+        android:summary="@string/prompt_authenticator_accont_info_summary">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.afterlogic.aurora.files"
+            android:targetClass="com.afterlogic.aurora.drive.presentation.ui.AccountInfoPreferenceActivity"/>
+    </PreferenceScreen>
+</PreferenceScreen>

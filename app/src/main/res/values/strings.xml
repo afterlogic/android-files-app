@@ -1,0 +1,104 @@
+<resources>
+
+    <string name="shared_user_label" translatable="false" >Afterlogic.Aurora</string>
+
+    <string name="app_name">Aurora.Files</string>
+    <string name="prompt_downloaded_file_description">From Aurora.Files</string>
+
+
+    <string name="app_name_global" translatable="false">Aurora</string>
+
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Log in</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid.</string>
+    <string name="error_incorrect_password">This password is incorrect.</string>
+    <string name="error_field_required">This field is required.</string>
+    <string name="error_unrechable_host">This host is unreachable.</string>
+    <string name="prompt_domain">Server</string>
+    <string name="error_pass_or_login">Invalid login or password.</string>
+    <string name="dialog_ok">Ok</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_prompt_processing">Processing…</string>
+    <string name="error_connection_to_domain">Connection to server failed.</string>
+    <string name="prompt_error_occurred">Error occurred.</string>
+    <string name="error_default_api_error">Request was failed.</string>
+    <string name="error_adding_aurora_account">Adding Aurora account was failed.</string>
+    <string name="error_add_more_than_one_account">Only one Aurora account may be signed in at a time. You must remove your current account before adding a new one.</string>
+    
+    <!-- Strings related to login -->
+    <string name="title_corporate">Corporate</string>
+    <string name="title_personal">Personal</string>
+    <string name="prompt_input_folder_name">Input folder name:</string>
+    <string name="error_folder_creation">Folder creation failed.</string>
+    <string name="prompt_rename">Rename</string>
+    <string name="prompt_delete">Delete</string>
+    <string name="prompt_input_new_file_name">Input new file\'s name:</string>
+    <string name="prompt_delete_file_confirm">"Are you sure that you want to delete %s?"</string>
+    <string name="prompt_delete_file_confirm_multiple">"Are you sure that you want to delete these files:\n%s"</string>
+    <string name="dialog_button_yes">Yes</string>
+    <string name="dialog_button_no">No</string>
+    <string name="prompt_cant_open_file">Unable to open file. No suitable application.</string>
+    <string name="prompt_upload_file_from">Upload file from:</string>
+    <string name="error_cant_read_file">Can\'t read file.</string>
+    <string name="error_uploading_failed">Uploading failed.</string>
+    <string name="prompt_folder_is_empty">Folder is empty.</string>
+    <string name="dialog_downloading">Downloading…</string>
+    <string name="error_downloading_failed">Downloading failed.</string>
+    <string name="error_cant_save_file_on_device">Can\'t save file on device.</string>
+    <string name="logout">Logout %s</string>
+    <string name="prompt_upload_file">Upload file</string>
+    <string name="prompt_create_folder">Create folder</string>
+    <string name="prompt_action_download">Download</string>
+    <string name="prompt_dialog_file_succes_download_open">File is downloaded successfully. Open it?</string>
+    <string name="prompt_dialog_dowload_link_file">This file is a url link. It can\'t be downloaded.</string>
+    <string name="prompt_send">Send…</string>
+    <string name="prompt_send_by_email_chooser">Send…</string>
+    <string name="prompt_dialog_upload_file_exist_overwrite">%s already exists. Overwrite?</string>
+    <string name="prompt_file_already_exist">%s already exists.</string>
+    <string name="error_cant_upload_file">Can\'t upload file.</string>
+    <string name="prompt_task_result_succes">Success.</string>
+    <string name="prompt_task_result_cancelled">Cancelled.</string>
+    <string name="prompt_task_result_failed">Failed.</string>
+    <string name="prompt_notify_download_file">Downloading %s</string>
+    <string name="prompt_notify_upload_file">Uploading %s</string>
+    <string name="prompt_notify_title_cant_upload_changes">Can\'t upload changes</string>
+    <string name="prompt_notify_file_was_renamed">Remote file was deleted or renamed.</string>
+    <string name="prompt_notify_upload_changes_for">"Upload changes for: %s"</string>
+    <string name="prompt_action_make_offline">Available offline</string>
+    <string name="notify_remote_not_exist">Remote %s was deleted.</string>
+    <string name="notify_remote_not_exise_save">Save local version to Downloads?</string>
+    <string name="notify_sync_conflict">Can\'t synchronize files.</string>
+    <string name="notify_sync_conflict_description">"File conflict for: %s.\nWhich version of file must be used?"</string>
+    <string name="notify_sync_conflict_action_local">Local</string>
+    <string name="notify_sync_conflict_action_remote">Remote</string>
+    <string name="error_open_not_synced_file">Can\'t open file while it is not synchronized.</string>
+    <string name="prompt_network_offline_mode_title">Can\'t connect to server.\nThese files available in offline mode:</string>
+    <string name="error_renamed_file_exist">Can\'t rename file because file with same name already exists.</string>
+    <string name="alert_message_remote_deleted_save_local">Remote file success deleted, but it was marked as offline. Save local version to \'Downloads\'?</string>
+    <string name="toast_choose_directory_for_files_upload">Choose directory for files upload.</string>
+    <string name="multichoise">Multichoise</string>
+    <string name="title_action_selected">"Selected: %d"</string>
+    <string name="toast_cant_upload_permission_not_granted">Permission not granted. Can\'t upload file.</string>
+    <string name="dialog_files_title_uploading">Uploading…</string>
+    <string name="dialog_files_title_dowloading">Downloading…</string>
+    <string name="prompt_send_upload_this_folder">Upload in this folder</string>
+    <string name="prompt_refreshing_files_list">Files list is refreshing…</string>
+    <string name="prompt_uploaded_successfully">%s uploaded successfully</string>
+    <string name="prompt_authenticator_accont_info">Full account info</string>
+    <string name="prompt_authenticator_accont_info_summary">Email, server, etc.</string>
+    <string name="prompt_account_info_not_authorized">You are not authorized in Aurora.</string>
+    <string name="prompt_connection_to_server_failed">Connection to server failed.</string>
+    <string name="prompt_retry">Retry</string>
+    <string name="prompt_offline_folder_is_empty">You don\'t have offline files.</string>
+    <string name="prompt_offline_mode">Offline mode</string>
+    <string name="prompt_manual_offline_mode_title">These files available in offline mode:</string>
+    <string name="prompt_online_mode">Online mode</string>
+    <string name="prompt_offline_file_not_exist">Offline file not exists. Maybe it not synced yet.</string>
+
+    <plurals name="prompt_upload_files_count">
+        <item quantity="one">%d file</item>
+        <item quantity="other">%d files</item>
+    </plurals>
+</resources>

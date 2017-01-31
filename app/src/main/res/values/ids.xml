@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="action_rename" type="id"/>
+    <item name="action_delete" type="id"/>
+    <item name="action_download" type="id"/>
+    <item name="action_send" type="id"/>
+    <item name="action_offline_on" type="id"/>
+    <item name="action_offline_off" type="id"/>
+
+    <item name="load_thumb_disposable" type="id"/>
+</resources>

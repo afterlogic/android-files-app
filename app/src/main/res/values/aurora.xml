@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- File storage type parameters array-->
+    <string-array name="folder_types">
+        <item>@string/folder_type_personal</item>
+        <item>@string/folder_type_corporate</item>
+    </string-array>
+
+    <string name="folder_type_personal" translatable="false">personal</string>
+    <string name="folder_type_corporate" translatable="false">corporate</string>
+
+    <!--
+    File storage type names array.
+    !!! MUST have size equals to types array size.
+    -->
+    <string-array name="folder_names">
+        <item>@string/title_personal</item>
+        <item>@string/title_corporate</item>
+    </string-array>
+
+</resources>
