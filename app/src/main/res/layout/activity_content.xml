@@ -13,6 +13,6 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="@dimen/toolbar_shadow_height"
+        android:layout_height="@dimen/compat_appbar_shadow_height"
         android:background="@drawable/toolbar_dropshadow"/>
 </RelativeLayout>

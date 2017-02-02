@@ -3,7 +3,7 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
-    <com.afterlogic.aurora.drive.presentation.ui.common.views.DisablableViewPager
+    <com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.views.DisablableViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
