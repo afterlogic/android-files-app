@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.afterlogic.aurora.drive.presentation.ui.common.views.SelectionEditText
+        <com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.views.SelectionEditText
             android:id="@+id/input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

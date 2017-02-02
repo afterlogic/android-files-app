@@ -1,0 +1,175 @@
+import groovy.swing.SwingBuilder
+
+ext{
+    getIncrementalVersionCode = this.&getIncrementalVersionCode
+    getIncrementalVersionName = this.&getIncrementalVersionName
+    getLastBuildReleaseNoteFile = this.&getLastBuildReleaseNoteFile
+    prepareVersions = this.&prepareVersions
+}
+
+//import groovy.swing.SwingBuilder
+/**
+ * Result apk naming.
+ */
+android.applicationVariants.all { variant ->;
+    def appName
+    //Check if an applicationName property is supplied; if not use the name of the parent project.
+    if (project.hasProperty("applicationName")) {
+        appName = applicationName
+    } else {
+        appName = parent.name
+    }
+
+    variant.outputs.each { output ->;
+        def newApkName
+        //If there's no ZipAlign task it means that our artifact will be unaligned and we need to mark it as such.
+        if (output.zipAlign) {
+            newApkName = "${appName}-${project.name}-${output.baseName}-${variant.versionName}-b${variant.versionCode}.apk"
+        } else {
+            newApkName = "${appName}-${project.name}-${output.baseName}-${variant.versionName}-b${variant.versionCode}-unaligned.apk"
+        }
+        output.outputFile = new File(output.outputFile.parent, newApkName)
+    }
+}
+
+def void prepareVersions(){
+    Properties versionProperties = new Properties()
+    File propsFile = getVersionFile();
+    if(propsFile.exists()) {
+        versionProperties.load(new FileInputStream(propsFile))
+    } else {
+        throw new IllegalStateException("Signing properties file not exist! File: " + propsFile.absolutePath)
+    }
+
+    def defaultChanged = false
+    if (versionProperties["VERSION_NAME"] == null){
+        versionProperties["VERSION_NAME"] = "0.0.0"
+        defaultChanged = true
+    }
+    if (versionProperties["VERSION_CODE"] == null){
+        versionProperties["VERSION_CODE"] = "1"
+        defaultChanged = true
+    }
+
+    if (defaultChanged){
+        versionProperties.store(propsFile.newWriter(), null)
+    }
+
+    if(isNeedIncrement()) {
+        checkVersionName(versionProperties)
+
+        //Increment version code
+        versionProperties["VERSION_CODE"] = String.valueOf(versionProperties["VERSION_CODE"].toString().toInteger() + 1)
+        versionProperties.store(propsFile.newWriter(), null)
+    }
+}
+
+/**
+ * Get version code from version.properties file and increment it if increment flag setted.
+ */
+def int getIncrementalVersionCode(){
+    Properties versionProperties = new Properties()
+    File propsFile = getVersionFile();
+    if(propsFile.exists()) {
+        versionProperties.load(new FileInputStream(propsFile))
+    } else {
+        throw new IllegalStateException("Signing properties file not exist! File: " + propsFile.absolutePath)
+    }
+
+    return versionProperties["VERSION_CODE"].toString().toInteger()
+}
+
+def String getIncrementalVersionName(){
+    Properties versionProperties = new Properties()
+    File propsFile = getVersionFile();
+    if(propsFile.exists()) {
+        versionProperties.load(new FileInputStream(propsFile))
+    } else {
+        throw new IllegalStateException("Signing properties file not exist! File: " + propsFile.absolutePath)
+    }
+
+    return versionProperties["VERSION_NAME"]
+}
+
+def boolean isNeedIncrement(){
+    def autoIncrementTasks = project.ext.get("autoIncrementTasks")
+    if (autoIncrementTasks != null) {
+        List<String> runTasks = gradle.startParameter.getTaskNames();
+        for (String item : runTasks) {
+            for (String task: ((String)autoIncrementTasks).split(",")){
+                if (task.trim() == item) {
+                    return true
+                }
+            }
+        }
+    }
+    return false;
+}
+
+def getVersionFile(){
+    def versionPropsFile = file(projectDir.absolutePath + '/version.properties')
+    if (!versionPropsFile.exists()){
+        versionPropsFile = new File(projectDir.absolutePath + '/version.properties').withWriterAppend { w ->
+            w << ""
+        }
+    }
+    return versionPropsFile
+}
+
+def getLastBuildReleaseNoteFile(){
+    def lastbuildNote = file(projectDir.absolutePath + "/lastBetaBuildNotes.txt")
+    if (!lastbuildNote.exists()){
+        new File(projectDir.absolutePath + "/lastBetaBuildNotes.txt").withWriterAppend { w ->
+            w << "Initial release note."
+        }
+    }
+    return projectDir.absolutePath + "/lastBetaBuildNotes.txt"
+}
+
+def checkVersionName(Properties properties){
+    def String[] versions = properties["VERSION_NAME"].toString().split("\\.")
+
+    def cancelled = false
+    new SwingBuilder().edt {
+        dialog(modal: true, // Otherwise the build will continue running before you closed the dialog
+                title: 'Build version.', // Dialog title
+                alwaysOnTop: true, // pretty much what the name says
+                resizable: false, // Don't allow the user to resize the dialog
+                locationRelativeTo: null, // Place dialog in center of the screen
+                pack: true, // We need to pack the dialog (so it will take the size of it's children)
+                show: true // Let's show it
+        ) {
+            vbox { // Put everything below each other
+                label(text: "Choose build type:")
+                button(text: 'Global', actionPerformed: {
+                    versions[0] = String.valueOf(versions[0].toInteger() + 1);
+                    versions[1] = "0"
+                    versions[2] = "0"
+                    dispose(); // Close dialog
+                })
+                button(text: 'Major', actionPerformed: {
+                    versions[1] = String.valueOf(versions[1].toInteger() + 1);
+                    versions[2] = "0"
+                    dispose(); // Close dialog
+                })
+                button(text: 'Minor', actionPerformed: {
+                    versions[2] = String.valueOf(versions[2].toInteger() + 1);
+                    dispose(); // Close dialog
+                })
+                button(defaultButton: true, text: 'Internal', actionPerformed: {
+                    dispose(); // Close dialog
+                })
+                button(text: 'Cancel', actionPerformed: {
+                    cancelled = true;
+                    dispose(); // Close dialog
+                })
+            } // vbox end
+        } // dialog end
+    } // edt end
+
+    if (cancelled){
+        throw new Exception("Cancelled.")
+    }
+
+    properties["VERSION_NAME"] = versions.join(".")
+}
