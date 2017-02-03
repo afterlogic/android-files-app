@@ -10,8 +10,8 @@ import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginView;
 
 import javax.inject.Inject;
 
-import static com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity.EXTRA_FINISH_ON_RESULT;
-import static com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity.EXTRA_NEXT_ACTIVITY;
+import static com.afterlogic.aurora.drive.presentation.modules.login.view.LoginIntent.EXTRA_FINISH_ON_RESULT;
+import static com.afterlogic.aurora.drive.presentation.modules.login.view.LoginIntent.EXTRA_NEXT_ACTIVITY;
 
 /**
  * Created by sashka on 02.02.17.<p/>
@@ -34,6 +34,7 @@ public class LoginRouterImpl extends BaseRouter<LoginView, BaseActivity> impleme
             } else {
                 activity.setResult(Activity.RESULT_OK);
             }
+            activity.finish();
         });
     }
 }

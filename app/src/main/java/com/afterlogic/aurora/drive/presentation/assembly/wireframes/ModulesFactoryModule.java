@@ -4,6 +4,8 @@ import com.afterlogic.aurora.drive.presentation.assembly.assemblies.AssembliesAs
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.Injector;
 import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginInjector;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
+import com.afterlogic.aurora.drive.presentation.modules.start.assembly.StartInjector;
+import com.afterlogic.aurora.drive.presentation.modules.start.view.StartActivity;
 
 import dagger.Module;
 import dagger.Provides;
@@ -38,4 +40,8 @@ public class ModulesFactoryModule {
         return injector;
     }
 
+    @Provides
+    Injector<StartActivity> start(StartInjector injector){
+        return injector;
+    }
 }

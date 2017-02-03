@@ -58,7 +58,7 @@ public abstract class BaseService extends Service implements PresentationView {
         MyLog.d("onDestroy()");
         Stream.of(mPresenters).forEach(Presenter::onStop);
         mIsActive = false;
-        ((App) getApplication()).modulesFactory().store().remove(getModuleUuid());
+        ((App) getApplication()).modulesFactory().modulesStore().remove(getModuleUuid());
 
         if (mMessageId > 0){
             NotificationManagerCompat nm  = NotificationManagerCompat.from(this);
