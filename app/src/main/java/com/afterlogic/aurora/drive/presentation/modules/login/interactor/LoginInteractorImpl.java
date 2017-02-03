@@ -105,7 +105,10 @@ public class LoginInteractorImpl extends BaseInteractor implements LoginInteract
                                     return Completable.complete();
                                 })
                                 .andThen(authRepository.login(session.getLogin(), session.getPassword()))
-                                .toCompletable()
+                                .flatMapCompletable(authToken -> {
+                                    mSessionManager.getSession().setAuthToken(authToken.token);
+                                    return Completable.complete();
+                                })
                 )
                 .andThen(storeAuthData())
                 .doOnError(error -> mSessionManager.setSession(null))
