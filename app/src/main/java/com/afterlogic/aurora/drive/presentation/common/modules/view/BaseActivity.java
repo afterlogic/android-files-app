@@ -50,7 +50,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Presenta
     private boolean mAddSubmoduleAvailable = true;
     private PresentationModulesStore mPresentationModulesStore;
 
-    private final Set<Presenter> mPresenters = new HashSet<>();
+    protected final Set<Presenter> mPresenters = new HashSet<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,7 +70,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Presenta
             if (uuidString != null) {
                 mModuleUuid = UUID.fromString(uuidString);
             }
-            Stream.of(mSubmodules).forEach(instantiable -> instantiable.restoreInstance(savedInstanceState));
+            Stream.of(mSubmodules).forEach(subModule -> subModule.restoreInstance(savedInstanceState));
         }
 
         ModulesFactoryComponent component = app.modulesFactory();
@@ -95,6 +95,14 @@ public abstract class BaseActivity extends AppCompatActivity implements Presenta
     protected <T extends ViewDataBinding> T setContentViewWithBinding(@LayoutRes int layoutId){
         mBinding = DataBindingUtil.setContentView(this, layoutId);
         return getViewBinding();
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null){
+            Stream.of(mPresenters).forEach(presenter -> presenter.onRestoreInstanceState(savedInstanceState));
+        }
     }
 
     @Override
@@ -147,6 +155,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Presenta
         if (mModuleUuid != null) {
             outState.putString(MODULE_UUID, mModuleUuid.toString());
         }
+
+        Stream.of(mPresenters).forEach(presenter -> presenter.onSaveInstanceState(outState));
     }
 
     @Override
@@ -260,7 +270,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Presenta
                             MyLog.majorException(activity, "Field marked as ViewPresenter but it is null: " + field.getName());
                         }
                     } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                        MyLog.majorException(e);
                     }
                 });
     }

@@ -1,9 +1,9 @@
 package com.afterlogic.aurora.drive.core.assembly;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.CoreScope;
-import com.afterlogic.aurora.drive.core.common.resourceProvders.AppStringProvider;
-import com.afterlogic.aurora.drive.core.common.resourceProvders.AppStringProviderImpl;
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
+import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
+import com.afterlogic.aurora.drive.data.modules.appResources.AppResourcesImpl;
 
 import dagger.Module;
 import dagger.Provides;
@@ -25,7 +25,7 @@ public class CoreAssemblyModule {
     }
 
     @Provides @CoreScope
-    AppStringProvider provideAppStringProvider(AppStringProviderImpl stringProvider){
+    AppResources provideAppStringProvider(AppResourcesImpl stringProvider){
         return stringProvider;
     }
 }

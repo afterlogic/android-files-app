@@ -15,14 +15,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive._unrefactored.AuraoraApp;
 import com.afterlogic.aurora.drive._unrefactored.data.common.ApiProvider;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.DBHelper;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.dao.WatchingFileDAO;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.model.WatchingFile;
-import com.afterlogic.aurora.drive._unrefactored.data.common.repository.FilesRepository;
 import com.afterlogic.aurora.drive._unrefactored.presentation.services.SyncService;
+import com.afterlogic.aurora.drive.application.App;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
+import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -86,7 +86,7 @@ public class FileViewImageFragment extends Fragment{
         super.onCreate(savedInstanceState);
 
         ApiProvider provider = new ApiProvider();
-        ((AuraoraApp) getContext().getApplicationContext()).getDataComponent().inject(provider);
+        ((App) getContext().getApplicationContext()).modulesFactory().inject(provider);
         mFilesRepository = provider.getFilesRepository();
 
         if (getArguments() != null) {

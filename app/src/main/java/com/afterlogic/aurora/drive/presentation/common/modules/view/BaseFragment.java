@@ -60,7 +60,7 @@ public abstract class BaseFragment extends Fragment implements PresentationView 
 
     private FirstCreateViewInterceptor mFirstCreateViewInterceptor;
 
-    private final Set<Presenter> mPresenters = new HashSet<>();
+    protected final Set<Presenter> mPresenters = new HashSet<>();
 
     /**
      * Initialize module wireframe and assembly it.
@@ -109,7 +109,7 @@ public abstract class BaseFragment extends Fragment implements PresentationView 
     /**
      * Assembly module wireframe.
      */
-    protected abstract void assembly(ModulesFactoryComponent wireframeFactory);
+    protected abstract void assembly(ModulesFactoryComponent modulesFactory);
 
     /**
      * Restore presenter state.

@@ -1,7 +1,8 @@
 package com.afterlogic.aurora.drive._unrefactored.data.common;
 
-import com.afterlogic.aurora.drive._unrefactored.data.common.repository.FilesRepository;
-import com.afterlogic.aurora.drive._unrefactored.data.common.repository.UserRepository;
+import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
+import com.afterlogic.aurora.drive.data.common.network.SessionManager;
+import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -16,7 +17,7 @@ public class ApiProvider {
     SessionManager mSessionManager;
 
     @Inject
-    Provider<UserRepository> mUserRepositoryProvider;
+    Provider<AuthRepository> mUserRepositoryProvider;
 
     @Inject
     Provider<FilesRepository> mFilesRepositoryProvider;
@@ -25,7 +26,7 @@ public class ApiProvider {
         return mSessionManager;
     }
 
-    public UserRepository getUserRepository() {
+    public AuthRepository getUserRepository() {
         return mUserRepositoryProvider.get();
     }
 

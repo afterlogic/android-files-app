@@ -36,7 +36,7 @@ public abstract class BaseService extends Service implements PresentationView {
 
     private int mMessageId = 0;
 
-    private final Set<Presenter> mPresenters = new HashSet<>();
+    protected final Set<Presenter> mPresenters = new HashSet<>();
 
     @Override
     public void onCreate() {

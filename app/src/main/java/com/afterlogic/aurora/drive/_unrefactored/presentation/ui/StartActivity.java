@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;
 import com.afterlogic.aurora.drive.model.AuroraSession;
+import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
 
 /**
  * Created by sashka on 29.03.16.
@@ -18,14 +19,14 @@ public class StartActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        AuroraSession session = Api.getApiProvider().getSessionManager().getAuroraSession();
+        AuroraSession session = Api.getApiProvider().getSessionManager().getSession();
 
         boolean logged = session != null && session.isComplete();
 
         Intent i = logged ?
                 new Intent(this, FilesListActivity.class) :
-                AuroraLoginActivity.IntentCreator.makeNextActivity(
-                        new Intent(this, AuroraLoginActivity.class),
+                LoginActivity.IntentCreator.makeNextActivity(
+                        new Intent(this, LoginActivity.class),
                         FilesListActivity.class
                 );
         startActivity(i);

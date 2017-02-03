@@ -1,6 +1,8 @@
 package com.afterlogic.aurora.drive.presentation.assembly.assemblies;
 
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationModulesStore;
+import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginComponent;
+import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginModule;
 
 import dagger.Subcomponent;
 
@@ -17,4 +19,6 @@ import dagger.Subcomponent;
 public interface AssembliesAssemblyComponent {
 
     PresentationModulesStore store();
+
+    LoginComponent plus(LoginModule module);
 }
