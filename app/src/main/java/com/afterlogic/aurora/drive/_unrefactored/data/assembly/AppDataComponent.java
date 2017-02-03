@@ -5,7 +5,6 @@ import com.afterlogic.aurora.drive._unrefactored.data.common.ApiProvider;
 import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.assembly.P7DataMappersModule;
 import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.assembly.Project7Module;
 import com.afterlogic.aurora.drive._unrefactored.data.modules.project8.assembly.Project8Module;
-import com.afterlogic.aurora.drive._unrefactored.presentation.ui.AuroraLoginActivity;
 
 import dagger.Component;
 
@@ -22,5 +21,4 @@ import dagger.Component;
 })
 public interface AppDataComponent {
     void inject(ApiProvider provider);
-    void inject(AuroraLoginActivity activity);
 }

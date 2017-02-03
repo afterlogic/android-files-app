@@ -10,13 +10,13 @@ import com.afterlogic.aurora.drive._unrefactored.core.annotations.qualifers.Repo
 import com.afterlogic.aurora.drive._unrefactored.core.annotations.scoupes.AppScoupe;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStoreImpl;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.checker.ApiChecker;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.checker.ApiCheckerImpl;
+import com.afterlogic.aurora.drive.data.modules.apiChecker.checker.ApiChecker;
+import com.afterlogic.aurora.drive.data.modules.apiChecker.checker.ApiCheckerImpl;
 import com.afterlogic.aurora.drive._unrefactored.data.common.ApiConfigurator;
 import com.afterlogic.aurora.drive._unrefactored.data.common.DynamicDomainProvider;
 import com.afterlogic.aurora.drive._unrefactored.data.common.SessionManager;
 import com.afterlogic.aurora.drive._unrefactored.data.common.repository.FilesRepository;
-import com.afterlogic.aurora.drive._unrefactored.data.common.repository.UserRepository;
+import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.core.consts.Const;
 import com.afterlogic.aurora.drive._unrefactored.core.util.AccountUtil;
@@ -81,8 +81,8 @@ public class DataModule {
     }
 
     @Provides
-    UserRepository provideUserRepository(@Project7 Provider<UserRepository> p7,
-                                         @Project8 Provider<UserRepository> p8,
+    AuthRepository provideUserRepository(@Project7 Provider<AuthRepository> p7,
+                                         @Project8 Provider<AuthRepository> p8,
                                          ApiConfigurator configurator){
         return chooseByApiVersion(configurator, p7, p8);
     }

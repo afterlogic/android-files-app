@@ -17,6 +17,7 @@ public class StringBinder extends Binder<String> implements TextWatcher{
     private boolean mTextInputMode = false;
 
     public StringBinder() {
+        super();
     }
 
     public StringBinder(@NonNull Provider<String> get, @NonNull Consumer<String> set) {

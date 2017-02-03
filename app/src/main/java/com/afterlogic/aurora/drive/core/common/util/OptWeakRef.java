@@ -67,7 +67,7 @@ public class OptWeakRef<T> {
         }
     }
 
-    public T get(){
+    public synchronized T get(){
         return mReference == null ? null : mReference.get();
     }
 
@@ -81,7 +81,7 @@ public class OptWeakRef<T> {
         }
     }
 
-    public boolean isPresent(){
+    public synchronized boolean isPresent(){
         return mReference != null && mReference.get() != null;
     }
 }

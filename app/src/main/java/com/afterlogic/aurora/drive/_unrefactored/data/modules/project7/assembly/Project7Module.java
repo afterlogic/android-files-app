@@ -6,20 +6,20 @@ import com.afterlogic.aurora.drive._unrefactored.data.common.DynamicDomainProvid
 import com.afterlogic.aurora.drive._unrefactored.data.common.DynamicEndPointInterceptor;
 import com.afterlogic.aurora.drive._unrefactored.data.common.repository.ApiCheckRepository;
 import com.afterlogic.aurora.drive._unrefactored.data.common.repository.FilesRepository;
-import com.afterlogic.aurora.drive._unrefactored.data.common.repository.UserRepository;
+import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.common.Api7;
 import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.common.ApiResponseConverter7;
 import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.common.DownloadInterceptor;
 import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.common.UploadInterceptor;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.modules.checker.repository.ApiCheckRepository7Impl;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.modules.checker.service.ApiCheckerServiceP7;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.modules.checker.service.ApiCheckerServiceP7Impl;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.modules.files.repository.FilesRepository7Impl;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.modules.files.service.FilesServiceP7;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.modules.files.service.FilesServiceP7Impl;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.modules.user.repository.UserRepositoryP7Impl;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.modules.user.service.AuthServiceP7;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.modules.user.service.AuthServiceP7Impl;
+import com.afterlogic.aurora.drive.data.modules.apiChecker.p7.repository.ApiCheckRepository7Impl;
+import com.afterlogic.aurora.drive.data.modules.apiChecker.p7.service.ApiCheckerServiceP7;
+import com.afterlogic.aurora.drive.data.modules.apiChecker.p7.service.ApiCheckerServiceP7Impl;
+import com.afterlogic.aurora.drive.data.modules.files.p7.repository.FilesRepository7Impl;
+import com.afterlogic.aurora.drive.data.modules.files.p7.service.FilesServiceP7;
+import com.afterlogic.aurora.drive.data.modules.files.p7.service.FilesServiceP7Impl;
+import com.afterlogic.aurora.drive.data.modules.auth.p7.repository.AuthRepositoryP7Impl;
+import com.afterlogic.aurora.drive.data.modules.auth.p7.service.AuthServiceP7;
+import com.afterlogic.aurora.drive.data.modules.auth.p7.service.AuthServiceP7Impl;
 import com.afterlogic.aurora.drive._unrefactored.model.project7.ApiResponseP7;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -95,7 +95,7 @@ public class Project7Module {
     }
 
     @Provides @Project7
-    UserRepository provideUserRepository(UserRepositoryP7Impl userRepositoryP7){
+    AuthRepository provideUserRepository(AuthRepositoryP7Impl userRepositoryP7){
         return userRepositoryP7;
     }
 

@@ -33,6 +33,7 @@ import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.Files
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.FilesListFragment;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.FilesRootFragment;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.OfflineFilesFragment;
+import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -492,8 +493,8 @@ public class FilesListActivity extends BaseFileActionActivity implements
 
         //Start login activity
         startActivity(
-                AuroraLoginActivity.IntentCreator.makeNextActivity(
-                        new Intent(this, AuroraLoginActivity.class),
+                LoginActivity.IntentCreator.makeNextActivity(
+                        new Intent(this, LoginActivity.class),
                         FilesListActivity.class
                 )
         );

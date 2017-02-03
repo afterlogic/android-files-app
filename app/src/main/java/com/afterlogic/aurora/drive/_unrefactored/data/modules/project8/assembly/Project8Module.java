@@ -6,19 +6,19 @@ import com.afterlogic.aurora.drive._unrefactored.data.common.DynamicDomainProvid
 import com.afterlogic.aurora.drive._unrefactored.data.common.DynamicEndPointInterceptor;
 import com.afterlogic.aurora.drive._unrefactored.data.common.repository.ApiCheckRepository;
 import com.afterlogic.aurora.drive._unrefactored.data.common.repository.FilesRepository;
-import com.afterlogic.aurora.drive._unrefactored.data.common.repository.UserRepository;
+import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive._unrefactored.data.modules.project8.common.Api8;
 import com.afterlogic.aurora.drive._unrefactored.data.modules.project8.common.UploadInterceptor;
 import com.afterlogic.aurora.drive._unrefactored.data.modules.project8.common.converter.ApiResponseConverter8;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project8.modules.checker.repository.ApiCheckRepository8Impl;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project8.modules.checker.service.ApiCheckerServiceP8;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project8.modules.checker.service.ApiCheckerServiceP8Impl;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project8.modules.file.repository.FilesRepositoryP8Impl;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project8.modules.file.service.FilesServiceP8;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project8.modules.file.service.FilesServiceP8Impl;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project8.modules.user.repository.UserRepositoryP8Impl;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project8.modules.user.service.AuthServiceP8;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project8.modules.user.service.AuthServiceP8Impl;
+import com.afterlogic.aurora.drive.data.modules.apiChecker.p8.repository.ApiCheckRepository8Impl;
+import com.afterlogic.aurora.drive.data.modules.apiChecker.p8.service.ApiCheckerServiceP8;
+import com.afterlogic.aurora.drive.data.modules.apiChecker.p8.service.ApiCheckerServiceP8Impl;
+import com.afterlogic.aurora.drive.data.modules.files.p8.repository.FilesRepositoryP8Impl;
+import com.afterlogic.aurora.drive.data.modules.files.p8.service.FilesServiceP8;
+import com.afterlogic.aurora.drive.data.modules.files.p8.service.FilesServiceP8Impl;
+import com.afterlogic.aurora.drive.data.modules.auth.p8.repository.AuthRepositoryP8Impl;
+import com.afterlogic.aurora.drive.data.modules.auth.p8.service.AuthServiceP8;
+import com.afterlogic.aurora.drive.data.modules.auth.p8.service.AuthServiceP8Impl;
 import com.afterlogic.aurora.drive._unrefactored.model.project8.ApiResponseP8;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.google.gson.Gson;
@@ -94,7 +94,7 @@ public class Project8Module{
     }
 
     @Provides @Project8
-    UserRepository provideUserRepository(UserRepositoryP8Impl userRepositoryP8){
+    AuthRepository provideUserRepository(AuthRepositoryP8Impl userRepositoryP8){
         MyLog.d(this, "Provide user repository: " + userRepositoryP8);
         return userRepositoryP8;
     }

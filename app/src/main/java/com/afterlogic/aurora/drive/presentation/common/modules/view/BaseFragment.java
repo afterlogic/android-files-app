@@ -109,7 +109,7 @@ public abstract class BaseFragment extends Fragment implements PresentationView 
     /**
      * Assembly module wireframe.
      */
-    protected abstract void assembly(ModulesFactoryComponent wireframeFactory);
+    protected abstract void assembly(ModulesFactoryComponent modulesFactory);
 
     /**
      * Restore presenter state.

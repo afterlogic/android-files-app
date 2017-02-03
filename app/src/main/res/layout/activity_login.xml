@@ -1,29 +1,41 @@
-<android.support.design.widget.CoordinatorLayout
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_height="match_parent" android:fitsSystemWindows="true"
-    android:layout_width="match_parent">
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <android.support.design.widget.AppBarLayout android:layout_height="wrap_content"
-                                                android:layout_width="match_parent" android:theme="@style/AppTheme.AppBarOverlay">
+    <data>
+        <import type="android.view.View"/>
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <variable
+            name="viewModel"
+            type="com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginViewModel"/>
+    </data>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_height="match_parent" android:fitsSystemWindows="true"
+        android:layout_width="match_parent">
+
+        <android.support.design.widget.AppBarLayout android:layout_height="wrap_content"
+                                                    android:layout_width="match_parent" android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/AppTheme.PopupOverlay"
+                />
+
+        </android.support.design.widget.AppBarLayout>
+
+        <LinearLayout
+            android:id="@+id/content_frame"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
-            />
-
-    </android.support.design.widget.AppBarLayout>
-
-    <LinearLayout
-        android:id="@+id/content_frame"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
 
             <ScrollView
                 android:id="@+id/login_form"
@@ -50,7 +62,12 @@
                             android:hint="@string/prompt_domain"
                             android:inputType="textEmailAddress"
                             android:maxLines="1"
-                            android:singleLine="true"/>
+                            android:singleLine="true"
+                            android:enabled="@{!viewModel.isInProgress}"
+                            bind:binder="@{viewModel.host}"
+                            bind:error="@{viewModel.hostError}"
+                            tools:text="http://aurora.com"
+                            tools:hint="@null"/>
 
                     </android.support.design.widget.TextInputLayout>
 
@@ -67,7 +84,12 @@
                             android:hint="@string/prompt_email"
                             android:inputType="textEmailAddress"
                             android:maxLines="1"
-                            android:singleLine="true"/>
+                            android:singleLine="true"
+                            android:enabled="@{!viewModel.isInProgress}"
+                            bind:binder="@{viewModel.login}"
+                            bind:error="@{viewModel.loginError}"
+                            tools:text="mail@mail.ru"
+                            tools:hint="@null"/>
 
                     </android.support.design.widget.TextInputLayout>
 
@@ -87,20 +109,28 @@
                             android:imeOptions="actionUnspecified"
                             android:inputType="textPassword"
                             android:maxLines="1"
-                            android:singleLine="true"/>
+                            android:singleLine="true"
+                            android:enabled="@{!viewModel.isInProgress}"
+                            bind:binder="@{viewModel.password}"
+                            bind:error="@{viewModel.passwordError}"
+                            tools:text="Kekelme"
+                            tools:hint="@null"/>
 
                     </android.support.design.widget.TextInputLayout>
 
                     <Button
                         android:id="@+id/email_sign_in_button"
-                        android:layout_below="@id/pass_wraper"
-                        style="?android:textAppearanceSmall"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_below="@id/pass_wraper"
                         android:layout_marginTop="16dp"
-                        android:text="@string/action_sign_in"
                         android:textStyle="bold"
-                        android:textColor="@color/white"/>
+                        android:textColor="@color/white"
+                        android:text='@{viewModel.isInProgress ? "" : @string/action_sign_in}'
+                        android:onClick="@{viewModel::onLogin}"
+                        android:enabled="@{!viewModel.isInProgress}"
+                        tools:text="@string/action_sign_in"
+                        style="?android:textAppearanceSmall"/>
 
                     <ProgressBar
                         android:id="@+id/login_progress"
@@ -110,16 +140,13 @@
                         android:layout_alignTop="@id/email_sign_in_button"
                         android:layout_alignBottom="@id/email_sign_in_button"
                         android:layout_marginTop="@dimen/activity_vertical_margin"
-                        android:visibility="gone"/>
+                        android:visibility="@{viewModel.isInProgress ? View.VISIBLE : View.GONE}"/>
 
                 </RelativeLayout>
             </ScrollView>
-    </LinearLayout>
+        </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/compat_appbar_shadow_height"
-        android:background="@drawable/toolbar_dropshadow"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        <include layout="@layout/view_compat_appbar_shadow"/>
 
-</android.support.design.widget.CoordinatorLayout>
+    </android.support.design.widget.CoordinatorLayout>
+</layout>

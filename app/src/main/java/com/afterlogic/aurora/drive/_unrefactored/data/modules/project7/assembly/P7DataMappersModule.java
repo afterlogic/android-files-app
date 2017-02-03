@@ -1,9 +1,9 @@
 package com.afterlogic.aurora.drive._unrefactored.data.modules.project7.assembly;
 
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.modules.files.mapper.file.factory.AuroraFileP7MapperFactory;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.modules.files.mapper.file.factory.AuroraFileP7MapperFactoryImpl;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.modules.files.mapper.uploadResult.factory.UploadResultP7MapperFactory;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.modules.files.mapper.uploadResult.factory.UploadResultP7MapperFactoryImpl;
+import com.afterlogic.aurora.drive.data.modules.files.p7.mapper.file.factory.AuroraFileP7MapperFactory;
+import com.afterlogic.aurora.drive.data.modules.files.p7.mapper.file.factory.AuroraFileP7MapperFactoryImpl;
+import com.afterlogic.aurora.drive.data.modules.files.p7.mapper.uploadResult.factory.UploadResultP7MapperFactory;
+import com.afterlogic.aurora.drive.data.modules.files.p7.mapper.uploadResult.factory.UploadResultP7MapperFactoryImpl;
 
 import dagger.Module;
 import dagger.Provides;

@@ -13,7 +13,7 @@ import com.afterlogic.aurora.drive.presentation.assembly.assemblies.AssembliesAs
 import com.afterlogic.aurora.drive.presentation.assembly.presentation.PresentationAssemblyComponent;
 import com.afterlogic.aurora.drive.presentation.assembly.presentation.PresentationAssemblyModule;
 import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryComponent;
-import com.afterlogic.aurora.drive.presentation.assembly.wireframes.WireframeFactoryModule;
+import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryModule;
 
 import javax.inject.Inject;
 
@@ -63,7 +63,7 @@ public class ApplicationConfigurator implements Configurable {
         PresentationAssemblyComponent presentationComponent =
                 dataComponent.plus(new PresentationAssemblyModule());
 
-        WireframeFactoryModule modulesModule = new WireframeFactoryModule(
+        ModulesFactoryModule modulesModule = new ModulesFactoryModule(
                 presentationComponent.plus(new AssembliesAssemblyModule())
         );
 

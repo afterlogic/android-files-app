@@ -122,6 +122,10 @@ public class AuroraSession implements Parcelable{
         return mApiType;
     }
 
+    public void setApiType(int apiType) {
+        mApiType = apiType;
+    }
+
     public boolean isComplete(){
         return mAccountId != 0 && mDomain != null &&
                 !hasEmpty(mAuthToken, mDomain.toString(), mLogin, mPassword, mAppToken);

@@ -18,7 +18,7 @@ import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive._unrefactored.presentation.receivers.session.SessionTrackerReceiver;
-import com.afterlogic.aurora.drive._unrefactored.presentation.ui.AuroraLoginActivity;
+import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.FilesListActivity;
 
 /**
@@ -187,8 +187,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void startLoginActivity(boolean resetActivityStack){
         mIsReleloginRequest = true;
         if (resetActivityStack){
-            Intent i = AuroraLoginActivity.IntentCreator.makeNextActivity(
-                    new Intent(this, AuroraLoginActivity.class),
+            Intent i = LoginActivity.IntentCreator.makeNextActivity(
+                    new Intent(this, LoginActivity.class),
                     FilesListActivity.class
             );
             Intent resultIntent = IntentCompat.makeRestartActivityTask(i.getComponent());
@@ -196,8 +196,8 @@ public abstract class BaseActivity extends AppCompatActivity {
             startActivity(resultIntent);
         } else {
             startActivityForResult(
-                    AuroraLoginActivity.IntentCreator
-                            .loginAndReturn(new Intent(this, AuroraLoginActivity.class))
+                    LoginActivity.IntentCreator
+                            .loginAndReturn(new Intent(this, LoginActivity.class))
                     , REQUEST_CODE_LOGIN
             );
         }
