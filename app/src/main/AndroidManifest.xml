@@ -87,6 +87,7 @@
             </intent-filter>
         </activity>
         <activity android:name="._unrefactored.presentation.ui.AccountInfoPreferenceActivity"/>
+        <activity android:name=".presentation.modules.filesMain.view.MainFilesActivity"/>
 
         <service android:name="._unrefactored.presentation.services.AuthenticatorService">
             <intent-filter>

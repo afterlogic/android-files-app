@@ -23,9 +23,9 @@ import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.presentation.common.binding.binder.Binder;
 import com.afterlogic.aurora.drive.presentation.common.binding.binder.SelectableArrayBinder;
-import com.afterlogic.aurora.drive.presentation.common.binding.listAdapter.RecyclerViewModelAdapter;
-import com.afterlogic.aurora.drive.presentation.common.binding.listAdapter.SpinnerViewModelAdapter;
-import com.afterlogic.aurora.drive.presentation.common.binding.listAdapter.ViewsViewModelBindAdapter;
+import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.RecyclerViewModelAdapter;
+import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.SpinnerViewModelAdapter;
+import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ViewsViewModelBindAdapter;
 import com.afterlogic.aurora.drive.presentation.common.modules.viewModel.SpinnerViewModel;
 import com.bumptech.glide.Glide;
 
@@ -89,7 +89,7 @@ public class BindingAdapters {
 
     @BindingAdapter("bind:layoutManager")
     public static void setRecyclerLayoutManager(RecyclerView list, ViewProvider<RecyclerView.LayoutManager, RecyclerView> provider){
-        setRecyclerLayoutManager(list, provider.provideFor(list));
+        setRecyclerLayoutManager(list, provider.provide(list));
     }
 
     @BindingAdapter("bind:layoutManager")
@@ -99,7 +99,7 @@ public class BindingAdapters {
 
     @BindingAdapter({"bind:adapter"})
     public static <T extends RecyclerView.Adapter> void setRecyclerViewAdapter(RecyclerView list, ViewProvider<T, RecyclerView> adapter){
-        setRecyclerViewAdapter(list, adapter.provideFor(list));
+        setRecyclerViewAdapter(list, adapter.provide(list));
     }
 
     @BindingAdapter({"bind:adapter"})
@@ -111,7 +111,7 @@ public class BindingAdapters {
 
     @BindingAdapter({"bind:adapter", "bind:items"})
     public static <VM> void setRecyclerAdapterWithItems(RecyclerView list, ViewProvider<RecyclerViewModelAdapter<VM>, RecyclerView> adapter, List<VM> items){
-        setRecyclerAdapterWithItems(list, adapter.provideFor(list), items);
+        setRecyclerAdapterWithItems(list, adapter.provide(list), items);
     }
 
     @BindingAdapter({"bind:adapter", "bind:items"})
@@ -164,7 +164,7 @@ public class BindingAdapters {
 
     @BindingAdapter({"bind:adapter", "bind:items"})
     public static <T extends SpinnerViewModel> void setSpinnerItems(Spinner spinner, ViewProvider<SpinnerViewModelAdapter<T>, Spinner > adapter, SelectableArrayBinder<T> items) {
-        setSpinnerItems(spinner, adapter.provideFor(spinner), items);
+        setSpinnerItems(spinner, adapter.provide(spinner), items);
     }
 
     @BindingAdapter({"bind:adapter", "bind:items"})
@@ -296,7 +296,7 @@ public class BindingAdapters {
     @BindingAdapter("bind:decoration")
     public static void setRecyclerDecoration(RecyclerView list, ViewProvider<RecyclerView.ItemDecoration, RecyclerView> provider){
         RecyclerView.ItemDecoration prev = (RecyclerView.ItemDecoration) list.getTag(R.id.bind_recycler_decoration);
-        RecyclerView.ItemDecoration decoration = provider.provideFor(list);
+        RecyclerView.ItemDecoration decoration = provider.provide(list);
 
         if (prev == decoration) return;
 

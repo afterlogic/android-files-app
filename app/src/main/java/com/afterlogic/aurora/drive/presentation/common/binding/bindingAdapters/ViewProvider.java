@@ -8,5 +8,5 @@ import android.view.View;
  */
 
 public interface ViewProvider<T, V extends View> {
-    T provideFor(V view);
+    T provide(V view);
 }

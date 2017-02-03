@@ -30,7 +30,7 @@ import dagger.Provides;
  * Created by sashka on 31.08.16.<p/>
  * mail: sunnyday.development@gmail.com
  *
- * Will provideFor repositories, services and etc.
+ * Will provide repositories, services and etc.
  */
 @Module(includes = {
         DataBaseModule.class,

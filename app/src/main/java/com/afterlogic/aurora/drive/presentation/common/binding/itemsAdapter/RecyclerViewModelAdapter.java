@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.common.binding.listAdapter;
+package com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter;
 
 import android.databinding.ObservableList;
 import android.databinding.ViewDataBinding;
