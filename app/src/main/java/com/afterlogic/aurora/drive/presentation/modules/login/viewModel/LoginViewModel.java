@@ -6,7 +6,6 @@ import android.text.TextUtils;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiUtil;
-import com.afterlogic.aurora.drive.core.common.annotation.qualifer.Internal;
 import com.afterlogic.aurora.drive.core.common.util.Holder;
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.core.consts.Const;
@@ -15,8 +14,6 @@ import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.presentation.common.binding.binder.StringBinder;
 import com.afterlogic.aurora.drive.presentation.modules.login.presenter.LoginPresenter;
 import com.annimon.stream.Stream;
-
-import javax.inject.Inject;
 
 import io.reactivex.Single;
 
@@ -42,7 +39,7 @@ public class LoginViewModel{
     private final ObservableField<String> mHostError = new ObservableField<>();
     private final ObservableBoolean mProgressState = new ObservableBoolean();
 
-    @Inject @Internal LoginViewModel(AppResources appResources) {
+    public LoginViewModel(AppResources appResources) {
         mAppResources = appResources;
     }
 

@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.login.assembly;
 
-import com.afterlogic.aurora.drive.core.common.annotation.qualifer.Internal;
-import com.afterlogic.aurora.drive.core.common.annotation.scopes.PresentationScope;
+import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
+import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationModule;
 import com.afterlogic.aurora.drive.presentation.modules.login.interactor.LoginInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.login.interactor.LoginInteractorImpl;
@@ -23,9 +23,9 @@ import dagger.Provides;
 @Module
 public class LoginModule extends PresentationModule<LoginView>{
 
-    @Provides @PresentationScope
-    LoginViewModel viewModel(@Internal LoginViewModel viewModel){
-        return viewModel;
+    @Provides @ModuleScope
+    LoginViewModel viewModel(AppResources resources){
+        return new LoginViewModel(resources);
     }
 
     @Provides
@@ -33,8 +33,7 @@ public class LoginModule extends PresentationModule<LoginView>{
         return model.getController();
     }
 
-
-    @Provides @PresentationScope
+    @Provides @ModuleScope
     LoginPresenter presenter(LoginPresenterImpl presenter){
         return presenter;
     }

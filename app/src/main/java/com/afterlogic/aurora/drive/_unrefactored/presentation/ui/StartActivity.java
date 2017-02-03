@@ -19,7 +19,7 @@ public class StartActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        AuroraSession session = Api.getApiProvider().getSessionManager().getAuroraSession();
+        AuroraSession session = Api.getApiProvider().getSessionManager().getSession();
 
         boolean logged = session != null && session.isComplete();
 

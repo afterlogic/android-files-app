@@ -123,7 +123,7 @@ public class SyncService extends Service {
                                   ContentProviderClient provider, SyncResult syncResult) {
             Log.d(TAG, "onPerformSync");
 
-            AuroraSession session = mApi.getSessionManager().getAuroraSession();
+            AuroraSession session = mApi.getSessionManager().getSession();
 
             if (session == null || !session.isComplete()) {
                 MyLog.e(this, "Ignore sync cause session is null or incomplete");
@@ -445,7 +445,7 @@ public class SyncService extends Service {
             AuroraFile file = target.getRemote();
 
             //TODO !!! Upload with override
-            if (mApi.getSessionManager().getAuroraSession().getApiVersion() == Const.ApiVersion.API_P8){
+            if (mApi.getSessionManager().getSession().getApiVersion() == Const.ApiVersion.API_P8){
                 boolean deleted = repository.delete(Collections.singletonList(file))
                         .blockingGet();
                 if (!deleted){

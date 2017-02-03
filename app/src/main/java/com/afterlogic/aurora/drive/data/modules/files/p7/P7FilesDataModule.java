@@ -10,13 +10,14 @@ import com.afterlogic.aurora.drive.data.modules.files.p7.repository.FilesReposit
 import com.afterlogic.aurora.drive.data.modules.files.p7.service.FilesServiceP7;
 import com.afterlogic.aurora.drive.data.modules.files.p7.service.FilesServiceP7Impl;
 
+import dagger.Module;
 import dagger.Provides;
 
 /**
  * Created by sashka on 03.02.17.<p/>
  * mail: sunnyday.development@gmail.com
  */
-
+@Module
 public class P7FilesDataModule {
 
     @Provides

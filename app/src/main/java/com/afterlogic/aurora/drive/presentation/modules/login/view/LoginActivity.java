@@ -20,9 +20,9 @@ import javax.inject.Inject;
  */
 public class LoginActivity extends BaseActivity implements LoginView{
 
-    private static final String EXTRA_NEXT_ACTIVITY =
+    public static final String EXTRA_NEXT_ACTIVITY =
             LoginActivity.class.getName() + ".EXTRA_NEXT_ACTIVITY";
-    private static final String EXTRA_FINISH_ON_RESULT =
+    public static final String EXTRA_FINISH_ON_RESULT =
             LoginActivity.class.getName() + "EXTRA_FINISH_ON_RESULT";
 
     @Inject @ViewPresenter

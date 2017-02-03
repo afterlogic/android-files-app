@@ -127,7 +127,7 @@
                         android:textStyle="bold"
                         android:textColor="@color/white"
                         android:text='@{viewModel.isInProgress ? "" : @string/action_sign_in}'
-                        android:onClick="@{viewModel::onLogin}"
+                        android:onClick="@{() -> viewModel.onLogin()}"
                         android:enabled="@{!viewModel.isInProgress}"
                         tools:text="@string/action_sign_in"
                         style="?android:textAppearanceSmall"/>

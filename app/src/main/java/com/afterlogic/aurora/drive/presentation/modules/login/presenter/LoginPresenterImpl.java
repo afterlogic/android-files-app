@@ -39,6 +39,7 @@ public class LoginPresenterImpl extends BasePresenter<LoginView> implements Logi
         mModel = model;
         mRouter = router;
         mAppResources = appResources;
+        model.setPresenter(this);
     }
 
     @Override

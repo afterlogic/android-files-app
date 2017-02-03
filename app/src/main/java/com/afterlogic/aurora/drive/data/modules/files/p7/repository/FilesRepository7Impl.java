@@ -78,7 +78,7 @@ public class FilesRepository7Impl extends Repository implements FilesRepository 
     @Override
     public Single<Uri> getFileThumbnail(AuroraFile file) {
         return Single.defer(() -> {
-            AuroraSession session = mSessionManager.getAuroraSession();
+            AuroraSession session = mSessionManager.getSession();
             String url = getCompleteUrl(
                     String.format(Locale.US, Api7.Links.THUMBNAIL_URL, session.getAccountId(), file.getHash(), session.getAuthToken())
             );
@@ -89,7 +89,7 @@ public class FilesRepository7Impl extends Repository implements FilesRepository 
     @Override
     public Single<Uri> viewFile(AuroraFile file) {
         return Single.defer(() -> {
-            AuroraSession session = mSessionManager.getAuroraSession();
+            AuroraSession session = mSessionManager.getSession();
             String url = getCompleteUrl(
                     String.format(Locale.US, Api7.Links.FILE_DOWNLOAD_LINK, session.getAccountId(), file.getHash(), session.getAuthToken())
             );

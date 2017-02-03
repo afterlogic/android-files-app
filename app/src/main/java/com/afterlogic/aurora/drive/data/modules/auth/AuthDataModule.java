@@ -3,7 +3,7 @@ package com.afterlogic.aurora.drive.data.modules.auth;
 import com.afterlogic.aurora.drive.data.common.annotations.P7;
 import com.afterlogic.aurora.drive.data.common.annotations.P8;
 import com.afterlogic.aurora.drive.data.common.network.ApiConfigurator;
-import com.afterlogic.aurora.drive.data.common.assembly.MultiApiModule;
+import com.afterlogic.aurora.drive.data.common.util.MultiApiUtil;
 import com.afterlogic.aurora.drive.data.modules.auth.p7.P7AuthDataModule;
 import com.afterlogic.aurora.drive.data.modules.auth.p8.P8AuthDataModule;
 
@@ -20,14 +20,10 @@ import dagger.Provides;
         P7AuthDataModule.class,
         P8AuthDataModule.class
 })
-public class AuthDataModule extends MultiApiModule{
-
-    public AuthDataModule(ApiConfigurator apiConfigurator) {
-        super(apiConfigurator);
-    }
+public class AuthDataModule{
 
     @Provides
-    AuthRepository repository(@P7 Provider<AuthRepository> p7, @P8 Provider<AuthRepository> p8){
-        return chooseByApiVersion(p7, p8);
+    AuthRepository repository(ApiConfigurator configurator, @P7 Provider<AuthRepository> p7, @P8 Provider<AuthRepository> p8){
+        return MultiApiUtil.chooseByApiVersion(configurator, p7, p8);
     }
 }

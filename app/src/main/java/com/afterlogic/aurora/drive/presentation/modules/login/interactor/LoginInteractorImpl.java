@@ -2,14 +2,10 @@ package com.afterlogic.aurora.drive.presentation.modules.login.interactor;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.widget.Toast;
 
-import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive._unrefactored.core.util.AccountUtil;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.AuroraApi;
 import com.afterlogic.aurora.drive._unrefactored.presentation.receivers.AccountLoginStateReceiver;
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
@@ -27,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
@@ -42,13 +39,13 @@ public class LoginInteractorImpl extends BaseInteractor implements LoginInteract
 
     private final SessionManager mSessionManager;
     private final ApiChecker mApiChecker;
-    private final AuthRepository mAuthRepository;
+    private final Provider<AuthRepository> mAuthRepository;
     private final Context mContext;
 
     @Inject LoginInteractorImpl(ObservableScheduler scheduler,
                                 SessionManager sessionManager,
                                 ApiChecker apiChecker,
-                                AuthRepository authRepository,
+                                Provider<AuthRepository> authRepository,
                                 Context context) {
         super(scheduler);
         mSessionManager = sessionManager;
@@ -60,7 +57,7 @@ public class LoginInteractorImpl extends BaseInteractor implements LoginInteract
     @Override
     public Maybe<AuroraSession> getCurrentSession() {
         return Maybe.defer(() -> {
-            AuroraSession session = mSessionManager.getAuroraSession();
+            AuroraSession session = mSessionManager.getSession();
             if (session == null){
                 return Maybe.empty();
             } else {
@@ -72,6 +69,8 @@ public class LoginInteractorImpl extends BaseInteractor implements LoginInteract
     @Override
     public Completable login(AuroraSession session, boolean manual) {
         return Single.defer(() -> {
+            //Get api version
+
             HttpUrl domain = session.getDomain();
 
             List<HttpUrl> domains = new ArrayList<>();
@@ -92,17 +91,24 @@ public class LoginInteractorImpl extends BaseInteractor implements LoginInteract
                     .switchIfEmpty(Maybe.error(new UnknownApiVersionError()))
                     .toSingle();
         })//----|
-                .flatMap(apiVersion -> {
+                //Get auth repository by api version
+                .map(apiVersion -> {
                     session.setApiType(apiVersion);
-                    mSessionManager.setAuroraSession(session);
-                    return mAuthRepository.getSystemAppData();
+                    mSessionManager.setSession(session);
+                    return mAuthRepository.get();
                 })
-                .flatMapCompletable(apiVersion ->
-                        mAuthRepository.login(session.getLogin(), session.getPassword())
+                //Auth
+                .flatMapCompletable(authRepository ->
+                        authRepository.getSystemAppData()
+                                .flatMapCompletable(appData -> {
+                                    mSessionManager.getSession().setAppToken(appData.getToken());
+                                    return Completable.complete();
+                                })
+                                .andThen(authRepository.login(session.getLogin(), session.getPassword()))
                                 .toCompletable()
                 )
                 .andThen(storeAuthData())
-                .doOnError(error -> mSessionManager.setAuroraSession(null))
+                .doOnError(error -> mSessionManager.setSession(null))
                 .compose(this::composeDefault);
     }
 
@@ -110,7 +116,7 @@ public class LoginInteractorImpl extends BaseInteractor implements LoginInteract
         return Completable.fromAction(() -> {
 
             AccountManager am = (AccountManager) mContext.getSystemService(Context.ACCOUNT_SERVICE);
-            AuroraSession session = AuroraApi.getCurrentSession();
+            AuroraSession session = mSessionManager.getSession();
 
             Account account = null;
             for (Account a:am.getAccountsByType(AccountUtil.ACCOUNT_TYPE)){

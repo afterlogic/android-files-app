@@ -41,7 +41,7 @@ public class AccountInfoPreferenceActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        AuroraSession session = mApiProvider.getSessionManager().getAuroraSession();
+        AuroraSession session = mApiProvider.getSessionManager().getSession();
         if (session != null){
             mLogin.setText(session.getLogin());
             mHost.setText(session.getDomain().toString());

@@ -39,7 +39,7 @@ public class AuthRepositoryP7Impl extends Repository implements AuthRepository {
                 mAuthService.login(login, password)
                         .map(response -> response),
                 response -> {
-                    mSessionManager.getAuroraSession().setAccountId(response.getAccountId());
+                    mSessionManager.getSession().setAccountId(response.getAccountId());
                     return response.getResult();
                 }
         );
@@ -48,7 +48,7 @@ public class AuthRepositoryP7Impl extends Repository implements AuthRepository {
     @Override
     public Single<AuthToken> relogin() {
         return Single.defer(() -> {
-            AuroraSession session = mSessionManager.getAuroraSession();
+            AuroraSession session = mSessionManager.getSession();
             return login(session.getLogin(), session.getPassword());
         });
     }
@@ -57,7 +57,7 @@ public class AuthRepositoryP7Impl extends Repository implements AuthRepository {
     public Single<SystemAppData> getSystemAppData() {
         return withNetMapper(mAuthService.getSystemAppData())
                 .map(result -> {
-                    mSessionManager.getAuroraSession().setAppToken(result.getToken());
+                    mSessionManager.getSession().setAppToken(result.getToken());
                     return result;
                 });
     }

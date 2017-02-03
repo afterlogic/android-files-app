@@ -50,7 +50,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Presenta
     private boolean mAddSubmoduleAvailable = true;
     private PresentationModulesStore mPresentationModulesStore;
 
-    private final Set<Presenter> mPresenters = new HashSet<>();
+    protected final Set<Presenter> mPresenters = new HashSet<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -270,7 +270,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Presenta
                             MyLog.majorException(activity, "Field marked as ViewPresenter but it is null: " + field.getName());
                         }
                     } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                        MyLog.majorException(e);
                     }
                 });
     }

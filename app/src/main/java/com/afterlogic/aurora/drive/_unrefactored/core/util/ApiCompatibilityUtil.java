@@ -38,7 +38,7 @@ public class ApiCompatibilityUtil {
 
     private static <T> ApiResponseP7<T> parseResponse(T result, SessionManager sessionManager){
         return new ApiResponseP7<>(
-                sessionManager.getAuroraSession().getAccountId(),
+                sessionManager.getSession().getAccountId(),
                 result,
                 null
         );
@@ -47,7 +47,7 @@ public class ApiCompatibilityUtil {
     private static <T> Single<ApiResponseP7<T>> parseError(Throwable error, SessionManager sessionManager){
         if (error instanceof ApiResponseError){
             ApiResponseP7<T> responseP7 = new ApiResponseP7<>(
-                    sessionManager.getAuroraSession().getAccountId(),
+                    sessionManager.getSession().getAccountId(),
                     null,
                     new com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiResponseError(
                             ((ApiResponseError) error).getErrorCode(),

@@ -43,12 +43,12 @@ public class AuthRepositoryP8Impl extends Repository implements AuthRepository {
 
     @Override
     public Single<AuthToken> relogin() {
-        AuroraSession session = mSessionManager.getAuroraSession();
+        AuroraSession session = mSessionManager.getSession();
         return login(session.getLogin(), session.getPassword());
     }
 
     public AuthToken handleSuccessAuth(ApiResponse<AuthToken> response){
-        AuroraSession session = mSessionManager.getAuroraSession();
+        AuroraSession session = mSessionManager.getSession();
 
         if (response.getAccountId() != 0) {
             session.setAccountId(response.getAccountId());

@@ -97,7 +97,7 @@ public class FilesServiceP7Impl extends AuthorizedServiceP7 implements FilesServ
 
     @Override
     public Single<ResponseBody> download(AuroraFileP7 file) {
-        AuroraSession session = getSessionManager().getAuroraSession();
+        AuroraSession session = getSessionManager().getSession();
         return mApi.downloadFile(
                 session.getAccountId(),
                 file.getHash(),
@@ -108,7 +108,7 @@ public class FilesServiceP7Impl extends AuthorizedServiceP7 implements FilesServ
     @Override
     public Single<ApiResponseP7<UploadResultP7>> upload(AuroraFileP7 file, FileInfo source, @Nullable ApiTask.ProgressUpdater progressUpdater) {
 
-        String authToken = getSessionManager().getAuroraSession().getAuthToken();
+        String authToken = getSessionManager().getSession().getAuthToken();
 
         ExtRequestBody uploadBody = new ExtRequestBody(source, mContext);
         if (progressUpdater != null){

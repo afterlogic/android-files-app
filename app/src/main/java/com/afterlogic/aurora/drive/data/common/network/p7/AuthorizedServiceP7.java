@@ -22,7 +22,7 @@ public class AuthorizedServiceP7 {
     }
 
     protected ParamsBuilder getDefaultParams(String method){
-        AuroraSession session = mSessionManager.getAuroraSession();
+        AuroraSession session = mSessionManager.getSession();
         return new ParamsBuilder()
                 .put(Api7.Fields.ACTION, method)
                 .put(Api7.Fields.ACCOUNT_ID, session.getAccountId())

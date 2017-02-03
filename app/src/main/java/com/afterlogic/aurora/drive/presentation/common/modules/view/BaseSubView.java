@@ -27,8 +27,7 @@ public abstract class BaseSubView<C extends Context> implements SubView {
     private UUID mUuid;
     private boolean mActive = false;
 
-
-    private final Set<Presenter> mPresenters = new HashSet<>();
+    protected final Set<Presenter> mPresenters = new HashSet<>();
 
     public BaseSubView(int id, C context) {
         mContext = context;

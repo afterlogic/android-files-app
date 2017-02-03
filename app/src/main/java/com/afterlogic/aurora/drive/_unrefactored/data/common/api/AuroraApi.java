@@ -68,11 +68,11 @@ public class AuroraApi {
     }
 
     public static AuroraSession getCurrentSession() {
-        return sApiProvider.getSessionManager().getAuroraSession();
+        return sApiProvider.getSessionManager().getSession();
     }
 
     public static void setCurrentSession(AuroraSession session) {
-        sApiProvider.getSessionManager().setAuroraSession(session);
+        sApiProvider.getSessionManager().setSession(session);
     }
 
     public static TaskStateHandler getTaskStateHandler(){

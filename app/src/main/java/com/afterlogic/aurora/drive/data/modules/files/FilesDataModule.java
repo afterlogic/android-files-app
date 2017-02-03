@@ -3,7 +3,7 @@ package com.afterlogic.aurora.drive.data.modules.files;
 import com.afterlogic.aurora.drive.data.common.annotations.P7;
 import com.afterlogic.aurora.drive.data.common.annotations.P8;
 import com.afterlogic.aurora.drive.data.common.network.ApiConfigurator;
-import com.afterlogic.aurora.drive.data.common.assembly.MultiApiModule;
+import com.afterlogic.aurora.drive.data.common.util.MultiApiUtil;
 import com.afterlogic.aurora.drive.data.modules.files.p7.P7FilesDataModule;
 import com.afterlogic.aurora.drive.data.modules.files.p8.P8FilesDataModule;
 
@@ -20,14 +20,10 @@ import dagger.Provides;
         P7FilesDataModule.class,
         P8FilesDataModule.class
 })
-public class FilesDataModule extends MultiApiModule{
-
-    public FilesDataModule(ApiConfigurator apiConfigurator) {
-        super(apiConfigurator);
-    }
+public class FilesDataModule{
 
     @Provides
-    FilesRepository repository(@P7 Provider<FilesRepository> p7, @P8 Provider<FilesRepository> p8){
-        return chooseByApiVersion(p7, p8);
+    FilesRepository repository(ApiConfigurator configurator, @P7 Provider<FilesRepository> p7, @P8 Provider<FilesRepository> p8){
+        return MultiApiUtil.chooseByApiVersion(configurator, p7, p8);
     }
 }

@@ -34,7 +34,7 @@ public class AuthServiceP7Impl extends AuthorizedServiceP7 implements AuthServic
             fiels.put(Api7.Fields.ACTION, Api7.Actions.SYSTEM_LOGIN);
             fiels.put(Api7.Fields.EMAIL, login);
             fiels.put(Api7.Fields.INC_PASSWORD, pass);
-            AuroraSession session = getSessionManager().getAuroraSession();
+            AuroraSession session = getSessionManager().getSession();
             if (session != null) {
                 fiels.put(Api7.Fields.TOKEN, session.getAppToken());
             }
