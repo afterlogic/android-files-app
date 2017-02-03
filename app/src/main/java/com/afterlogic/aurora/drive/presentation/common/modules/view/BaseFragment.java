@@ -77,7 +77,7 @@ public abstract class BaseFragment extends Fragment implements PresentationView 
 
         mOnSaveInstanceStateCalled = false;
         mPresentationModulesStore = ((App) getActivity().getApplication())
-                .modulesFactory().store();
+                .modulesFactory().modulesStore();
 
         mAddSubmoduleAvailable = true;
         onCreateSubView(savedInstanceState);
@@ -195,7 +195,7 @@ public abstract class BaseFragment extends Fragment implements PresentationView 
     public void onDestroy() {
         MyLog.d(this, "onDestroy");
 
-        //Remove presentation modules from store if not saved previously
+        //Remove presentation modules from modulesStore if not saved previously
         if (!mOnSaveInstanceStateCalled){
             mPresentationModulesStore.remove(getModuleUuid());
             Stream.of(mSubmodules).forEach(subView -> mPresentationModulesStore.remove(subView.getModuleUuid()));

@@ -122,7 +122,7 @@ public class ViewState<T extends PresentationView> implements Stoppable {
         }
 
         private void storeInvoke(MethodInvocation invocation){
-            MyLog.d("store: " + invocation);
+            MyLog.d("modulesStore: " + invocation);
 
             RepeatPolicy repeatPolicy = invocation.getRepeatPolicy();
             String group = invocation.getGroup();

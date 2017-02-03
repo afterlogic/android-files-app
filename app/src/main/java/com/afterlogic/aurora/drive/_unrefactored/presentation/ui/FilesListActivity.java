@@ -25,15 +25,16 @@ import com.afterlogic.aurora.drive._unrefactored.core.util.IntentUtil;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiCallback;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiError;
-import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.adapters.FilesAdapter;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.dialogs.FileActionsBottomSheet;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.FilesCallback;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.FilesListFragment;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.FilesRootFragment;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.OfflineFilesFragment;
+import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
+import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginIntent;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -493,7 +494,7 @@ public class FilesListActivity extends BaseFileActionActivity implements
 
         //Start login activity
         startActivity(
-                LoginActivity.IntentCreator.makeNextActivity(
+                LoginIntent.makeNextActivity(
                         new Intent(this, LoginActivity.class),
                         FilesListActivity.class
                 )

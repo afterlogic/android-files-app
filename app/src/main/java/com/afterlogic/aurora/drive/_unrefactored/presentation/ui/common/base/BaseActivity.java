@@ -20,6 +20,7 @@ import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive._unrefactored.presentation.receivers.session.SessionTrackerReceiver;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.FilesListActivity;
+import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginIntent;
 
 /**
  * Created by sashka on 21.03.16.
@@ -187,7 +188,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void startLoginActivity(boolean resetActivityStack){
         mIsReleloginRequest = true;
         if (resetActivityStack){
-            Intent i = LoginActivity.IntentCreator.makeNextActivity(
+            Intent i = LoginIntent.makeNextActivity(
                     new Intent(this, LoginActivity.class),
                     FilesListActivity.class
             );
@@ -196,7 +197,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             startActivity(resultIntent);
         } else {
             startActivityForResult(
-                    LoginActivity.IntentCreator
+                    LoginIntent
                             .loginAndReturn(new Intent(this, LoginActivity.class))
                     , REQUEST_CODE_LOGIN
             );

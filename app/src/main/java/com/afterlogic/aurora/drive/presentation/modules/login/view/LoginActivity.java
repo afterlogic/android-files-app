@@ -1,6 +1,5 @@
 package com.afterlogic.aurora.drive.presentation.modules.login.view;
 
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.view.inputmethod.EditorInfo;
@@ -19,11 +18,6 @@ import javax.inject.Inject;
  * A checkApiVersion screen that offers checkApiVersion via email/password.
  */
 public class LoginActivity extends BaseActivity implements LoginView{
-
-    public static final String EXTRA_NEXT_ACTIVITY =
-            LoginActivity.class.getName() + ".EXTRA_NEXT_ACTIVITY";
-    public static final String EXTRA_FINISH_ON_RESULT =
-            LoginActivity.class.getName() + "EXTRA_FINISH_ON_RESULT";
 
     @Inject @ViewPresenter
     protected LoginPresenter mPresenter;
@@ -51,19 +45,6 @@ public class LoginActivity extends BaseActivity implements LoginView{
             }
             return false;
         });
-    }
-
-    public static class IntentCreator{
-
-        public static Intent makeNextActivity(Intent i, Class activityClass){
-            i.putExtra(EXTRA_NEXT_ACTIVITY, activityClass);
-            return i;
-        }
-
-        public static Intent loginAndReturn(Intent i){
-            i.putExtra(EXTRA_FINISH_ON_RESULT, true);
-            return i;
-        }
     }
 }
 

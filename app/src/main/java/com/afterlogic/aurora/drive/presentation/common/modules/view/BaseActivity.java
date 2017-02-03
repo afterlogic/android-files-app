@@ -59,7 +59,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Presenta
 
         App app = ((App) getApplication());
 
-        mPresentationModulesStore = app.modulesFactory().store();
+        mPresentationModulesStore = app.modulesFactory().modulesStore();
 
         mAddSubmoduleAvailable = true;
         onCreateSubView(savedInstanceState);
@@ -262,6 +262,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Presenta
                         Presenter.class.isAssignableFrom(field.getType())
                 )
                 .forEach(field -> {
+                    boolean accessible = field.isAccessible();
+                    field.setAccessible(true);
                     try {
                         Presenter presenter = (Presenter) field.get(activity);
                         if (presenter != null) {
@@ -272,6 +274,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Presenta
                     } catch (IllegalAccessException e) {
                         MyLog.majorException(e);
                     }
+                    field.setAccessible(accessible);
                 });
     }
 }

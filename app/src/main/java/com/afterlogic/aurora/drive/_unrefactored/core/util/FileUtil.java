@@ -295,7 +295,7 @@ public class FileUtil {
     /**
      * Get dir for cached files.
      * @param ctx - application context.
-     * @return - return dir where store cached files.
+     * @return - return dir where modulesStore cached files.
      */
     public static File getCacheFileDir(Context ctx){
         return new File(ctx.getExternalCacheDir(), "files/");
@@ -304,7 +304,7 @@ public class FileUtil {
     /**
      * Get dir for offline files.
      * @param ctx - application context.
-     * @return - return dir where store offline files.
+     * @return - return dir where modulesStore offline files.
      */
     public static File getOfflineFileDir(Context ctx){
         return new File(ctx.getExternalFilesDir(null), "offline/");

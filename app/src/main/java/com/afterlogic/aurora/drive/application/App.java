@@ -27,7 +27,7 @@ public class App extends Application implements ApplicationConfigurationCallback
     /**
      * {@link ApplicationConfigurationCallback#onWireframeFactoryConfigured(ModulesFactoryComponent)}  implementation.
      *
-     * When app is success configured store presentation modules's factory.
+     * When app is success configured modulesStore presentation modules's factory.
      */
     @Override
     public void onWireframeFactoryConfigured(ModulesFactoryComponent component) {
