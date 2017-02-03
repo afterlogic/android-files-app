@@ -1,9 +1,9 @@
 package com.afterlogic.aurora.drive.core.assembly;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.CoreScope;
+import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResourcesImpl;
-import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
 
 import dagger.Module;
 import dagger.Provides;

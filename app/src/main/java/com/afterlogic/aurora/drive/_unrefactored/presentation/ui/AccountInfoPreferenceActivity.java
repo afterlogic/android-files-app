@@ -7,10 +7,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive._unrefactored.AuraoraApp;
 import com.afterlogic.aurora.drive._unrefactored.data.common.ApiProvider;
-import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.base.BaseActivity;
+import com.afterlogic.aurora.drive.application.App;
+import com.afterlogic.aurora.drive.model.AuroraSession;
 
 /**
  * Created by sashka on 16.01.17.<p/>
@@ -35,7 +35,7 @@ public class AccountInfoPreferenceActivity extends BaseActivity {
         mLogin = (TextView) findViewById(R.id.email);
         mHost = (TextView) findViewById(R.id.domain);
 
-        ((AuraoraApp) getApplication()).getDataComponent().inject(mApiProvider);
+        ((App) getApplication()).modulesFactory().inject(mApiProvider);
     }
 
     @Override

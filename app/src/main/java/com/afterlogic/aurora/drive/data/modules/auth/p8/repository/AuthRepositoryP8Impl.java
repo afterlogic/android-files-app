@@ -1,9 +1,9 @@
 package com.afterlogic.aurora.drive.data.modules.auth.p8.repository;
 
-import com.afterlogic.aurora.drive._unrefactored.core.annotations.qualifers.RepositoryCache;
+import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
-import com.afterlogic.aurora.drive._unrefactored.data.common.SessionManager;
-import com.afterlogic.aurora.drive._unrefactored.data.common.repository.BaseRepository;
+import com.afterlogic.aurora.drive.data.common.network.SessionManager;
+import com.afterlogic.aurora.drive.data.common.repository.Repository;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.data.modules.auth.p8.service.AuthServiceP8;
 import com.afterlogic.aurora.drive._unrefactored.model.ApiResponse;
@@ -20,7 +20,7 @@ import io.reactivex.Single;
  * mail: sunnyday.development@gmail.com
  */
 @SuppressWarnings("WeakerAccess")
-public class AuthRepositoryP8Impl extends BaseRepository implements AuthRepository {
+public class AuthRepositoryP8Impl extends Repository implements AuthRepository {
 
     private static final String USER_P_8 = "userP8";
     private final AuthServiceP8 mAuthService;

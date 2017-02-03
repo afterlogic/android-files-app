@@ -1,7 +1,12 @@
 package com.afterlogic.aurora.drive.application.configurators.application;
 
 import android.content.Context;
+import android.content.Intent;
 
+import com.afterlogic.aurora.drive._unrefactored.data.common.ApiProvider;
+import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;
+import com.afterlogic.aurora.drive._unrefactored.presentation.services.ClearCacheService;
+import com.afterlogic.aurora.drive._unrefactored.presentation.services.FileObserverService;
 import com.afterlogic.aurora.drive.application.assembly.ApplicationAssemblyComponent;
 import com.afterlogic.aurora.drive.core.assembly.CoreAssemblyModule;
 import com.afterlogic.aurora.drive.core.common.interfaces.Configurable;
@@ -69,6 +74,14 @@ public class ApplicationConfigurator implements Configurable {
 
         ModulesFactoryComponent modulesComponent = presentationComponent
                 .plus(modulesModule);
+
+        //TODO remove static ApiProvider
+        ApiProvider apiProvider = new ApiProvider();
+        dataComponent.inject(apiProvider);
+
+        Api.init(mContext, apiProvider);
+        mContext.startService(new Intent(mContext, ClearCacheService.class));
+        mContext.startService(new Intent(mContext, FileObserverService.class));
 
         mConfigurationCallback.onWireframeFactoryConfigured(modulesComponent);
     }

@@ -19,7 +19,9 @@ public interface LoginModel {
 
     Single<AuroraSession> collectNewSessionData();
 
-    void showErrorMode();
+    void setPasswordError();
+
+    void setDomainError();
 
     void setProgressState(boolean inProgress);
 }

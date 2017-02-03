@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.model;
 
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project8.common.Api8;
+import com.afterlogic.aurora.drive.data.common.network.p8.Api8;
 import com.google.gson.annotations.SerializedName;
 
 /**

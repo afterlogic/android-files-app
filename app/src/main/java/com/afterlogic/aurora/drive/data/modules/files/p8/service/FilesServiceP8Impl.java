@@ -3,13 +3,13 @@ package com.afterlogic.aurora.drive.data.modules.files.p8.service;
 import android.content.Context;
 import android.support.annotation.Nullable;
 
-import com.afterlogic.aurora.drive._unrefactored.core.annotations.qualifers.Project8;
-import com.afterlogic.aurora.drive._unrefactored.data.common.ExtRequestBody;
-import com.afterlogic.aurora.drive._unrefactored.data.common.ParamsBuilder;
-import com.afterlogic.aurora.drive._unrefactored.data.common.SessionManager;
+import com.afterlogic.aurora.drive.data.common.annotations.P8;
+import com.afterlogic.aurora.drive.data.common.network.ExtRequestBody;
+import com.afterlogic.aurora.drive.data.common.network.ParamsBuilder;
+import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiTask;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project8.common.Api8;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project8.common.AuthorizedServiceP8;
+import com.afterlogic.aurora.drive.data.common.network.p8.Api8;
+import com.afterlogic.aurora.drive.data.common.network.p8.AuthorizedServiceP8;
 import com.afterlogic.aurora.drive.model.DeleteFileInfo;
 import com.afterlogic.aurora.drive.model.FileInfo;
 import com.afterlogic.aurora.drive._unrefactored.model.project8.ApiResponseP8;
@@ -38,7 +38,7 @@ public class FilesServiceP8Impl extends AuthorizedServiceP8 implements FilesServ
     private final Api8 mApi;
     private final Context mContext;
 
-    @Inject FilesServiceP8Impl(Api8 api, @Project8 Gson gson, Context context, SessionManager sessionManager) {
+    @Inject FilesServiceP8Impl(Api8 api, @P8 Gson gson, Context context, SessionManager sessionManager) {
         super(Api8.Module.FILES, sessionManager, gson);
         mApi = api;
         mContext = context;

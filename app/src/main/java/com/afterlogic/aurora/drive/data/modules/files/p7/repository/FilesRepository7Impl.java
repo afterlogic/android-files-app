@@ -3,16 +3,16 @@ package com.afterlogic.aurora.drive.data.modules.files.p7.repository;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
-import com.afterlogic.aurora.drive._unrefactored.core.annotations.qualifers.RepositoryCache;
+import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
-import com.afterlogic.aurora.drive._unrefactored.data.common.DynamicDomainProvider;
-import com.afterlogic.aurora.drive._unrefactored.data.common.SessionManager;
+import com.afterlogic.aurora.drive.data.common.network.DynamicDomainProvider;
+import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiTask;
 import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
 import com.afterlogic.aurora.drive.data.common.mapper.MapperUtil;
-import com.afterlogic.aurora.drive._unrefactored.data.common.repository.BaseRepository;
-import com.afterlogic.aurora.drive._unrefactored.data.common.repository.FilesRepository;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.common.Api7;
+import com.afterlogic.aurora.drive.data.common.repository.Repository;
+import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
+import com.afterlogic.aurora.drive.data.common.network.p7.Api7;
 import com.afterlogic.aurora.drive.data.modules.files.p7.mapper.file.factory.AuroraFileP7MapperFactory;
 import com.afterlogic.aurora.drive.data.modules.files.p7.mapper.uploadResult.factory.UploadResultP7MapperFactory;
 import com.afterlogic.aurora.drive.data.modules.files.p7.service.FilesServiceP7;
@@ -37,7 +37,7 @@ import okhttp3.ResponseBody;
  * Created by sashka on 19.10.16.<p/>
  * mail: sunnyday.development@gmail.com
  */
-public class FilesRepository7Impl extends BaseRepository implements FilesRepository {
+public class FilesRepository7Impl extends Repository implements FilesRepository {
 
     private static final String FILES_P_7 = "filesP7";
 

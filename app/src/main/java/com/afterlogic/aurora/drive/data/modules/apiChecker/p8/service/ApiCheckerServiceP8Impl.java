@@ -2,9 +2,9 @@ package com.afterlogic.aurora.drive.data.modules.apiChecker.p8.service;
 
 import android.support.annotation.NonNull;
 
-import com.afterlogic.aurora.drive._unrefactored.core.annotations.qualifers.Project8;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project8.common.Api8;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project8.common.CloudServiceP8;
+import com.afterlogic.aurora.drive.data.common.annotations.P8;
+import com.afterlogic.aurora.drive.data.common.network.p8.Api8;
+import com.afterlogic.aurora.drive.data.common.network.p8.CloudServiceP8;
 import com.afterlogic.aurora.drive._unrefactored.model.project8.ApiResponseP8;
 import com.google.gson.Gson;
 
@@ -25,7 +25,7 @@ public class ApiCheckerServiceP8Impl extends CloudServiceP8 implements ApiChecke
     private final Api8 mApi;
 
     @SuppressWarnings("WeakerAccess")
-    @Inject public ApiCheckerServiceP8Impl(@Project8 @NonNull Gson gson, Api8 api) {
+    @Inject public ApiCheckerServiceP8Impl(@P8 @NonNull Gson gson, Api8 api) {
         super(Api8.Module.CORE, gson);
         mApi = api;
     }

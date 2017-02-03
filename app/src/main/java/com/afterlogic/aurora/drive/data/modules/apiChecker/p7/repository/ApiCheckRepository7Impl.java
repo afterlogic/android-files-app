@@ -1,9 +1,9 @@
 package com.afterlogic.aurora.drive.data.modules.apiChecker.p7.repository;
 
-import com.afterlogic.aurora.drive._unrefactored.core.annotations.qualifers.RepositoryCache;
+import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
-import com.afterlogic.aurora.drive._unrefactored.data.common.repository.ApiCheckRepository;
-import com.afterlogic.aurora.drive._unrefactored.data.common.repository.BaseRepository;
+import com.afterlogic.aurora.drive.data.modules.apiChecker.ApiCheckRepository;
+import com.afterlogic.aurora.drive.data.common.repository.Repository;
 import com.afterlogic.aurora.drive.data.modules.apiChecker.p7.service.ApiCheckerServiceP7;
 
 import javax.inject.Inject;
@@ -15,7 +15,7 @@ import okhttp3.HttpUrl;
  * Created by sashka on 19.10.16.<p/>
  * mail: sunnyday.development@gmail.com
  */
-public class ApiCheckRepository7Impl extends BaseRepository implements ApiCheckRepository {
+public class ApiCheckRepository7Impl extends Repository implements ApiCheckRepository {
 
     private static final String CHECK_P_7 = "checkP7";
     private final ApiCheckerServiceP7 mAuthService;

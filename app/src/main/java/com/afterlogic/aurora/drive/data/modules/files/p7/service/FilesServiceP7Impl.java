@@ -3,12 +3,12 @@ package com.afterlogic.aurora.drive.data.modules.files.p7.service;
 import android.content.Context;
 import android.support.annotation.Nullable;
 
-import com.afterlogic.aurora.drive._unrefactored.core.annotations.qualifers.Project7;
-import com.afterlogic.aurora.drive._unrefactored.data.common.ExtRequestBody;
-import com.afterlogic.aurora.drive._unrefactored.data.common.SessionManager;
+import com.afterlogic.aurora.drive.data.common.annotations.P7;
+import com.afterlogic.aurora.drive.data.common.network.ExtRequestBody;
+import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiTask;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.common.Api7;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.common.AuthorizedServiceP7;
+import com.afterlogic.aurora.drive.data.common.network.p7.Api7;
+import com.afterlogic.aurora.drive.data.common.network.p7.AuthorizedServiceP7;
 import com.afterlogic.aurora.drive._unrefactored.model.AuroraFilesResponse;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.FileInfo;
@@ -36,7 +36,7 @@ public class FilesServiceP7Impl extends AuthorizedServiceP7 implements FilesServ
     private final Context mContext;
 
     @SuppressWarnings("WeakerAccess")
-    @Inject public FilesServiceP7Impl(SessionManager sessionManager, Api7 api, @Project7 Gson gson, Context context) {
+    @Inject public FilesServiceP7Impl(SessionManager sessionManager, Api7 api, @P7 Gson gson, Context context) {
         super(sessionManager);
         mApi = api;
         mGson = gson;

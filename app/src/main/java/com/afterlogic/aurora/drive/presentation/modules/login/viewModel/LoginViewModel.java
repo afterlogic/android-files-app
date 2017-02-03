@@ -167,8 +167,19 @@ public class LoginViewModel{
         }
 
         @Override
-        public void showErrorMode() {
+        public void setPasswordError() {
+            mLoginError.set(null);
+            mHostError.set(null);
+            mPasswordError.set(mAppResources.getString(R.string.error_pass_or_login));
+            mErrorState = true;
+        }
 
+        @Override
+        public void setDomainError() {
+            mLoginError.set(null);
+            mPasswordError.set(null);
+            mHostError.set(mAppResources.getString(R.string.error_unrechable_host));
+            mErrorState = true;
         }
 
         @Override

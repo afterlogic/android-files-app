@@ -5,16 +5,15 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Base64;
 
-import com.afterlogic.aurora.drive._unrefactored.core.annotations.qualifers.RepositoryCache;
+import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
 import com.afterlogic.aurora.drive._unrefactored.core.util.FileUtil;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiResponseError;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiTask;
-import com.afterlogic.aurora.drive._unrefactored.data.common.error.ObservableApiError;
+import com.afterlogic.aurora.drive.model.error.ApiResponseError;
 import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
 import com.afterlogic.aurora.drive.data.common.mapper.MapperUtil;
-import com.afterlogic.aurora.drive._unrefactored.data.common.repository.BaseRepository;
-import com.afterlogic.aurora.drive._unrefactored.data.common.repository.FilesRepository;
+import com.afterlogic.aurora.drive.data.common.repository.Repository;
+import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
 import com.afterlogic.aurora.drive.data.modules.files.p8.service.FilesServiceP8;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.DeleteFileInfo;
@@ -42,7 +41,7 @@ import okhttp3.ResponseBody;
  * Created by sashka on 19.10.16.<p/>
  * mail: sunnyday.development@gmail.com
  */
-public class FilesRepositoryP8Impl extends BaseRepository implements FilesRepository {
+public class FilesRepositoryP8Impl extends Repository implements FilesRepository {
 
     private static final String FILES_P_8 = "filesP8";
 
@@ -144,9 +143,9 @@ public class FilesRepositoryP8Impl extends BaseRepository implements FilesReposi
                         AuroraFile requestedFile = Stream.of(files)
                                 .filter(remoteFile -> remoteFile.getFullPath().equals(file.getFullPath()))
                                 .findFirst()
-                                .orElseThrow(() -> new ObservableApiError("File not exist", ApiResponseError.FILE_NOT_EXIST));
+                                .orElseThrow(() -> new ApiResponseError("File not exist", com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiResponseError.FILE_NOT_EXIST));
                         return Single.just(requestedFile);
-                    } catch (ObservableApiError e){
+                    } catch (ApiResponseError e){
                         return Single.error(e);
                     }
                 });

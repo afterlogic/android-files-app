@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;
-import com.afterlogic.aurora.drive._unrefactored.data.common.repository.FilesRepository;
+import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.adapters.FileActionsMenuAdapter;
 import com.afterlogic.aurora.drive._unrefactored.core.util.FileUtil;

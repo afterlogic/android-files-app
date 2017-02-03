@@ -1,8 +1,8 @@
 package com.afterlogic.aurora.drive.data.modules.auth.p7.service;
 
-import com.afterlogic.aurora.drive._unrefactored.data.common.SessionManager;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.common.Api7;
-import com.afterlogic.aurora.drive._unrefactored.data.modules.project7.common.AuthorizedServiceP7;
+import com.afterlogic.aurora.drive.data.common.network.SessionManager;
+import com.afterlogic.aurora.drive.data.common.network.p7.Api7;
+import com.afterlogic.aurora.drive.data.common.network.p7.AuthorizedServiceP7;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.AuthToken;
 import com.afterlogic.aurora.drive.model.SystemAppData;

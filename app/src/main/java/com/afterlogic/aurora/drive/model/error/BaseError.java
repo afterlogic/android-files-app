@@ -7,5 +7,16 @@ package com.afterlogic.aurora.drive.model.error;
 
 public abstract class BaseError extends RuntimeException {
 
+    public BaseError() {
+    }
+
+    public BaseError(String message) {
+        super(message);
+    }
+
+    public BaseError(Throwable cause) {
+        super(cause);
+    }
+
     public abstract int getErrorCode();
 }

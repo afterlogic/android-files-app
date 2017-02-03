@@ -1,8 +1,8 @@
 package com.afterlogic.aurora.drive.data.modules.apiChecker.checker;
 
-import com.afterlogic.aurora.drive._unrefactored.core.annotations.qualifers.Project7;
-import com.afterlogic.aurora.drive._unrefactored.core.annotations.qualifers.Project8;
-import com.afterlogic.aurora.drive._unrefactored.data.common.repository.ApiCheckRepository;
+import com.afterlogic.aurora.drive.data.common.annotations.P7;
+import com.afterlogic.aurora.drive.data.common.annotations.P8;
+import com.afterlogic.aurora.drive.data.modules.apiChecker.ApiCheckRepository;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.consts.Const;
 
@@ -23,8 +23,8 @@ public class ApiCheckerImpl implements ApiChecker {
     private final ApiCheckRepository mP8Checker;
 
     @SuppressWarnings("WeakerAccess")
-    @Inject public ApiCheckerImpl(@Project7 ApiCheckRepository p7Checker,
-                                  @Project8 ApiCheckRepository p8Checker) {
+    @Inject public ApiCheckerImpl(@P7 ApiCheckRepository p7Checker,
+                                  @P8 ApiCheckRepository p8Checker) {
         mP7Checker = p7Checker;
         mP8Checker = p8Checker;
     }

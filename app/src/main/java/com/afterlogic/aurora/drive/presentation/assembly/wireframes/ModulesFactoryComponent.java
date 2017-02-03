@@ -1,5 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.assembly.wireframes;
 
+import com.afterlogic.aurora.drive._unrefactored.data.common.ApiProvider;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.Injector;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationModulesStore;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
@@ -14,6 +15,9 @@ import dagger.Subcomponent;
  */
 @Subcomponent(modules = {ModulesFactoryModule.class})
 public interface ModulesFactoryComponent {
+
+    //TODO remove ApiProvider
+    void inject(ApiProvider apiProvider);
 
     PresentationModulesStore store();
 

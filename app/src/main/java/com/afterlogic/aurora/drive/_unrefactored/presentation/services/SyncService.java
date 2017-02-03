@@ -30,7 +30,7 @@ import com.afterlogic.aurora.drive._unrefactored.data.common.api.AuroraApi;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.DBHelper;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.dao.WatchingFileDAO;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.model.WatchingFile;
-import com.afterlogic.aurora.drive._unrefactored.data.common.repository.FilesRepository;
+import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
 import com.afterlogic.aurora.drive._unrefactored.model.project7.ApiResponseP7;
 import com.afterlogic.aurora.drive._unrefactored.presentation.receivers.SyncResolveReceiver;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;

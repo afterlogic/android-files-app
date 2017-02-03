@@ -2,9 +2,8 @@ package com.afterlogic.aurora.drive._unrefactored.core.util;
 
 import android.support.annotation.Nullable;
 
-import com.afterlogic.aurora.drive._unrefactored.data.common.SessionManager;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiResponseError;
-import com.afterlogic.aurora.drive._unrefactored.data.common.error.ObservableApiError;
+import com.afterlogic.aurora.drive.data.common.network.SessionManager;
+import com.afterlogic.aurora.drive.model.error.ApiResponseError;
 import com.afterlogic.aurora.drive._unrefactored.model.project7.ApiResponseP7;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
@@ -46,12 +45,12 @@ public class ApiCompatibilityUtil {
     }
 
     private static <T> Single<ApiResponseP7<T>> parseError(Throwable error, SessionManager sessionManager){
-        if (error instanceof ObservableApiError){
+        if (error instanceof ApiResponseError){
             ApiResponseP7<T> responseP7 = new ApiResponseP7<>(
                     sessionManager.getAuroraSession().getAccountId(),
                     null,
-                    new ApiResponseError(
-                            ((ObservableApiError) error).getCode(),
+                    new com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiResponseError(
+                            ((ApiResponseError) error).getErrorCode(),
                             error.getMessage()
                     )
             );

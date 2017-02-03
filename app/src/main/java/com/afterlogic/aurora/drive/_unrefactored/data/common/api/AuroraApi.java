@@ -12,7 +12,7 @@ import com.afterlogic.aurora.drive._unrefactored.core.util.AccountUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.ApiCompatibilityUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.api.ApiResponseDeserializer;
 import com.afterlogic.aurora.drive._unrefactored.data.common.ApiProvider;
-import com.afterlogic.aurora.drive._unrefactored.data.common.DynamicEndPointInterceptor;
+import com.afterlogic.aurora.drive.data.common.network.DynamicEndPointInterceptor;
 import com.afterlogic.aurora.drive._unrefactored.model.project7.ApiResponseP7;
 import com.afterlogic.aurora.drive._unrefactored.presentation.receivers.session.SessionTrackerReceiver;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;

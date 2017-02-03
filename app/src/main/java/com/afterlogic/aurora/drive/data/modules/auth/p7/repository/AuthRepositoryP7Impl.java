@@ -1,9 +1,9 @@
 package com.afterlogic.aurora.drive.data.modules.auth.p7.repository;
 
-import com.afterlogic.aurora.drive._unrefactored.core.annotations.qualifers.RepositoryCache;
+import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
-import com.afterlogic.aurora.drive._unrefactored.data.common.SessionManager;
-import com.afterlogic.aurora.drive._unrefactored.data.common.repository.BaseRepository;
+import com.afterlogic.aurora.drive.data.common.network.SessionManager;
+import com.afterlogic.aurora.drive.data.common.repository.Repository;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.data.modules.auth.p7.service.AuthServiceP7;
 import com.afterlogic.aurora.drive.model.AuroraSession;
@@ -18,7 +18,7 @@ import io.reactivex.Single;
  * Created by sashka on 11.10.16.<p/>
  * mail: sunnyday.development@gmail.com
  */
-public class AuthRepositoryP7Impl extends BaseRepository implements AuthRepository {
+public class AuthRepositoryP7Impl extends Repository implements AuthRepository {
 
     private static final String USER_P_7 = "userP7";
 

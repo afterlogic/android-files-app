@@ -32,7 +32,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:largeHeap="true"
-        android:name="com.afterlogic.aurora.drive._unrefactored.AuraoraApp">
+        android:name=".application.App">
 
         <meta-data
             android:name="io.fabric.ApiKey"
@@ -175,7 +175,7 @@
         <!--[END Sync process]-->
 
         <provider
-            android:name="._unrefactored.data.modules.stubProvider.StubContentProvider"
+            android:name=".data.modules.stubProvider.StubContentProvider"
             android:authorities="com.afterlogic.aurora.filesync.provider"
             android:exported="false"
             android:syncable="true"/>

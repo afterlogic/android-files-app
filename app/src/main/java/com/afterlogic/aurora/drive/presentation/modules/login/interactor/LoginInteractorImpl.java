@@ -1,12 +1,24 @@
 package com.afterlogic.aurora.drive.presentation.modules.login.interactor;
 
-import com.afterlogic.aurora.drive._unrefactored.data.common.SessionManager;
-import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
-import com.afterlogic.aurora.drive.data.modules.apiChecker.checker.ApiChecker;
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.widget.Toast;
+
+import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive._unrefactored.core.util.AccountUtil;
+import com.afterlogic.aurora.drive._unrefactored.data.common.api.AuroraApi;
+import com.afterlogic.aurora.drive._unrefactored.presentation.receivers.AccountLoginStateReceiver;
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.core.consts.Const;
+import com.afterlogic.aurora.drive.data.common.network.SessionManager;
+import com.afterlogic.aurora.drive.data.modules.apiChecker.checker.ApiChecker;
+import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.model.AuroraSession;
+import com.afterlogic.aurora.drive.model.error.AccountManagerError;
 import com.afterlogic.aurora.drive.model.error.UnknownApiVersionError;
 import com.afterlogic.aurora.drive.presentation.common.modules.interactor.BaseInteractor;
 import com.annimon.stream.Stream;
@@ -31,15 +43,18 @@ public class LoginInteractorImpl extends BaseInteractor implements LoginInteract
     private final SessionManager mSessionManager;
     private final ApiChecker mApiChecker;
     private final AuthRepository mAuthRepository;
+    private final Context mContext;
 
     @Inject LoginInteractorImpl(ObservableScheduler scheduler,
                                 SessionManager sessionManager,
                                 ApiChecker apiChecker,
-                                AuthRepository authRepository) {
+                                AuthRepository authRepository,
+                                Context context) {
         super(scheduler);
         mSessionManager = sessionManager;
         mApiChecker = apiChecker;
         mAuthRepository = authRepository;
+        mContext = context;
     }
 
     @Override
@@ -56,7 +71,7 @@ public class LoginInteractorImpl extends BaseInteractor implements LoginInteract
 
     @Override
     public Completable login(AuroraSession session, boolean manual) {
-        Single.defer(() -> {
+        return Single.defer(() -> {
             HttpUrl domain = session.getDomain();
 
             List<HttpUrl> domains = new ArrayList<>();
@@ -80,11 +95,47 @@ public class LoginInteractorImpl extends BaseInteractor implements LoginInteract
                 .flatMap(apiVersion -> {
                     session.setApiType(apiVersion);
                     mSessionManager.setAuroraSession(session);
-                    mAuthRepository.
+                    return mAuthRepository.getSystemAppData();
                 })
+                .flatMapCompletable(apiVersion ->
+                        mAuthRepository.login(session.getLogin(), session.getPassword())
+                                .toCompletable()
+                )
+                .andThen(storeAuthData())
+                .doOnError(error -> mSessionManager.setAuroraSession(null))
+                .compose(this::composeDefault);
+    }
 
-        return mApiCheckRepository.checkDomain(session.getDomain())
-                .flatMap()
+    private Completable storeAuthData(){
+        return Completable.fromAction(() -> {
+
+            AccountManager am = (AccountManager) mContext.getSystemService(Context.ACCOUNT_SERVICE);
+            AuroraSession session = AuroraApi.getCurrentSession();
+
+            Account account = null;
+            for (Account a:am.getAccountsByType(AccountUtil.ACCOUNT_TYPE)){
+                if (a.name.equals(session.getLogin())){
+                    account = a;
+                    break;
+                }
+            }
+
+            boolean isNew = account == null;
+            if (isNew) {
+                account = new Account(session.getLogin(), AccountUtil.ACCOUNT_TYPE);
+                if (!am.addAccountExplicitly(account, session.getPassword(), null)) {
+                    throw new AccountManagerError();
+                }
+            }
+
+            AccountUtil.updateAccountCredentials(account, session, am);
+
+            Intent loggedBroadcast = new Intent(AccountLoginStateReceiver.ACTION_AURORA_LOGIN);
+            loggedBroadcast.putExtra(AccountLoginStateReceiver.ACCOUNT, account);
+            loggedBroadcast.putExtra(AccountLoginStateReceiver.AURORA_SESSION, session);
+            loggedBroadcast.putExtra(AccountLoginStateReceiver.IS_NEW, isNew);
+            mContext.sendBroadcast(loggedBroadcast);
+        });
     }
 
 }

@@ -6,7 +6,7 @@ package com.afterlogic.aurora.drive.model.error;
  */
 
 public class UnknownApiVersionError extends BaseError {
-    public static final int CODE = 1;
+    public static final int CODE = -1;
 
     @Override
     public int getErrorCode() {

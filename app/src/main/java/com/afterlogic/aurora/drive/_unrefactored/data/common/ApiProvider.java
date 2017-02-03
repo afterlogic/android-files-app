@@ -1,6 +1,7 @@
 package com.afterlogic.aurora.drive._unrefactored.data.common;
 
-import com.afterlogic.aurora.drive._unrefactored.data.common.repository.FilesRepository;
+import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
+import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 
 import javax.inject.Inject;
