@@ -13,6 +13,7 @@ import com.afterlogic.aurora.drive.model.SystemAppData;
 
 import javax.inject.Inject;
 
+import io.reactivex.Completable;
 import io.reactivex.Single;
 
 /**
@@ -33,16 +34,16 @@ public class AuthRepositoryP8Impl extends Repository implements AuthRepository {
     }
 
     @Override
-    public Single<AuthToken> login(String login, String password) {
+    public Completable login(String login, String password) {
         return withNetRawMapper(
                 mAuthService.login(login, password)
                         .map(response -> response),
                 this::handleSuccessAuth
-        );
+        ).toCompletable();
     }
 
     @Override
-    public Single<AuthToken> relogin() {
+    public Completable relogin() {
         AuroraSession session = mSessionManager.getSession();
         return login(session.getLogin(), session.getPassword());
     }

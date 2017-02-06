@@ -21,8 +21,8 @@ import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnBackPressedListener;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiCallback;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiError;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiResponseError;
+import com.afterlogic.aurora.drive.model.error.ApiError;
+import com.afterlogic.aurora.drive.model.error.ApiResponseError;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.FilesListActivity;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.views.DisablableViewPager;
@@ -345,7 +345,7 @@ public class FilesRootFragment extends Fragment implements
             public void onError(ApiError error) {
                 if (requestId != mActualCheckRequestId) return;
 
-                if (error.getCode() != ApiResponseError.RESULT_FALSE){
+                if (error.getErrorCode() != ApiResponseError.RESULT_FALSE){
                     //Increase request id for prevent handling all other responses
                     mActualCheckRequestId++;
                     //Set error indicator

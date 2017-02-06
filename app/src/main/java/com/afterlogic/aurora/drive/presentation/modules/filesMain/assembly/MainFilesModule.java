@@ -2,6 +2,8 @@ package com.afterlogic.aurora.drive.presentation.modules.filesMain.assembly;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationModule;
+import com.afterlogic.aurora.drive.presentation.modules.filesMain.interactor.MainFilesInteractor;
+import com.afterlogic.aurora.drive.presentation.modules.filesMain.interactor.MainFilesInteractorImpl;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.presenter.MainFilesPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.presenter.MainFilesPresenterImpl;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesView;
@@ -26,6 +28,11 @@ public class MainFilesModule extends PresentationModule<MainFilesView> {
     @Provides @ModuleScope
     MainFilesViewModel viewModel(){
         return new MainFilesViewModel();
+    }
+
+    @Provides
+    MainFilesInteractor interactor(MainFilesInteractorImpl interactor){
+        return interactor;
     }
 
     @Provides

@@ -3,7 +3,9 @@ package com.afterlogic.aurora.drive.presentation.modules.filesMain.presenter;
 import com.afterlogic.aurora.drive.presentation.common.modules.presenter.BasePresenter;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.PresentationView;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
+import com.afterlogic.aurora.drive.presentation.modules.filesMain.interactor.MainFilesInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesView;
+import com.afterlogic.aurora.drive.presentation.modules.filesMain.viewModel.MainFilesModel;
 
 import javax.inject.Inject;
 
@@ -14,8 +16,25 @@ import javax.inject.Inject;
 
 public class MainFilesPresenterImpl extends BasePresenter<MainFilesView> implements MainFilesPresenter {
 
-    @Inject MainFilesPresenterImpl(ViewState<MainFilesView> viewState) {
+    private final MainFilesInteractor mInteractor;
+    private final MainFilesModel mModel;
+
+    @Inject MainFilesPresenterImpl(ViewState<MainFilesView> viewState,
+                                   MainFilesInteractor interactor,
+                                   MainFilesModel model) {
         super(viewState);
+        mInteractor = interactor;
+        mModel = model;
+    }
+
+    @Override
+    protected void onPresenterStart() {
+        super.onPresenterStart();
+        mInteractor.getAvailableFileTypes()
+                .subscribe(
+                        mModel::setFileTypes,
+                        this::onErrorObtained
+                );
     }
 
     @Override

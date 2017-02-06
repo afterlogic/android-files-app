@@ -35,8 +35,8 @@ import com.afterlogic.aurora.drive._unrefactored.core.util.task.TaskProgressNoti
 import com.afterlogic.aurora.drive._unrefactored.core.util.task.TaskRegisterConnection;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiCallback;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiError;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiResponseError;
+import com.afterlogic.aurora.drive.model.error.ApiError;
+import com.afterlogic.aurora.drive.model.error.ApiResponseError;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Task;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.DBHelper;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.dao.WatchingFileDAO;
@@ -357,7 +357,7 @@ abstract class BaseFileActionActivity extends BaseFileDownloadActivity{
 
             @Override
             public void onError(ApiError error) {
-                if (error.getCode() == ApiResponseError.FILE_NOT_EXIST){
+                if (error.getErrorCode() == ApiResponseError.FILE_NOT_EXIST){
                     //File not exist so can rename
                     rename(oldFile, newFile);
                 } else {

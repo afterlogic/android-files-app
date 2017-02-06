@@ -25,7 +25,7 @@ import com.afterlogic.aurora.drive._unrefactored.core.util.interfaces.OnItemClic
 import com.afterlogic.aurora.drive._unrefactored.core.util.interfaces.OnItemLongClickListener;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiCallback;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiError;
+import com.afterlogic.aurora.drive.model.error.ApiError;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.DBHelper;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.dao.WatchingFileDAO;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.model.WatchingFile;
@@ -256,7 +256,7 @@ public class FilesListFragment extends Fragment implements
      */
     @Override
     public void onError(ApiError error) {
-        if (error.getCode() == ApiError.CONNECTION_ERROR || error.getCode() == ApiError.UNKNOWN_HOST){
+        if (error.getErrorCode() == ApiError.CONNECTION_ERROR || error.getErrorCode() == ApiError.UNKNOWN_HOST){
             if (getActivity() != null){
                 FilesListActivity activity = (FilesListActivity) getActivity();
                 activity.showOfflineState();

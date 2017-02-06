@@ -2,8 +2,8 @@ package com.afterlogic.aurora.drive._unrefactored.core.util.api;
 
 import android.text.TextUtils;
 
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiError;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiResponseError;
+import com.afterlogic.aurora.drive.model.error.ApiError;
+import com.afterlogic.aurora.drive.model.error.ApiResponseError;
 import com.afterlogic.aurora.drive._unrefactored.model.project7.ApiResponseP7;
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;

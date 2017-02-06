@@ -4,11 +4,10 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiTask;
+import com.afterlogic.aurora.drive._unrefactored.model.UploadResult;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileInfo;
-import com.afterlogic.aurora.drive._unrefactored.model.UploadResult;
 
-import java.util.Collection;
 import java.util.List;
 
 import io.reactivex.Single;
@@ -20,7 +19,9 @@ import okhttp3.ResponseBody;
  */
 public interface FilesRepository {
 
-    Single<Collection<AuroraFile>> getFiles(AuroraFile folder);
+    Single<List<String>> getAvailableFileTypes();
+
+    Single<List<AuroraFile>> getFiles(AuroraFile folder);
 
     Single<Uri> getFileThumbnail(AuroraFile file);
 

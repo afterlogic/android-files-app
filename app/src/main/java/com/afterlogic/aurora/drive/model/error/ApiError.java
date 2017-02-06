@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive._unrefactored.data.common.api;
+package com.afterlogic.aurora.drive.model.error;
 
 /**
  * Created by sashka on 18.03.16.
@@ -15,5 +15,5 @@ public interface ApiError {
     int NOT_FOUND = 404;
 
     String getMessage();
-    int getCode();
+    int getErrorCode();
 }

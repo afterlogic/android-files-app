@@ -5,22 +5,26 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Base64;
 
-import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
-import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
+import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive._unrefactored.core.util.FileUtil;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiTask;
-import com.afterlogic.aurora.drive.model.error.ApiResponseError;
+import com.afterlogic.aurora.drive._unrefactored.model.UploadResult;
+import com.afterlogic.aurora.drive._unrefactored.model.project8.ApiResponseP8;
+import com.afterlogic.aurora.drive._unrefactored.model.project8.AuroraFileP8;
+import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
+import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
+import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
 import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
 import com.afterlogic.aurora.drive.data.common.mapper.MapperUtil;
-import com.afterlogic.aurora.drive.data.common.repository.Repository;
+import com.afterlogic.aurora.drive.data.common.repository.AuthorizedRepository;
+import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
+import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
 import com.afterlogic.aurora.drive.data.modules.files.p8.service.FilesServiceP8;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.DeleteFileInfo;
 import com.afterlogic.aurora.drive.model.FileInfo;
-import com.afterlogic.aurora.drive._unrefactored.model.UploadResult;
-import com.afterlogic.aurora.drive._unrefactored.model.project8.ApiResponseP8;
-import com.afterlogic.aurora.drive._unrefactored.model.project8.AuroraFileP8;
+import com.afterlogic.aurora.drive.model.error.ApiResponseError;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 
@@ -28,11 +32,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Maybe;
 import io.reactivex.Single;
 import okhttp3.MediaType;
 import okhttp3.ResponseBody;
@@ -41,13 +45,15 @@ import okhttp3.ResponseBody;
  * Created by sashka on 19.10.16.<p/>
  * mail: sunnyday.development@gmail.com
  */
-public class FilesRepositoryP8Impl extends Repository implements FilesRepository {
+public class FilesRepositoryP8Impl extends AuthorizedRepository implements FilesRepository {
 
     private static final String FILES_P_8 = "filesP8";
 
     private final FilesServiceP8 mFilesService;
     private final File mFilesCacheDir;
     private final File mThumbCacheDir;
+
+    private final AppResources mAppResources;
 
     private final Mapper<AuroraFile, AuroraFileP8> mFileMapper = source -> new AuroraFile(
             source.getName(),
@@ -72,15 +78,41 @@ public class FilesRepositoryP8Impl extends Repository implements FilesRepository
     );
 
     @SuppressWarnings("WeakerAccess")
-    @Inject public FilesRepositoryP8Impl(@RepositoryCache SharedObservableStore cache, FilesServiceP8 filesService, Context context) {
-        super(cache, FILES_P_8);
+    @Inject public FilesRepositoryP8Impl(@RepositoryCache SharedObservableStore cache,
+                                         FilesServiceP8 filesService,
+                                         Context context,
+                                         AppResources appResources,
+                                         AuthRepository authRepository) {
+        super(cache, FILES_P_8, authRepository);
         mFilesService = filesService;
         mFilesCacheDir = FileUtil.getCacheFileDir(context);
         mThumbCacheDir = new File(context.getExternalCacheDir(), "thumb");
+        mAppResources = appResources;
     }
 
     @Override
-    public Single<Collection<AuroraFile>> getFiles(AuroraFile folder) {
+    public Single<List<String>> getAvailableFileTypes() {
+        return Single.fromCallable(() -> Stream.of(mAppResources.getStringArray(R.array.folder_types))
+                .map(type -> {
+                    List<AuroraFile> files = getFiles(AuroraFile.parse("", type, true))
+                            .toMaybe()
+                            .onErrorResumeNext(error -> {
+                                if (error instanceof ApiResponseError){
+                                    return Maybe.empty();
+                                } else {
+                                    return Maybe.error(error);
+                                }
+                            })
+                            .blockingGet();
+                    return files != null ? type : null;
+                })
+                .filter(ObjectsUtil::nonNull)
+                .collect(Collectors.toList())
+        );
+    }
+
+    @Override
+    public Single<List<AuroraFile>> getFiles(AuroraFile folder) {
         return withNetMapper(
                 mFilesService.getFiles(folder.getType(), folder.getFullPath(), "")
                         .map(response -> response),
@@ -143,7 +175,7 @@ public class FilesRepositoryP8Impl extends Repository implements FilesRepository
                         AuroraFile requestedFile = Stream.of(files)
                                 .filter(remoteFile -> remoteFile.getFullPath().equals(file.getFullPath()))
                                 .findFirst()
-                                .orElseThrow(() -> new ApiResponseError("File not exist", com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiResponseError.FILE_NOT_EXIST));
+                                .orElseThrow(() -> new ApiResponseError(ApiResponseError.FILE_NOT_EXIST, "File not exist"));
                         return Single.just(requestedFile);
                     } catch (ApiResponseError e){
                         return Single.error(e);

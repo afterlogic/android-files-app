@@ -12,13 +12,15 @@ import com.afterlogic.aurora.drive._unrefactored.core.util.AccountUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.ApiCompatibilityUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.api.ApiResponseDeserializer;
 import com.afterlogic.aurora.drive._unrefactored.data.common.ApiProvider;
-import com.afterlogic.aurora.drive.data.common.network.DynamicEndPointInterceptor;
 import com.afterlogic.aurora.drive._unrefactored.model.project7.ApiResponseP7;
 import com.afterlogic.aurora.drive._unrefactored.presentation.receivers.session.SessionTrackerReceiver;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
+import com.afterlogic.aurora.drive.data.common.network.DynamicEndPointInterceptor;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.AuthToken;
 import com.afterlogic.aurora.drive.model.SystemAppData;
+import com.afterlogic.aurora.drive.model.error.ApiError;
+import com.afterlogic.aurora.drive.model.error.ApiResponseError;
 import com.annimon.stream.Stream;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -247,7 +249,10 @@ public class AuroraApi {
                     @Override
                     public Call<ApiResponseP7<AuthToken>> createCall(AuthApi apiInterface) {
                         Single<AuthToken> observable = getApiProvider().getUserRepository()
-                                .login(email, pass);
+                                .login(email, pass)
+                                .andThen(Single.fromCallable(() ->
+                                        new AuthToken(getApiProvider().getSessionManager().getSession().getAuthToken())
+                                ));
                         return fromObservable(observable);
                     }
                 }).execute();
@@ -389,7 +394,7 @@ public class AuroraApi {
                 @Override
                 public void onError(ApiError error) {
                     if (mHandleUnauthorizedError && mReCallCreator != null){
-                        switch (error.getCode()) {
+                        switch (error.getErrorCode()) {
                             case ApiResponseError.INVALID_TOKEN:
                                 updateToken();
                                 break;
@@ -400,8 +405,8 @@ public class AuroraApi {
                                 mApiCallback.onError(error);
                         }
                     }else{
-                        if (error.getCode() == ApiResponseError.AUTH_FAILED ||
-                                error.getCode() == ApiResponseError.INVALID_TOKEN){
+                        if (error.getErrorCode() == ApiResponseError.AUTH_FAILED ||
+                                error.getErrorCode() == ApiResponseError.INVALID_TOKEN){
 
                             LocalBroadcastManager.getInstance(sContext)
                                     .sendBroadcast(new Intent(ACTION_AUTH_FAILED));

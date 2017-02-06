@@ -24,7 +24,7 @@ import com.afterlogic.aurora.drive._unrefactored.core.util.FileUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.IntentUtil;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiCallback;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiError;
+import com.afterlogic.aurora.drive.model.error.ApiError;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.adapters.FilesAdapter;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.dialogs.FileActionsBottomSheet;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.FilesCallback;

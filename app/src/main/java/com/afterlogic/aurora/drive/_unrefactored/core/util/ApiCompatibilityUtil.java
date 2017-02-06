@@ -49,7 +49,7 @@ public class ApiCompatibilityUtil {
             ApiResponseP7<T> responseP7 = new ApiResponseP7<>(
                     sessionManager.getSession().getAccountId(),
                     null,
-                    new com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiResponseError(
+                    new ApiResponseError(
                             ((ApiResponseError) error).getErrorCode(),
                             error.getMessage()
                     )

@@ -3,7 +3,7 @@ package com.afterlogic.aurora.drive._unrefactored.core.util.api;
 import android.support.annotation.NonNull;
 
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiCallback;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiError;
+import com.afterlogic.aurora.drive.model.error.ApiError;
 
 /**
  * Created by sashka on 24.03.16.

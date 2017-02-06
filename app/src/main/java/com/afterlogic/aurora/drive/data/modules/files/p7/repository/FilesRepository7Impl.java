@@ -3,33 +3,39 @@ package com.afterlogic.aurora.drive.data.modules.files.p7.repository;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
+import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiTask;
+import com.afterlogic.aurora.drive._unrefactored.model.UploadResult;
+import com.afterlogic.aurora.drive._unrefactored.model.project7.AuroraFileP7;
+import com.afterlogic.aurora.drive._unrefactored.model.project7.UploadResultP7;
+import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
-import com.afterlogic.aurora.drive.data.common.network.DynamicDomainProvider;
-import com.afterlogic.aurora.drive.data.common.network.SessionManager;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiTask;
 import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
 import com.afterlogic.aurora.drive.data.common.mapper.MapperUtil;
-import com.afterlogic.aurora.drive.data.common.repository.Repository;
-import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
+import com.afterlogic.aurora.drive.data.common.network.DynamicDomainProvider;
+import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.common.network.p7.Api7;
+import com.afterlogic.aurora.drive.data.common.repository.AuthorizedRepository;
+import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
+import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
+import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
 import com.afterlogic.aurora.drive.data.modules.files.p7.mapper.file.factory.AuroraFileP7MapperFactory;
 import com.afterlogic.aurora.drive.data.modules.files.p7.mapper.uploadResult.factory.UploadResultP7MapperFactory;
 import com.afterlogic.aurora.drive.data.modules.files.p7.service.FilesServiceP7;
+import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.FileInfo;
-import com.afterlogic.aurora.drive._unrefactored.model.UploadResult;
-import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive._unrefactored.model.project7.AuroraFileP7;
-import com.afterlogic.aurora.drive._unrefactored.model.project7.UploadResultP7;
+import com.afterlogic.aurora.drive.model.error.ApiResponseError;
+import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
 
+import io.reactivex.Maybe;
 import io.reactivex.Single;
 import okhttp3.ResponseBody;
 
@@ -37,7 +43,7 @@ import okhttp3.ResponseBody;
  * Created by sashka on 19.10.16.<p/>
  * mail: sunnyday.development@gmail.com
  */
-public class FilesRepository7Impl extends Repository implements FilesRepository {
+public class FilesRepository7Impl extends AuthorizedRepository implements FilesRepository {
 
     private static final String FILES_P_7 = "filesP7";
 
@@ -49,24 +55,50 @@ public class FilesRepository7Impl extends Repository implements FilesRepository 
     private final DynamicDomainProvider mDynamicDomainProvider;
     private final SessionManager mSessionManager;
 
+    private final AppResources mAppResources;
+
     @SuppressWarnings("WeakerAccess")
     @Inject public FilesRepository7Impl(@RepositoryCache SharedObservableStore cache,
                                         AuroraFileP7MapperFactory mapperFactory,
                                         FilesServiceP7 cloudService,
                                         DynamicDomainProvider dynamicDomainProvider,
                                         SessionManager sessionManager,
-                                        UploadResultP7MapperFactory uploadResultP7MapperFactory) {
-        super(cache, FILES_P_7);
+                                        UploadResultP7MapperFactory uploadResultP7MapperFactory,
+                                        AppResources appResources,
+                                        AuthRepository authRepository) {
+        super(cache, FILES_P_7, authRepository);
         mFileNetToBlMapper = mapperFactory.netToBl();
         mFileBlToNetMapper = mapperFactory.blToNet();
         mCloudService = cloudService;
         mDynamicDomainProvider = dynamicDomainProvider;
         mSessionManager = sessionManager;
         mUploadResultToBlMapper = uploadResultP7MapperFactory.p7toBl();
+        mAppResources = appResources;
     }
 
     @Override
-    public Single<Collection<AuroraFile>> getFiles(AuroraFile folder) {
+    public Single<List<String>> getAvailableFileTypes() {
+        return Single.fromCallable(() -> Stream.of(mAppResources.getStringArray(R.array.folder_types))
+                .map(type -> {
+                    List<AuroraFile> files = getFiles(AuroraFile.parse("", type, true))
+                            .toMaybe()
+                            .onErrorResumeNext(error -> {
+                                if (error instanceof ApiResponseError){
+                                    return Maybe.empty();
+                                } else {
+                                    return Maybe.error(error);
+                                }
+                            })
+                            .blockingGet();
+                    return files != null ? type : null;
+                })
+                .filter(ObjectsUtil::nonNull)
+                .collect(Collectors.toList())
+        );
+    }
+
+    @Override
+    public Single<List<AuroraFile>> getFiles(AuroraFile folder) {
         return withNetMapper(
                 mCloudService.getFiles(folder.getFullPath(), folder.getType(), null)
                         .map(response -> response),

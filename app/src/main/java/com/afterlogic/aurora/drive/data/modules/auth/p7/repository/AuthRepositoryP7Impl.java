@@ -7,11 +7,11 @@ import com.afterlogic.aurora.drive.data.common.repository.Repository;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.data.modules.auth.p7.service.AuthServiceP7;
 import com.afterlogic.aurora.drive.model.AuroraSession;
-import com.afterlogic.aurora.drive.model.AuthToken;
 import com.afterlogic.aurora.drive.model.SystemAppData;
 
 import javax.inject.Inject;
 
+import io.reactivex.Completable;
 import io.reactivex.Single;
 
 /**
@@ -34,7 +34,7 @@ public class AuthRepositoryP7Impl extends Repository implements AuthRepository {
     }
 
     @Override
-    public Single<AuthToken> login(String login, String password) {
+    public Completable login(String login, String password) {
         return withNetRawMapper(
                 mAuthService.login(login, password)
                         .map(response -> response),
@@ -42,12 +42,15 @@ public class AuthRepositoryP7Impl extends Repository implements AuthRepository {
                     mSessionManager.getSession().setAccountId(response.getAccountId());
                     return response.getResult();
                 }
-        );
+        )//-----|
+                .flatMapCompletable(authToken -> Completable.fromAction(() ->
+                        mSessionManager.getSession().setAuthToken(authToken.token)
+                ));
     }
 
     @Override
-    public Single<AuthToken> relogin() {
-        return Single.defer(() -> {
+    public Completable relogin() {
+        return Completable.defer(() -> {
             AuroraSession session = mSessionManager.getSession();
             return login(session.getLogin(), session.getPassword());
         });
