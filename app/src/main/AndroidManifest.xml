@@ -32,16 +32,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:largeHeap="true"
-        android:name="com.afterlogic.aurora.drive.application.App">
+        android:name=".application.App">
 
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="e389d068cbb5a55d812a15e7cb135cd85d9cf647" />
 
-        <activity android:name=".presentation.ui.StartActivity"
+        <activity android:name=".presentation.modules.start.view.StartActivity"
                   android:label="@string/app_name"
                   android:theme="@style/Theme.Transparent"
-                    android:noHistory="true">
+                  android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -51,22 +51,22 @@
 
         <!--[START Main process]-->
         <activity
-            android:name=".presentation.ui.AuroraLoginActivity"
+            android:name=".presentation.modules.login.view.LoginActivity"
             android:label="@string/app_name">
         </activity>
 
         <activity
-            android:name=".presentation.ui.FilesListActivity"
+            android:name="._unrefactored.presentation.ui.FilesListActivity"
             android:label="@string/app_name" >
         </activity>
 
         <activity
-            android:name=".presentation.ui.FileViewActivity"
+            android:name="._unrefactored.presentation.ui.FileViewActivity"
             android:label="@string/app_name" >
         </activity>
 
         <activity
-            android:name=".presentation.ui.ChooseFileActivity"
+            android:name="._unrefactored.presentation.ui.ChooseFileActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT"/>
@@ -76,7 +76,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".presentation.ui.SendFilesActivity"
+        <activity android:name="._unrefactored.presentation.ui.SendFilesActivity"
                   android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>
@@ -86,9 +86,9 @@
                 <data android:mimeType="*/*"/>
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.ui.AccountInfoPreferenceActivity"/>
+        <activity android:name="._unrefactored.presentation.ui.AccountInfoPreferenceActivity"/>
 
-        <service android:name=".presentation.services.AuthenticatorService">
+        <service android:name="._unrefactored.presentation.services.AuthenticatorService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
@@ -96,19 +96,19 @@
                        android:resource="@xml/authentificator" />
         </service>
 
-        <service android:name=".presentation.services.FileObserverService"
+        <service android:name="._unrefactored.presentation.services.FileObserverService"
                  android:exported="false"/>
 
-        <service android:name=".presentation.services.ClearCacheService"
+        <service android:name="._unrefactored.presentation.services.ClearCacheService"
                  android:exported="false"/>
 
-        <receiver android:name=".presentation.receivers.BootReceiver">
+        <receiver android:name="._unrefactored.presentation.receivers.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".presentation.receivers.AccountLoginStateReceiver"
+        <receiver android:name="._unrefactored.presentation.receivers.AccountLoginStateReceiver"
                   android:exported="false"
                   android:permission="com.afterlogic.aurora.CATCH_LOGIN">
             <intent-filter>
@@ -117,7 +117,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".presentation.receivers.SyncResolveReceiver"
+        <receiver android:name="._unrefactored.presentation.receivers.SyncResolveReceiver"
                   android:exported="false">
             <intent-filter>
                 <action android:name="com.afterlogic.aurora.drive.ACTION_RESOLVE_SYNC_CONFLICT"/>
@@ -125,7 +125,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".presentation.receivers.session.SessionTrackerReceiver"
+        <receiver android:name="._unrefactored.presentation.receivers.session.SessionTrackerReceiver"
                   android:exported="false">
             <intent-filter>
                 <action android:name="com.afterlogic.aurora.sessiontracker.ACTION_SESSION_CHANGED"/>
@@ -134,11 +134,11 @@
         <!--[END Main process]-->
 
         <!--[START File load process]-->
-        <service android:name=".presentation.services.FileLoadService"
+        <service android:name="._unrefactored.presentation.services.FileLoadService"
                  android:process=":load"
             android:exported="false"/>
 
-        <receiver android:name=".presentation.receivers.session.SessionChangedReceiver_LoadProcess"
+        <receiver android:name="._unrefactored.presentation.receivers.session.SessionChangedReceiver_LoadProcess"
                   android:process=":load"
                   android:exported="false">
             <intent-filter>
@@ -146,7 +146,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".presentation.receivers.AccountActionReceiver">
+        <receiver android:name="._unrefactored.presentation.receivers.AccountActionReceiver">
             <intent-filter>
                 <action android:name="android.accounts.LOGIN_ACCOUNTS_CHANGED"/>
             </intent-filter>
@@ -155,7 +155,7 @@
 
         <!--[START Sync process]-->
         <service
-            android:name=".presentation.services.SyncService"
+            android:name="._unrefactored.presentation.services.SyncService"
             android:exported="true"
             android:process=":sync">
             <intent-filter>
@@ -165,7 +165,7 @@
                        android:resource="@xml/syncadapter" />
         </service>
 
-        <receiver android:name=".presentation.receivers.session.SessionChangedReceiver_SyncProcess"
+        <receiver android:name="._unrefactored.presentation.receivers.session.SessionChangedReceiver_SyncProcess"
                   android:process=":sync"
                   android:exported="false">
             <intent-filter>

@@ -1,113 +1,93 @@
 package com.afterlogic.aurora.drive.data.assembly;
 
+
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
 
-import com.afterlogic.aurora.drive.core.annotations.qualifers.Project7;
-import com.afterlogic.aurora.drive.core.annotations.qualifers.Project8;
-import com.afterlogic.aurora.drive.core.annotations.qualifers.RepositoryCache;
-import com.afterlogic.aurora.drive.core.annotations.scoupes.AppScoupe;
-import com.afterlogic.aurora.drive.core.rx.ObservableCache;
-import com.afterlogic.aurora.drive.core.rx.ObservableCacheImpl;
-import com.afterlogic.aurora.drive.data.modules.checker.ApiChecker;
-import com.afterlogic.aurora.drive.data.modules.checker.ApiCheckerImpl;
-import com.afterlogic.aurora.drive.data.common.ApiConfigurator;
-import com.afterlogic.aurora.drive.data.common.DynamicDomainProvider;
-import com.afterlogic.aurora.drive.data.common.SessionManager;
-import com.afterlogic.aurora.drive.data.common.repository.FilesRepository;
-import com.afterlogic.aurora.drive.data.common.repository.UserRepository;
+import com.afterlogic.aurora.drive._unrefactored.core.util.AccountUtil;
+import com.afterlogic.aurora.drive.core.common.annotation.scopes.DataScope;
+import com.afterlogic.aurora.drive.core.consts.Const;
+import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
+import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
+import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStoreImpl;
+import com.afterlogic.aurora.drive.data.common.db.DataBaseModule;
+import com.afterlogic.aurora.drive.data.common.network.ApiConfigurator;
+import com.afterlogic.aurora.drive.data.common.network.DynamicDomainProvider;
+import com.afterlogic.aurora.drive.data.common.network.NetworkDataModule;
+import com.afterlogic.aurora.drive.data.common.network.SessionManager;
+import com.afterlogic.aurora.drive.data.modules.apiChecker.ApiCheckerDataModule;
+import com.afterlogic.aurora.drive.data.modules.auth.AuthDataModule;
+import com.afterlogic.aurora.drive.data.modules.files.FilesDataModule;
+import com.afterlogic.aurora.drive.data.modules.prefs.AppPrefs;
+import com.afterlogic.aurora.drive.data.modules.prefs.AppPrefsImpl;
 import com.afterlogic.aurora.drive.model.AuroraSession;
-import com.afterlogic.aurora.drive.core.Const;
-import com.afterlogic.aurora.drive.core.util.AccountUtil;
-
-import javax.inject.Provider;
 
 import dagger.Module;
 import dagger.Provides;
 
 /**
- * Created by sashka on 11.10.16.<p/>
+ * Created by sashka on 31.08.16.<p/>
  * mail: sunnyday.development@gmail.com
+ *
+ * Will provideFor repositories, services and etc.
  */
-@Module
+@Module(includes = {
+        DataBaseModule.class,
+        NetworkDataModule.class,
+        ApiCheckerDataModule.class,
+        AuthDataModule.class,
+        FilesDataModule.class
+})
 public class DataModule {
 
-    private Context mContext;
-
+    //TODO optimize
     private ApiConfigurator mApiConfigurator = new ApiConfigurator();
     private SessionManager mSessionManager = new SessionManager(mApiConfigurator);
 
-    public DataModule(Context context) {
-        mContext = context;
-    }
 
-    @Provides
-    Context provideApplicationContext(){
-        return mContext;
-    }
-
-    @Provides @AppScoupe
-    SessionManager provideSessionManager(Context context){
-        if (mSessionManager.getAuroraSession() == null) {
+    @Provides @DataScope
+    SessionManager sessionManager(Context context){
+        if (mSessionManager.getSession() == null) {
             //If current session loosed get it from account
             Account account = AccountUtil.getCurrentAccount(context);
             if (account != null) {
                 AccountManager am = AccountManager.get(context);
                 AuroraSession session = AccountUtil.fromAccount(account, am);
-                mSessionManager.setAuroraSession(session);
+                mSessionManager.setSession(session);
             }
         }
         return mSessionManager;
     }
 
-    @Provides
-    ApiConfigurator provideApiConfigurator(){
-        AuroraSession session = mSessionManager.getAuroraSession();
+    @Provides @DataScope
+    ApiConfigurator apiConfigurator(){
+        AuroraSession session = mSessionManager.getSession();
         if (session != null && session.getApiVersion() != Const.ApiVersion.API_NONE && mApiConfigurator.getCurrentApiVersion() == Const.ApiVersion.API_NONE){
             mApiConfigurator.setDomain(session.getDomain(), session.getApiVersion());
         }
         return mApiConfigurator;
     }
 
-    @Provides @AppScoupe @RepositoryCache
-    ObservableCache provideRepositoryCache(ObservableCacheImpl cache){
-        return cache;
-    }
-
-    @Provides
+    @Provides @DataScope
     DynamicDomainProvider provideDynamicLink(ApiConfigurator configurator){
         return configurator;
     }
 
-    @Provides
-    UserRepository provideUserRepository(@Project7 Provider<UserRepository> p7,
-                                         @Project8 Provider<UserRepository> p8,
-                                         ApiConfigurator configurator){
-        return chooseByApiVersion(configurator, p7, p8);
+    @Provides @DataScope
+    AppPrefs provideAppPrefs(AppPrefsImpl prefsData){
+        return prefsData;
     }
 
-    @Provides
-    FilesRepository provideFilesRepository(@Project7 Provider<FilesRepository> p7,
-                                           @Project8 Provider<FilesRepository> p8,
-                                           ApiConfigurator configurator){
-        return chooseByApiVersion(configurator, p7, p8);
+
+    @Provides @DataScope
+    SharedObservableStore sharedObservableStore(SharedObservableStoreImpl sharedObservableStore){
+        return sharedObservableStore;
     }
 
-    @Provides
-    ApiChecker provideApiChecker(ApiCheckerImpl apiChecker){
-        return apiChecker;
+    //TODO remove qualifier @RepositoryCache
+    @Provides @RepositoryCache @DataScope
+    SharedObservableStore repositoryCache(SharedObservableStore sharedObservableStore){
+        return sharedObservableStore;
     }
-
-    private  <T> T chooseByApiVersion(ApiConfigurator configurator, Provider<T> p7, Provider<T> p8){
-        switch (configurator.getCurrentApiVersion()){
-            case Const.ApiVersion.API_P7:
-                return p7.get();
-            case Const.ApiVersion.API_P8:
-                return p8.get();
-            default:
-                return null;
-        }
-    }
-
 }

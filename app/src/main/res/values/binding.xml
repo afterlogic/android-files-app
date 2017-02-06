@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="bind_text_adapter" type="id"/>
+    <item name="bind_check_adapter" type="id"/>
+    <item name="bind_spinner_adapter" type="id"/>
+    <item name="bind_pager_listener" type="id"/>
+    <item name="bind_view_child" type="id"/>
+    <item name="bind_view_child_adapter" type="id"/>
+    <item name="bind_binder_position" type="id"/>
+    <item name="bind_recycler_config" type="id"/>
+    <item name="bind_recycler_decoration" type="id"/>
+    <item name="bind_target" type="id"/>
+    <item name="bind_unifact_relativeView" type="id"/>
+    <item name="bind_views_adapter_attach_listener" type="id"/>
+</resources>

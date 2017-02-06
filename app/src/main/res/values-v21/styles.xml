@@ -1,0 +1,6 @@
+<resources>
+
+    <style name="AppTheme.Dialog" parent="AppTheme.Base.Dialog">
+    </style>
+
+</resources>

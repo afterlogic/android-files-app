@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
-import com.afterlogic.aurora.drive.core.util.FileUtil;
+import com.afterlogic.aurora.drive._unrefactored.core.util.FileUtil;
 
 import java.io.File;
 
