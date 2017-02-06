@@ -389,7 +389,7 @@ public class FilesListFragment extends Fragment implements
 
         mNeedRefresh = true;
 
-        if (isAdded()) {
+        if (getContext() != null) {
             setRefreshingState(true);
 
             mFilesAdapter.setEmptyText(getString(R.string.prompt_folder_is_empty));

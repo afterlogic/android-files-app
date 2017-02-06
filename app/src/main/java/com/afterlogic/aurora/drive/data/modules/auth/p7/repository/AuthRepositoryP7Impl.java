@@ -1,5 +1,8 @@
 package com.afterlogic.aurora.drive.data.modules.auth.p7.repository;
 
+import android.content.Context;
+
+import com.afterlogic.aurora.drive._unrefactored.presentation.receivers.session.SessionTrackerReceiver;
 import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
@@ -22,13 +25,18 @@ public class AuthRepositoryP7Impl extends Repository implements AuthRepository {
 
     private static final String USER_P_7 = "userP7";
 
-    private final AuthServiceP7 mAuthService;
+    private final Context mContext;
 
+    private final AuthServiceP7 mAuthService;
     private final SessionManager mSessionManager;
 
     @Inject
-    AuthRepositoryP7Impl(@RepositoryCache SharedObservableStore cache, AuthServiceP7 authService, SessionManager sessionManager) {
+    AuthRepositoryP7Impl(@RepositoryCache SharedObservableStore cache,
+                         Context context,
+                         AuthServiceP7 authService,
+                         SessionManager sessionManager) {
         super(cache, USER_P_7);
+        mContext = context;
         mAuthService = authService;
         mSessionManager = sessionManager;
     }
@@ -43,9 +51,11 @@ public class AuthRepositoryP7Impl extends Repository implements AuthRepository {
                     return response.getResult();
                 }
         )//-----|
-                .flatMapCompletable(authToken -> Completable.fromAction(() ->
-                        mSessionManager.getSession().setAuthToken(authToken.token)
-                ));
+                .flatMapCompletable(authToken -> Completable.fromAction(() -> {
+                    AuroraSession session = mSessionManager.getSession();
+                    session.setAuthToken(authToken.token);
+                    SessionTrackerReceiver.fireSessionChanged(session, mContext);
+                }));
     }
 
     @Override

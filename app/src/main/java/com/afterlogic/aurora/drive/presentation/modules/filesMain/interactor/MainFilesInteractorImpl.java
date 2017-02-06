@@ -1,6 +1,10 @@
 package com.afterlogic.aurora.drive.presentation.modules.filesMain.interactor;
 
+import android.util.Pair;
+
+import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
+import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
 import com.afterlogic.aurora.drive.presentation.common.modules.interactor.BaseInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.viewModel.FileType;
@@ -8,6 +12,7 @@ import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -21,20 +26,38 @@ import io.reactivex.Single;
 public class MainFilesInteractorImpl extends BaseInteractor implements MainFilesInteractor {
 
     private final FilesRepository mFilesRepository;
+    private final AppResources mAppResources;
 
     @Inject MainFilesInteractorImpl(ObservableScheduler scheduler,
-                                    FilesRepository filesRepository) {
+                                    FilesRepository filesRepository,
+                                    AppResources appResources) {
         super(scheduler);
         mFilesRepository = filesRepository;
+        mAppResources = appResources;
     }
 
     @Override
     public Single<List<FileType>> getAvailableFileTypes() {
-        return mFilesRepository.getAvailableFileTypes()
-                .map(types -> Stream.of(types)
-                        .map(type -> new FileType(type, type))
-                        .collect(Collectors.toList())
-                )
-                .compose(this::composeDefault);
+        return Single.defer(() -> {
+
+            String[] types = mAppResources.getStringArray(R.array.folder_types);
+            String[] captions = mAppResources.getStringArray(R.array.folder_captions);
+
+            Map<String, String> captionsMap = Stream.zip(
+                    Stream.of(types),
+                    Stream.of(captions),
+                    Pair::new
+            ).collect(Collectors.toMap(
+                    p -> p.first,
+                    p -> p.second
+            ));
+
+            return mFilesRepository.getAvailableFileTypes()
+                    .map(availableTypes -> Stream.of(availableTypes)
+                            .map(type -> new FileType(type, captionsMap.get(type)))
+                            .collect(Collectors.toList())
+                    )
+                    .compose(this::composeDefault);
+        });
     }
 }

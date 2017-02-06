@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.views;
+package com.afterlogic.aurora.drive.presentation.common.components.view;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;

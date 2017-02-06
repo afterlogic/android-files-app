@@ -20,7 +20,7 @@
         </ScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.views.DisablableViewPager
+    <com.afterlogic.aurora.drive.presentation.common.components.view.DisablableViewPager
         android:id="@+id/types_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

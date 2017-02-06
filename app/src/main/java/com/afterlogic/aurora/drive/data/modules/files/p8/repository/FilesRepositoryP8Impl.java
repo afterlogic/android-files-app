@@ -113,8 +113,8 @@ public class FilesRepositoryP8Impl extends AuthorizedRepository implements Files
 
     @Override
     public Single<List<AuroraFile>> getFiles(AuroraFile folder) {
-        return withNetMapper(
-                mFilesService.getFiles(folder.getType(), folder.getFullPath(), "")
+        return withReloginNetMapper(
+                () -> mFilesService.getFiles(folder.getType(), folder.getFullPath(), "")
                         .map(response -> response),
                 result -> MapperUtil.list(mFileMapper).map(result.getFiles())
         );

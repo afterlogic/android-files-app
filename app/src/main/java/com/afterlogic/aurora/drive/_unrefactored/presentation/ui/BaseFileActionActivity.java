@@ -45,7 +45,7 @@ import com.afterlogic.aurora.drive._unrefactored.presentation.receivers.SyncReso
 import com.afterlogic.aurora.drive._unrefactored.presentation.services.FileLoadService;
 import com.afterlogic.aurora.drive._unrefactored.presentation.services.SyncService;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.base.BaseFileDownloadActivity;
-import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.views.SelectionEditText;
+import com.afterlogic.aurora.drive.presentation.common.components.view.SelectionEditText;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileInfo;

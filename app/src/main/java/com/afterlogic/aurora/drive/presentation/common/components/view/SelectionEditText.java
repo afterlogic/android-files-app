@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.views;
+package com.afterlogic.aurora.drive.presentation.common.components.view;
 
 import android.annotation.TargetApi;
 import android.content.Context;

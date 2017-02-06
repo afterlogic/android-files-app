@@ -1,8 +1,8 @@
 package com.afterlogic.aurora.drive.presentation.modules.filesMain.viewModel;
 
 import android.databinding.ObservableArrayList;
+import android.databinding.ObservableBoolean;
 import android.databinding.ObservableList;
-
 
 import java.util.List;
 
@@ -15,6 +15,8 @@ public class MainFilesViewModel {
 
     private final ObservableList<FileType> mFileTypes = new ObservableArrayList<>();
 
+    private final ObservableBoolean mRefreshing = new ObservableBoolean(true);
+
     public ObservableList<FileType> getFileTypes() {
         return mFileTypes;
     }
@@ -23,12 +25,17 @@ public class MainFilesViewModel {
         return new Controller();
     }
 
+    public ObservableBoolean getRefreshing() {
+        return mRefreshing;
+    }
+
     private class Controller implements MainFilesModel{
 
         @Override
         public void setFileTypes(List<FileType> types) {
             mFileTypes.clear();
             mFileTypes.addAll(types);
+            mRefreshing.set(false);
         }
     }
 }

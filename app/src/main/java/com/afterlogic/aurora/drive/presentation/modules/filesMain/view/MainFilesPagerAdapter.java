@@ -4,6 +4,7 @@ import android.databinding.ObservableList;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.FilesListFragment;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ItemsAdapter;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.SimpleOnObservableListChagnedListener;
 import com.afterlogic.aurora.drive.presentation.common.components.view.FragmentRecreatePagerAdapter;
@@ -48,7 +49,9 @@ public class MainFilesPagerAdapter extends FragmentRecreatePagerAdapter implemen
 
     @Override
     public Fragment getItem(int position) {
-        return new Fragment();
+        FilesListFragment fragment = FilesListFragment.newInstance(mFileTypes.get(position).getFilesType());
+        fragment.refreshCurrentFolder();
+        return fragment;
     }
 
     @Override

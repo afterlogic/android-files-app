@@ -6,12 +6,13 @@ package com.afterlogic.aurora.drive.presentation.modules.filesMain.viewModel;
  */
 
 public class FileType {
+
     private String mCaption;
     private String mFilesType;
 
-    public FileType(String caption, String filesType) {
+    public FileType(String type, String caption) {
+        mFilesType = type;
         mCaption = caption;
-        mFilesType = filesType;
     }
 
     public String getCaption() {

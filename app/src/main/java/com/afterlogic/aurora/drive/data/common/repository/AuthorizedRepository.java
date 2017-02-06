@@ -1,6 +1,7 @@
 package com.afterlogic.aurora.drive.data.common.repository;
 
 import com.afterlogic.aurora.drive._unrefactored.model.ApiResponse;
+import com.afterlogic.aurora.drive.core.common.interfaces.Creator;
 import com.afterlogic.aurora.drive.data.common.Observator;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
 import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
@@ -24,60 +25,45 @@ public class AuthorizedRepository extends Observator {
         mAuthRepository = authRepository;
     }
 
-    protected   <T, R> Single<T> withNetRawMapper(Single<ApiResponse<R>> observable, Mapper<T, ApiResponse<R>> mapper){
-        return withNetRawMapper(observable.retry(), mapper, true);
-    }
-
-    private   <T, R> Single<T> withNetRawMapper(Single<ApiResponse<R>> observable, Mapper<T, ApiResponse<R>> mapper, boolean relogin){
+    protected static <T, R> Single<T> withNetRawMapper(Single<ApiResponse<R>> observable, Mapper<T, ApiResponse<R>> mapper){
         return observable.flatMap(result -> {
             if (result.isSuccess()){
                 return Single.just(mapper.map(result));
             } else {
-                if (relogin && result.getErrorCode() == ApiResponseError.AUTH_FAILED){
-                    return mAuthRepository.relogin()
-                            .andThen(withNetRawMapper(observable.retry(), mapper, false));
-                } else {
-                    return Single.error(new ApiResponseError(result.getErrorCode(), result.getErrorMessage()));
-                }
+                return Single.error(new ApiResponseError(result.getErrorCode(), result.getErrorMessage()));
             }
         });
     }
 
-    protected <T, R> Single<T> withNetMapper(Single<ApiResponse<R>> observable, Mapper<T, R> mapper){
-        return withNetMapper(observable, mapper, true);
-    }
-
-    private   <T, R> Single<T> withNetMapper(Single<ApiResponse<R>> observable, Mapper<T, R> mapper, boolean relogin){
+    protected static <T, R> Single<T> withNetMapper(Single<ApiResponse<R>> observable, Mapper<T, R> mapper){
         return observable.flatMap(result -> {
             if (result.isSuccess()){
                 return Single.just(mapper.map(result.getResult()));
             } else {
-                if (relogin && result.getErrorCode() == ApiResponseError.AUTH_FAILED){
-                    return mAuthRepository.relogin()
-                            .andThen(withNetMapper(observable.retry(), mapper, false));
-                } else {
-                    return Single.error(new ApiResponseError(result.getErrorCode(), result.getErrorMessage()));
-                }
+                return Single.error(new ApiResponseError(result.getErrorCode(), result.getErrorMessage()));
             }
         });
     }
 
-    protected <T, R extends ApiResponse<T>> Single<T> withNetMapper(Single<R> observable){
-        return withNetMapper(observable.retry(), true);
-    }
-
-    private <T, R extends ApiResponse<T>> Single<T> withNetMapper(Single<R> observable, boolean relogin){
+    protected static <T, R extends ApiResponse<T>> Single<T> withNetMapper(Single<R> observable){
         return observable.flatMap(result -> {
             if (result.isSuccess()){
                 return Single.just(result.getResult());
             } else {
-                if (relogin && result.getErrorCode() == ApiResponseError.AUTH_FAILED){
-                    return mAuthRepository.relogin()
-                            .andThen(withNetMapper(observable.retry(), false));
-                } else {
-                    return Single.error(new ApiResponseError(result.getErrorCode(), result.getErrorMessage()));
-                }
+                return Single.error(new ApiResponseError(result.getErrorCode(), result.getErrorMessage()));
             }
         });
+    }
+
+    protected <T, R> Single<T> withReloginNetMapper(Creator<Single<ApiResponse<R>>> creator, Mapper<T, R> mapper){
+        return withNetMapper(creator.create(), mapper)
+                .onErrorResumeNext(error -> {
+                    if (error instanceof ApiResponseError && ((ApiResponseError) error).getErrorCode() == ApiResponseError.AUTH_FAILED){
+                        return mAuthRepository.relogin()
+                                .andThen(withNetMapper(creator.create(), mapper));
+                    } else {
+                        return Single.error(error);
+                    }
+                });
     }
 }

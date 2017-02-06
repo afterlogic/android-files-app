@@ -43,7 +43,7 @@ import okhttp3.ResponseBody;
  * Created by sashka on 19.10.16.<p/>
  * mail: sunnyday.development@gmail.com
  */
-public class FilesRepository7Impl extends AuthorizedRepository implements FilesRepository {
+public class FilesRepositoryP7Impl extends AuthorizedRepository implements FilesRepository {
 
     private static final String FILES_P_7 = "filesP7";
 
@@ -58,14 +58,14 @@ public class FilesRepository7Impl extends AuthorizedRepository implements FilesR
     private final AppResources mAppResources;
 
     @SuppressWarnings("WeakerAccess")
-    @Inject public FilesRepository7Impl(@RepositoryCache SharedObservableStore cache,
-                                        AuroraFileP7MapperFactory mapperFactory,
-                                        FilesServiceP7 cloudService,
-                                        DynamicDomainProvider dynamicDomainProvider,
-                                        SessionManager sessionManager,
-                                        UploadResultP7MapperFactory uploadResultP7MapperFactory,
-                                        AppResources appResources,
-                                        AuthRepository authRepository) {
+    @Inject public FilesRepositoryP7Impl(@RepositoryCache SharedObservableStore cache,
+                                         AuroraFileP7MapperFactory mapperFactory,
+                                         FilesServiceP7 cloudService,
+                                         DynamicDomainProvider dynamicDomainProvider,
+                                         SessionManager sessionManager,
+                                         UploadResultP7MapperFactory uploadResultP7MapperFactory,
+                                         AppResources appResources,
+                                         AuthRepository authRepository) {
         super(cache, FILES_P_7, authRepository);
         mFileNetToBlMapper = mapperFactory.netToBl();
         mFileBlToNetMapper = mapperFactory.blToNet();
@@ -99,8 +99,8 @@ public class FilesRepository7Impl extends AuthorizedRepository implements FilesR
 
     @Override
     public Single<List<AuroraFile>> getFiles(AuroraFile folder) {
-        return withNetMapper(
-                mCloudService.getFiles(folder.getFullPath(), folder.getType(), null)
+        return withReloginNetMapper(
+                () -> mCloudService.getFiles(folder.getFullPath(), folder.getType(), null)
                         .map(response -> response),
                 files -> MapperUtil.list(mFileNetToBlMapper)
                         .map(files.getFiles())

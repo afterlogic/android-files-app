@@ -25,7 +25,7 @@ import com.afterlogic.aurora.drive.model.error.ApiError;
 import com.afterlogic.aurora.drive.model.error.ApiResponseError;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.FilesListActivity;
-import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.views.DisablableViewPager;
+import com.afterlogic.aurora.drive.presentation.common.components.view.DisablableViewPager;
 import com.annimon.stream.Stream;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
@@ -560,7 +560,7 @@ public class FilesRootFragment extends Fragment implements
 
         @Override
         public CharSequence getPageTitle(int position) {
-            String[] titles = mResources.getStringArray(R.array.folder_names);
+            String[] titles = mResources.getStringArray(R.array.folder_captions);
             String[] types = mResources.getStringArray(R.array.folder_types);
 
             for (int i = 0; i < types.length; i++){

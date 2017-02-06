@@ -5,12 +5,16 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.FilesCallback;
 import com.afterlogic.aurora.drive.databinding.ActivityMainFilesBinding;
+import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryComponent;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.ViewPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.presenter.MainFilesPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.viewModel.MainFilesViewModel;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -19,7 +23,7 @@ import javax.inject.Inject;
  * mail: sunnyday.development@gmail.com
  */
 
-public class MainFilesActivity extends BaseActivity implements MainFilesView {
+public class MainFilesActivity extends BaseActivity implements MainFilesView, FilesCallback {
 
     @Inject @ViewPresenter
     protected MainFilesPresenter mPresenter;
@@ -40,5 +44,25 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView {
 
         binding.setFragmentManager(getSupportFragmentManager());
         binding.setViewModel(mViewModel);
+    }
+
+    @Override
+    public void onOpenFolder(AuroraFile folder) {
+
+    }
+
+    @Override
+    public void showActions(AuroraFile file) {
+
+    }
+
+    @Override
+    public void onFileClicked(AuroraFile file, List<AuroraFile> allFiles) {
+
+    }
+
+    @Override
+    public void createFolder(String path, String type, String folderName) {
+
     }
 }
