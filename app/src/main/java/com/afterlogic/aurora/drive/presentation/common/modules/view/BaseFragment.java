@@ -84,9 +84,11 @@ public abstract class BaseFragment extends Fragment implements PresentationView 
         mAddSubmoduleAvailable = false;
 
         if (savedInstanceState != null){
-            String uuidString = savedInstanceState.getString(MODULE_UUID, null);
-            if (uuidString != null) {
-                mModuleUuid = UUID.fromString(uuidString);
+            if (mModuleUuid == null) {
+                String uuidString = savedInstanceState.getString(MODULE_UUID, null);
+                if (uuidString != null) {
+                    mModuleUuid = UUID.fromString(uuidString);
+                }
             }
             Stream.of(mSubmodules).forEach(instantiable -> instantiable.restoreInstance(savedInstanceState));
         }
@@ -272,7 +274,7 @@ public abstract class BaseFragment extends Fragment implements PresentationView 
         mModuleUuid = uuid;
     }
 
-    void setFirstCreateInterceptor(FirstCreateViewInterceptor firstCreateViewInterceptor) {
+    public void setFirstCreateInterceptor(FirstCreateViewInterceptor firstCreateViewInterceptor) {
         mFirstCreateViewInterceptor = firstCreateViewInterceptor;
     }
 
@@ -303,25 +305,28 @@ public abstract class BaseFragment extends Fragment implements PresentationView 
         }
     }
 
-    interface FirstCreateViewInterceptor{
+    public interface FirstCreateViewInterceptor{
         void onPresentationViewCreated(BaseFragment view);
     }
 
-    private static void reflectiveCollectPresenters(BaseFragment activity){
-        Stream.of(activity.getClass().getDeclaredFields())
+    private static void reflectiveCollectPresenters(BaseFragment fragment){
+        Stream.of(fragment.getClass().getDeclaredFields())
                 .filter(field -> field.isAnnotationPresent(ViewPresenter.class) &&
                         Presenter.class.isAssignableFrom(field.getType())
                 )
                 .forEach(field -> {
                     try {
-                        Presenter presenter = (Presenter) field.get(activity);
+                        boolean accessible = field.isAccessible();
+                        field.setAccessible(true);
+                        Presenter presenter = (Presenter) field.get(fragment);
                         if (presenter != null) {
-                            activity.mPresenters.add(presenter);
+                            fragment.mPresenters.add(presenter);
                         } else {
-                            MyLog.majorException(activity, "Field marked as ViewPresenter but it is null: " + field.getName());
+                            MyLog.majorException(fragment, "Field marked as ViewPresenter but it is null: " + field.getName());
                         }
+                        field.setAccessible(accessible);
                     } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                        MyLog.majorException(fragment, e);
                     }
                 });
     }

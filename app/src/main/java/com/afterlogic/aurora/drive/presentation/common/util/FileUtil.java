@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive._unrefactored.core.util;
+package com.afterlogic.aurora.drive.presentation.common.util;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -14,8 +14,10 @@ import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
+import com.afterlogic.aurora.drive._unrefactored.core.util.DownloadType;
+import com.afterlogic.aurora.drive._unrefactored.core.util.DrawableUtil;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
+import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileInfo;
 import com.bumptech.glide.Glide;
@@ -160,17 +162,27 @@ public class FileUtil {
      * @return - icon drawable for extension or icon for undefined type.
      */
     private static Drawable getContentIcon(AuroraFile file, Context ctx){
+        return ContextCompat.getDrawable(ctx, getFileIconRes(file));
+    }
+
+    /**
+     * Get icon by file content-type and file name extensions.
+     *
+     * @param file - target file.
+     * @return - icon drawable for extension or icon for undefined type.
+     */
+    public static int getFileIconRes(AuroraFile file){
         int id;
         if (file.isLink()){
             id = R.drawable.ic_content_link;
         } else {
-            id = getIconResByFileName(file);
+            id = getIconResByFileExtension(file);
             if (id == -1) {
                 id = getIconResByContentType(file);
             }
         }
         if (id == -1) id = R.drawable.ic_content_udefined;
-        return ContextCompat.getDrawable(ctx, id);
+        return id;
     }
 
     /**
@@ -178,11 +190,11 @@ public class FileUtil {
      * @param file - target file.
      * @return - icon res for file extension or -1 if it not exist.
      */
-    private static int getIconResByFileName(AuroraFile file){
+    private static int getIconResByFileExtension(AuroraFile file){
         String fileName = file.getName();
         int point = fileName.lastIndexOf('.');
         if (point != -1){
-            String ext = fileName.substring(point + 1);
+            String ext = fileName.substring(point + 1).toLowerCase();
             if (EXTENSIONS_ICON_MAP.containsKey(ext)){
                 return EXTENSIONS_ICON_MAP.get(ext);
             }

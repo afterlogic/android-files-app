@@ -20,15 +20,15 @@ import android.widget.Toast;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive._unrefactored.core.util.AccountUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.DownloadType;
-import com.afterlogic.aurora.drive._unrefactored.core.util.FileUtil;
+import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.IntentUtil;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiCallback;
 import com.afterlogic.aurora.drive.model.error.ApiError;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.adapters.FilesAdapter;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.dialogs.FileActionsBottomSheet;
-import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.FilesCallback;
-import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.FilesListFragment;
+import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.FileActionCallback;
+import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FilesListFragmentDeprecated;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.FilesRootFragment;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.OfflineFilesFragment;
 import com.afterlogic.aurora.drive.model.AuroraFile;
@@ -46,7 +46,7 @@ import java.util.List;
  * mail: sunnyday.development@gmail.com
  */
 public class FilesListActivity extends BaseFileActionActivity implements
-        FilesCallback,
+        FileActionCallback,
         FileActionsBottomSheet.FileActionListener,
         FilesRootFragment.FilesRootFragmentCallback,
         FilesAdapter.MultichoiseListener
@@ -171,7 +171,7 @@ public class FilesListActivity extends BaseFileActionActivity implements
                 return true;
             case R.id.action_multichoise:
                 if (mFilesRootFragment != null){
-                    FilesListFragment listFragment = mFilesRootFragment.getCurrentListFragment();
+                    FilesListFragmentDeprecated listFragment = mFilesRootFragment.getCurrentListFragment();
                     if (listFragment != null && !listFragment.isRefreshing()){
                         startSupportActionMode(new MultichoiseMenu());
                     } else {
@@ -266,7 +266,7 @@ public class FilesListActivity extends BaseFileActionActivity implements
     }
 
     /**
-     * {@link FilesCallback#onOpenFolder(AuroraFile)}  implementation.
+     * {@link FileActionCallback#onOpenFolder(AuroraFile)}  implementation.
      */
     @Override
     public void onOpenFolder(AuroraFile folder) {
@@ -277,7 +277,7 @@ public class FilesListActivity extends BaseFileActionActivity implements
     }
 
     /**
-     * {@link FilesCallback#showActions(AuroraFile)}  implementation.
+     * {@link FileActionCallback#showActions(AuroraFile)}  implementation.
      */
     @Override
     public void showActions(AuroraFile file) {
@@ -286,7 +286,7 @@ public class FilesListActivity extends BaseFileActionActivity implements
     }
 
     /**
-     * {@link FilesCallback#onFileClicked(AuroraFile, List)}  implementation.
+     * {@link FileActionCallback#onFileClicked(AuroraFile, List)}  implementation.
      */
     @Override
     public void onFileClicked(AuroraFile file, List<AuroraFile> all) {
@@ -332,7 +332,7 @@ public class FilesListActivity extends BaseFileActionActivity implements
     }
 
     /**
-     * {@link FilesCallback#createFolder(String, String, String)}  implementation.
+     * {@link FileActionCallback#createFolder(String, String, String)}  implementation.
      */
     @Override
     public void createFolder(String path, final String type, String folderName) {

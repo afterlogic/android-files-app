@@ -16,7 +16,7 @@ import java.util.List;
  * Created by sashka on 13.09.16.<p/>
  * mail: sunnyday.development@gmail.com
  */
-public abstract class RecyclerViewModelAdapter<T> extends RecyclerBindAdapter {
+public abstract class RecyclerViewModelAdapter<T> extends RecyclerBindAdapter implements ItemsAdapter<T>{
 
     private List<T> mList;
 
@@ -52,6 +52,7 @@ public abstract class RecyclerViewModelAdapter<T> extends RecyclerBindAdapter {
         removeObservableListListener();
     }
 
+    @Override
     public void setItems(@Nullable List<T> list) {
         if (mList == list) return;
 

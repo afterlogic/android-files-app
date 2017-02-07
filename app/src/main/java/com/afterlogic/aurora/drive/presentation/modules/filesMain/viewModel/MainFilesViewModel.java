@@ -1,8 +1,13 @@
 package com.afterlogic.aurora.drive.presentation.modules.filesMain.viewModel;
 
+import android.databinding.BaseObservable;
+import android.databinding.Bindable;
 import android.databinding.ObservableArrayList;
-import android.databinding.ObservableBoolean;
 import android.databinding.ObservableList;
+
+import com.afterlogic.aurora.drive.BR;
+import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.annimon.stream.Stream;
 
 import java.util.List;
 
@@ -11,11 +16,13 @@ import java.util.List;
  * mail: sunnyday.development@gmail.com
  */
 
-public class MainFilesViewModel {
+public class MainFilesViewModel extends BaseObservable{
+
+    private String mCurrentFileType = null;
+    private String mFolderTitle;
+    private boolean mRefreshing = true;
 
     private final ObservableList<FileType> mFileTypes = new ObservableArrayList<>();
-
-    private final ObservableBoolean mRefreshing = new ObservableBoolean(true);
 
     public ObservableList<FileType> getFileTypes() {
         return mFileTypes;
@@ -25,8 +32,28 @@ public class MainFilesViewModel {
         return new Controller();
     }
 
-    public ObservableBoolean getRefreshing() {
+    @Bindable
+    public boolean getRefreshing() {
         return mRefreshing;
+    }
+
+    @Bindable
+    public String getFolderTitle() {
+        return mFolderTitle;
+    }
+
+    @Bindable
+    public boolean getLocked(){
+        return getCurrentPagePosition() != -1;
+    }
+
+    @Bindable
+    public int getCurrentPagePosition(){
+        return Stream.of(mFileTypes)
+                .filter(type -> type.getFilesType().equals(mCurrentFileType))
+                .map(mFileTypes::indexOf)
+                .findFirst()
+                .orElse(-1);
     }
 
     private class Controller implements MainFilesModel{
@@ -35,7 +62,22 @@ public class MainFilesViewModel {
         public void setFileTypes(List<FileType> types) {
             mFileTypes.clear();
             mFileTypes.addAll(types);
-            mRefreshing.set(false);
+            mRefreshing = false;
+            notifyPropertyChanged(BR.refreshing);
+        }
+
+        @Override
+        public void setCurrentFolder(AuroraFile folder) {
+            if ("".equals(folder.getFullPath())){
+                mCurrentFileType = null;
+                mFolderTitle = null;
+            } else {
+                mCurrentFileType = folder.getType();
+                mFolderTitle = folder.getName();
+            }
+            notifyPropertyChanged(BR.folderTitle);
+            notifyPropertyChanged(BR.currentPagePosition);
+            notifyPropertyChanged(BR.locked);
         }
     }
 }

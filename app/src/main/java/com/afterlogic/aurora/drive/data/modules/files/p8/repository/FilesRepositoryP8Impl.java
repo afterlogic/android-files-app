@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import android.util.Base64;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive._unrefactored.core.util.FileUtil;
+import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiTask;
 import com.afterlogic.aurora.drive._unrefactored.model.UploadResult;
 import com.afterlogic.aurora.drive._unrefactored.model.project8.ApiResponseP8;

@@ -21,6 +21,7 @@ import com.afterlogic.aurora.drive._unrefactored.data.common.db.model.WatchingFi
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.FilesListActivity;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.adapters.FilesAdapter;
 import com.afterlogic.aurora.drive._unrefactored.core.util.interfaces.OnItemClickListener;
+import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.FileActionCallback;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class OfflineFilesFragment extends Fragment implements
     private static final String KEY_MANUAL = OfflineFilesFragment.class.getName() + ".KEY_MANUAL";
 
     private List<AuroraFile> mFiles = new ArrayList<>();
-    private FilesCallback mCallback;
+    private FileActionCallback mCallback;
     private DBHelper mDB;
     private boolean mManualMode = false;
 
@@ -56,7 +57,7 @@ public class OfflineFilesFragment extends Fragment implements
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mCallback = (FilesCallback) context;
+        mCallback = (FileActionCallback) context;
     }
 
     @Override

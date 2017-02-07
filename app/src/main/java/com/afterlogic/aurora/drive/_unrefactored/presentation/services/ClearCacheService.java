@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.afterlogic.aurora.drive._unrefactored.core.util.FileUtil;
+import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.DBHelper;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.dao.WatchingFileDAO;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.model.WatchingFile;
@@ -20,7 +20,7 @@ import java.util.List;
 
 import io.reactivex.Completable;
 
-import static com.afterlogic.aurora.drive.core.common.rx.Observables.ObservableCollectors.concatCompletable;
+import static com.afterlogic.aurora.drive.core.common.rx.Observables.Collectors.concatCompletable;
 
 /**
  * Created by sashka on 04.04.16.

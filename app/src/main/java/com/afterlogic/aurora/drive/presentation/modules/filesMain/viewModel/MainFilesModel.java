@@ -1,5 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.filesMain.viewModel;
 
+import com.afterlogic.aurora.drive.model.AuroraFile;
+
 import java.util.List;
 
 /**
@@ -8,5 +10,8 @@ import java.util.List;
  */
 
 public interface MainFilesModel {
+
     void setFileTypes(List<FileType> types);
+
+    void setCurrentFolder(AuroraFile folder);
 }

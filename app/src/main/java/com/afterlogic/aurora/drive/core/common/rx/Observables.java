@@ -16,7 +16,7 @@ import io.reactivex.Observable;
  */
 public class Observables {
 
-    public static class ObservableCollectors {
+    public static class Collectors {
         public static Collector<Completable, List<Completable>, Completable> concatCompletable(){
             return new Collector<Completable, List<Completable>, Completable>() {
                 @Override

@@ -9,7 +9,7 @@ import android.widget.EditText;
  * mail: sunnyday.development@gmail.com
  */
 
-public class EditTextBindingAdapters {
+public class EditTextBinding {
 
     @BindingAdapter("bind:error")
     public static void bindError(EditText editText, @Nullable String error){

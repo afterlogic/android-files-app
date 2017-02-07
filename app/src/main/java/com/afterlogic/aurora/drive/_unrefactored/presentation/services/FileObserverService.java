@@ -15,7 +15,7 @@ import android.util.Log;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive._unrefactored.core.util.AccountUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.DeepFolderObserver;
-import com.afterlogic.aurora.drive._unrefactored.core.util.FileUtil;
+import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.interfaces.FileEventListener;
 import com.afterlogic.aurora.drive._unrefactored.core.util.task.TaskProgressNotifier;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;

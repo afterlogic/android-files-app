@@ -18,7 +18,7 @@ import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;
 import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.adapters.FileActionsMenuAdapter;
-import com.afterlogic.aurora.drive._unrefactored.core.util.FileUtil;
+import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.WatchingFileManager;
 import com.afterlogic.aurora.drive._unrefactored.core.util.interfaces.OnItemClickListener;
 

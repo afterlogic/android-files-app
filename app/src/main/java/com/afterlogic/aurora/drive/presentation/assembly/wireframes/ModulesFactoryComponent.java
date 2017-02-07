@@ -3,6 +3,7 @@ package com.afterlogic.aurora.drive.presentation.assembly.wireframes;
 import com.afterlogic.aurora.drive._unrefactored.data.common.ApiProvider;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.Injector;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationModulesStore;
+import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FileListFragment;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesActivity;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
 import com.afterlogic.aurora.drive.presentation.modules.start.view.StartActivity;
@@ -28,4 +29,6 @@ public interface ModulesFactoryComponent {
     Injector<StartActivity> start();
 
     Injector<MainFilesActivity> filesMain();
+
+    Injector<FileListFragment> fileList();
 }

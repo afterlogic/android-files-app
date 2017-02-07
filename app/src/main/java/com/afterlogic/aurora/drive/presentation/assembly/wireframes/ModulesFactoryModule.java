@@ -2,6 +2,8 @@ package com.afterlogic.aurora.drive.presentation.assembly.wireframes;
 
 import com.afterlogic.aurora.drive.presentation.assembly.assemblies.AssembliesAssemblyComponent;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.Injector;
+import com.afterlogic.aurora.drive.presentation.modules.filelist.assembly.FileListInjector;
+import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FileListFragment;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.assembly.MainFilesInjector;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesActivity;
 import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginInjector;
@@ -49,6 +51,11 @@ public class ModulesFactoryModule {
 
     @Provides
     Injector<MainFilesActivity> filesMain(MainFilesInjector injector){
+        return injector;
+    }
+
+    @Provides
+    Injector<FileListFragment> fileList(FileListInjector injector){
         return injector;
     }
 }

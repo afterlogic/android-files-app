@@ -1,6 +1,8 @@
 package com.afterlogic.aurora.drive.presentation.assembly.assemblies;
 
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationModulesStore;
+import com.afterlogic.aurora.drive.presentation.modules.filelist.assembly.FileListComponent;
+import com.afterlogic.aurora.drive.presentation.modules.filelist.assembly.FileListModule;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.assembly.MainFilesComponent;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.assembly.MainFilesModule;
 import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginComponent;
@@ -29,4 +31,6 @@ public interface AssembliesAssemblyComponent {
     StartComponent plus(StartModule module);
 
     MainFilesComponent plus(MainFilesModule module);
+
+    FileListComponent plus(FileListModule module);
 }

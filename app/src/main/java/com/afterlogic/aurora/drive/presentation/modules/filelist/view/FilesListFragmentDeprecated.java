@@ -1,11 +1,10 @@
-package com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments;
+package com.afterlogic.aurora.drive.presentation.modules.filelist.view;
 
 import android.accounts.Account;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,21 +17,24 @@ import android.widget.Toast;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive._unrefactored.core.util.AccountUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.DialogUtil;
-import com.afterlogic.aurora.drive._unrefactored.core.util.FileUtil;
+import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.api.ValidApiCallback;
-import com.afterlogic.aurora.drive.presentation.common.interfaces.OnBackPressedListener;
 import com.afterlogic.aurora.drive._unrefactored.core.util.interfaces.OnItemClickListener;
 import com.afterlogic.aurora.drive._unrefactored.core.util.interfaces.OnItemLongClickListener;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiCallback;
-import com.afterlogic.aurora.drive.model.error.ApiError;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.DBHelper;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.dao.WatchingFileDAO;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.model.WatchingFile;
-import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive._unrefactored.presentation.services.SyncService;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.FilesListActivity;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.adapters.FilesAdapter;
+import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.model.error.ApiError;
+import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.common.interfaces.OnBackPressedListener;
+import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseFragment;
+import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.FileActionCallback;
 import com.annimon.stream.Stream;
 
 import java.io.File;
@@ -45,15 +47,16 @@ import java.util.List;
  * Created by sashka on 18.03.16.
  * mail: sunnyday.development@gmail.com
  */
-public class FilesListFragment extends Fragment implements
+public class FilesListFragmentDeprecated extends BaseFragment implements
         ApiCallback<List<AuroraFile>>,
         OnItemClickListener<AuroraFile>,
         OnItemLongClickListener<AuroraFile>,
         OnBackPressedListener,
-        FilesAdapter.MultichoiseListener
+        FilesAdapter.MultichoiseListener,
+        FileListView
 {
 
-    private static final String TAG = FilesListFragment.class.getSimpleName();
+    private static final String TAG = FilesListFragmentDeprecated.class.getSimpleName();
     public static final String ARGS_TYPE = TAG + ".ARGS_TYPE";
     public static final String EXTRA_FOLDERS = "EXTRA_FOLDERS";
     public static final String EXTRA_REFRESHING = "EXTRA_REFRESHING";
@@ -74,22 +77,22 @@ public class FilesListFragment extends Fragment implements
     private String mType;
     private ArrayList<AuroraFile> mFolders;
 
-    private FilesCallback mCallback;
+    private FileActionCallback mCallback;
 
     private final List<Runnable> mOnRefreshActions = new ArrayList<>();
 
-    public static FilesListFragment newInstance(String type) {
+    public static FilesListFragmentDeprecated newInstance(String type) {
 
         Bundle args = new Bundle();
         args.putString(ARGS_TYPE, type);
-        FilesListFragment fragment = new FilesListFragment();
+        FilesListFragmentDeprecated fragment = new FilesListFragmentDeprecated();
         fragment.setArguments(args);
         return fragment;
     }
 
-    public static FilesListFragment newInstance(@NonNull String type,
-                                                @Nullable List<AuroraFile> folders,
-                                                @Nullable List<AuroraFile> content){
+    public static FilesListFragmentDeprecated newInstance(@NonNull String type,
+                                                          @Nullable List<AuroraFile> folders,
+                                                          @Nullable List<AuroraFile> content){
 
         ArrayList<AuroraFile> foldersArrayList = new ArrayList<>();
         if (folders != null) {
@@ -107,7 +110,7 @@ public class FilesListFragment extends Fragment implements
         args.putParcelableArrayList(EXTRA_CONTENT, contentArrayList);
         args.putBoolean(EXTRA_REFRESHING, false);
 
-        FilesListFragment fragment = new FilesListFragment();
+        FilesListFragmentDeprecated fragment = new FilesListFragmentDeprecated();
         fragment.setArguments(args);
         return fragment;
     }
@@ -124,7 +127,12 @@ public class FilesListFragment extends Fragment implements
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mCallback = (FilesCallback) context;
+        mCallback = (FileActionCallback) context;
+    }
+
+    @Override
+    protected void assembly(ModulesFactoryComponent modulesFactory) {
+
     }
 
     @Override

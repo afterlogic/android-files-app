@@ -21,7 +21,7 @@ import com.afterlogic.aurora.drive.BuildConfig;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive._unrefactored.core.util.AccountUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.ApiCompatibilityUtil;
-import com.afterlogic.aurora.drive._unrefactored.core.util.FileUtil;
+import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.NotificationUtil;
 import com.afterlogic.aurora.drive._unrefactored.data.common.ApiProvider;
 import com.afterlogic.aurora.drive.model.error.ApiResponseError;
