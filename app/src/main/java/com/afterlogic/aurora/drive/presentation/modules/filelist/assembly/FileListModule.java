@@ -7,6 +7,8 @@ import com.afterlogic.aurora.drive.presentation.modules.filelist.interactor.File
 import com.afterlogic.aurora.drive.presentation.modules.filelist.interactor.FileListInteractorImpl;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.presenter.FileListPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.presenter.FileListPresenterImpl;
+import com.afterlogic.aurora.drive.presentation.modules.filelist.router.FileListRouter;
+import com.afterlogic.aurora.drive.presentation.modules.filelist.router.FileListRouterImpl;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FileListView;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.viewModel.FileListModel;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.viewModel.FileListViewModel;
@@ -39,5 +41,10 @@ public class FileListModule extends PresentationModule<FileListView> {
     @Provides
     FileListInteractor interactor(FileListInteractorImpl interactor){
         return interactor;
+    }
+
+    @Provides
+    FileListRouter router(FileListRouterImpl router){
+        return router;
     }
 }

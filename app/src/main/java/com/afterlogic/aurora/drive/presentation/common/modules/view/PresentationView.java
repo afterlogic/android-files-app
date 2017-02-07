@@ -1,5 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.common.modules.view;
 
+import android.support.annotation.StringRes;
+
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.annotations.Repeat;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.annotations.RepeatPolicy;
 
@@ -29,6 +31,9 @@ public interface PresentationView extends ViewContext{
 
     @Repeat(RepeatPolicy.EACH_UNHANDLED)
     void showMessage(String message, int type);
+
+    @Repeat(RepeatPolicy.EACH_UNHANDLED)
+    void showMessage(@StringRes int messageId, int type);
 
     boolean isActive();
 

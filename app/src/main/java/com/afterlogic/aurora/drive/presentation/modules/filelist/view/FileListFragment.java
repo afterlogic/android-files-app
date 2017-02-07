@@ -15,7 +15,7 @@ import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseFragment
 import com.afterlogic.aurora.drive.presentation.common.modules.view.ViewPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.presenter.FileListPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.viewModel.FileListViewModel;
-import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.FileActionCallback;
+import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesCallback;
 
 import javax.inject.Inject;
 
@@ -51,7 +51,7 @@ public class FileListFragment extends BaseFragment implements FileListView, OnBa
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPresenter.initWith(getArguments().getString(ARGS_TYPE), (FileActionCallback) getActivity());
+        mPresenter.initWith(getArguments().getString(ARGS_TYPE), (MainFilesCallback) getActivity());
     }
 
     @Nullable

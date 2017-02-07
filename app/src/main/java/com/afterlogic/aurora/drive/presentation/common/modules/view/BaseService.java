@@ -93,6 +93,11 @@ public abstract class BaseService extends Service implements PresentationView {
     }
 
     @Override
+    public void showMessage(int messageId, int type) {
+        showMessage(getString(messageId), type);
+    }
+
+    @Override
     public void showMessage(String message, int type) {
         switch (type){
             case PresentationView.TYPE_MESSAGE_MAJOR:

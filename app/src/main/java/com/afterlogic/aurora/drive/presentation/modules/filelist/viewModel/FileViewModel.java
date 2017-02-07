@@ -25,6 +25,8 @@ public class FileViewModel extends BaseObservable implements View.OnClickListene
     private final OptWeakRef<FileListPresenter> mPresenter;
     private final AppResources mAppResources;
 
+    private final FileModel mModel = new FileModelImpl();
+
     private Uri mThumbNail = null;
 
     public FileViewModel(AuroraFile auroraFile, OptWeakRef<FileListPresenter> presenter, AppResources appResources) {
@@ -61,7 +63,7 @@ public class FileViewModel extends BaseObservable implements View.OnClickListene
     }
 
     public FileModel getModel(){
-        return new FileModelImpl();
+        return mModel;
     }
 
     @IntRange(from = -1, to = 1000)
@@ -86,6 +88,11 @@ public class FileViewModel extends BaseObservable implements View.OnClickListene
         public void setThumbNail(Uri uri) {
             mThumbNail = uri;
             notifyPropertyChanged(BR.fileIcon);
+        }
+
+        @Override
+        public AuroraFile getFile() {
+            return mAuroraFile;
         }
     }
 }

@@ -17,8 +17,6 @@ import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FileListFr
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.presenter.MainFilesPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.viewModel.MainFilesViewModel;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 /**
@@ -26,7 +24,7 @@ import javax.inject.Inject;
  * mail: sunnyday.development@gmail.com
  */
 
-public class MainFilesActivity extends BaseActivity implements MainFilesView, FileActionCallback {
+public class MainFilesActivity extends BaseActivity implements MainFilesView, MainFilesCallback {
 
     @Inject @ViewPresenter
     protected MainFilesPresenter mPresenter;
@@ -73,21 +71,6 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Fi
     }
 
     @Override
-    public void showActions(AuroraFile file) {
-
-    }
-
-    @Override
-    public void onFileClicked(AuroraFile file, List<AuroraFile> allFiles) {
-
-    }
-
-    @Override
-    public void createFolder(String path, String type, String folderName) {
-
-    }
-
-    @Override
     public void onBackPressed() {
         if (getCurrentFragment() == null || !getCurrentFragment().onBackPressed()){
             super.onBackPressed();
@@ -121,7 +104,6 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Fi
         public void onPropertyChanged(Observable observable, int i) {
             MainFilesViewModel viewModel = (MainFilesViewModel) observable;
             switch (i){
-
                 case BR.locked:
                     boolean locked = viewModel.getLocked();
                     getSupportActionBar().setDisplayHomeAsUpEnabled(locked);

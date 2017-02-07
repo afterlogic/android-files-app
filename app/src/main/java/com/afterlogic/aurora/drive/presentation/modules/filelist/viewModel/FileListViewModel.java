@@ -89,5 +89,12 @@ public class FileListViewModel implements SwipeRefreshLayout.OnRefreshListener{
         public void setThumbNail(AuroraFile file, Uri thumbUri) {
             mFilesMap.get(file).setThumbNail(thumbUri);
         }
+
+        @Override
+        public List<AuroraFile> getFiles() {
+            return Stream.of(mFiles)
+                    .map(file -> file.getModel().getFile())
+                    .collect(Collectors.toList());
+        }
     }
 }

@@ -34,7 +34,7 @@ import com.afterlogic.aurora.drive.model.error.ApiError;
 import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryComponent;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnBackPressedListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseFragment;
-import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.FileActionCallback;
+import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesCallback;
 import com.annimon.stream.Stream;
 
 import java.io.File;
@@ -77,7 +77,7 @@ public class FilesListFragmentDeprecated extends BaseFragment implements
     private String mType;
     private ArrayList<AuroraFile> mFolders;
 
-    private FileActionCallback mCallback;
+    private MainFilesCallback mCallback;
 
     private final List<Runnable> mOnRefreshActions = new ArrayList<>();
 
@@ -127,7 +127,7 @@ public class FilesListFragmentDeprecated extends BaseFragment implements
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mCallback = (FileActionCallback) context;
+        mCallback = (MainFilesCallback) context;
     }
 
     @Override
@@ -293,7 +293,7 @@ public class FilesListFragmentDeprecated extends BaseFragment implements
         if (item.isFolder()){
             openFolder(item);
         }else{
-            mCallback.onFileClicked(item, mFiles);
+            //mCallback.onFileClicked(item, mFiles);
         }
     }
 
@@ -303,7 +303,7 @@ public class FilesListFragmentDeprecated extends BaseFragment implements
     @Override
     public boolean onItemLongClick(AuroraFile item) {
         mNeedRefresh = true;
-        mCallback.showActions(item);
+        //mCallback.showActions(item);
         return false;
     }
 
@@ -450,7 +450,7 @@ public class FilesListFragmentDeprecated extends BaseFragment implements
 
                     mNeedRefresh = true;
 
-                    mCallback.createFolder(path, mType, folderName);
+                    //mCallback.createFolder(path, mType, folderName);
 
                     //Dismiss once everything is OK.
                     dialogInterface.dismiss();

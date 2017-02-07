@@ -21,4 +21,6 @@ public interface FileListModel {
     void setRefreshing(boolean isRefreshing);
 
     void setThumbNail(AuroraFile file, Uri thumbUri);
+
+    List<AuroraFile> getFiles();
 }

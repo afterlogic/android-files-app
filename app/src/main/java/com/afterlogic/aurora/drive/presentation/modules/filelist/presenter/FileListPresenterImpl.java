@@ -1,14 +1,20 @@
 package com.afterlogic.aurora.drive.presentation.modules.filelist.presenter;
 
+import android.content.Intent;
+
+import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive._unrefactored.core.util.DownloadType;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.modules.presenter.BasePresenter;
+import com.afterlogic.aurora.drive.presentation.common.modules.view.PresentationView;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.interactor.FileListInteractor;
+import com.afterlogic.aurora.drive.presentation.modules.filelist.router.FileListRouter;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FileListView;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.viewModel.FileListModel;
-import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.FileActionCallback;
+import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesCallback;
 import com.annimon.stream.Stream;
 
 import java.util.ArrayList;
@@ -28,8 +34,9 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
 
     private final FileListInteractor mInteractor;
     private final FileListModel mModel;
+    private final FileListRouter mRouter;
 
-    private FileActionCallback mFileActionCallback;
+    private MainFilesCallback mFileActionCallback;
     private String mType;
 
     private final List<AuroraFile> mPath = new ArrayList<>();
@@ -39,15 +46,17 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
 
     @Inject FileListPresenterImpl(ViewState<FileListView> viewState,
                                   FileListInteractor interactor,
-                                  FileListModel model) {
+                                  FileListModel model,
+                                  FileListRouter router) {
         super(viewState);
         mInteractor = interactor;
         mModel = model;
+        mRouter = router;
         mModel.setPresenter(this);
     }
 
     @Override
-    public void initWith(String type, FileActionCallback callback) {
+    public void initWith(String type, MainFilesCallback callback) {
         mType = type;
         mFileActionCallback = callback;
     }
@@ -87,6 +96,34 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
         if (file.isFolder()){
             mPath.add(0, file);
             onRefresh();
+        } else {
+            if (!mRouter.canOpenFile(file)){
+                onCantOpenFile();
+            }
+            if (file.isLink()){
+                mRouter.openLink(file);
+            }else {
+                if (file.isPreviewAble()){
+                    mRouter.openImagePreview(file, mModel.getFiles());
+                }else {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setType(file.getContentType());
+
+                    if (!file.isOfflineMode()) {
+                        downloadFile(file, DownloadType.DOWNLOAD_OPEN);
+                    } else {
+                        //File localFile = FileUtil.getOfflineFile(file, getApplicationContext());
+                        //if (localFile.exists()){
+                        //    onFileDownloaded(file, localFile, DownloadType.DOWNLOAD_OPEN);
+                        //} else {
+                        //    getView().showMessage(
+                        //            R.string.prompt_offline_file_not_exist,
+                        //            PresentationView.TYPE_MESSAGE_MAJOR
+                        //    );
+                        //}
+                    }
+                }
+            }
         }
     }
 
@@ -129,5 +166,16 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
 
         //TODO notify changes
         return true;
+    }
+
+    private void onCantOpenFile(){
+        getView().showMessage(
+                R.string.prompt_cant_open_file,
+                PresentationView.TYPE_MESSAGE_MAJOR
+        );
+    }
+
+    private void downloadFile(AuroraFile file, DownloadType type){
+
     }
 }

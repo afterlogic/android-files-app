@@ -242,6 +242,11 @@ public abstract class BaseActivity extends AppCompatActivity implements Presenta
     }
 
     @Override
+    public void showMessage(int messageId, int type) {
+        showMessage(getString(messageId), type);
+    }
+
+    @Override
     public boolean isActive() {
         return mIsActive;
     }

@@ -242,6 +242,11 @@ public abstract class BaseFragment extends Fragment implements PresentationView 
     }
 
     @Override
+    public void showMessage(int messageId, int type) {
+        showMessage(getString(messageId), type);
+    }
+
+    @Override
     public void showMessage(String message, int type) {
         if (mIsActive) {
             switch (type) {
