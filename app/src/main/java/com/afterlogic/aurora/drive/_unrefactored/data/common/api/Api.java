@@ -164,11 +164,7 @@ public class Api extends AuroraApi{
                 new ApiTask.CallCreatorImpl<AuroraFiles, ApiResponseP7<Boolean>>() {
                     @Override
                     public Call<ApiResponseP7<Boolean>> createCall(AuroraFiles apiInterface) {
-                        Single<Boolean> observable = getApiProvider().getFilesRepository().rename(
-                                file,
-                                newName
-                        );
-                        return fromObservable(observable);
+                        return fromObservable(null);
                     }
                 }
         ).execute();
@@ -199,9 +195,7 @@ public class Api extends AuroraApi{
                     public Call<ApiResponseP7<Boolean>> createCall(AuroraFiles apiInterface) {
                         List<AuroraFile> targetFiles = Stream.of(files)
                                 .collect(Collectors.toList());
-                        Single<Boolean> observable = getApiProvider().getFilesRepository()
-                                .delete(targetFiles);
-                        return fromObservable(observable);
+                        return fromObservable(null);
                     }
                 }
         ).execute();

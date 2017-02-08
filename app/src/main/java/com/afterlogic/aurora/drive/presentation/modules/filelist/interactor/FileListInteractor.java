@@ -9,6 +9,7 @@ import com.afterlogic.aurora.drive.presentation.common.modules.interactor.Intera
 import java.io.File;
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
@@ -23,7 +24,11 @@ public interface FileListInteractor extends Interactor {
 
     Single<Uri> getThumbnail(AuroraFile file);
 
-    Observable<Progressible<File>> downloadFileForOpen(AuroraFile file);
+    Observable<Progressible<File>> downloadForOpen(AuroraFile file);
 
-    Observable<Progressible<File>> downloadFile(AuroraFile file);
+    Observable<Progressible<File>> downloadToDownloads(AuroraFile file);
+
+    Single<AuroraFile> rename(AuroraFile file, String newName);
+
+    Completable deleateFile(AuroraFile file);
 }

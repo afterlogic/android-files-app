@@ -19,4 +19,6 @@ public interface FileListRouter {
     boolean canOpenFile(AuroraFile file);
 
     void openFile(AuroraFile remote, File file);
+
+    void openSendTo(AuroraFile source, File file);
 }

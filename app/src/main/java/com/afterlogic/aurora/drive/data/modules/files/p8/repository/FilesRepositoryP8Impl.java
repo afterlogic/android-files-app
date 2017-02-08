@@ -27,6 +27,8 @@ import com.afterlogic.aurora.drive.model.DeleteFileInfo;
 import com.afterlogic.aurora.drive.model.FileInfo;
 import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.model.error.ApiResponseError;
+import com.afterlogic.aurora.drive.model.error.FileAlreadyExist;
+import com.afterlogic.aurora.drive.model.error.FileNotExistError;
 import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
@@ -35,10 +37,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -161,36 +165,52 @@ public class FilesRepositoryP8Impl extends AuthorizedRepository implements Files
     }
 
     @Override
-    public Single<Boolean> rename(AuroraFile file, String newName) {
-        Single<ApiResponseP8<Boolean>> netRequest = mFilesService.renameFile(
+    public Single<AuroraFile> rename(AuroraFile file, String newName) {
+        AuroraFile newFile = file.clone();
+        newFile.setName(newName);
+
+        Completable renameRequest = withNetMapper(mFilesService.renameFile(
                 file.getType(),
                 file.getPath(),
                 file.getName(),
-                newName,
+                newFile.getName(),
                 file.isLink()
-        );
-        return withNetMapper(netRequest);
+        ))//-----|
+                .toCompletable();
+
+        return checkFile(newFile)
+                .flatMap(remoteFile -> Single.error(new FileAlreadyExist()))
+                .toCompletable()
+                .onErrorResumeNext(error -> {
+                    if (error instanceof FileNotExistError){
+                        return Completable.complete();
+                    } else {
+                        return Completable.error(error);
+                    }
+                })
+                .andThen(renameRequest)
+                .andThen(checkFile(newFile));
     }
 
     @Override
     public Single<AuroraFile> checkFile(AuroraFile file) {
         return getFiles(file.getParentFolder())
-                .flatMap(files -> {
-                    try {
-                        AuroraFile requestedFile = Stream.of(files)
-                                .filter(remoteFile -> remoteFile.getFullPath().equals(file.getFullPath()))
-                                .findFirst()
-                                .orElseThrow(() -> new ApiResponseError(ApiResponseError.FILE_NOT_EXIST, "File not exist"));
-                        return Single.just(requestedFile);
-                    } catch (ApiResponseError e){
-                        return Single.error(e);
-                    }
-                });
+                .flatMap(files -> Single.fromCallable(() ->
+                        Stream.of(files)
+                        .filter(remoteFile -> remoteFile.getFullPath().equals(file.getFullPath()))
+                        .findFirst()
+                        .orElseThrow(FileNotExistError::new))
+                );
     }
 
     @Override
-    public Single<Boolean> delete(List<AuroraFile> files) {
-        return Single.defer(() -> {
+    public Completable delete(AuroraFile files) {
+        return delete(Collections.singletonList(files));
+    }
+
+    @Override
+    public Completable delete(List<AuroraFile> files) {
+        return Completable.defer(() -> {
             String type = files.get(0).getType();
 
             checkFilesType(type, files);
@@ -200,7 +220,8 @@ public class FilesRepositoryP8Impl extends AuthorizedRepository implements Files
                     .collect(Collectors.toList());
 
             Single<ApiResponseP8<Boolean>> netRequest = mFilesService.delete(type, deleteInfo);
-            return withNetMapper(netRequest);
+            return withNetMapper(netRequest)
+                    .toCompletable();
         });
     }
 

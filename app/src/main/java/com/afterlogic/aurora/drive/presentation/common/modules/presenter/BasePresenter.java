@@ -148,6 +148,23 @@ public abstract class BasePresenter<V extends PresentationView> implements Prese
         return Observable.defer(() -> mPermissionSource);
     }
 
+    public Observable<PermissionGrantEvent> observePermissions(int requestId, boolean checkGrant){
+        return observePermissions()
+                .filter(grantEvent -> grantEvent.getRequestId() == requestId)
+                .flatMap(permissions -> {
+                    if (!checkGrant || permissions.isAllGranted()){
+                        return Observable.just(permissions);
+                    } else {
+                        PermissionDeniedError error = new PermissionDeniedError(
+                                permissions.getRequestId(),
+                                permissions.getPermissions()
+                        );
+                        error.setHandled(true);
+                        return Observable.error(error);
+                    }
+                });
+    }
+
     /**
      * Run action only if view output is presented and presenter state is active.
      */

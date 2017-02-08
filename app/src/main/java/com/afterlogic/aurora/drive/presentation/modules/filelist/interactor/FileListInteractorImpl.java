@@ -18,6 +18,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
@@ -53,13 +54,13 @@ public class FileListInteractorImpl extends BaseInteractor implements FileListIn
     }
 
     @Override
-    public Observable<Progressible<File>> downloadFileForOpen(AuroraFile file) {
+    public Observable<Progressible<File>> downloadForOpen(AuroraFile file) {
         return mFilesRepository.download(file, FileUtil.getTargetFileByType(file, DownloadType.DOWNLOAD_OPEN, mAppContext))
                 .compose(this::composeDefault);
     }
 
     @Override
-    public Observable<Progressible<File>> downloadFile(AuroraFile file) {
+    public Observable<Progressible<File>> downloadToDownloads(AuroraFile file) {
         return mFilesRepository.download(file, FileUtil.getTargetFileByType(file, DownloadType.DOWNLOAD_TO_DOWNLOADS, mAppContext))
                 .doOnNext(progress -> {
                     if (progress.isDone()){
@@ -78,4 +79,18 @@ public class FileListInteractorImpl extends BaseInteractor implements FileListIn
                 })
                 .compose(this::composeDefault);
     }
+
+    @Override
+    public Single<AuroraFile> rename(AuroraFile file, String newName) {
+        return mFilesRepository.rename(file, newName)
+                .compose(this::composeDefault);
+    }
+
+    @Override
+    public Completable deleateFile(AuroraFile file) {
+        return mFilesRepository.delete(file)
+                .compose(this::composeDefault);
+    }
+
+
 }

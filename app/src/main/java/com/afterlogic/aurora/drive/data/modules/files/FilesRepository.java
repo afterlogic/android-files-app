@@ -12,6 +12,7 @@ import com.afterlogic.aurora.drive.model.Progressible;
 import java.io.File;
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import okhttp3.ResponseBody;
@@ -32,11 +33,12 @@ public interface FilesRepository {
 
     Single<Boolean> createFolder(AuroraFile file);
 
-    Single<Boolean> rename(AuroraFile file, String newName);
+    Single<AuroraFile> rename(AuroraFile file, String newName);
 
     Single<AuroraFile> checkFile(AuroraFile file);
 
-    Single<Boolean> delete(List<AuroraFile> files);
+    Completable delete(AuroraFile files);
+    Completable delete(List<AuroraFile> files);
 
     Single<ResponseBody> downloadFileBody(AuroraFile file);
 

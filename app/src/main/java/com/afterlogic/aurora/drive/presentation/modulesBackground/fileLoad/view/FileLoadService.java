@@ -124,6 +124,9 @@ public class FileLoadService extends Service {
 
         PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
         mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "file_task");
+
+        startForeground(0, null);
+        stopForeground(true);
     }
 
     @Override

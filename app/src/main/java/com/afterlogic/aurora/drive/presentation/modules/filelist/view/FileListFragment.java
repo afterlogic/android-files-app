@@ -1,22 +1,30 @@
 package com.afterlogic.aurora.drive.presentation.modules.filelist.view;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.FloatRange;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive._unrefactored.core.util.DialogUtil;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.dialogs.FileActionsBottomSheet;
+import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.databinding.FragmentFilesListBindBinding;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.common.components.view.SelectionEditText;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnBackPressedListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseFragment;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.ViewPresenter;
+import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.presenter.FileListPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.viewModel.FileListViewModel;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesCallback;
@@ -136,10 +144,97 @@ public class FileListFragment extends BaseFragment implements FileListView, OnBa
     }
 
     @Override
+    public void showRenameDialog(AuroraFile file, Consumer<String> newNameConsumer) {
+        //[START Prepare input view (disallow change file extension)]
+        @SuppressLint("InflateParams")
+        View inputView = LayoutInflater.from(getContext())
+                .inflate(R.layout.item_layout_dialog_input, null);
+        final String ext = FileUtil.getFileExtension(file.getName());
+        if (ext != null && !file.isFolder() && !file.isLink()) {
+            //Set disallow only for 'normal' file
+            final SelectionEditText input = (SelectionEditText) inputView.findViewById(R.id.input);
+            input.setOnSelectionChangeListener((start, end) -> {
+                int lenght = input.getText().length();
+                int max = lenght - ext.length() - 1;
+                boolean fixed = false;
+                if (start > max){
+                    start = max;
+                    fixed = true;
+                }
+                if (end > max){
+                    end = max;
+                    fixed = true;
+                }
+                if (fixed){
+                    input.setSelection(start, end);
+                }
+            });
+        }
+        //[END Prepare input view (disallow change file extension)]
+
+        //Show dialog
+        DialogUtil.showInputDialog(
+                inputView,
+                getString(R.string.prompt_input_new_file_name),
+                file.getName(),
+                getContext(),
+                (dialogInterface, input) -> {
+
+                    String newName = input.getText().toString();
+                    if (TextUtils.isEmpty(newName)){
+                        input.setError(getString(R.string.error_field_required));
+                        input.requestFocus();
+                        return;
+                    }
+
+                    input.clearFocus();
+
+                    InputMethodManager keyboard = (InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    keyboard.hideSoftInputFromWindow(input.getWindowToken(), 0);
+
+                    dialogInterface.dismiss();
+
+                    final String trimmed = newName.trim();
+
+                    //Check new name if it is same as old closeQuietly dialog without any action
+                    if (!newName.equals(file.getName()) && !trimmed.equals(file.getName())){
+                        newNameConsumer.consume(trimmed);
+                    }
+                });
+    }
+
+    @Override
+    public void showFileDeletingProgress(String fileName) {
+        mProgressDialog = new ProgressDialog(getContext(), R.style.AppTheme_Dialog);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setTitle("Deleting:");
+        mProgressDialog.setMessage(fileName);
+        mProgressDialog.show();
+    }
+
+    @Override
+    public void showFileRenamingProgress(String fileName) {
+        mProgressDialog = new ProgressDialog(getContext(), R.style.AppTheme_Dialog);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setTitle("Renaming:");
+        mProgressDialog.setMessage(fileName);
+        mProgressDialog.show();
+    }
+
+    @Override
     public void onFileAction(int action, AuroraFile file) {
         switch (action){
-            case R.id.action_download:
-                mPresenter.onDownload(file);
+            case R.id.action_download: mPresenter.onDownload(file); break;
+            case R.id.action_delete: mPresenter.onDelete(file); break;
+            case R.id.action_send: mPresenter.onSendTo(file); break;
+            case R.id.action_rename: mPresenter.onRename(file); break;
+
+            case R.id.action_offline:
+            case R.id.action_offline_on:
+            case R.id.action_offline_off:
+                mPresenter.onToggleOffline(file);
                 break;
         }
     }

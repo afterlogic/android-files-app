@@ -22,5 +22,9 @@ public interface FileListModel {
 
     void setThumbNail(AuroraFile file, Uri thumbUri);
 
+    void changeFile(AuroraFile previous, AuroraFile newFile);
+
+    void removeFile(AuroraFile file);
+
     List<AuroraFile> getFiles();
 }

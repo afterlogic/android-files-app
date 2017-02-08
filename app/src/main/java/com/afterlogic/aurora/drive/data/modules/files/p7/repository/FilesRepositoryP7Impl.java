@@ -30,6 +30,8 @@ import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.FileInfo;
 import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.model.error.ApiResponseError;
+import com.afterlogic.aurora.drive.model.error.FileAlreadyExist;
+import com.afterlogic.aurora.drive.model.error.FileNotExistError;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 
@@ -37,11 +39,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
 
+import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -144,14 +148,35 @@ public class FilesRepositoryP7Impl extends AuthorizedRepository implements Files
     }
 
     @Override
-    public Single<Boolean> rename(AuroraFile file, String newName) {
-        return withNetMapper(mCloudService.renameFile(
+    public Single<AuroraFile> rename(AuroraFile file, String newName) {
+        AuroraFile newFile = file.clone();
+        newFile.setName(newName);
+
+        Completable renameAction = withNetMapper(mCloudService.renameFile(
                 file.getType(),
                 file.getPath(),
                 file.getName(),
-                newName,
+                newFile.getName(),
                 file.isLink()
-        ));
+        )).toCompletable();
+
+        return checkFile(newFile)
+                .flatMap(remoteFile -> Single.error(new FileAlreadyExist())).toCompletable()
+                .onErrorResumeNext(error -> {
+                    if (error instanceof FileNotExistError){
+                        return Completable.complete();
+                    } else {
+                        return Completable.error(error);
+                    }
+                })
+                .andThen(renameAction)
+                .andThen(checkFile(newFile)).toCompletable()
+                .andThen(getFiles(file.getParentFolder()))
+                .map(files -> Stream.of(files)
+                        .filter(fileItem -> fileItem.getFullPath().equals(newFile.getFullPath()))
+                        .findFirst()
+                        .orElseThrow(FileNotExistError::new)
+                );
     }
 
     @Override
@@ -159,17 +184,29 @@ public class FilesRepositoryP7Impl extends AuthorizedRepository implements Files
         return withNetMapper(
                 mCloudService.checkFile(file.getType(), file.getPath(), file.getName()).map(response -> response),
                 mFileNetToBlMapper
-        );
+        ).onErrorResumeNext(error -> {
+            if (error instanceof ApiResponseError && ((ApiResponseError) error).getErrorCode() == ApiResponseError.FILE_NOT_EXIST){
+                return Single.error(FileNotExistError::new);
+            } else {
+                return Single.error(error);
+            }
+        });
     }
 
     @Override
-    public Single<Boolean> delete(List<AuroraFile> files) {
-        return Single.defer(() -> {
+    public Completable delete(AuroraFile files) {
+        return delete(Collections.singletonList(files));
+    }
+
+    @Override
+    public Completable delete(List<AuroraFile> files) {
+        return Completable.defer(() -> {
             String type = files.get(0).getType();
             checkFilesType(type, files);
 
-            List<AuroraFileP7> mapped = MapperUtil.list(mFileBlToNetMapper).map(files);
-            return withNetMapper(mCloudService.deleteFiles(type, mapped));
+            List<AuroraFileP7> mapped = MapperUtil.listOrEmpty(files, mFileBlToNetMapper);
+            return withNetMapper(mCloudService.deleteFiles(type, mapped))
+                    .toCompletable();
         });
     }
 

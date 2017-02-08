@@ -21,12 +21,12 @@ import com.afterlogic.aurora.drive.presentation.modules.filelist.presenter.FileL
 
 public class FileViewModel extends BaseObservable implements View.OnClickListener, View.OnLongClickListener{
 
-    private final AuroraFile mAuroraFile;
     private final OptWeakRef<FileListPresenter> mPresenter;
     private final AppResources mAppResources;
 
     private final FileModel mModel = new FileModelImpl();
 
+    private AuroraFile mAuroraFile;
     private Uri mThumbNail = null;
 
     public FileViewModel(AuroraFile auroraFile, OptWeakRef<FileListPresenter> presenter, AppResources appResources) {
@@ -35,6 +35,7 @@ public class FileViewModel extends BaseObservable implements View.OnClickListene
         mAppResources = appResources;
     }
 
+    @Bindable
     public String getFileName(){
         return mAuroraFile.getName();
     }
@@ -93,6 +94,13 @@ public class FileViewModel extends BaseObservable implements View.OnClickListene
         @Override
         public AuroraFile getFile() {
             return mAuroraFile;
+        }
+
+        @Override
+        public void updateBy(AuroraFile file) {
+            mAuroraFile = file;
+            notifyPropertyChanged(BR.fileName);
+            notifyPropertyChanged(BR.fileIcon);
         }
     }
 }

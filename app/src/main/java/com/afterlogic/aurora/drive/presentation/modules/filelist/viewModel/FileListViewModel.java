@@ -9,10 +9,12 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.presenter.FileListPresenter;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.WeakHashMap;
 
@@ -28,10 +30,11 @@ public class FileListViewModel implements SwipeRefreshLayout.OnRefreshListener{
     private final AppResources mAppResources;
 
     private final OptWeakRef<FileListPresenter> mPresenter = OptWeakRef.empty();
-    private final ObservableList<FileViewModel> mFiles = new ObservableArrayList<>();
-    private final ObservableBoolean mRefreshing = new ObservableBoolean(true);
 
-    private final WeakHashMap<AuroraFile, FileModel> mFilesMap = new WeakHashMap<>();
+    private final ObservableList<FileViewModel> mFiles = new ObservableArrayList<>();
+    private final WeakHashMap<AuroraFile, FileViewModel> mFilesMap = new WeakHashMap<>();
+
+    private final ObservableBoolean mRefreshing = new ObservableBoolean(true);
 
     @Inject
     public FileListViewModel(AppResources appResources) {
@@ -71,7 +74,7 @@ public class FileListViewModel implements SwipeRefreshLayout.OnRefreshListener{
                 List<FileViewModel> viewModels = Stream.of(files)
                         .map((auroraFile) -> {
                             FileViewModel viewModel = new FileViewModel(auroraFile, mPresenter, mAppResources);
-                            mFilesMap.put(auroraFile, viewModel.getModel());
+                            mFilesMap.put(auroraFile, viewModel);
                             return viewModel;
                         })
                         .collect(Collectors.toList());
@@ -87,7 +90,23 @@ public class FileListViewModel implements SwipeRefreshLayout.OnRefreshListener{
 
         @Override
         public void setThumbNail(AuroraFile file, Uri thumbUri) {
-            mFilesMap.get(file).setThumbNail(thumbUri);
+            mFilesMap.get(file).getModel().setThumbNail(thumbUri);
+        }
+
+        @Override
+        public void changeFile(AuroraFile previous, AuroraFile newFile) {
+            FileViewModel newModel = new FileViewModel(newFile, mPresenter, mAppResources);
+            FileViewModel prevModel = mFilesMap.remove(previous);
+            mFiles.set(mFiles.indexOf(prevModel), newModel);
+            mFilesMap.put(newFile, newModel);
+            Collections.sort(mFiles, (l, r) ->
+                    FileUtil.AURORA_FILE_COMPARATOR.compare(l.getModel().getFile(), r.getModel().getFile())
+            );
+        }
+
+        @Override
+        public void removeFile(AuroraFile file) {
+            mFiles.remove(mFilesMap.remove(file));
         }
 
         @Override

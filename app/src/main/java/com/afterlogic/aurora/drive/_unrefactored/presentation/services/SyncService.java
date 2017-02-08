@@ -447,8 +447,7 @@ public class SyncService extends Service {
 
             //TODO !!! Upload with override
             if (mApi.getSessionManager().getSession().getApiVersion() == Const.ApiVersion.API_P8){
-                boolean deleted = repository.delete(Collections.singletonList(file))
-                        .blockingGet();
+                boolean deleted = repository.delete(Collections.singletonList(file)).blockingGet() == null;
                 if (!deleted){
                     MyLog.e(this, "File not deleted: " + file.getName());
                     return false;

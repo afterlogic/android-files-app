@@ -6,6 +6,7 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -40,28 +41,21 @@ public class DialogUtil {
                 .setView(inputView)
                 .setTitle(title)
                 .setPositiveButton(ctx.getString(R.string.dialog_ok), null)
-                .setNegativeButton(ctx.getString(R.string.dialog_cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        input.clearFocus();
-                        dialog.dismiss();
-                    }
+                .setNegativeButton(ctx.getString(R.string.dialog_cancel), (dialog, which) -> {
+                    input.clearFocus();
+                    dialog.dismiss();
                 })
                 .create();
 
-        d.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
+        d.setOnShowListener(dialog -> {
 
-                Button b = d.getButton(AlertDialog.BUTTON_POSITIVE);
-                b.setOnClickListener(new View.OnClickListener() {
+            input.requestFocus();
+            Button b = d.getButton(AlertDialog.BUTTON_POSITIVE);
+            b.setOnClickListener(view -> listener.onInput(d, input));
 
-                    @Override
-                    public void onClick(View view) {
-                        listener.onInput(d, input);
-                    }
-                });
-            }
+
+            InputMethodManager keyboard = (InputMethodManager)ctx.getSystemService(Context.INPUT_METHOD_SERVICE);
+            keyboard.showSoftInput(input, 0);
         });
 
         d.show();

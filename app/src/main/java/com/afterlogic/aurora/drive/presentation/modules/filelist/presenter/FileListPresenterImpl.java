@@ -7,6 +7,8 @@ import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
+import com.afterlogic.aurora.drive.model.error.FileAlreadyExist;
+import com.afterlogic.aurora.drive.model.error.FileNotExistError;
 import com.afterlogic.aurora.drive.model.error.PermissionDeniedError;
 import com.afterlogic.aurora.drive.presentation.common.modules.presenter.BasePresenter;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.PresentationView;
@@ -27,6 +29,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 
@@ -40,7 +43,6 @@ import static com.afterlogic.aurora.drive.model.events.PermissionGrantEvent.FILE
  */
 
 public class FileListPresenterImpl extends BasePresenter<FileListView> implements FileListPresenter {
-
 
     private final FileListInteractor mInteractor;
     private final FileListModel mModel;
@@ -128,7 +130,7 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
                     intent.setType(file.getContentType());
 
                     if (!file.isOfflineMode()) {
-                        mInteractor.downloadFileForOpen(file)
+                        mInteractor.downloadForOpen(file)
                                 .compose(this::downloadTask)
                                 .subscribe(
                                         localFile -> mRouter.openFile(file, localFile),
@@ -165,11 +167,49 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
 
     @Override
     public void onDownload(AuroraFile file) {
-        mInteractor.downloadFile(file)
+        mInteractor.downloadToDownloads(file)
                 .compose(this::downloadTask)
                 .subscribe(
                         //TODO dialog: open file?
                         localFile -> mRouter.openFile(file, localFile),
+                        this::onErrorObtained
+                );
+    }
+
+    @Override
+    public void onSendTo(AuroraFile file) {
+        mInteractor.downloadForOpen(file)
+                .compose(this::downloadTask)
+                .subscribe(
+                        localFile -> mRouter.openSendTo(file, localFile),
+                        this::onErrorObtained
+                );
+    }
+
+    @Override
+    public void onRename(AuroraFile file) {
+        getView().showRenameDialog(file, name -> mInteractor.rename(file, name)
+                .doOnSubscribe(disposable -> getView().showFileRenamingProgress(file.getName()))
+                .doFinally(() -> getView().hideProgress())
+                .subscribe(
+                        newFile -> handleRenameResult(file, newFile),
+                        this::onRenameError
+                )
+        );
+    }
+
+    @Override
+    public void onToggleOffline(AuroraFile file) {
+
+    }
+
+    @Override
+    public void onDelete(AuroraFile file) {
+        mInteractor.deleateFile(file)
+                .doOnSubscribe(disposable -> getView().showFileDeletingProgress(file.getName()))
+                .doFinally(() -> getView().hideProgress())
+                .subscribe(
+                        () -> mModel.removeFile(file),
                         this::onErrorObtained
                 );
     }
@@ -183,23 +223,6 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
         return popPath();
     }
 
-    private void handleFilesResult(List<AuroraFile> files){
-        Collections.sort(files, FileUtil.AURORA_FILE_COMPARATOR);
-
-        mModel.setFileList(files);
-        mThumbnailRequest = Stream.of(files)
-                .filter(AuroraFile::hasThumbnail)
-                .map(file -> mInteractor.getThumbnail(file)
-                        .doOnSuccess(thumb -> mModel.setThumbNail(file, thumb))
-                        .toCompletable()
-                        .onErrorComplete()
-                )
-                .collect(Observables.Collectors.concatCompletable())
-                .doFinally(() -> mThumbnailRequest = null)
-                .subscribe();
-
-    }
-
     private boolean popPath(){
         if (mPath.size() == 1) return false;
 
@@ -208,6 +231,49 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
 
         //TODO notify changes
         return true;
+    }
+
+    private void handleFilesResult(List<AuroraFile> files){
+        Collections.sort(files, FileUtil.AURORA_FILE_COMPARATOR);
+
+        mModel.setFileList(files);
+        mThumbnailRequest = Stream.of(files)
+                .filter(AuroraFile::hasThumbnail)
+                .map(this::updateFileThumb)
+                .collect(Observables.Collectors.concatCompletable())
+                .doFinally(() -> mThumbnailRequest = null)
+                .subscribe();
+
+    }
+
+    private void handleRenameResult(AuroraFile previous, AuroraFile newFile){
+        mModel.changeFile(previous, newFile);
+        if (newFile.hasThumbnail()){
+            updateFileThumb(newFile).subscribe();
+        }
+    }
+
+    private void onRenameError(Throwable error){
+        if (error instanceof FileNotExistError){
+            getView().showMessage(
+                    R.string.error_default_api_error,
+                    PresentationView.TYPE_MESSAGE_MAJOR
+            );
+        } else if (error instanceof FileAlreadyExist){
+            getView().showMessage(
+                    R.string.error_renamed_file_exist,
+                    PresentationView.TYPE_MESSAGE_MAJOR
+            );
+        } else {
+            onErrorObtained(error);
+        }
+    }
+
+    private Completable updateFileThumb(AuroraFile file){
+        return mInteractor.getThumbnail(file)
+                .doOnSuccess(thumb -> mModel.setThumbNail(file, thumb))
+                .toCompletable()
+                .onErrorComplete();
     }
 
     private void onCantOpenFile(){
@@ -223,7 +289,7 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
     }
 
     private Observable<File> downloadTask(Observable<Progressible<File>> observable){
-        return observable.startWith(checkPermission(
+        return observable.startWith(checkAndWaitPermissionResult(
                 FILES_STORAGE_ACCESS,
                 new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}
         ))//----|
@@ -241,7 +307,7 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
                 .compose(this::trackCurrentTask);
     }
 
-    private <T> Observable<T> checkPermission(int requestId, String... perms){
+    private <T> Observable<T> checkAndWaitPermissionResult(int requestId, String... perms){
         return Observable.defer(() -> {
             if (!PermissionUtil.isAllGranted(mAppContext, perms)){
                 return Observable.<T>error(new PermissionDeniedError(requestId, perms));
@@ -250,21 +316,7 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
             }
         })//----|
                 .doOnError(this::onErrorObtained)
-                .retryWhen(attempts -> attempts.flatMap(error -> observePermissions())
-                        .filter(permEvent -> permEvent.getRequestId() == requestId)
-                        .flatMap(permissions -> {
-                            if (permissions.isAllGranted()){
-                                return Observable.<Object>just(permissions);
-                            } else {
-                                PermissionDeniedError error = new PermissionDeniedError(
-                                        permissions.getRequestId(),
-                                        permissions.getPermissions()
-                                );
-                                error.setHandled(true);
-                                return Observable.<T>error(error);
-                            }
-                        })
-                );
+                .retryWhen(attempts -> observePermissions(requestId, true));
 
     }
 }

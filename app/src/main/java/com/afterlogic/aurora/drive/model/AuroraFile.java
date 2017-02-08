@@ -129,7 +129,8 @@ public class AuroraFile implements Parcelable, Cloneable{
     }
 
     public void setName(String name) {
-        mFullPath = mFullPath.replace(mName, name);
+        int nameStart = mFullPath.lastIndexOf(mName);
+        mFullPath = mFullPath.substring(0, nameStart) + name;
         mName = name;
     }
 
@@ -268,5 +269,14 @@ public class AuroraFile implements Parcelable, Cloneable{
             e.printStackTrace();
         }
         return null;
+    }
+
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof AuroraFile)) return false;
+        AuroraFile check = (AuroraFile) obj;
+
+        return mFullPath.equals(check.getFullPath());
     }
 }
