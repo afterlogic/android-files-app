@@ -19,4 +19,8 @@ public interface FileListPresenter extends Presenter, OnBackPressedListener {
     void onFileClick(AuroraFile file);
 
     void onFileLongClick(AuroraFile file);
+
+    void onCancelCurrentTask();
+
+    void onDownload(AuroraFile file);
 }

@@ -52,8 +52,7 @@ public class FilesListFragmentDeprecated extends BaseFragment implements
         OnItemClickListener<AuroraFile>,
         OnItemLongClickListener<AuroraFile>,
         OnBackPressedListener,
-        FilesAdapter.MultichoiseListener,
-        FileListView
+        FilesAdapter.MultichoiseListener
 {
 
     private static final String TAG = FilesListFragmentDeprecated.class.getSimpleName();

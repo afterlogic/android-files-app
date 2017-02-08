@@ -5,9 +5,13 @@ import android.os.Bundle;
 import com.afterlogic.aurora.drive.BuildConfig;
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
+import com.afterlogic.aurora.drive.model.error.BaseError;
+import com.afterlogic.aurora.drive.model.error.PermissionDeniedError;
+import com.afterlogic.aurora.drive.model.events.PermissionGrantEvent;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.Stoppable;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.PresentationView;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
+import com.afterlogic.aurora.drive.presentation.common.util.PermisionResultListener;
 import com.annimon.stream.Stream;
 
 import java.util.ArrayList;
@@ -26,6 +30,8 @@ import io.reactivex.exceptions.CompositeException;
  * Base presenter implementation.
  */
 public abstract class BasePresenter<V extends PresentationView> implements Presenter {
+
+    private final PermissionEventObservableSource mPermissionSource = new PermissionEventObservableSource();
 
     //Presenter view input
     private final V mView;
@@ -109,7 +115,7 @@ public abstract class BasePresenter<V extends PresentationView> implements Prese
     }
 
     protected void onPresenterStart(){
-        //no-op
+        registerStoppable(new PermisionResultListener(this::onPermissionEvent));
     }
 
     /**
@@ -132,6 +138,14 @@ public abstract class BasePresenter<V extends PresentationView> implements Prese
 
     protected V getView() {
         return mView;
+    }
+
+    protected void onPermissionEvent(PermissionGrantEvent event){
+        mPermissionSource.onPermissionEvent(event);
+    }
+
+    public Observable<PermissionGrantEvent> observePermissions(){
+        return Observable.defer(() -> mPermissionSource);
     }
 
     /**
@@ -164,9 +178,24 @@ public abstract class BasePresenter<V extends PresentationView> implements Prese
             return;
         }
 
+        if (error instanceof BaseError){
+            switch (((BaseError) error).getErrorCode()){
+                case PermissionDeniedError.CODE:
+                    PermissionDeniedError permissionError = (PermissionDeniedError) error;
+                    if (!permissionError.isHandled()) {
+                        onUnhandledPermissionError(permissionError);
+                    }
+                    break;
+            }
+        }
+
         if (BuildConfig.DEBUG) {
             mView.showMessage(error.getMessage(), PresentationView.TYPE_MESSAGE_MINOR);
         }
+    }
+
+    protected void onUnhandledPermissionError(PermissionDeniedError error){
+        getView().requestPermissions(error.getPermissions(), error.getRequestCode());
     }
 
     protected void registerStoppable(Stoppable stoppable){

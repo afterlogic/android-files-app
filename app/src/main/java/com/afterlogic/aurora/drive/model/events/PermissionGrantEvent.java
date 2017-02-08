@@ -8,6 +8,9 @@ import android.content.pm.PackageManager;
  */
 public class PermissionGrantEvent extends HandableRequestEvent {
 
+    public static final int ON_ERROR = 1;
+    public static final int FILES_STORAGE_ACCESS = 2;
+
     private String[] mPermissions;
     private int[] mGrantResults;
 

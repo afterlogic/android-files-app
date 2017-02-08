@@ -1,15 +1,18 @@
 package com.afterlogic.aurora.drive.presentation.modules.filelist.presenter;
 
+import android.content.Context;
 import android.content.Intent;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive._unrefactored.core.util.DownloadType;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.model.Progressible;
+import com.afterlogic.aurora.drive.model.error.PermissionDeniedError;
 import com.afterlogic.aurora.drive.presentation.common.modules.presenter.BasePresenter;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.PresentationView;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
+import com.afterlogic.aurora.drive.presentation.common.util.PermissionUtil;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.interactor.FileListInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.router.FileListRouter;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FileListView;
@@ -17,13 +20,19 @@ import com.afterlogic.aurora.drive.presentation.modules.filelist.viewModel.FileL
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesCallback;
 import com.annimon.stream.Stream;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
+
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static com.afterlogic.aurora.drive.model.events.PermissionGrantEvent.FILES_STORAGE_ACCESS;
 
 /**
  * Created by sashka on 07.02.17.<p/>
@@ -32,26 +41,31 @@ import io.reactivex.disposables.Disposable;
 
 public class FileListPresenterImpl extends BasePresenter<FileListView> implements FileListPresenter {
 
+
     private final FileListInteractor mInteractor;
     private final FileListModel mModel;
     private final FileListRouter mRouter;
+    private final Context mAppContext;
 
     private MainFilesCallback mFileActionCallback;
     private String mType;
 
     private final List<AuroraFile> mPath = new ArrayList<>();
     private Disposable mThumbnailRequest = null;
+    private Disposable mCurrentFileTask = null;
 
     private String mLastRefreshFolder = null;
 
     @Inject FileListPresenterImpl(ViewState<FileListView> viewState,
                                   FileListInteractor interactor,
                                   FileListModel model,
-                                  FileListRouter router) {
+                                  FileListRouter router,
+                                  Context appContext) {
         super(viewState);
         mInteractor = interactor;
         mModel = model;
         mRouter = router;
+        mAppContext = appContext;
         mModel.setPresenter(this);
     }
 
@@ -64,6 +78,7 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
     @Override
     protected void onPresenterStart() {
         super.onPresenterStart();
+
         mPath.add(AuroraFile.parse("", mType, true));
         onRefresh();
     }
@@ -97,9 +112,12 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
             mPath.add(0, file);
             onRefresh();
         } else {
+
             if (!mRouter.canOpenFile(file)){
                 onCantOpenFile();
+                return;
             }
+
             if (file.isLink()){
                 mRouter.openLink(file);
             }else {
@@ -110,8 +128,14 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
                     intent.setType(file.getContentType());
 
                     if (!file.isOfflineMode()) {
-                        downloadFile(file, DownloadType.DOWNLOAD_OPEN);
+                        mInteractor.downloadFileForOpen(file)
+                                .compose(this::downloadTask)
+                                .subscribe(
+                                        localFile -> mRouter.openFile(file, localFile),
+                                        this::onErrorObtained
+                                );
                     } else {
+                        //TODO open offline
                         //File localFile = FileUtil.getOfflineFile(file, getApplicationContext());
                         //if (localFile.exists()){
                         //    onFileDownloaded(file, localFile, DownloadType.DOWNLOAD_OPEN);
@@ -129,7 +153,25 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
 
     @Override
     public void onFileLongClick(AuroraFile file) {
+        getView().showFileActions(file);
+    }
 
+    @Override
+    public void onCancelCurrentTask() {
+        if (mCurrentFileTask != null){
+            mCurrentFileTask.dispose();
+        }
+    }
+
+    @Override
+    public void onDownload(AuroraFile file) {
+        mInteractor.downloadFile(file)
+                .compose(this::downloadTask)
+                .subscribe(
+                        //TODO dialog: open file?
+                        localFile -> mRouter.openFile(file, localFile),
+                        this::onErrorObtained
+                );
     }
 
     private AuroraFile getCurrentFolder(){
@@ -175,7 +217,54 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
         );
     }
 
-    private void downloadFile(AuroraFile file, DownloadType type){
+    private <T> Observable<T> trackCurrentTask(Observable<T> observable){
+        return observable.doOnSubscribe(disposable -> mCurrentFileTask = disposable)
+                .doFinally(() -> mCurrentFileTask = null);
+    }
+
+    private Observable<File> downloadTask(Observable<Progressible<File>> observable){
+        return observable.startWith(checkPermission(
+                FILES_STORAGE_ACCESS,
+                new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}
+        ))//----|
+                .doOnNext(progress -> {
+                    float value = progress.getMax() > 0 ?
+                            (float) progress.getProgress() / progress.getMax() : -1;
+                    getView().showDownloadProgress(progress.getName(), value * 100);
+                })
+                .filter(Progressible::isDone)
+                .map(Progressible::getData)
+                .doFinally(() -> {
+                    getView().hideProgress();
+                    mCurrentFileTask = null;
+                })
+                .compose(this::trackCurrentTask);
+    }
+
+    private <T> Observable<T> checkPermission(int requestId, String... perms){
+        return Observable.defer(() -> {
+            if (!PermissionUtil.isAllGranted(mAppContext, perms)){
+                return Observable.<T>error(new PermissionDeniedError(requestId, perms));
+            } else {
+                return Observable.<T>empty();
+            }
+        })//----|
+                .doOnError(this::onErrorObtained)
+                .retryWhen(attempts -> attempts.flatMap(error -> observePermissions())
+                        .filter(permEvent -> permEvent.getRequestId() == requestId)
+                        .flatMap(permissions -> {
+                            if (permissions.isAllGranted()){
+                                return Observable.<Object>just(permissions);
+                            } else {
+                                PermissionDeniedError error = new PermissionDeniedError(
+                                        permissions.getRequestId(),
+                                        permissions.getPermissions()
+                                );
+                                error.setHandled(true);
+                                return Observable.<T>error(error);
+                            }
+                        })
+                );
 
     }
 }

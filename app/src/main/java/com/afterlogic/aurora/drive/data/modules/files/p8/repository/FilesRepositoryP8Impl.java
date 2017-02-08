@@ -6,11 +6,12 @@ import android.support.annotation.Nullable;
 import android.util.Base64;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiTask;
 import com.afterlogic.aurora.drive._unrefactored.model.UploadResult;
 import com.afterlogic.aurora.drive._unrefactored.model.project8.ApiResponseP8;
 import com.afterlogic.aurora.drive._unrefactored.model.project8.AuroraFileP8;
+import com.afterlogic.aurora.drive.core.common.logging.MyLog;
+import com.afterlogic.aurora.drive.core.common.util.IOUtil;
 import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
@@ -24,7 +25,9 @@ import com.afterlogic.aurora.drive.data.modules.files.p8.service.FilesServiceP8;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.DeleteFileInfo;
 import com.afterlogic.aurora.drive.model.FileInfo;
+import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.model.error.ApiResponseError;
+import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 
@@ -37,6 +40,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Maybe;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
 import io.reactivex.Single;
 import okhttp3.MediaType;
 import okhttp3.ResponseBody;
@@ -205,12 +210,64 @@ public class FilesRepositoryP8Impl extends AuthorizedRepository implements Files
     }
 
     @Override
+    public Observable<Progressible<File>> download(AuroraFile file, File target) {
+        Observable<Progressible<File>> request = downloadFileBody(file)
+                .flatMapObservable(fileBody -> Observable.create(emitter -> {
+                    File dir = target.getParentFile();
+
+                    if (!dir.exists() && !dir.mkdirs()){
+                        throw new IOException("Can't create dir: " + dir.toString());
+                    }
+
+                    long size = file.getSize();
+                    saveFile(fileBody.byteStream(), file, target, emitter);
+
+                    if (!target.setLastModified(file.getLastModified())){
+                        MyLog.majorException(new IOException("Can't set last modified: " + target.getPath()));
+                    }
+
+                    emitter.onNext(new Progressible<>(target, size, size, file.getName()));
+                    emitter.onComplete();
+                }));
+        return Observable.concat(
+                Observable.just(new Progressible<>(null, 0, 0, file.getName())),
+                request
+        );
+    }
+
+    @Override
     public Single<UploadResult> uploadFile(AuroraFile folder, FileInfo file, @Nullable ApiTask.ProgressUpdater progressUpdater) {
         return withNetMapper(
                 mFilesService.uploadFile(folder.getType(), folder.getFullPath(), file, progressUpdater)
                         .map(response -> response),
                 result -> new UploadResult()
         );
+    }
+
+    /**
+     * Read {@link ResponseBody} to local file.
+     * @param is - resource input stream.
+     * @param target - local file target.
+     */
+    private void saveFile(InputStream is, AuroraFile source, File target, ObservableEmitter<Progressible<File>> progressEmmiter) throws IOException{
+        FileOutputStream fos = null;
+        try{
+            fos = new FileOutputStream(target);
+            progressEmmiter.onNext(new Progressible<>(null, source.getSize(), 0, source.getName()));
+
+            byte[] buffer = new byte[2048];
+            int count;
+            long totalRead = 0;
+            while ((count = is.read(buffer)) != -1 && totalRead < source.getSize()){
+                count = (int) Math.min(source.getSize() - totalRead, count);
+                fos.write(buffer, 0, count);
+                totalRead += count;
+                progressEmmiter.onNext(new Progressible<>(null, source.getSize(), totalRead, source.getName()));
+            }
+        } finally {
+            IOUtil.closeQuietly(is);
+            IOUtil.closeQuietly(fos);
+        }
     }
 
     private Single<Uri> getFile(AuroraFile file, File cacheDir, Single<ResponseBody> cloud){

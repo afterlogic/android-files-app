@@ -367,10 +367,10 @@ public class FilesListActivity extends BaseFileActionActivity implements
     }
 
     /**
-     * {@link FileActionsBottomSheet.FileActionListener#onActionSelected(int, AuroraFile)}  implementation.
+     * {@link FileActionsBottomSheet.FileActionListener#onFileAction(int, AuroraFile)}  implementation.
      */
     @Override
-    public void onActionSelected(int action, AuroraFile file) {
+    public void onFileAction(int action, AuroraFile file) {
         switch (action){
             case R.id.action_rename:
                 showRenameDialog(file);

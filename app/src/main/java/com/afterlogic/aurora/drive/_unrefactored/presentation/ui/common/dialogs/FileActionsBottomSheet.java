@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -48,6 +49,10 @@ public class FileActionsBottomSheet extends BottomSheetDialogFragment implements
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        Fragment target = getTargetFragment();
+        if (target != null && target instanceof FileActionListener){
+            mListener = (FileActionListener) target;
+        }
         if (context instanceof FileActionListener){
             mListener = (FileActionListener) context;
         }
@@ -99,8 +104,14 @@ public class FileActionsBottomSheet extends BottomSheetDialogFragment implements
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        dismiss();
+    }
+
+    @Override
     public void onItemClick(FileActionsMenuAdapter.ActionItem item) {
-        mListener.onActionSelected(item.getId(), mAuroraFile);
+        mListener.onFileAction(item.getId(), mAuroraFile);
         dismiss();
     }
 
@@ -108,7 +119,7 @@ public class FileActionsBottomSheet extends BottomSheetDialogFragment implements
     public void onCheckedChanged(FileActionsMenuAdapter.ActionSwitch action, boolean isChecked) {
         switch (action.getId()){
             case R.id.action_offline_on:
-                mListener.onActionSelected(
+                mListener.onFileAction(
                         isChecked ? R.id.action_offline_on : R.id.action_offline_off,
                         mAuroraFile
                 );
@@ -117,6 +128,6 @@ public class FileActionsBottomSheet extends BottomSheetDialogFragment implements
     }
 
     public interface FileActionListener{
-        void onActionSelected(int action, AuroraFile file);
+        void onFileAction(int action, AuroraFile file);
     }
 }

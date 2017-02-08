@@ -140,8 +140,14 @@
         <!--[END Main process]-->
 
         <!--[START File load process]-->
-        <service android:name="._unrefactored.presentation.services.FileLoadService"
-                 android:process=":load"
+        <service
+            android:name="._unrefactored.presentation.services.FileLoadService"
+            android:process=":load"
+            android:exported="false"/>
+
+        <service
+            android:name=".presentation.modulesBackground.fileLoad.view.FileLoadService"
+            android:process=":load"
             android:exported="false"/>
 
         <receiver android:name="._unrefactored.presentation.receivers.session.SessionChangedReceiver_LoadProcess"

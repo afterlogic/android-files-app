@@ -2,6 +2,7 @@ package com.afterlogic.aurora.drive.presentation.modules.filelist.router;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -16,4 +17,6 @@ public interface FileListRouter {
     void openLink(AuroraFile target);
 
     boolean canOpenFile(AuroraFile file);
+
+    void openFile(AuroraFile remote, File file);
 }

@@ -7,9 +7,12 @@ import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiTask;
 import com.afterlogic.aurora.drive._unrefactored.model.UploadResult;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileInfo;
+import com.afterlogic.aurora.drive.model.Progressible;
 
+import java.io.File;
 import java.util.List;
 
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import okhttp3.ResponseBody;
 
@@ -36,6 +39,8 @@ public interface FilesRepository {
     Single<Boolean> delete(List<AuroraFile> files);
 
     Single<ResponseBody> downloadFileBody(AuroraFile file);
+
+    Observable<Progressible<File>> download(AuroraFile file, File target);
 
     Single<UploadResult> uploadFile(AuroraFile folder, FileInfo file, @Nullable ApiTask.ProgressUpdater progressListener);
 }
