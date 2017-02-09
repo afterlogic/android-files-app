@@ -1,13 +1,11 @@
 package com.afterlogic.aurora.drive.data.modules.files.p8.service;
 
-import android.support.annotation.Nullable;
-
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiTask;
-import com.afterlogic.aurora.drive.model.DeleteFileInfo;
-import com.afterlogic.aurora.drive.model.FileInfo;
 import com.afterlogic.aurora.drive._unrefactored.model.project8.ApiResponseP8;
 import com.afterlogic.aurora.drive._unrefactored.model.project8.FilesResponseP8;
 import com.afterlogic.aurora.drive._unrefactored.model.project8.UploadResultP8;
+import com.afterlogic.aurora.drive.core.common.interfaces.ProgressListener;
+import com.afterlogic.aurora.drive.model.DeleteFileInfo;
+import com.afterlogic.aurora.drive.model.FileInfo;
 
 import java.util.List;
 
@@ -35,5 +33,5 @@ public interface FilesServiceP8 {
 
     Single<ResponseBody> downloadFile(String type, String path, String name, String publicHash);
 
-    Single<ApiResponseP8<UploadResultP8>> uploadFile(String type, String path, FileInfo fileInfo, @Nullable ApiTask.ProgressUpdater progressUpdater);
+    Single<ApiResponseP8<UploadResultP8>> uploadFile(String type, String path, FileInfo fileInfo, ProgressListener progressUpdater);
 }

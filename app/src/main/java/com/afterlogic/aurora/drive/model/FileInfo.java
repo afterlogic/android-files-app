@@ -58,6 +58,10 @@ public class FileInfo implements Parcelable{
         return mUri;
     }
 
+    public void setName(String name) {
+        mName = name;
+    }
+
     @Override
     public int describeContents() {
         return 0;

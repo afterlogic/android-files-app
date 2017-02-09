@@ -3,10 +3,10 @@ package com.afterlogic.aurora.drive.data.modules.files.p7.service;
 import android.content.Context;
 import android.support.annotation.Nullable;
 
+import com.afterlogic.aurora.drive.core.common.interfaces.ProgressListener;
 import com.afterlogic.aurora.drive.data.common.annotations.P7;
 import com.afterlogic.aurora.drive.data.common.network.ExtRequestBody;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiTask;
 import com.afterlogic.aurora.drive.data.common.network.p7.Api7;
 import com.afterlogic.aurora.drive.data.common.network.p7.AuthorizedServiceP7;
 import com.afterlogic.aurora.drive._unrefactored.model.AuroraFilesResponse;
@@ -106,13 +106,13 @@ public class FilesServiceP7Impl extends AuthorizedServiceP7 implements FilesServ
     }
 
     @Override
-    public Single<ApiResponseP7<UploadResultP7>> upload(AuroraFileP7 file, FileInfo source, @Nullable ApiTask.ProgressUpdater progressUpdater) {
+    public Single<ApiResponseP7<UploadResultP7>> upload(AuroraFileP7 file, FileInfo source, @Nullable ProgressListener progressListener) {
 
         String authToken = getSessionManager().getSession().getAuthToken();
 
         ExtRequestBody uploadBody = new ExtRequestBody(source, mContext);
-        if (progressUpdater != null){
-            uploadBody.setProgressUpdater(progressUpdater);
+        if (progressListener != null){
+            uploadBody.setProgressListener(progressListener);
         }
 
         return mApi.upload(authToken, file.getType(), file.getFullPath(), source.getName(), uploadBody);

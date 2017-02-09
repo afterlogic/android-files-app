@@ -43,4 +43,10 @@ public class Progressible<T> {
     public String getName() {
         return mName;
     }
+
+    public <R> Progressible<R> map(R value){
+        return new Progressible<>(
+                value, mMax, mProgress, mName
+        );
+    }
 }

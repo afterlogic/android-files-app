@@ -8,6 +8,7 @@ import android.content.Intent;
  * mail: sunnyday.development@gmail.com
  */
 public class ActivityResultEvent extends HandableRequestEvent {
+
     public static final int CAMERA = 2;
     public static final int GALERY = 3;
     public static final int RINGTONE_CHOOSER = 4;

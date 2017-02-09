@@ -1,12 +1,8 @@
 package com.afterlogic.aurora.drive.data.modules.files;
 
 import android.net.Uri;
-import android.support.annotation.Nullable;
 
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiTask;
-import com.afterlogic.aurora.drive._unrefactored.model.UploadResult;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.model.FileInfo;
 import com.afterlogic.aurora.drive.model.Progressible;
 
 import java.io.File;
@@ -35,6 +31,8 @@ public interface FilesRepository {
 
     Single<AuroraFile> rename(AuroraFile file, String newName);
 
+
+    Completable checkFileExisting(AuroraFile file);
     Single<AuroraFile> checkFile(AuroraFile file);
 
     Completable delete(AuroraFile files);
@@ -44,5 +42,5 @@ public interface FilesRepository {
 
     Observable<Progressible<File>> download(AuroraFile file, File target);
 
-    Single<UploadResult> uploadFile(AuroraFile folder, FileInfo file, @Nullable ApiTask.ProgressUpdater progressListener);
+    Observable<Progressible<AuroraFile>> uploadFile(AuroraFile folder, Uri fileUri);
 }

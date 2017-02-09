@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Completable;
+import io.reactivex.CompletableTransformer;
 import io.reactivex.Observable;
 
 /**
@@ -15,6 +16,16 @@ import io.reactivex.Observable;
  * mail: sunnyday.development@gmail.com
  */
 public class Observables {
+
+    public static CompletableTransformer completeOnError(Class<? extends Throwable> skipClass){
+        return upstream -> upstream.onErrorResumeNext(error -> {
+            if (skipClass == error.getClass()){
+                return Completable.complete();
+            } else {
+                return Completable.error(error);
+            }
+        });
+    }
 
     public static class Collectors {
         public static Collector<Completable, List<Completable>, Completable> concatCompletable(){

@@ -98,7 +98,7 @@ public class FileListFragment extends BaseFragment implements FileListView, OnBa
     }
 
     @Override
-    public void showDownloadProgress(String fileName, @FloatRange(from = -1, to = 100) float progress) {
+    public void showLoadProgress(String fileName, @FloatRange(from = -1, to = 100) float progress) {
         if (mProgressDialog != null) {
             if (progress != -1) {
                 mProgressDialog.setIndeterminate(false);

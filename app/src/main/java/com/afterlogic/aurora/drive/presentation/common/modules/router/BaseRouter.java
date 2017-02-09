@@ -21,14 +21,14 @@ public class BaseRouter<VI extends PresentationView, T extends Context>{
     }
 
     protected boolean ifViewActive(Consumer<T> consumer){
-        Holder<Boolean> present = new Holder<>(false);
+        Holder<Boolean> viewActive = new Holder<>(false);
         mViewContext.ifPresent(view -> {
             if (view.isActive()){
-                present.set(true);
+                viewActive.set(true);
                 T context = view.getViewContext();
                 consumer.consume(context);
             }
         });
-        return present.get();
+        return viewActive.get();
     }
 }

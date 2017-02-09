@@ -205,10 +205,7 @@ public class Api extends AuroraApi{
             return null;
         }
 
-        Single<UploadResult> observable = getApiProvider().getFilesRepository()
-                .uploadFile(folder, file, updater);
-
-        return fromObservable(observable);
+        return fromObservable(null);
     }
 
     /**

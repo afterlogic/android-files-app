@@ -34,5 +34,5 @@ public interface FileListInteractor extends Interactor {
 
     Single<AuroraFile> createFolder(AuroraFile parentFolder, String name);
 
-    Single<AuroraFile> uploadFile(Uri file);
+    Observable<Progressible<AuroraFile>> uploadFile(AuroraFile folder, Uri file);
 }

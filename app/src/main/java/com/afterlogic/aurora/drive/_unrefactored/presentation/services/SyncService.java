@@ -460,11 +460,11 @@ public class SyncService extends Service {
                     (progress, max) -> sendChangedBroadcast(watchingFile, (int)progress, (int)max)
             );
 
-            repository.uploadFile(file.getParentFolder(), fileInfo, progressUpdater)
-                    .subscribe(
-                            response -> result.set(true),
-                            error -> MyLog.e(this, error)
-                    );
+            //repository.uploadFile(file.getParentFolder(), fileInfo, progressUpdater)
+            //        .subscribe(
+            //                response -> result.set(true),
+            //                error -> MyLog.e(this, error)
+            //        );
             return result.get();
         }
 

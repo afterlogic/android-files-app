@@ -1,5 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.filelist.router;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -107,6 +108,18 @@ public class FileListRouterImpl extends BaseRouter<FileListView, BaseActivity> i
             activity.startActivity(
                     Intent.createChooser(intent, activity.getString(prompt_send_by_email_chooser))
             );
+        });
+    }
+
+    @Override
+    public void openUploadFileChooser() throws ActivityNotFoundException{
+        ifViewActive(activity -> {
+            Intent intent = new Intent();
+            intent.setType("*/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+            activity.startActivityForResult(intent, FILE_SELECT_CODE);
         });
     }
 }

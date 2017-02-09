@@ -12,6 +12,8 @@ import java.util.List;
 
 public interface FileListRouter {
 
+    int FILE_SELECT_CODE = 1;
+
     void openImagePreview(AuroraFile target, List<AuroraFile> dirContent);
 
     void openLink(AuroraFile target);
@@ -21,4 +23,6 @@ public interface FileListRouter {
     void openFile(AuroraFile remote, File file);
 
     void openSendTo(AuroraFile source, File file);
+
+    void openUploadFileChooser();
 }

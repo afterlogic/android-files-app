@@ -5,12 +5,15 @@ import android.os.Bundle;
 import com.afterlogic.aurora.drive.BuildConfig;
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
+import com.afterlogic.aurora.drive.model.error.ActivityResultError;
 import com.afterlogic.aurora.drive.model.error.BaseError;
 import com.afterlogic.aurora.drive.model.error.PermissionDeniedError;
+import com.afterlogic.aurora.drive.model.events.ActivityResultEvent;
 import com.afterlogic.aurora.drive.model.events.PermissionGrantEvent;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.Stoppable;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.PresentationView;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
+import com.afterlogic.aurora.drive.presentation.common.util.ActivityResultListener;
 import com.afterlogic.aurora.drive.presentation.common.util.PermisionResultListener;
 import com.annimon.stream.Stream;
 
@@ -32,6 +35,7 @@ import io.reactivex.exceptions.CompositeException;
 public abstract class BasePresenter<V extends PresentationView> implements Presenter {
 
     private final PermissionEventObservableSource mPermissionSource = new PermissionEventObservableSource();
+    private final ActivityResultObservableSource mActivityResultSource = new ActivityResultObservableSource();
 
     //Presenter view input
     private final V mView;
@@ -116,6 +120,7 @@ public abstract class BasePresenter<V extends PresentationView> implements Prese
 
     protected void onPresenterStart(){
         registerStoppable(new PermisionResultListener(this::onPermissionEvent));
+        registerStoppable(new ActivityResultListener(this::onActivityResult));
     }
 
     /**
@@ -138,6 +143,26 @@ public abstract class BasePresenter<V extends PresentationView> implements Prese
 
     protected V getView() {
         return mView;
+    }
+
+    protected void onActivityResult(ActivityResultEvent event){
+        mActivityResultSource.onActivityResult(event);
+    }
+
+    protected Observable<ActivityResultEvent> observeActivityResult(){
+        return Observable.defer(() -> mActivityResultSource);
+    }
+
+    protected Observable<ActivityResultEvent> observeActivityResult(int requestId, boolean checkResult){
+        return observeActivityResult()
+                .filter(result -> result.getRequestId() == requestId)
+                .flatMap(result -> {
+                    if (!checkResult || result.isSuccess()){
+                        return Observable.just(result);
+                    } else {
+                        return Observable.error(new ActivityResultError(requestId));
+                    }
+                });
     }
 
     protected void onPermissionEvent(PermissionGrantEvent event){

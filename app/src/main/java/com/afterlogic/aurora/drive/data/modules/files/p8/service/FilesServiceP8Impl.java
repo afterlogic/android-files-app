@@ -3,18 +3,18 @@ package com.afterlogic.aurora.drive.data.modules.files.p8.service;
 import android.content.Context;
 import android.support.annotation.Nullable;
 
+import com.afterlogic.aurora.drive._unrefactored.model.project8.ApiResponseP8;
+import com.afterlogic.aurora.drive._unrefactored.model.project8.FilesResponseP8;
+import com.afterlogic.aurora.drive._unrefactored.model.project8.UploadResultP8;
+import com.afterlogic.aurora.drive.core.common.interfaces.ProgressListener;
 import com.afterlogic.aurora.drive.data.common.annotations.P8;
 import com.afterlogic.aurora.drive.data.common.network.ExtRequestBody;
 import com.afterlogic.aurora.drive.data.common.network.ParamsBuilder;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiTask;
 import com.afterlogic.aurora.drive.data.common.network.p8.Api8;
 import com.afterlogic.aurora.drive.data.common.network.p8.AuthorizedServiceP8;
 import com.afterlogic.aurora.drive.model.DeleteFileInfo;
 import com.afterlogic.aurora.drive.model.FileInfo;
-import com.afterlogic.aurora.drive._unrefactored.model.project8.ApiResponseP8;
-import com.afterlogic.aurora.drive._unrefactored.model.project8.FilesResponseP8;
-import com.afterlogic.aurora.drive._unrefactored.model.project8.UploadResultP8;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 import com.google.gson.Gson;
@@ -133,7 +133,7 @@ public class FilesServiceP8Impl extends AuthorizedServiceP8 implements FilesServ
     }
 
     @Override
-    public Single<ApiResponseP8<UploadResultP8>> uploadFile(String type, String path, FileInfo fileInfo, @Nullable ApiTask.ProgressUpdater progressUpdater) {
+    public Single<ApiResponseP8<UploadResultP8>> uploadFile(String type, String path, FileInfo fileInfo, @Nullable ProgressListener progressUpdater) {
         Map<String, Object> params = new ParamsBuilder()
                 .put(Api8.Param.TYPE, type)
                 .put(Api8.Param.PATH, path)
@@ -146,7 +146,7 @@ public class FilesServiceP8Impl extends AuthorizedServiceP8 implements FilesServ
 
         ExtRequestBody uploadBody = new ExtRequestBody(fileInfo, mContext);
         if (progressUpdater != null){
-            uploadBody.setProgressUpdater(progressUpdater);
+            uploadBody.setProgressListener(progressUpdater);
         }
         MultipartBody.Part filePart = MultipartBody.Part.createFormData(
                 Api8.Field.JUA_UPLOADER, fileInfo.getName(), uploadBody

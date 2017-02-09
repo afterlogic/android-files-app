@@ -5,9 +5,10 @@ import android.content.Intent;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
+import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
-import com.afterlogic.aurora.drive.model.error.FileAlreadyExist;
+import com.afterlogic.aurora.drive.model.error.FileAlreadyExistError;
 import com.afterlogic.aurora.drive.model.error.FileNotExistError;
 import com.afterlogic.aurora.drive.model.error.PermissionDeniedError;
 import com.afterlogic.aurora.drive.presentation.common.modules.presenter.BasePresenter;
@@ -22,7 +23,6 @@ import com.afterlogic.aurora.drive.presentation.modules.filelist.viewModel.FileL
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesCallback;
 import com.annimon.stream.Stream;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,6 +47,7 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
     private final FileListInteractor mInteractor;
     private final FileListModel mModel;
     private final FileListRouter mRouter;
+    private final AppResources mAppResources;
     private final Context mAppContext;
 
     private MainFilesCallback mFileActionCallback;
@@ -62,11 +63,12 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
                                   FileListInteractor interactor,
                                   FileListModel model,
                                   FileListRouter router,
-                                  Context appContext) {
+                                  AppResources appResources, Context appContext) {
         super(viewState);
         mInteractor = interactor;
         mModel = model;
         mRouter = router;
+        mAppResources = appResources;
         mAppContext = appContext;
         mModel.setPresenter(this);
     }
@@ -131,7 +133,7 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
 
                     if (!file.isOfflineMode()) {
                         mInteractor.downloadForOpen(file)
-                                .compose(this::downloadTask)
+                                .compose(this::progressibleLoadTask)
                                 .subscribe(
                                         localFile -> mRouter.openFile(file, localFile),
                                         this::onErrorObtained
@@ -168,7 +170,7 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
     @Override
     public void onDownload(AuroraFile file) {
         mInteractor.downloadToDownloads(file)
-                .compose(this::downloadTask)
+                .compose(this::progressibleLoadTask)
                 .subscribe(
                         //TODO dialog: open file?
                         localFile -> mRouter.openFile(file, localFile),
@@ -179,7 +181,7 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
     @Override
     public void onSendTo(AuroraFile file) {
         mInteractor.downloadForOpen(file)
-                .compose(this::downloadTask)
+                .compose(this::progressibleLoadTask)
                 .subscribe(
                         localFile -> mRouter.openSendTo(file, localFile),
                         this::onErrorObtained
@@ -206,6 +208,7 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
     @Override
     public void onDelete(AuroraFile file) {
         mInteractor.deleteFile(file)
+                //TODO text to resources
                 .doOnSubscribe(disposable -> getView().showProgress("Deleting:", file.getName()))
                 .doFinally(() -> getView().hideProgress())
                 .subscribe(
@@ -217,6 +220,7 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
     @Override
     public void onCreateFolder() {
         getView().showNewFolderNameDialog(name -> mInteractor.createFolder(getCurrentFolder(), name)
+                //TODO text to resources
                 .doOnSubscribe(disposable -> getView().showProgress("Folder creation:", name))
                 .doFinally(() -> getView().hideProgress())
                 .subscribe(
@@ -227,7 +231,26 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
 
     @Override
     public void onFileUpload() {
-
+        observeActivityResult(FileListRouter.FILE_SELECT_CODE, true)
+                .startWith(Completable.fromAction(mRouter::openUploadFileChooser).toObservable())
+                .doOnError(error -> getView().showMessage(
+                        //TODO text to resources
+                        "Doesn't have application for choose file.",
+                        PresentationView.TYPE_MESSAGE_MAJOR
+                ))
+                .firstElement()
+                .flatMapObservable(activityResult -> mInteractor.uploadFile(
+                        getCurrentFolder(),
+                        activityResult.getResult().getData()
+                ))
+                .compose(this::progressibleLoadTask)
+                .subscribe(
+                        uploadedFile -> {
+                            mModel.addFile(uploadedFile);
+                            updateFileThumb(uploadedFile).subscribe();
+                        },
+                        this::onUploadError
+                );
     }
 
     private AuroraFile getCurrentFolder(){
@@ -245,7 +268,6 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
         mPath.remove(0);
         onRefresh();
 
-        //TODO notify changes
         return true;
     }
 
@@ -275,7 +297,7 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
                     R.string.error_default_api_error,
                     PresentationView.TYPE_MESSAGE_MAJOR
             );
-        } else if (error instanceof FileAlreadyExist){
+        } else if (error instanceof FileAlreadyExistError){
             getView().showMessage(
                     R.string.error_renamed_file_exist,
                     PresentationView.TYPE_MESSAGE_MAJOR
@@ -285,7 +307,24 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
         }
     }
 
+    private void onUploadError(Throwable error){
+        if (error instanceof FileAlreadyExistError){
+            FileAlreadyExistError existError = (FileAlreadyExistError) error;
+            getView().showMessage(
+                    mAppResources.getString(
+                            R.string.prompt_file_already_exist,
+                            existError.getCheckedFile().getName()
+                    ),
+                    PresentationView.TYPE_MESSAGE_MAJOR
+            );
+        } else {
+            onErrorObtained(error);
+        }
+    }
+
     private Completable updateFileThumb(AuroraFile file){
+        if (!file.hasThumbnail()) return Completable.complete();
+
         return mInteractor.getThumbnail(file)
                 .doOnSuccess(thumb -> mModel.setThumbNail(file, thumb))
                 .toCompletable()
@@ -304,15 +343,16 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
                 .doFinally(() -> mCurrentFileTask = null);
     }
 
-    private Observable<File> downloadTask(Observable<Progressible<File>> observable){
+    private <T> Observable<T> progressibleLoadTask(Observable<Progressible<T>> observable){
         return observable.startWith(checkAndWaitPermissionResult(
                 FILES_STORAGE_ACCESS,
                 new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}
         ))//----|
+                //TODO load progress title (download/upload)
                 .doOnNext(progress -> {
                     float value = progress.getMax() > 0 ?
                             (float) progress.getProgress() / progress.getMax() : -1;
-                    getView().showDownloadProgress(progress.getName(), value * 100);
+                    getView().showLoadProgress(progress.getName(), value * 100);
                 })
                 .filter(Progressible::isDone)
                 .map(Progressible::getData)

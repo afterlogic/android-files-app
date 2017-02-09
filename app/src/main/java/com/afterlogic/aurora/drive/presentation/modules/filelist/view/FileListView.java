@@ -16,7 +16,7 @@ import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.an
 public interface FileListView extends PresentationView {
 
     @Repeat(group = "progress", value = RepeatPolicy.LAST)
-    void showDownloadProgress(String fileName, @FloatRange(from = -1, to = 100) float progress);
+    void showLoadProgress(String fileName, @FloatRange(from = -1, to = 100) float progress);
 
     @Repeat(group = "progress", value = RepeatPolicy.LAST)
     void showProgress(String title, String message);

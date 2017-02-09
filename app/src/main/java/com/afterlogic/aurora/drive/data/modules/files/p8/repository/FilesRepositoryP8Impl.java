@@ -2,15 +2,16 @@ package com.afterlogic.aurora.drive.data.modules.files.p8.repository;
 
 import android.content.Context;
 import android.net.Uri;
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 import android.util.Base64;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiTask;
 import com.afterlogic.aurora.drive._unrefactored.model.UploadResult;
 import com.afterlogic.aurora.drive._unrefactored.model.project8.ApiResponseP8;
 import com.afterlogic.aurora.drive._unrefactored.model.project8.AuroraFileP8;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
+import com.afterlogic.aurora.drive.core.common.rx.Observables;
+import com.afterlogic.aurora.drive.core.common.rx.SimpleObservableSource;
 import com.afterlogic.aurora.drive.core.common.util.IOUtil;
 import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
@@ -27,7 +28,7 @@ import com.afterlogic.aurora.drive.model.DeleteFileInfo;
 import com.afterlogic.aurora.drive.model.FileInfo;
 import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.model.error.ApiResponseError;
-import com.afterlogic.aurora.drive.model.error.FileAlreadyExist;
+import com.afterlogic.aurora.drive.model.error.FileAlreadyExistError;
 import com.afterlogic.aurora.drive.model.error.FileNotExistError;
 import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.annimon.stream.Collectors;
@@ -63,6 +64,7 @@ public class FilesRepositoryP8Impl extends AuthorizedRepository implements Files
     private final File mThumbCacheDir;
 
     private final AppResources mAppResources;
+    private final Context mAppContext;
 
     private final Mapper<AuroraFile, AuroraFileP8> mFileMapper = source -> new AuroraFile(
             source.getName(),
@@ -91,12 +93,14 @@ public class FilesRepositoryP8Impl extends AuthorizedRepository implements Files
                                          FilesServiceP8 filesService,
                                          Context context,
                                          AppResources appResources,
-                                         AuthRepository authRepository) {
+                                         AuthRepository authRepository,
+                                         Context appContext) {
         super(cache, FILES_P_8, authRepository);
         mFilesService = filesService;
         mFilesCacheDir = FileUtil.getCacheFileDir(context);
         mThumbCacheDir = new File(context.getExternalCacheDir(), "thumb");
         mAppResources = appResources;
+        mAppContext = appContext;
     }
 
     @Override
@@ -178,18 +182,16 @@ public class FilesRepositoryP8Impl extends AuthorizedRepository implements Files
         ))//-----|
                 .toCompletable();
 
-        return checkFile(newFile)
-                .flatMap(remoteFile -> Single.error(new FileAlreadyExist()))
-                .toCompletable()
-                .onErrorResumeNext(error -> {
-                    if (error instanceof FileNotExistError){
-                        return Completable.complete();
-                    } else {
-                        return Completable.error(error);
-                    }
-                })
+        return checkFileExisting(newFile)
+                .andThen(Completable.error(new FileAlreadyExistError(newFile)))
+                .compose(Observables.completeOnError(FileNotExistError.class))
                 .andThen(renameRequest)
                 .andThen(checkFile(newFile));
+    }
+
+    @Override
+    public Completable checkFileExisting(AuroraFile file) {
+        return checkFile(file).toCompletable();
     }
 
     @Override
@@ -257,11 +259,54 @@ public class FilesRepositoryP8Impl extends AuthorizedRepository implements Files
     }
 
     @Override
-    public Single<UploadResult> uploadFile(AuroraFile folder, FileInfo file, @Nullable ApiTask.ProgressUpdater progressUpdater) {
-        return withNetMapper(
-                mFilesService.uploadFile(folder.getType(), folder.getFullPath(), file, progressUpdater)
-                        .map(response -> response),
+    public Observable<Progressible<AuroraFile>> uploadFile(AuroraFile folder, Uri file) {
+        return Observable.defer(() -> {
+            FileInfo fileInfo = FileUtil.fileInfo(file, mAppContext);
+
+            //check file
+            AuroraFile checkFile = AuroraFile.create(folder, fileInfo.getName(), false);
+            return checkFileExisting(checkFile)
+                    .andThen(Completable.error(new FileAlreadyExistError(checkFile)))
+                    .compose(Observables.completeOnError(FileNotExistError.class))
+                    //upload
+                    .andThen(uploadFileToServser(folder, fileInfo))
+                    .flatMap(progress -> {
+                        if (!progress.isDone()){
+                            return Observable.just(progress.map(null));
+                        } else {
+                            //TODO get uploaded file name
+                            return checkFile(AuroraFile.create(folder, fileInfo.getName(), false))
+                                    .map(progress::map)
+                                    .toObservable()
+                                    .startWith(new Progressible<>(null, -1, 0, progress.getName()));
+                        }
+                    });
+        });
+    }
+
+    private Observable<Progressible<UploadResult>> uploadFileToServser(AuroraFile folder, @NonNull FileInfo fileInfo) {
+        SimpleObservableSource<Progressible<UploadResult>> progressSource = new SimpleObservableSource<>();
+
+        Observable<Progressible<UploadResult>> request = withNetMapper(
+                mFilesService.uploadFile(
+                        folder.getType(),
+                        folder.getFullPath(),
+                        fileInfo,
+                        (max, value) -> progressSource.onNext(new Progressible<>(
+                                null, max, value, fileInfo.getName()
+                        ))
+                ).map(response -> response),
                 result -> new UploadResult()
+        )//-----|
+                .doOnEvent((uploadResult, throwable) -> progressSource.complete())
+                .doOnDispose(progressSource::clear)
+                .map(result -> new Progressible<>(result, 0, 0, fileInfo.getName()))
+                .toObservable()
+                .doFinally(() -> MyLog.d("Request released."));
+
+        return Observable.merge(
+                progressSource,
+                request
         );
     }
 
