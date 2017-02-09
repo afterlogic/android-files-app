@@ -129,6 +129,16 @@ public class FileListFragment extends BaseFragment implements FileListView, OnBa
     }
 
     @Override
+    public void showProgress(String title, String message) {
+        mProgressDialog = new ProgressDialog(getContext(), R.style.AppTheme_Dialog);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setTitle(title);
+        mProgressDialog.setMessage(message);
+        mProgressDialog.show();
+    }
+
+    @Override
     public void hideProgress() {
         if (mProgressDialog != null){
             mProgressDialog.hide();
@@ -204,23 +214,33 @@ public class FileListFragment extends BaseFragment implements FileListView, OnBa
     }
 
     @Override
-    public void showFileDeletingProgress(String fileName) {
-        mProgressDialog = new ProgressDialog(getContext(), R.style.AppTheme_Dialog);
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setTitle("Deleting:");
-        mProgressDialog.setMessage(fileName);
-        mProgressDialog.show();
-    }
+    public void showNewFolderNameDialog(Consumer<String> newNameConsumer) {
+        View inputView = LayoutInflater.from(getContext())
+                .inflate(R.layout.item_layout_dialog_input, null);
 
-    @Override
-    public void showFileRenamingProgress(String fileName) {
-        mProgressDialog = new ProgressDialog(getContext(), R.style.AppTheme_Dialog);
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setTitle("Renaming:");
-        mProgressDialog.setMessage(fileName);
-        mProgressDialog.show();
+        //Show dialog
+        DialogUtil.showInputDialog(
+                inputView,
+                getString(R.string.prompt_create_folder),
+                "",
+                getContext(),
+                (dialogInterface, input) -> {
+
+                    String newName = input.getText().toString().trim();
+                    if (TextUtils.isEmpty(newName)){
+                        input.setError(getString(R.string.error_field_required));
+                        input.requestFocus();
+                        return;
+                    }
+
+                    input.clearFocus();
+
+                    InputMethodManager keyboard = (InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    keyboard.hideSoftInputFromWindow(input.getWindowToken(), 0);
+
+                    dialogInterface.dismiss();
+                    newNameConsumer.consume(newName);
+                });
     }
 
     @Override
@@ -237,5 +257,13 @@ public class FileListFragment extends BaseFragment implements FileListView, OnBa
                 mPresenter.onToggleOffline(file);
                 break;
         }
+    }
+
+    public void createFolder(){
+        mPresenter.onCreateFolder();
+    }
+
+    public void uploadFile(){
+        mPresenter.onFileUpload();
     }
 }

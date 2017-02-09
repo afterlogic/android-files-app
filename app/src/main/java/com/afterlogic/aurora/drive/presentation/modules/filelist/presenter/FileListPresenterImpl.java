@@ -189,7 +189,7 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
     @Override
     public void onRename(AuroraFile file) {
         getView().showRenameDialog(file, name -> mInteractor.rename(file, name)
-                .doOnSubscribe(disposable -> getView().showFileRenamingProgress(file.getName()))
+                .doOnSubscribe(disposable -> getView().showProgress("Renaming:", file.getName()))
                 .doFinally(() -> getView().hideProgress())
                 .subscribe(
                         newFile -> handleRenameResult(file, newFile),
@@ -205,13 +205,29 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
 
     @Override
     public void onDelete(AuroraFile file) {
-        mInteractor.deleateFile(file)
-                .doOnSubscribe(disposable -> getView().showFileDeletingProgress(file.getName()))
+        mInteractor.deleteFile(file)
+                .doOnSubscribe(disposable -> getView().showProgress("Deleting:", file.getName()))
                 .doFinally(() -> getView().hideProgress())
                 .subscribe(
                         () -> mModel.removeFile(file),
                         this::onErrorObtained
                 );
+    }
+
+    @Override
+    public void onCreateFolder() {
+        getView().showNewFolderNameDialog(name -> mInteractor.createFolder(getCurrentFolder(), name)
+                .doOnSubscribe(disposable -> getView().showProgress("Folder creation:", name))
+                .doFinally(() -> getView().hideProgress())
+                .subscribe(
+                        mModel::addFile,
+                        this::onErrorObtained
+                ));
+    }
+
+    @Override
+    public void onFileUpload() {
+
     }
 
     private AuroraFile getCurrentFolder(){

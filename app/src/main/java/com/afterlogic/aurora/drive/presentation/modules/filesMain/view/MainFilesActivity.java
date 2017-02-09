@@ -4,10 +4,9 @@ import android.databinding.DataBindingUtil;
 import android.databinding.Observable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 
-import com.afterlogic.aurora.drive.BR;
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.databinding.ActivityMainFilesBinding;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryComponent;
@@ -16,6 +15,7 @@ import com.afterlogic.aurora.drive.presentation.common.modules.view.ViewPresente
 import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FileListFragment;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.presenter.MainFilesPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.viewModel.MainFilesViewModel;
+import com.android.databinding.library.baseAdapters.BR;
 
 import javax.inject.Inject;
 
@@ -35,6 +35,7 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Ma
     private MainFilesPagerAdapter mAdapter;
 
     private final OnViewModelPropertyChangedCallback mPropertyChangedCallback = new OnViewModelPropertyChangedCallback();
+    private ActivityMainFilesBinding mBinding;
 
     @Override
     protected void assembly(ModulesFactoryComponent modulesFactory) {
@@ -44,15 +45,21 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Ma
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityMainFilesBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main_files);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main_files);
 
-        setSupportActionBar(binding.toolbar);
+        setSupportActionBar(mBinding.toolbar);
 
-        binding.tabs.setupWithViewPager(binding.viewpager, true);
+        mBinding.tabs.setupWithViewPager(mBinding.viewpager, true);
 
         mAdapter = new MainFilesPagerAdapter(getSupportFragmentManager());
-        binding.setAdapter(mAdapter);
-        binding.setViewModel(mViewModel);
+        mBinding.setAdapter(mAdapter);
+        mBinding.setViewModel(mViewModel);
+
+        //[START Init FAB menu]
+        mBinding.uploadFile.setOnClickListener(view -> fabAction(FileListFragment::uploadFile));
+        mBinding.createFolder.setOnClickListener(view -> fabAction(FileListFragment::createFolder));
+        mBinding.fabCollapser.setOnTouchListener((v, event) -> collapseFabAction());
+        //[END Init FAB menu]
 
         updateTitle(mViewModel.getFolderTitle());
         getSupportActionBar().setDisplayHomeAsUpEnabled(mViewModel.getLocked());
@@ -73,7 +80,9 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Ma
     @Override
     public void onBackPressed() {
         if (getCurrentFragment() == null || !getCurrentFragment().onBackPressed()){
-            super.onBackPressed();
+            if (!collapseFabAction()) {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -90,11 +99,29 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Ma
     }
 
     private void updateTitle(String title){
-        if (TextUtils.isEmpty(title)){
+        if (title == null){
             setTitle(getString(R.string.app_name));
         } else {
             setTitle(title);
         }
+    }
+
+    private void ifCurrentFragment(Consumer<FileListFragment> fragmentConsumer){
+        FileListFragment fragment = getCurrentFragment();
+        if (fragment != null){
+            fragmentConsumer.consume(fragment);
+        }
+    }
+
+    private boolean collapseFabAction(){
+        if (mBinding == null || !mBinding.addMenu.isExpanded()) return false;
+        mBinding.addMenu.collapse();
+        return true;
+    }
+
+    private void fabAction(Consumer<FileListFragment> fragmentConsumer){
+        collapseFabAction();
+        ifCurrentFragment(fragmentConsumer);
     }
 
     private class OnViewModelPropertyChangedCallback extends Observable.OnPropertyChangedCallback{

@@ -134,9 +134,7 @@ public class Api extends AuroraApi{
                 new ApiTask.CallCreatorImpl<AuroraFiles, ApiResponseP7<Boolean>>() {
                     @Override
                     public Call<ApiResponseP7<Boolean>> createCall(AuroraFiles apiInterface) {
-                        Single<Boolean> observable = getApiProvider().getFilesRepository()
-                                .createFolder(AuroraFile.create(path, name, type, false));
-                        return fromObservable(observable);
+                        return fromObservable(null);
                     }
                 }
         ).execute();

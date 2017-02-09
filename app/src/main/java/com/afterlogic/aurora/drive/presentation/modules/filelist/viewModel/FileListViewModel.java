@@ -110,6 +110,16 @@ public class FileListViewModel implements SwipeRefreshLayout.OnRefreshListener{
         }
 
         @Override
+        public void addFile(AuroraFile file) {
+            FileViewModel newModel = new FileViewModel(file, mPresenter, mAppResources);
+            mFiles.add(newModel);
+            Collections.sort(mFiles, (l, r) ->
+                    FileUtil.AURORA_FILE_COMPARATOR.compare(l.getModel().getFile(), r.getModel().getFile())
+            );
+            mFilesMap.put(file, newModel);
+        }
+
+        @Override
         public List<AuroraFile> getFiles() {
             return Stream.of(mFiles)
                     .map(file -> file.getModel().getFile())

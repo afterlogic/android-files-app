@@ -26,5 +26,7 @@ public interface FileListModel {
 
     void removeFile(AuroraFile file);
 
+    void addFile(AuroraFile file);
+
     List<AuroraFile> getFiles();
 }

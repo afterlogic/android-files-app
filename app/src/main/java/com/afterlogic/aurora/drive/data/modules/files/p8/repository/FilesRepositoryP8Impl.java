@@ -155,13 +155,13 @@ public class FilesRepositoryP8Impl extends AuthorizedRepository implements Files
     }
 
     @Override
-    public Single<Boolean> createFolder(AuroraFile file) {
+    public Completable createFolder(AuroraFile file) {
         Single<ApiResponseP8<Boolean>> netRequest = mFilesService.createFolder(
                 file.getType(),
                 file.getPath(),
                 file.getName()
         );
-        return withNetMapper(netRequest);
+        return withNetMapper(netRequest).toCompletable();
     }
 
     @Override

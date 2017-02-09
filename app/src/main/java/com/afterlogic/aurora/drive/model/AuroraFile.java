@@ -54,19 +54,50 @@ public class AuroraFile implements Parcelable, Cloneable{
 
     private boolean mIsOffline;
 
-    public static AuroraFile create(@NonNull String path, @NonNull String name, @NonNull String type, boolean mIsFolder){
+    public static AuroraFile create(@NonNull AuroraFile parent, @NonNull String name, boolean mIsFolder){
         AuroraFile file = new AuroraFile();
-        file.mFullPath = path.equals("") ? name : path + "/" + name;
-        file.mType = type;
+        String parentFullPath = parent.getFullPath();
+        file.mFullPath = parentFullPath.equals("") ? "/" + name : parentFullPath + "/" + name;
+        file.mType = parent.getType();
         file.mIsFolder = mIsFolder;
         file.mSize = -1;
-        file.mPath = path;
+        file.mPath = parentFullPath;
         file.mName = name;
         return file;
     }
 
+    public static AuroraFile parse(@NonNull String fullPath, @NonNull String type, boolean mIsFolder){
+        AuroraFile file = new AuroraFile();
+        file.mFullPath = fullPath;
+        file.mType = type;
+        file.mIsFolder = mIsFolder;
+        file.mIsPreviewAble = 0;
+        file.mSize = -1;
+        if (fullPath.contains("/")){
+            int lastSeparator = fullPath.lastIndexOf("/");
+            file.mName = fullPath.substring(lastSeparator + 1);
+            file.mPath = fullPath.substring(0, lastSeparator);
+        }else{
+            file.mName = fullPath;
+            file.mPath = "";
+        }
+        return file;
+    }
 
-    public AuroraFile() {
+    public static AuroraFile createOffline(@NonNull String remotePath, @NonNull String remoteType,
+                                           File local){
+        AuroraFile file = parse(remotePath, remoteType, false);
+        file.mContentType = FileUtil.getFileMimeType(local);
+        if (file.mContentType.startsWith("image")){
+            file.mThumb = true;
+            file.mThumbnailLink = local.getAbsolutePath();
+        }
+        file.mLinkUrl = local.getAbsolutePath();
+        file.mIsOffline = true;
+        return file;
+    }
+
+    private AuroraFile() {
     }
 
     public AuroraFile(String name, String path, String fullPath, boolean isFolder, boolean isLink, String linkUrl, int linkType, String thumbnailLink, boolean thumb, String contentType, String hash, String type, long size, long lastModified) {
@@ -205,37 +236,6 @@ public class AuroraFile implements Parcelable, Cloneable{
             }
             return false;
         }
-    }
-
-    public static AuroraFile parse(@NonNull String fullPath, @NonNull String type, boolean mIsFolder){
-        AuroraFile file = new AuroraFile();
-        file.mFullPath = fullPath;
-        file.mType = type;
-        file.mIsFolder = mIsFolder;
-        file.mIsPreviewAble = 0;
-        file.mSize = -1;
-        if (fullPath.contains("/")){
-            int lastSeparator = fullPath.lastIndexOf("/");
-            file.mName = fullPath.substring(lastSeparator + 1);
-            file.mPath = fullPath.substring(0, lastSeparator);
-        }else{
-            file.mName = fullPath;
-            file.mPath = "";
-        }
-        return file;
-    }
-
-    public static AuroraFile createOffline(@NonNull String remotePath, @NonNull String remoteType,
-                                           File local){
-        AuroraFile file = parse(remotePath, remoteType, false);
-        file.mContentType = FileUtil.getFileMimeType(local);
-        if (file.mContentType.startsWith("image")){
-            file.mThumb = true;
-            file.mThumbnailLink = local.getAbsolutePath();
-        }
-        file.mLinkUrl = local.getAbsolutePath();
-        file.mIsOffline = true;
-        return file;
     }
 
     @Override

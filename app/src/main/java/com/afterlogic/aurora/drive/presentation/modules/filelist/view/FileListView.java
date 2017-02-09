@@ -18,6 +18,9 @@ public interface FileListView extends PresentationView {
     @Repeat(group = "progress", value = RepeatPolicy.LAST)
     void showDownloadProgress(String fileName, @FloatRange(from = -1, to = 100) float progress);
 
+    @Repeat(group = "progress", value = RepeatPolicy.LAST)
+    void showProgress(String title, String message);
+
     @Repeat(group = "progress")
     void hideProgress();
 
@@ -25,9 +28,6 @@ public interface FileListView extends PresentationView {
 
     void showRenameDialog(AuroraFile file, Consumer<String> newNameConsumer);
 
-    @Repeat(group = "progress", value = RepeatPolicy.LAST)
-    void showFileDeletingProgress(String fileName);
+    void showNewFolderNameDialog(Consumer<String> newNameConsumer);
 
-    @Repeat(group = "progress", value = RepeatPolicy.LAST)
-    void showFileRenamingProgress(String fileName);
 }

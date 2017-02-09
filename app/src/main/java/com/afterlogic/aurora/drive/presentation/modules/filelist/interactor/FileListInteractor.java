@@ -30,5 +30,9 @@ public interface FileListInteractor extends Interactor {
 
     Single<AuroraFile> rename(AuroraFile file, String newName);
 
-    Completable deleateFile(AuroraFile file);
+    Completable deleteFile(AuroraFile file);
+
+    Single<AuroraFile> createFolder(AuroraFile parentFolder, String name);
+
+    Single<AuroraFile> uploadFile(Uri file);
 }

@@ -10,8 +10,10 @@ import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
 import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
+import com.afterlogic.aurora.drive.model.error.FileNotExistError;
 import com.afterlogic.aurora.drive.presentation.common.modules.interactor.BaseInteractor;
 import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
+import com.annimon.stream.Stream;
 
 import java.io.File;
 import java.util.List;
@@ -87,9 +89,28 @@ public class FileListInteractorImpl extends BaseInteractor implements FileListIn
     }
 
     @Override
-    public Completable deleateFile(AuroraFile file) {
+    public Completable deleteFile(AuroraFile file) {
         return mFilesRepository.delete(file)
                 .compose(this::composeDefault);
+    }
+
+    @Override
+    public Single<AuroraFile> createFolder(AuroraFile parentFolder, String name) {
+        AuroraFile newFolder = AuroraFile.create(parentFolder, name, true);
+        //TODO move to repository?
+        return mFilesRepository.createFolder(newFolder)
+                .andThen(getFilesList(parentFolder))
+                .map(files -> Stream.of(files)
+                        .filter(file -> file.getFullPath().equals(newFolder.getFullPath()))
+                        .findFirst()
+                        .orElseThrow(FileNotExistError::new)
+                )
+                .compose(this::composeDefault);
+    }
+
+    @Override
+    public Single<AuroraFile> uploadFile(Uri file) {
+        return null;
     }
 
 

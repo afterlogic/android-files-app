@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiTask;
 import com.afterlogic.aurora.drive._unrefactored.model.UploadResult;
+import com.afterlogic.aurora.drive._unrefactored.model.project7.ApiResponseP7;
 import com.afterlogic.aurora.drive._unrefactored.model.project7.AuroraFileP7;
 import com.afterlogic.aurora.drive._unrefactored.model.project7.UploadResultP7;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
@@ -143,8 +144,11 @@ public class FilesRepositoryP7Impl extends AuthorizedRepository implements Files
     }
 
     @Override
-    public Single<Boolean> createFolder(AuroraFile file) {
-        return withNetMapper(mCloudService.createFolder(file.getType(), file.getPath(), file.getName()));
+    public Completable createFolder(AuroraFile file) {
+        Single<ApiResponseP7<Boolean>> request = mCloudService.createFolder(
+                file.getType(), file.getPath(), file.getName()
+        );
+        return withNetMapper(request).toCompletable();
     }
 
     @Override

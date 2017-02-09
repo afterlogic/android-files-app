@@ -31,7 +31,7 @@ public interface FilesRepository {
 
     Single<Uri> viewFile(AuroraFile file);
 
-    Single<Boolean> createFolder(AuroraFile file);
+    Completable createFolder(AuroraFile file);
 
     Single<AuroraFile> rename(AuroraFile file, String newName);
 
