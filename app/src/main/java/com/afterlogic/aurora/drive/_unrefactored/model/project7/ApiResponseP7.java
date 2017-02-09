@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive._unrefactored.model.project7;
 
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiError;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiResponseError;
+import com.afterlogic.aurora.drive.model.error.ApiError;
+import com.afterlogic.aurora.drive.model.error.ApiResponseError;
 import com.afterlogic.aurora.drive._unrefactored.model.ApiResponse;
 import com.google.gson.annotations.SerializedName;
 
@@ -45,7 +45,7 @@ public class ApiResponseP7<T> implements ApiResponse<T>{
 
     private void parseApiError(ApiError error){
         if (error != null) {
-            mErrorCode = error.getCode();
+            mErrorCode = error.getErrorCode();
             mErrorMessage = error.getMessage();
         } else {
             mErrorCode = -1;
@@ -87,6 +87,6 @@ public class ApiResponseP7<T> implements ApiResponse<T>{
 
     @Override
     public int getErrorCode() {
-        return getError() == null ? 0 : getError().getCode();
+        return getError() == null ? 0 : getError().getErrorCode();
     }
 }

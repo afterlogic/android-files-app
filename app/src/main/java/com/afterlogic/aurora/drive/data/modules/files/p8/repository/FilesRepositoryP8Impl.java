@@ -2,25 +2,35 @@ package com.afterlogic.aurora.drive.data.modules.files.p8.repository;
 
 import android.content.Context;
 import android.net.Uri;
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 import android.util.Base64;
 
+import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive._unrefactored.model.UploadResult;
+import com.afterlogic.aurora.drive._unrefactored.model.project8.ApiResponseP8;
+import com.afterlogic.aurora.drive._unrefactored.model.project8.AuroraFileP8;
+import com.afterlogic.aurora.drive.core.common.logging.MyLog;
+import com.afterlogic.aurora.drive.core.common.rx.Observables;
+import com.afterlogic.aurora.drive.core.common.rx.SimpleObservableSource;
+import com.afterlogic.aurora.drive.core.common.util.IOUtil;
+import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
-import com.afterlogic.aurora.drive._unrefactored.core.util.FileUtil;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiTask;
-import com.afterlogic.aurora.drive.model.error.ApiResponseError;
 import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
 import com.afterlogic.aurora.drive.data.common.mapper.MapperUtil;
-import com.afterlogic.aurora.drive.data.common.repository.Repository;
+import com.afterlogic.aurora.drive.data.common.repository.AuthorizedRepository;
+import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
+import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
 import com.afterlogic.aurora.drive.data.modules.files.p8.service.FilesServiceP8;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.DeleteFileInfo;
 import com.afterlogic.aurora.drive.model.FileInfo;
-import com.afterlogic.aurora.drive._unrefactored.model.UploadResult;
-import com.afterlogic.aurora.drive._unrefactored.model.project8.ApiResponseP8;
-import com.afterlogic.aurora.drive._unrefactored.model.project8.AuroraFileP8;
+import com.afterlogic.aurora.drive.model.Progressible;
+import com.afterlogic.aurora.drive.model.error.ApiResponseError;
+import com.afterlogic.aurora.drive.model.error.FileAlreadyExistError;
+import com.afterlogic.aurora.drive.model.error.FileNotExistError;
+import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 
@@ -28,11 +38,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Completable;
+import io.reactivex.Maybe;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
 import io.reactivex.Single;
 import okhttp3.MediaType;
 import okhttp3.ResponseBody;
@@ -41,13 +55,16 @@ import okhttp3.ResponseBody;
  * Created by sashka on 19.10.16.<p/>
  * mail: sunnyday.development@gmail.com
  */
-public class FilesRepositoryP8Impl extends Repository implements FilesRepository {
+public class FilesRepositoryP8Impl extends AuthorizedRepository implements FilesRepository {
 
     private static final String FILES_P_8 = "filesP8";
 
     private final FilesServiceP8 mFilesService;
     private final File mFilesCacheDir;
     private final File mThumbCacheDir;
+
+    private final AppResources mAppResources;
+    private final Context mAppContext;
 
     private final Mapper<AuroraFile, AuroraFileP8> mFileMapper = source -> new AuroraFile(
             source.getName(),
@@ -72,17 +89,45 @@ public class FilesRepositoryP8Impl extends Repository implements FilesRepository
     );
 
     @SuppressWarnings("WeakerAccess")
-    @Inject public FilesRepositoryP8Impl(@RepositoryCache SharedObservableStore cache, FilesServiceP8 filesService, Context context) {
-        super(cache, FILES_P_8);
+    @Inject public FilesRepositoryP8Impl(@RepositoryCache SharedObservableStore cache,
+                                         FilesServiceP8 filesService,
+                                         Context context,
+                                         AppResources appResources,
+                                         AuthRepository authRepository,
+                                         Context appContext) {
+        super(cache, FILES_P_8, authRepository);
         mFilesService = filesService;
         mFilesCacheDir = FileUtil.getCacheFileDir(context);
         mThumbCacheDir = new File(context.getExternalCacheDir(), "thumb");
+        mAppResources = appResources;
+        mAppContext = appContext;
     }
 
     @Override
-    public Single<Collection<AuroraFile>> getFiles(AuroraFile folder) {
-        return withNetMapper(
-                mFilesService.getFiles(folder.getType(), folder.getFullPath(), "")
+    public Single<List<String>> getAvailableFileTypes() {
+        return Single.fromCallable(() -> Stream.of(mAppResources.getStringArray(R.array.folder_types))
+                .map(type -> {
+                    List<AuroraFile> files = getFiles(AuroraFile.parse("", type, true))
+                            .toMaybe()
+                            .onErrorResumeNext(error -> {
+                                if (error instanceof ApiResponseError){
+                                    return Maybe.empty();
+                                } else {
+                                    return Maybe.error(error);
+                                }
+                            })
+                            .blockingGet();
+                    return files != null ? type : null;
+                })
+                .filter(ObjectsUtil::nonNull)
+                .collect(Collectors.toList())
+        );
+    }
+
+    @Override
+    public Single<List<AuroraFile>> getFiles(AuroraFile folder) {
+        return withReloginNetMapper(
+                () -> mFilesService.getFiles(folder.getType(), folder.getFullPath(), "")
                         .map(response -> response),
                 result -> MapperUtil.list(mFileMapper).map(result.getFiles())
         );
@@ -114,46 +159,60 @@ public class FilesRepositoryP8Impl extends Repository implements FilesRepository
     }
 
     @Override
-    public Single<Boolean> createFolder(AuroraFile file) {
+    public Completable createFolder(AuroraFile file) {
         Single<ApiResponseP8<Boolean>> netRequest = mFilesService.createFolder(
                 file.getType(),
                 file.getPath(),
                 file.getName()
         );
-        return withNetMapper(netRequest);
+        return withNetMapper(netRequest).toCompletable();
     }
 
     @Override
-    public Single<Boolean> rename(AuroraFile file, String newName) {
-        Single<ApiResponseP8<Boolean>> netRequest = mFilesService.renameFile(
+    public Single<AuroraFile> rename(AuroraFile file, String newName) {
+        AuroraFile newFile = file.clone();
+        newFile.setName(newName);
+
+        Completable renameRequest = withNetMapper(mFilesService.renameFile(
                 file.getType(),
                 file.getPath(),
                 file.getName(),
-                newName,
+                newFile.getName(),
                 file.isLink()
-        );
-        return withNetMapper(netRequest);
+        ))//-----|
+                .toCompletable();
+
+        return checkFileExisting(newFile)
+                .andThen(Completable.error(new FileAlreadyExistError(newFile)))
+                .compose(Observables.completeOnError(FileNotExistError.class))
+                .andThen(renameRequest)
+                .andThen(checkFile(newFile));
+    }
+
+    @Override
+    public Completable checkFileExisting(AuroraFile file) {
+        return checkFile(file).toCompletable();
     }
 
     @Override
     public Single<AuroraFile> checkFile(AuroraFile file) {
         return getFiles(file.getParentFolder())
-                .flatMap(files -> {
-                    try {
-                        AuroraFile requestedFile = Stream.of(files)
-                                .filter(remoteFile -> remoteFile.getFullPath().equals(file.getFullPath()))
-                                .findFirst()
-                                .orElseThrow(() -> new ApiResponseError("File not exist", com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiResponseError.FILE_NOT_EXIST));
-                        return Single.just(requestedFile);
-                    } catch (ApiResponseError e){
-                        return Single.error(e);
-                    }
-                });
+                .flatMap(files -> Single.fromCallable(() ->
+                        Stream.of(files)
+                        .filter(remoteFile -> remoteFile.getFullPath().equals(file.getFullPath()))
+                        .findFirst()
+                        .orElseThrow(FileNotExistError::new))
+                );
     }
 
     @Override
-    public Single<Boolean> delete(List<AuroraFile> files) {
-        return Single.defer(() -> {
+    public Completable delete(AuroraFile files) {
+        return delete(Collections.singletonList(files));
+    }
+
+    @Override
+    public Completable delete(List<AuroraFile> files) {
+        return Completable.defer(() -> {
             String type = files.get(0).getType();
 
             checkFilesType(type, files);
@@ -163,7 +222,8 @@ public class FilesRepositoryP8Impl extends Repository implements FilesRepository
                     .collect(Collectors.toList());
 
             Single<ApiResponseP8<Boolean>> netRequest = mFilesService.delete(type, deleteInfo);
-            return withNetMapper(netRequest);
+            return withNetMapper(netRequest)
+                    .toCompletable();
         });
     }
 
@@ -173,12 +233,107 @@ public class FilesRepositoryP8Impl extends Repository implements FilesRepository
     }
 
     @Override
-    public Single<UploadResult> uploadFile(AuroraFile folder, FileInfo file, @Nullable ApiTask.ProgressUpdater progressUpdater) {
-        return withNetMapper(
-                mFilesService.uploadFile(folder.getType(), folder.getFullPath(), file, progressUpdater)
-                        .map(response -> response),
-                result -> new UploadResult()
+    public Observable<Progressible<File>> download(AuroraFile file, File target) {
+        Observable<Progressible<File>> request = downloadFileBody(file)
+                .flatMapObservable(fileBody -> Observable.create(emitter -> {
+                    File dir = target.getParentFile();
+
+                    if (!dir.exists() && !dir.mkdirs()){
+                        throw new IOException("Can't create dir: " + dir.toString());
+                    }
+
+                    long size = file.getSize();
+                    saveFile(fileBody.byteStream(), file, target, emitter);
+
+                    if (!target.setLastModified(file.getLastModified())){
+                        MyLog.majorException(new IOException("Can't set last modified: " + target.getPath()));
+                    }
+
+                    emitter.onNext(new Progressible<>(target, size, size, file.getName()));
+                    emitter.onComplete();
+                }));
+        return Observable.concat(
+                Observable.just(new Progressible<>(null, 0, 0, file.getName())),
+                request
         );
+    }
+
+    @Override
+    public Observable<Progressible<AuroraFile>> uploadFile(AuroraFile folder, Uri file) {
+        return Observable.defer(() -> {
+            FileInfo fileInfo = FileUtil.fileInfo(file, mAppContext);
+
+            //check file
+            AuroraFile checkFile = AuroraFile.create(folder, fileInfo.getName(), false);
+            return checkFileExisting(checkFile)
+                    .andThen(Completable.error(new FileAlreadyExistError(checkFile)))
+                    .compose(Observables.completeOnError(FileNotExistError.class))
+                    //upload
+                    .andThen(uploadFileToServser(folder, fileInfo))
+                    .flatMap(progress -> {
+                        if (!progress.isDone()){
+                            return Observable.just(progress.map(null));
+                        } else {
+                            //TODO get uploaded file name
+                            return checkFile(AuroraFile.create(folder, fileInfo.getName(), false))
+                                    .map(progress::map)
+                                    .toObservable()
+                                    .startWith(new Progressible<>(null, -1, 0, progress.getName()));
+                        }
+                    });
+        });
+    }
+
+    private Observable<Progressible<UploadResult>> uploadFileToServser(AuroraFile folder, @NonNull FileInfo fileInfo) {
+        SimpleObservableSource<Progressible<UploadResult>> progressSource = new SimpleObservableSource<>();
+
+        Observable<Progressible<UploadResult>> request = withNetMapper(
+                mFilesService.uploadFile(
+                        folder.getType(),
+                        folder.getFullPath(),
+                        fileInfo,
+                        (max, value) -> progressSource.onNext(new Progressible<>(
+                                null, max, value, fileInfo.getName()
+                        ))
+                ).map(response -> response),
+                result -> new UploadResult()
+        )//-----|
+                .doOnEvent((uploadResult, throwable) -> progressSource.complete())
+                .doOnDispose(progressSource::clear)
+                .map(result -> new Progressible<>(result, 0, 0, fileInfo.getName()))
+                .toObservable()
+                .doFinally(() -> MyLog.d("Request released."));
+
+        return Observable.merge(
+                progressSource,
+                request
+        );
+    }
+
+    /**
+     * Read {@link ResponseBody} to local file.
+     * @param is - resource input stream.
+     * @param target - local file target.
+     */
+    private void saveFile(InputStream is, AuroraFile source, File target, ObservableEmitter<Progressible<File>> progressEmmiter) throws IOException{
+        FileOutputStream fos = null;
+        try{
+            fos = new FileOutputStream(target);
+            progressEmmiter.onNext(new Progressible<>(null, source.getSize(), 0, source.getName()));
+
+            byte[] buffer = new byte[2048];
+            int count;
+            long totalRead = 0;
+            while ((count = is.read(buffer)) != -1 && totalRead < source.getSize()){
+                count = (int) Math.min(source.getSize() - totalRead, count);
+                fos.write(buffer, 0, count);
+                totalRead += count;
+                progressEmmiter.onNext(new Progressible<>(null, source.getSize(), totalRead, source.getName()));
+            }
+        } finally {
+            IOUtil.closeQuietly(is);
+            IOUtil.closeQuietly(fos);
+        }
     }
 
     private Single<Uri> getFile(AuroraFile file, File cacheDir, Single<ResponseBody> cloud){

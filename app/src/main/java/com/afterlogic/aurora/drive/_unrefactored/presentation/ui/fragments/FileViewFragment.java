@@ -19,7 +19,7 @@ import com.afterlogic.aurora.drive._unrefactored.data.common.db.DBHelper;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.dao.WatchingFileDAO;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.model.WatchingFile;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.views.DisablableViewPager;
+import com.afterlogic.aurora.drive.presentation.common.components.view.DisablableViewPager;
 
 import java.util.ArrayList;
 import java.util.List;

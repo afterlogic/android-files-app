@@ -21,11 +21,13 @@ import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnBackPressedListener;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiCallback;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiError;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiResponseError;
+import com.afterlogic.aurora.drive.model.error.ApiError;
+import com.afterlogic.aurora.drive.model.error.ApiResponseError;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.FilesListActivity;
-import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.views.DisablableViewPager;
+import com.afterlogic.aurora.drive.presentation.common.components.view.DisablableViewPager;
+import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FilesListFragmentDeprecated;
+import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesCallback;
 import com.annimon.stream.Stream;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
@@ -43,7 +45,7 @@ import java.util.Set;
  */
 public class FilesRootFragment extends Fragment implements
         View.OnClickListener,
-        FilesCallback,
+        MainFilesCallback,
         OnBackPressedListener,
         SwipeRefreshLayout.OnRefreshListener
 {
@@ -65,7 +67,7 @@ public class FilesRootFragment extends Fragment implements
 
     private final List<String> mAvailableTypes = new ArrayList<>();
     private final Set<String> mTypesInCheck = new HashSet<>();
-    private final HashMap<String, FilesListFragment> mFirstInstances = new HashMap<>();
+    private final HashMap<String, FilesListFragmentDeprecated> mFirstInstances = new HashMap<>();
 
     private FilesRootFragmentCallback mCallback;
     private boolean mIsRoot = true;
@@ -178,7 +180,7 @@ public class FilesRootFragment extends Fragment implements
     @Override
     public boolean onBackPressed() {
         if (mFilesTypesAdapter != null) {
-            FilesListFragment current = mFilesTypesAdapter.getFilesFragment(mCurrentFragment);
+            FilesListFragmentDeprecated current = mFilesTypesAdapter.getFilesFragment(mCurrentFragment);
             return current != null && current.onBackPressed();
         }else{
             return false;
@@ -196,7 +198,7 @@ public class FilesRootFragment extends Fragment implements
                         .requestCreateFolder();
                 break;
             case R.id.upload_file:
-                FilesListFragment fragment = mFilesTypesAdapter.getFilesFragment(mViewPager.getCurrentItem());
+                FilesListFragmentDeprecated fragment = mFilesTypesAdapter.getFilesFragment(mViewPager.getCurrentItem());
                 AuroraFile folder = fragment.getCurrentFolder();
                 mCallback.requestFileUpload(folder);
                 break;
@@ -205,7 +207,7 @@ public class FilesRootFragment extends Fragment implements
     }
 
     /**
-     * {@link FilesCallback#onOpenFolder(AuroraFile)}  implementation.
+     * {@link MainFilesCallback#onOpenFolder(AuroraFile)}  implementation.
      */
     @Override
     public void onOpenFolder(AuroraFile folder) {
@@ -215,27 +217,6 @@ public class FilesRootFragment extends Fragment implements
         if (mAddMenu != null){
             mAddMenu.collapse();
         }
-    }
-
-    /**
-     * {@link FilesCallback#showActions(AuroraFile)}  implementation.
-     */
-    @Override
-    public void showActions(AuroraFile file) {
-        //STUB. It is handled in Activity.
-    }
-
-    /**
-     * {@link FilesCallback#onFileClicked(AuroraFile, List)}  implementation.
-     */
-    @Override
-    public void onFileClicked(AuroraFile file, List<AuroraFile> allFiles) {
-        //STUB. It is handled in Activity.
-    }
-
-    @Override
-    public void createFolder(String path, String type, String folderName) {
-        //STUB. It is handled in Activity.
     }
 
     /**
@@ -252,7 +233,7 @@ public class FilesRootFragment extends Fragment implements
 
     public void setMultichoiseMode(boolean multichoiseMode){
         if (mViewPager != null){
-            FilesListFragment flf = mFilesTypesAdapter.getFilesFragment(mViewPager.getCurrentItem());
+            FilesListFragmentDeprecated flf = mFilesTypesAdapter.getFilesFragment(mViewPager.getCurrentItem());
             flf.setMultichoiseMode(multichoiseMode);
             mIsMultiChoise = multichoiseMode;
             updateUI();
@@ -267,7 +248,7 @@ public class FilesRootFragment extends Fragment implements
     public AuroraFile getCurrentFolder(){
         if (mViewPager != null){
             if (mFilesTypesAdapter.getCount() > 0){
-                FilesListFragment files = mFilesTypesAdapter.getFilesFragment(
+                FilesListFragmentDeprecated files = mFilesTypesAdapter.getFilesFragment(
                         mViewPager.getCurrentItem()
                 );
                 if (files != null){
@@ -279,10 +260,10 @@ public class FilesRootFragment extends Fragment implements
     }
 
     /**
-     * Get current {@link FilesListFragment}
+     * Get current {@link FilesListFragmentDeprecated}
      * @return - current selected fragment fragment.
      */
-    public FilesListFragment getCurrentListFragment(){
+    public FilesListFragmentDeprecated getCurrentListFragment(){
         if (mViewPager != null){
             if (mFilesTypesAdapter.getCount() > 0){
                 return mFilesTypesAdapter.getFilesFragment(
@@ -333,7 +314,7 @@ public class FilesRootFragment extends Fragment implements
 
                 //On success create fragment with result content
                 //It will be showed in adapter at first time.
-                FilesListFragment fragment = FilesListFragment.newInstance(type, null, result);
+                FilesListFragmentDeprecated fragment = FilesListFragmentDeprecated.newInstance(type, null, result);
                 //Add data to buffers
                 mFirstInstances.put(type, fragment);
                 mAvailableTypes.add(type);
@@ -345,7 +326,7 @@ public class FilesRootFragment extends Fragment implements
             public void onError(ApiError error) {
                 if (requestId != mActualCheckRequestId) return;
 
-                if (error.getCode() != ApiResponseError.RESULT_FALSE){
+                if (error.getErrorCode() != ApiResponseError.RESULT_FALSE){
                     //Increase request id for prevent handling all other responses
                     mActualCheckRequestId++;
                     //Set error indicator
@@ -397,13 +378,13 @@ public class FilesRootFragment extends Fragment implements
     }
 
     /**
-     * Refresh {@link FilesListFragment} with requested type.
+     * Refresh {@link FilesListFragmentDeprecated} with requested type.
      * @param type - type of folder (personal, corporate and etc.)
      */
     public void refreshFolderByType(String type){
         if (mFilesTypesAdapter != null) {
             for (int i = 0; i < mFilesTypesAdapter.getCount(); i++){
-                FilesListFragment fragment = mFilesTypesAdapter.getFilesFragment(i);
+                FilesListFragmentDeprecated fragment = mFilesTypesAdapter.getFilesFragment(i);
                 if (fragment != null){
                     if (type != null) {
                         AuroraFile itemFolder = fragment.getCurrentFolder();
@@ -419,11 +400,11 @@ public class FilesRootFragment extends Fragment implements
     }
 
     /**
-     * Refresh selected {@link FilesListFragment}.
+     * Refresh selected {@link FilesListFragmentDeprecated}.
      */
     public void refreshCurrentFolder(){
         if (mFilesTypesAdapter != null && mCurrentFragment >= 0 && mCurrentFragment < mFilesTypesAdapter.getCount()) {
-            FilesListFragment fragment = mFilesTypesAdapter.getFilesFragment(mCurrentFragment);
+            FilesListFragmentDeprecated fragment = mFilesTypesAdapter.getFilesFragment(mCurrentFragment);
             if (fragment != null){
                 fragment.refreshCurrentFolder();
             }
@@ -436,7 +417,7 @@ public class FilesRootFragment extends Fragment implements
             Stream.of(0, adapter.getCount())
                     .map(adapter::getFilesFragment)
                     .filter(ObjectsUtil::nonNull)
-                    .forEach(FilesListFragment::refreshCurrentFolder);
+                    .forEach(FilesListFragmentDeprecated::refreshCurrentFolder);
         }
     }
 
@@ -447,7 +428,7 @@ public class FilesRootFragment extends Fragment implements
     public void onFileDeleted(List<AuroraFile> files){
         if (mFilesTypesAdapter != null) {
             for (int i = 0; i < mFilesTypesAdapter.getCount(); i++){
-                FilesListFragment fragment = mFilesTypesAdapter.getFilesFragment(i);
+                FilesListFragmentDeprecated fragment = mFilesTypesAdapter.getFilesFragment(i);
                 if (fragment != null){
                     fragment.onFilesDeleted(files);
                 }
@@ -505,12 +486,12 @@ public class FilesRootFragment extends Fragment implements
     }
 
     /**
-     * Two files folder types adapter. Personal or Corporate {@link FilesListFragment}s.
+     * Two files folder types adapter. Personal or Corporate {@link FilesListFragmentDeprecated}s.
      */
     private class FilesTypesAdapter extends FragmentPagerAdapter {
 
-        private final HashMap<String, FilesListFragment> mFirstInstances = new HashMap<>();
-        private SparseArray<FilesListFragment> mFilesListFragments = new SparseArray<>();
+        private final HashMap<String, FilesListFragmentDeprecated> mFirstInstances = new HashMap<>();
+        private SparseArray<FilesListFragmentDeprecated> mFilesListFragments = new SparseArray<>();
         private List<String> mTypes;
         private Resources mResources;
 
@@ -522,14 +503,14 @@ public class FilesRootFragment extends Fragment implements
 
         @Override
         public Fragment getItem(int position) {
-            FilesListFragment f = null;
+            FilesListFragmentDeprecated f = null;
             String type = mTypes.get(position);
             if (mFirstInstances != null) {
                 f = mFirstInstances.get(type);
                 mFirstInstances.remove(type);
             }
             if (f == null){
-                f = FilesListFragment.newInstance(type);
+                f = FilesListFragmentDeprecated.newInstance(type);
             }
             return f;
         }
@@ -540,8 +521,8 @@ public class FilesRootFragment extends Fragment implements
          */
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            FilesListFragment fragment =
-                    (FilesListFragment) super.instantiateItem(container, position);
+            FilesListFragmentDeprecated fragment =
+                    (FilesListFragmentDeprecated) super.instantiateItem(container, position);
 
             mFilesListFragments.put(position, fragment);
             return fragment;
@@ -560,7 +541,7 @@ public class FilesRootFragment extends Fragment implements
 
         @Override
         public CharSequence getPageTitle(int position) {
-            String[] titles = mResources.getStringArray(R.array.folder_names);
+            String[] titles = mResources.getStringArray(R.array.folder_captions);
             String[] types = mResources.getStringArray(R.array.folder_types);
 
             for (int i = 0; i < types.length; i++){
@@ -573,20 +554,20 @@ public class FilesRootFragment extends Fragment implements
         }
 
         /**
-         * Set first instances of {@link FilesListFragment}s and {@link #notifyDataSetChanged()}.
+         * Set first instances of {@link FilesListFragmentDeprecated}s and {@link #notifyDataSetChanged()}.
          * @param firstInstances - Map of first instances of files fragment with type key.
          *                       It will be cleared after {@link #getItem(int)}.
          */
-        public void notifyChangedWithInstances(HashMap<String, FilesListFragment> firstInstances){
+        public void notifyChangedWithInstances(HashMap<String, FilesListFragmentDeprecated> firstInstances){
             mFirstInstances.clear();
             mFirstInstances.putAll(firstInstances);
             notifyDataSetChanged();
         }
 
         /**
-         * Get {@link FilesListFragment} by position.
+         * Get {@link FilesListFragmentDeprecated} by position.
          */
-        public FilesListFragment getFilesFragment(int position) {
+        public FilesListFragmentDeprecated getFilesFragment(int position) {
             return mFilesListFragments.get(position);
         }
 

@@ -85,7 +85,7 @@ public class LoginInteractorImpl extends BaseInteractor implements LoginInteract
             return Stream.of(domains)
                     .map(mApiChecker::getApiVersion)
                     .map(Single::toObservable)
-                    .collect(Observables.ObservableCollectors.concatObservables())
+                    .collect(Observables.Collectors.concatObservables())
                     .filter(version -> version != Const.ApiVersion.API_NONE)
                     .firstElement()
                     .switchIfEmpty(Maybe.error(new UnknownApiVersionError()))
@@ -105,10 +105,6 @@ public class LoginInteractorImpl extends BaseInteractor implements LoginInteract
                                     return Completable.complete();
                                 })
                                 .andThen(authRepository.login(session.getLogin(), session.getPassword()))
-                                .flatMapCompletable(authToken -> {
-                                    mSessionManager.getSession().setAuthToken(authToken.token);
-                                    return Completable.complete();
-                                })
                 )
                 .andThen(storeAuthData())
                 .doOnError(error -> mSessionManager.setSession(null))

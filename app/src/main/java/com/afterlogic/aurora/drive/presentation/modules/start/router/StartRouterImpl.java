@@ -3,7 +3,7 @@ package com.afterlogic.aurora.drive.presentation.modules.start.router;
 import com.afterlogic.aurora.drive.presentation.common.modules.router.BaseRouter;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
-import com.afterlogic.aurora.drive.presentation.modules.files.FileListIntent;
+import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesIntent;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginIntent;
 import com.afterlogic.aurora.drive.presentation.modules.start.view.StartView;
 
@@ -28,6 +28,6 @@ public class StartRouterImpl extends BaseRouter<StartView, BaseActivity> impleme
 
     @Override
     public void openMain() {
-        ifViewActive(activity -> activity.startActivity(FileListIntent.intent(activity)));
+        ifViewActive(activity -> activity.startActivity(MainFilesIntent.intent(activity)));
     }
 }

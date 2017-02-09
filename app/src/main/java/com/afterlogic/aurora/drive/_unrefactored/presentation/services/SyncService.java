@@ -21,10 +21,10 @@ import com.afterlogic.aurora.drive.BuildConfig;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive._unrefactored.core.util.AccountUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.ApiCompatibilityUtil;
-import com.afterlogic.aurora.drive._unrefactored.core.util.FileUtil;
+import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.NotificationUtil;
 import com.afterlogic.aurora.drive._unrefactored.data.common.ApiProvider;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiResponseError;
+import com.afterlogic.aurora.drive.model.error.ApiResponseError;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiTask;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.AuroraApi;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.DBHelper;
@@ -51,6 +51,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
@@ -196,10 +197,10 @@ public class SyncService extends Service {
             Holder<Boolean> credentialResult = new Holder<>(false);
             mApi.getUserRepository()
                     .getSystemAppData()
-                    .flatMap(systemAppData -> mApi.getUserRepository().relogin())
+                    .flatMapCompletable(systemAppData -> mApi.getUserRepository().relogin())
                     .compose(this::scheduleImmediate)
                     .subscribe(
-                            token -> credentialResult.set(true),
+                            () -> credentialResult.set(true),
                             error -> MyLog.majorException(this, error)
                     );
             return credentialResult.get();
@@ -260,7 +261,7 @@ public class SyncService extends Service {
                     }
                     Log.d(TAG, watching.getRemoteUniqueSpec() + "|" + remote.getFullPath());
                 } else {
-                    if (response.getError() == null || response.getError().getCode() != ApiResponseError.UNKNOWN){
+                    if (response.getError() == null || response.getError().getErrorCode() != ApiResponseError.UNKNOWN){
                         //TODO handle unexpected error
                         continue;
                         //Else file not exist and it is expected error
@@ -446,8 +447,7 @@ public class SyncService extends Service {
 
             //TODO !!! Upload with override
             if (mApi.getSessionManager().getSession().getApiVersion() == Const.ApiVersion.API_P8){
-                boolean deleted = repository.delete(Collections.singletonList(file))
-                        .blockingGet();
+                boolean deleted = repository.delete(Collections.singletonList(file)).blockingGet() == null;
                 if (!deleted){
                     MyLog.e(this, "File not deleted: " + file.getName());
                     return false;
@@ -460,11 +460,11 @@ public class SyncService extends Service {
                     (progress, max) -> sendChangedBroadcast(watchingFile, (int)progress, (int)max)
             );
 
-            repository.uploadFile(file.getParentFolder(), fileInfo, progressUpdater)
-                    .subscribe(
-                            response -> result.set(true),
-                            error -> MyLog.e(this, error)
-                    );
+            //repository.uploadFile(file.getParentFolder(), fileInfo, progressUpdater)
+            //        .subscribe(
+            //                response -> result.set(true),
+            //                error -> MyLog.e(this, error)
+            //        );
             return result.get();
         }
 
@@ -693,6 +693,12 @@ public class SyncService extends Service {
         }
 
         private <T> Single<T> scheduleImmediate(Single<T> observable){
+            return observable
+                    .subscribeOn(Schedulers.from(Runnable::run))
+                    .observeOn(Schedulers.from(Runnable::run));
+        }
+
+        private Completable scheduleImmediate(Completable observable){
             return observable
                     .subscribeOn(Schedulers.from(Runnable::run))
                     .observeOn(Schedulers.from(Runnable::run));

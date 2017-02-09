@@ -14,13 +14,13 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive._unrefactored.core.util.FileUtil;
+import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Task;
 import com.afterlogic.aurora.drive.databinding.ActivitySendFilesBinding;
 import com.afterlogic.aurora.drive.model.FileInfo;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.ConnectionFailedFragment;
-import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.FilesListFragment;
+import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FilesListFragmentDeprecated;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -56,7 +56,7 @@ public class SendFilesActivity extends ChooseFileActivity {
         if (createFolder != null) {
             createFolder.setOnClickListener(v -> {
                 if (mFilesRootFragment != null) {
-                    FilesListFragment current = mFilesRootFragment.getCurrentListFragment();
+                    FilesListFragmentDeprecated current = mFilesRootFragment.getCurrentListFragment();
                     if (current != null) {
                         current.requestCreateFolder();
                     }

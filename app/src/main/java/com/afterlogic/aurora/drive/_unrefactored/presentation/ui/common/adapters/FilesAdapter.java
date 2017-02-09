@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive._unrefactored.core.util.DrawableUtil;
-import com.afterlogic.aurora.drive._unrefactored.core.util.FileUtil;
+import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.interfaces.OnItemClickListener;
 import com.afterlogic.aurora.drive._unrefactored.core.util.interfaces.OnItemLongClickListener;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;

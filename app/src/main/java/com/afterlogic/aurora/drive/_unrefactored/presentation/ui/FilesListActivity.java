@@ -20,15 +20,15 @@ import android.widget.Toast;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive._unrefactored.core.util.AccountUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.DownloadType;
-import com.afterlogic.aurora.drive._unrefactored.core.util.FileUtil;
+import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.IntentUtil;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiCallback;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiError;
+import com.afterlogic.aurora.drive.model.error.ApiError;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.adapters.FilesAdapter;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.dialogs.FileActionsBottomSheet;
-import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.FilesCallback;
-import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.FilesListFragment;
+import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesCallback;
+import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FilesListFragmentDeprecated;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.FilesRootFragment;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.OfflineFilesFragment;
 import com.afterlogic.aurora.drive.model.AuroraFile;
@@ -46,7 +46,7 @@ import java.util.List;
  * mail: sunnyday.development@gmail.com
  */
 public class FilesListActivity extends BaseFileActionActivity implements
-        FilesCallback,
+        MainFilesCallback,
         FileActionsBottomSheet.FileActionListener,
         FilesRootFragment.FilesRootFragmentCallback,
         FilesAdapter.MultichoiseListener
@@ -171,7 +171,7 @@ public class FilesListActivity extends BaseFileActionActivity implements
                 return true;
             case R.id.action_multichoise:
                 if (mFilesRootFragment != null){
-                    FilesListFragment listFragment = mFilesRootFragment.getCurrentListFragment();
+                    FilesListFragmentDeprecated listFragment = mFilesRootFragment.getCurrentListFragment();
                     if (listFragment != null && !listFragment.isRefreshing()){
                         startSupportActionMode(new MultichoiseMenu());
                     } else {
@@ -266,7 +266,7 @@ public class FilesListActivity extends BaseFileActionActivity implements
     }
 
     /**
-     * {@link FilesCallback#onOpenFolder(AuroraFile)}  implementation.
+     * {@link MainFilesCallback#onOpenFolder(AuroraFile)}  implementation.
      */
     @Override
     public void onOpenFolder(AuroraFile folder) {
@@ -277,18 +277,16 @@ public class FilesListActivity extends BaseFileActionActivity implements
     }
 
     /**
-     * {@link FilesCallback#showActions(AuroraFile)}  implementation.
+     * {@link MainFilesCallback#showActions(AuroraFile)}  implementation.
      */
-    @Override
     public void showActions(AuroraFile file) {
         FileActionsBottomSheet actions = FileActionsBottomSheet.newInstance(file);
         actions.show(getSupportFragmentManager(), "file_actions");
     }
 
     /**
-     * {@link FilesCallback#onFileClicked(AuroraFile, List)}  implementation.
+     * {@link MainFilesCallback#onFileClicked(AuroraFile, List)}  implementation.
      */
-    @Override
     public void onFileClicked(AuroraFile file, List<AuroraFile> all) {
         if (file.isLink()){
             //[START Open url]
@@ -332,9 +330,8 @@ public class FilesListActivity extends BaseFileActionActivity implements
     }
 
     /**
-     * {@link FilesCallback#createFolder(String, String, String)}  implementation.
+     * {@link MainFilesCallback#createFolder(String, String, String)}  implementation.
      */
-    @Override
     public void createFolder(String path, final String type, String folderName) {
 
         int taskId = Api.createFolder(folderName, path, type, new ApiCallback<Void>() {
@@ -370,10 +367,10 @@ public class FilesListActivity extends BaseFileActionActivity implements
     }
 
     /**
-     * {@link FileActionsBottomSheet.FileActionListener#onActionSelected(int, AuroraFile)}  implementation.
+     * {@link FileActionsBottomSheet.FileActionListener#onFileAction(int, AuroraFile)}  implementation.
      */
     @Override
-    public void onActionSelected(int action, AuroraFile file) {
+    public void onFileAction(int action, AuroraFile file) {
         switch (action){
             case R.id.action_rename:
                 showRenameDialog(file);

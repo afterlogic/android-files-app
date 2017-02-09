@@ -28,15 +28,15 @@ import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive._unrefactored.core.util.AccountUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.DialogUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.DownloadType;
-import com.afterlogic.aurora.drive._unrefactored.core.util.FileUtil;
+import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.IntentUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.WatchingFileManager;
 import com.afterlogic.aurora.drive._unrefactored.core.util.task.TaskProgressNotifier;
 import com.afterlogic.aurora.drive._unrefactored.core.util.task.TaskRegisterConnection;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiCallback;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiError;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiResponseError;
+import com.afterlogic.aurora.drive.model.error.ApiError;
+import com.afterlogic.aurora.drive.model.error.ApiResponseError;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Task;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.DBHelper;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.dao.WatchingFileDAO;
@@ -45,7 +45,7 @@ import com.afterlogic.aurora.drive._unrefactored.presentation.receivers.SyncReso
 import com.afterlogic.aurora.drive._unrefactored.presentation.services.FileLoadService;
 import com.afterlogic.aurora.drive._unrefactored.presentation.services.SyncService;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.base.BaseFileDownloadActivity;
-import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.views.SelectionEditText;
+import com.afterlogic.aurora.drive.presentation.common.components.view.SelectionEditText;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileInfo;
@@ -357,7 +357,7 @@ abstract class BaseFileActionActivity extends BaseFileDownloadActivity{
 
             @Override
             public void onError(ApiError error) {
-                if (error.getCode() == ApiResponseError.FILE_NOT_EXIST){
+                if (error.getErrorCode() == ApiResponseError.FILE_NOT_EXIST){
                     //File not exist so can rename
                     rename(oldFile, newFile);
                 } else {

@@ -6,7 +6,7 @@ import com.afterlogic.aurora.drive.data.modules.files.p7.mapper.file.factory.Aur
 import com.afterlogic.aurora.drive.data.modules.files.p7.mapper.file.factory.AuroraFileP7MapperFactoryImpl;
 import com.afterlogic.aurora.drive.data.modules.files.p7.mapper.uploadResult.factory.UploadResultP7MapperFactory;
 import com.afterlogic.aurora.drive.data.modules.files.p7.mapper.uploadResult.factory.UploadResultP7MapperFactoryImpl;
-import com.afterlogic.aurora.drive.data.modules.files.p7.repository.FilesRepository7Impl;
+import com.afterlogic.aurora.drive.data.modules.files.p7.repository.FilesRepositoryP7Impl;
 import com.afterlogic.aurora.drive.data.modules.files.p7.service.FilesServiceP7;
 import com.afterlogic.aurora.drive.data.modules.files.p7.service.FilesServiceP7Impl;
 
@@ -26,7 +26,7 @@ public class P7FilesDataModule {
     }
 
     @Provides @P7
-    FilesRepository provideFilesRepository(FilesRepository7Impl repository7){
+    FilesRepository provideFilesRepository(FilesRepositoryP7Impl repository7){
         return repository7;
     }
 

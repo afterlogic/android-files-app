@@ -14,7 +14,7 @@
     File storage type names array.
     !!! MUST have size equals to types array size.
     -->
-    <string-array name="folder_names">
+    <string-array name="folder_captions">
         <item>@string/title_personal</item>
         <item>@string/title_corporate</item>
     </string-array>

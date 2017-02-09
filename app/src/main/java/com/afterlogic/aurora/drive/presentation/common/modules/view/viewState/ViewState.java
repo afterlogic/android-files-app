@@ -96,11 +96,42 @@ public class ViewState<T extends PresentationView> implements Stoppable {
             boolean handled = invoke(invocation);
 
             RepeatPolicy repeatPolicy = invocation.getRepeatPolicy();
-            if (repeatPolicy == RepeatPolicy.NONE || handled && invocation.isOnceHandle()){
+            String group = invocation.getGroup();
+
+            boolean noNeedStore = repeatPolicy == RepeatPolicy.NONE ||
+                    handled && invocation.isOnceHandle();
+
+            if (group == null && noNeedStore){
                 return null;
             }
 
-            storeInvoke(invocation);
+            synchronized (mInvokes){
+                List<MethodInvocation> deleteList = new ArrayList<>();
+
+                //Remove all previously stored same methods if 'repeat last' or 'repeat last unhandled'
+                if (oneOfType(repeatPolicy, LAST_UNHANDLED, LAST)) {
+                    deleteList.addAll(Stream.of(mInvokes)
+                            .filter(stored -> stored.equals(invocation))
+                            .collect(Collectors.toList())
+                    );
+                }
+
+                if (group != null) {
+                    //Remove all previously stored different methods with same group
+                    deleteList.addAll(Stream.of(mInvokes)
+                            .filter(stored -> group.equals(stored.getGroup()) && !stored.equals(invocation))
+                            .collect(Collectors.toList())
+                    );
+                }
+
+                if (!deleteList.isEmpty()){
+                    mInvokes.removeAll(deleteList);
+                }
+
+                if (!noNeedStore){
+                    mInvokes.add(invocation);
+                }
+            }
 
             return null;
         }
@@ -111,7 +142,6 @@ public class ViewState<T extends PresentationView> implements Stoppable {
                 return false;
             }
 
-            MyLog.d("invoke: " + invocation);
             invocation.invoke(view);
 
             if (invocation.isOnceHandle()){
@@ -121,44 +151,7 @@ public class ViewState<T extends PresentationView> implements Stoppable {
             return true;
         }
 
-        private void storeInvoke(MethodInvocation invocation){
-            MyLog.d("modulesStore: " + invocation);
-
-            RepeatPolicy repeatPolicy = invocation.getRepeatPolicy();
-            String group = invocation.getGroup();
-
-            synchronized (mInvokes){
-                if (group == null) {
-                    //Remove all same methods if @RepeatLast
-                    if (oneOfType(repeatPolicy, LAST_UNHANDLED, LAST)) {
-                        List<MethodInvocation> sameMethods = Stream.of(mInvokes)
-                                .filter(stored -> stored.equals(invocation))
-                                .collect(Collectors.toList());
-                        mInvokes.removeAll(sameMethods);
-                    }
-                } else {
-                    if (oneOfType(repeatPolicy, LAST_UNHANDLED, LAST)){
-                        List<MethodInvocation> sameGroup = Stream.of(mInvokes)
-                                .filter(stored -> group.equals(stored.getGroup()))
-                                .collect(Collectors.toList());
-                        mInvokes.removeAll(sameGroup);
-                    } else {
-                        List<MethodInvocation> lastWithSameGroup = Stream.of(mInvokes)
-                                .filter(item ->
-                                        oneOfType(item.getRepeatPolicy(), LAST_UNHANDLED, LAST) &&
-                                                group.equals(item.getGroup())
-                                )
-                                .collect(Collectors.toList());
-                        mInvokes.removeAll(lastWithSameGroup);
-                    }
-                }
-
-                mInvokes.add(invocation);
-            }
-        }
-
         void reinvoke(){
-            MyLog.d("reinvoke()");
             synchronized (mInvokes) {
                 Stream.of(new ArrayList<>(mInvokes))
                         .sortBy(MethodInvocation::getCallTime)

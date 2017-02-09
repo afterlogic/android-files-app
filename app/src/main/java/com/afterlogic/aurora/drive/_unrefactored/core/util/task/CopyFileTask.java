@@ -3,8 +3,8 @@ package com.afterlogic.aurora.drive._unrefactored.core.util.task;
 import android.os.AsyncTask;
 
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiCallback;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiError;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiResponseError;
+import com.afterlogic.aurora.drive.model.error.ApiError;
+import com.afterlogic.aurora.drive.model.error.ApiResponseError;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Task;
 import com.afterlogic.aurora.drive.core.common.util.IOUtil;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;
