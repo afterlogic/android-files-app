@@ -1,12 +1,11 @@
-package com.afterlogic.aurora.drive.data.modules.auth.p7.repository;
+package com.afterlogic.aurora.drive.data.modules.auth.repository;
 
 import android.content.Context;
 
-import com.afterlogic.aurora.drive._unrefactored.presentation.receivers.session.SessionTrackerReceiver;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.session.SessionTrackUtil;
 import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
-import com.afterlogic.aurora.drive.data.common.repository.Repository;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.data.modules.auth.p7.service.AuthServiceP7;
 import com.afterlogic.aurora.drive.model.AuroraSession;
@@ -21,7 +20,7 @@ import io.reactivex.Single;
  * Created by sashka on 11.10.16.<p/>
  * mail: sunnyday.development@gmail.com
  */
-public class AuthRepositoryP7Impl extends Repository implements AuthRepository {
+public class AuthRepositoryP7Impl extends BaseAuthRepository implements AuthRepository {
 
     private static final String USER_P_7 = "userP7";
 
@@ -35,7 +34,7 @@ public class AuthRepositoryP7Impl extends Repository implements AuthRepository {
                          Context context,
                          AuthServiceP7 authService,
                          SessionManager sessionManager) {
-        super(cache, USER_P_7);
+        super(cache, USER_P_7, context, sessionManager);
         mContext = context;
         mAuthService = authService;
         mSessionManager = sessionManager;
@@ -54,8 +53,9 @@ public class AuthRepositoryP7Impl extends Repository implements AuthRepository {
                 .flatMapCompletable(authToken -> Completable.fromAction(() -> {
                     AuroraSession session = mSessionManager.getSession();
                     session.setAuthToken(authToken.token);
-                    SessionTrackerReceiver.fireSessionChanged(session, mContext);
-                }));
+                    SessionTrackUtil.fireSessionChanged(session, mContext);
+                }))
+                .andThen(storeAuthData());
     }
 
     @Override

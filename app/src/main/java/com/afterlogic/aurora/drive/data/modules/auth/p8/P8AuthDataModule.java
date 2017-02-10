@@ -3,7 +3,7 @@ package com.afterlogic.aurora.drive.data.modules.auth.p8;
 import com.afterlogic.aurora.drive.data.common.annotations.P8;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
-import com.afterlogic.aurora.drive.data.modules.auth.p8.repository.AuthRepositoryP8Impl;
+import com.afterlogic.aurora.drive.data.modules.auth.repository.AuthRepositoryP8Impl;
 import com.afterlogic.aurora.drive.data.modules.auth.p8.service.AuthServiceP8;
 import com.afterlogic.aurora.drive.data.modules.auth.p8.service.AuthServiceP8Impl;
 

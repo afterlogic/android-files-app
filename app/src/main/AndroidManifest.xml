@@ -130,13 +130,6 @@
                 <action android:name="com.afterlogic.aurora.drive.ACTION_RESOLVE_REMOTE_NOT_EXIST"/>
             </intent-filter>
         </receiver>
-
-        <receiver android:name="._unrefactored.presentation.receivers.session.SessionTrackerReceiver"
-                  android:exported="false">
-            <intent-filter>
-                <action android:name="com.afterlogic.aurora.sessiontracker.ACTION_SESSION_CHANGED"/>
-            </intent-filter>
-        </receiver>
         <!--[END Main process]-->
 
         <!--[START File load process]-->
@@ -150,7 +143,7 @@
             android:process=":load"
             android:exported="false"/>
 
-        <receiver android:name="._unrefactored.presentation.receivers.session.SessionChangedReceiver_LoadProcess"
+        <receiver android:name=".presentation.modulesBackground.session.SessionChangedReceiver_LoadProcess"
                   android:process=":load"
                   android:exported="false">
             <intent-filter>
@@ -177,7 +170,7 @@
                        android:resource="@xml/syncadapter" />
         </service>
 
-        <receiver android:name="._unrefactored.presentation.receivers.session.SessionChangedReceiver_SyncProcess"
+        <receiver android:name=".presentation.modulesBackground.session.SessionChangedReceiver_SyncProcess"
                   android:process=":sync"
                   android:exported="false">
             <intent-filter>

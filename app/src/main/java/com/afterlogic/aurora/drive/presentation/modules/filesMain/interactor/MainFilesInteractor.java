@@ -5,6 +5,7 @@ import com.afterlogic.aurora.drive.presentation.modules.filesMain.viewModel.File
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Single;
 
 /**
@@ -13,5 +14,10 @@ import io.reactivex.Single;
  */
 
 public interface MainFilesInteractor extends Interactor {
+
+    Single<String> getUserLogin();
+
     Single<List<FileType>> getAvailableFileTypes();
+
+    Completable logout();
 }

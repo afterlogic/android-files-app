@@ -14,4 +14,6 @@ public interface MainFilesModel {
     void setFileTypes(List<FileType> types);
 
     void setCurrentFolder(AuroraFile folder);
+
+    void setLogin(String login);
 }

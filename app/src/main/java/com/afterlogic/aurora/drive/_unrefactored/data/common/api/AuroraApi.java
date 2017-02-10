@@ -13,7 +13,7 @@ import com.afterlogic.aurora.drive._unrefactored.core.util.ApiCompatibilityUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.api.ApiResponseDeserializer;
 import com.afterlogic.aurora.drive._unrefactored.data.common.ApiProvider;
 import com.afterlogic.aurora.drive._unrefactored.model.project7.ApiResponseP7;
-import com.afterlogic.aurora.drive._unrefactored.presentation.receivers.session.SessionTrackerReceiver;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.session.SessionTrackUtil;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.data.common.network.DynamicEndPointInterceptor;
 import com.afterlogic.aurora.drive.model.AuroraSession;
@@ -192,7 +192,7 @@ public class AuroraApi {
                 SystemAppData data = result.getResult();
                 getCurrentSession().setAppToken(data.getToken());
 
-                SessionTrackerReceiver.fireSessionChanged(getCurrentSession(), sContext);
+                SessionTrackUtil.fireSessionChanged(getCurrentSession(), sContext);
 
                 callback.onSucces(data);
             }
@@ -231,7 +231,7 @@ public class AuroraApi {
                 getCurrentSession().setAuthToken(token.token);
                 getCurrentSession().setAccountId(result.getAccountId());
 
-                SessionTrackerReceiver.fireSessionChanged(getCurrentSession(), sContext);
+                SessionTrackUtil.fireSessionChanged(getCurrentSession(), sContext);
 
                 if (callback != null) {
                     callback.onSucces(token);

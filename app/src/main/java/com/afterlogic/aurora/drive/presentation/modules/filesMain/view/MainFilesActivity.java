@@ -4,6 +4,9 @@ import android.databinding.DataBindingUtil;
 import android.databinding.Observable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
@@ -35,7 +38,9 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Ma
     private MainFilesPagerAdapter mAdapter;
 
     private final OnViewModelPropertyChangedCallback mPropertyChangedCallback = new OnViewModelPropertyChangedCallback();
+
     private ActivityMainFilesBinding mBinding;
+    private MenuItem mLogoutMenuItem;
 
     @Override
     protected void assembly(ModulesFactoryComponent modulesFactory) {
@@ -46,7 +51,6 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Ma
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main_files);
-
         setSupportActionBar(mBinding.toolbar);
 
         mBinding.tabs.setupWithViewPager(mBinding.viewpager, true);
@@ -61,9 +65,31 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Ma
         mBinding.fabCollapser.setOnTouchListener((v, event) -> collapseFabAction());
         //[END Init FAB menu]
 
-        updateTitle(mViewModel.getFolderTitle());
         getSupportActionBar().setDisplayHomeAsUpEnabled(mViewModel.getLocked());
+
+        updateTitleByViewModel();
+        updateHomeButtonByViewModel();
         mViewModel.addOnPropertyChangedCallback(mPropertyChangedCallback);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        mLogoutMenuItem = menu.findItem(R.id.action_logout);
+        updateLogoutMenuByViewModel();
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_logout:
+                mPresenter.onLogout();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -98,12 +124,26 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Ma
         return mAdapter.getPrimaryFragment();
     }
 
-    private void updateTitle(String title){
+    private void updateTitleByViewModel(){
+        String title = mViewModel.getFolderTitle();
         if (title == null){
             setTitle(getString(R.string.app_name));
         } else {
             setTitle(title);
         }
+    }
+
+    private void updateLogoutMenuByViewModel(){
+        if (mLogoutMenuItem == null) return;
+        mLogoutMenuItem.setTitle(getString(R.string.logout, mViewModel.getLogin()));
+    }
+
+    private void updateHomeButtonByViewModel(){
+        ActionBar ab = getSupportActionBar();
+
+        if (ab == null) return;
+
+        ab.setDisplayHomeAsUpEnabled(mViewModel.getLocked());
     }
 
     private void ifCurrentFragment(Consumer<FileListFragment> fragmentConsumer){
@@ -129,17 +169,10 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Ma
         @SuppressWarnings("ConstantConditions")
         @Override
         public void onPropertyChanged(Observable observable, int i) {
-            MainFilesViewModel viewModel = (MainFilesViewModel) observable;
             switch (i){
-                case BR.locked:
-                    boolean locked = viewModel.getLocked();
-                    getSupportActionBar().setDisplayHomeAsUpEnabled(locked);
-                    break;
-
-                case BR.folderTitle:
-                    String title = viewModel.getFolderTitle();
-                    updateTitle(title);
-                    break;
+                case BR.locked: updateHomeButtonByViewModel(); break;
+                case BR.folderTitle: updateTitleByViewModel(); break;
+                case BR.login: updateLogoutMenuByViewModel(); break;
             }
         }
     }

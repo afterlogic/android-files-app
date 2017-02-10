@@ -3,18 +3,12 @@ package com.afterlogic.aurora.drive._unrefactored.core.util;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
 import android.support.annotation.Nullable;
 
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.AuroraApi;
-import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.core.consts.Const;
-import com.afterlogic.aurora.drive._unrefactored.presentation.receivers.AccountLoginStateReceiver;
+import com.afterlogic.aurora.drive.model.AuroraSession;
 
 import okhttp3.HttpUrl;
-
-import static android.content.Context.ACCOUNT_SERVICE;
 
 /**
  * Created by sashka on 05.04.16.
@@ -113,21 +107,6 @@ public class AccountUtil {
 
     //TODO move to user repository
     public static void logout(Context ctx){
-        //[START Clear account and session data]
-        AuroraSession current = AuroraApi.getCurrentSession();
-        AuroraApi.setCurrentSession(null);
 
-        AccountManager am = (AccountManager) ctx.getSystemService(ACCOUNT_SERVICE);
-        Account account = AccountUtil.getAccount(current.getLogin(), am);
-        if (account != null) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
-                //noinspection deprecation
-                am.removeAccount(account, null, null);
-            } else {
-                am.removeAccountExplicitly(account);
-            }
-            ctx.sendBroadcast(new Intent(AccountLoginStateReceiver.ACTION_AURORA_LOGOUT));
-        }
-        //[END Clear account and session data]
     }
 }

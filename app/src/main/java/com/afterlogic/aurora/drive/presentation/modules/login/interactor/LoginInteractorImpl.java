@@ -1,12 +1,5 @@
 package com.afterlogic.aurora.drive.presentation.modules.login.interactor;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.content.Context;
-import android.content.Intent;
-
-import com.afterlogic.aurora.drive._unrefactored.core.util.AccountUtil;
-import com.afterlogic.aurora.drive._unrefactored.presentation.receivers.AccountLoginStateReceiver;
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.core.consts.Const;
@@ -14,7 +7,6 @@ import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.modules.apiChecker.checker.ApiChecker;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.model.AuroraSession;
-import com.afterlogic.aurora.drive.model.error.AccountManagerError;
 import com.afterlogic.aurora.drive.model.error.UnknownApiVersionError;
 import com.afterlogic.aurora.drive.presentation.common.modules.interactor.BaseInteractor;
 import com.annimon.stream.Stream;
@@ -40,18 +32,15 @@ public class LoginInteractorImpl extends BaseInteractor implements LoginInteract
     private final SessionManager mSessionManager;
     private final ApiChecker mApiChecker;
     private final Provider<AuthRepository> mAuthRepository;
-    private final Context mContext;
 
     @Inject LoginInteractorImpl(ObservableScheduler scheduler,
                                 SessionManager sessionManager,
                                 ApiChecker apiChecker,
-                                Provider<AuthRepository> authRepository,
-                                Context context) {
+                                Provider<AuthRepository> authRepository) {
         super(scheduler);
         mSessionManager = sessionManager;
         mApiChecker = apiChecker;
         mAuthRepository = authRepository;
-        mContext = context;
     }
 
     @Override
@@ -106,41 +95,8 @@ public class LoginInteractorImpl extends BaseInteractor implements LoginInteract
                                 })
                                 .andThen(authRepository.login(session.getLogin(), session.getPassword()))
                 )
-                .andThen(storeAuthData())
                 .doOnError(error -> mSessionManager.setSession(null))
                 .compose(this::composeDefault);
-    }
-
-    private Completable storeAuthData(){
-        return Completable.fromAction(() -> {
-
-            AccountManager am = (AccountManager) mContext.getSystemService(Context.ACCOUNT_SERVICE);
-            AuroraSession session = mSessionManager.getSession();
-
-            Account account = null;
-            for (Account a:am.getAccountsByType(AccountUtil.ACCOUNT_TYPE)){
-                if (a.name.equals(session.getLogin())){
-                    account = a;
-                    break;
-                }
-            }
-
-            boolean isNew = account == null;
-            if (isNew) {
-                account = new Account(session.getLogin(), AccountUtil.ACCOUNT_TYPE);
-                if (!am.addAccountExplicitly(account, session.getPassword(), null)) {
-                    throw new AccountManagerError();
-                }
-            }
-
-            AccountUtil.updateAccountCredentials(account, session, am);
-
-            Intent loggedBroadcast = new Intent(AccountLoginStateReceiver.ACTION_AURORA_LOGIN);
-            loggedBroadcast.putExtra(AccountLoginStateReceiver.ACCOUNT, account);
-            loggedBroadcast.putExtra(AccountLoginStateReceiver.AURORA_SESSION, session);
-            loggedBroadcast.putExtra(AccountLoginStateReceiver.IS_NEW, isNew);
-            mContext.sendBroadcast(loggedBroadcast);
-        });
     }
 
 }

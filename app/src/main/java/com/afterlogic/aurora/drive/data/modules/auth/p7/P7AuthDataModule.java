@@ -2,7 +2,7 @@ package com.afterlogic.aurora.drive.data.modules.auth.p7;
 
 import com.afterlogic.aurora.drive.data.common.annotations.P7;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
-import com.afterlogic.aurora.drive.data.modules.auth.p7.repository.AuthRepositoryP7Impl;
+import com.afterlogic.aurora.drive.data.modules.auth.repository.AuthRepositoryP7Impl;
 import com.afterlogic.aurora.drive.data.modules.auth.p7.service.AuthServiceP7;
 import com.afterlogic.aurora.drive.data.modules.auth.p7.service.AuthServiceP7Impl;
 

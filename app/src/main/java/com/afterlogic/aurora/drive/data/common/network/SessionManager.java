@@ -21,6 +21,8 @@ public class SessionManager {
     }
 
     public void setSession(AuroraSession auroraSession) {
+        if (auroraSession == mAuroraSession) return;
+
         mAuroraSession = auroraSession;
         if (auroraSession != null) {
             mApiConfigurator.setDomain(auroraSession.getDomain(), auroraSession.getApiVersion());

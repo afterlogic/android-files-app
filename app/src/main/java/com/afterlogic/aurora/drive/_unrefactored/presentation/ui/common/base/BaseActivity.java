@@ -17,7 +17,7 @@ import android.view.MenuItem;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;
 import com.afterlogic.aurora.drive.model.AuroraSession;
-import com.afterlogic.aurora.drive._unrefactored.presentation.receivers.session.SessionTrackerReceiver;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.session.SessionTrackUtil;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.FilesListActivity;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginIntent;
@@ -179,7 +179,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (session != null){
             session.setAuthToken(null);
             session.setAppToken(null);
-            SessionTrackerReceiver.fireSessionChanged(session, this);
+            SessionTrackUtil.fireSessionChanged(session, this);
         }
         startLoginActivity(session == null);
         return true;

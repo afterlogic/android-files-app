@@ -21,6 +21,7 @@ public class MainFilesViewModel extends BaseObservable{
     private String mCurrentFileType = null;
     private String mFolderTitle;
     private boolean mRefreshing = true;
+    private String mLogin;
 
     private final ObservableList<FileType> mFileTypes = new ObservableArrayList<>();
 
@@ -56,6 +57,11 @@ public class MainFilesViewModel extends BaseObservable{
                 .orElse(-1);
     }
 
+    @Bindable
+    public String getLogin(){
+        return mLogin;
+    }
+
     private class Controller implements MainFilesModel{
 
         @Override
@@ -78,6 +84,12 @@ public class MainFilesViewModel extends BaseObservable{
             notifyPropertyChanged(BR.folderTitle);
             notifyPropertyChanged(BR.currentPagePosition);
             notifyPropertyChanged(BR.locked);
+        }
+
+        @Override
+        public void setLogin(String login) {
+            mLogin = login;
+            notifyPropertyChanged(BR.login);
         }
     }
 }
