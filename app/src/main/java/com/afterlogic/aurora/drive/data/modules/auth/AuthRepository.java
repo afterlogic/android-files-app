@@ -1,8 +1,10 @@
 package com.afterlogic.aurora.drive.data.modules.auth;
 
+import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.SystemAppData;
 
 import io.reactivex.Completable;
+import io.reactivex.Maybe;
 import io.reactivex.Single;
 
 /**
@@ -15,4 +17,8 @@ public interface AuthRepository {
     Completable relogin();
 
     Single<SystemAppData> getSystemAppData();
+
+    Maybe<AuroraSession> getCurrentSession();
+
+    Completable logoutAndClearData();
 }

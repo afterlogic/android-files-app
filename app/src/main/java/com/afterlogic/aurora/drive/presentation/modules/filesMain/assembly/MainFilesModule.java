@@ -6,6 +6,8 @@ import com.afterlogic.aurora.drive.presentation.modules.filesMain.interactor.Mai
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.interactor.MainFilesInteractorImpl;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.presenter.MainFilesPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.presenter.MainFilesPresenterImpl;
+import com.afterlogic.aurora.drive.presentation.modules.filesMain.router.MainFilesRouter;
+import com.afterlogic.aurora.drive.presentation.modules.filesMain.router.MainFilesRouterImpl;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesView;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.viewModel.MainFilesModel;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.viewModel.MainFilesViewModel;
@@ -38,6 +40,11 @@ public class MainFilesModule extends PresentationModule<MainFilesView> {
     @Provides
     MainFilesModel model(MainFilesViewModel model){
         return model.getController();
+    }
+
+    @Provides
+    MainFilesRouter router(MainFilesRouterImpl router){
+        return router;
     }
 
 }

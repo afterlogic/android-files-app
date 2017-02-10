@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive._unrefactored.presentation.receivers.session;
+package com.afterlogic.aurora.drive.presentation.modulesBackground.session;
 
 /**
  * Created by sashka on 22.11.16.<p/>

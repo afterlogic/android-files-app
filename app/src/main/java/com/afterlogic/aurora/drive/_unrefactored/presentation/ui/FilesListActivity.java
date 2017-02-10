@@ -119,7 +119,7 @@ public class FilesListActivity extends BaseFileActionActivity implements
         mMultichoiseActionItem.setVisible(mMultichoiseAllowed);
 
         mOfflineModeMenuItem = menu.findItem(R.id.action_offline_mode);
-        mOnlineModeMenuItem = menu.findItem(R.id.action_online_mode);
+        mOnlineModeMenuItem = menu.findItem(R.id.action_offline_mode);
 
         updateOfflineModeMenus(mCurrentMode);
 
@@ -183,9 +183,9 @@ public class FilesListActivity extends BaseFileActionActivity implements
                 mCurrentMode = MODE_OFFLINE_MANUAL;
                 showOfflineState();
                 break;
-            case R.id.action_online_mode:
-                showOnlineState();
-                break;
+            //case R.id.action_online_mode:
+            //    showOnlineState();
+            //    break;
         }
         return super.onOptionsItemSelected(item);
     }

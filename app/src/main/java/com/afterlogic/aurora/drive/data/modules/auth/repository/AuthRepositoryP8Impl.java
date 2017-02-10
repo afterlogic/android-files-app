@@ -1,13 +1,12 @@
-package com.afterlogic.aurora.drive.data.modules.auth.p8.repository;
+package com.afterlogic.aurora.drive.data.modules.auth.repository;
 
 import android.content.Context;
 
 import com.afterlogic.aurora.drive._unrefactored.model.ApiResponse;
-import com.afterlogic.aurora.drive._unrefactored.presentation.receivers.session.SessionTrackerReceiver;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.session.SessionTrackUtil;
 import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
-import com.afterlogic.aurora.drive.data.common.repository.Repository;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.data.modules.auth.p8.service.AuthServiceP8;
 import com.afterlogic.aurora.drive.model.AuroraSession;
@@ -24,7 +23,7 @@ import io.reactivex.Single;
  * mail: sunnyday.development@gmail.com
  */
 @SuppressWarnings("WeakerAccess")
-public class AuthRepositoryP8Impl extends Repository implements AuthRepository {
+public class AuthRepositoryP8Impl extends BaseAuthRepository implements AuthRepository {
 
     private static final String USER_P_8 = "userP8";
     private final AuthServiceP8 mAuthService;
@@ -35,7 +34,7 @@ public class AuthRepositoryP8Impl extends Repository implements AuthRepository {
                                         AuthServiceP8 authService,
                                         SessionManager sessionManager,
                                         Context context) {
-        super(cache, USER_P_8);
+        super(cache, USER_P_8, context, sessionManager);
         mAuthService = authService;
         mSessionManager = sessionManager;
         mContext = context;
@@ -47,7 +46,9 @@ public class AuthRepositoryP8Impl extends Repository implements AuthRepository {
                 mAuthService.login(login, password)
                         .map(response -> response),
                 this::handleSuccessAuth
-        ).toCompletable();
+        )//-----|
+                .toCompletable()
+                .andThen(storeAuthData());
     }
 
     @Override
@@ -66,7 +67,7 @@ public class AuthRepositoryP8Impl extends Repository implements AuthRepository {
         }
         session.setAuthToken(response.getResult().token);
 
-        SessionTrackerReceiver.fireSessionChanged(session, mContext);
+        SessionTrackUtil.fireSessionChanged(session, mContext);
 
         return response.getResult();
     }

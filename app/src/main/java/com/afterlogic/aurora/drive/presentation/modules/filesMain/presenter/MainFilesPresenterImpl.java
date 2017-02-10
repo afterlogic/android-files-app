@@ -1,8 +1,10 @@
 package com.afterlogic.aurora.drive.presentation.modules.filesMain.presenter;
 
+import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.presentation.common.modules.presenter.BasePresenter;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.interactor.MainFilesInteractor;
+import com.afterlogic.aurora.drive.presentation.modules.filesMain.router.MainFilesRouter;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesView;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.viewModel.MainFilesModel;
 
@@ -17,22 +19,32 @@ public class MainFilesPresenterImpl extends BasePresenter<MainFilesView> impleme
 
     private final MainFilesInteractor mInteractor;
     private final MainFilesModel mModel;
+    private final MainFilesRouter mRouter;
 
     @Inject MainFilesPresenterImpl(ViewState<MainFilesView> viewState,
                                    MainFilesInteractor interactor,
-                                   MainFilesModel model) {
+                                   MainFilesModel model,
+                                   MainFilesRouter router) {
         super(viewState);
         mInteractor = interactor;
         mModel = model;
+        mRouter = router;
     }
 
     @Override
     protected void onPresenterStart() {
         super.onPresenterStart();
         mInteractor.getAvailableFileTypes()
-                .subscribe(
-                        mModel::setFileTypes,
-                        this::onErrorObtained
-                );
+                .subscribe(mModel::setFileTypes, this::onErrorObtained);
+        mInteractor.getUserLogin()
+                .subscribe(mModel::setLogin, this::onErrorObtained);
+    }
+
+    @Override
+    public void onLogout() {
+        mInteractor.logout()
+                .doOnError(MyLog::majorException)
+                .onErrorComplete()
+                .subscribe(mRouter::openLogin);
     }
 }

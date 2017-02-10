@@ -8,4 +8,5 @@ import com.afterlogic.aurora.drive.presentation.common.modules.presenter.Present
  */
 
 public interface MainFilesPresenter extends Presenter {
+    void onLogout();
 }
