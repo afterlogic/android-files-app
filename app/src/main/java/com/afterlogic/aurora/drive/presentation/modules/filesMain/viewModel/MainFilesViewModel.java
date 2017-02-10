@@ -22,8 +22,10 @@ public class MainFilesViewModel extends BaseObservable{
     private String mFolderTitle;
     private boolean mRefreshing = true;
     private String mLogin;
+
     private boolean mMultichoiseMode = false;
     private int mSelectedCount = 0;
+    private boolean mSelectedHasFolder = false;
 
     private final ObservableList<FileType> mFileTypes = new ObservableArrayList<>();
 
@@ -74,6 +76,11 @@ public class MainFilesViewModel extends BaseObservable{
         return mSelectedCount;
     }
 
+    @Bindable
+    public boolean getSelectedHasFolder(){
+        return mSelectedHasFolder && mSelectedCount > 0;
+    }
+
     private class Controller implements MainFilesModel{
 
         @Override
@@ -119,6 +126,14 @@ public class MainFilesViewModel extends BaseObservable{
         public void setSelectedCount(int count) {
             mSelectedCount = count;
             notifyPropertyChanged(BR.selectedCount);
+        }
+
+        @Override
+        public void setSetSelectedHasFolder(boolean hasFolder){
+            if (hasFolder == mSelectedHasFolder) return;
+
+            mSelectedHasFolder = hasFolder;
+            notifyPropertyChanged(BR.selectedHasFolder);
         }
     }
 }

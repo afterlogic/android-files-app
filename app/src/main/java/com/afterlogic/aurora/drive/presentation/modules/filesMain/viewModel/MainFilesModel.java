@@ -22,4 +22,6 @@ public interface MainFilesModel {
     boolean isInMultiChoise();
 
     void setSelectedCount(int count);
+
+    void setSetSelectedHasFolder(boolean hasFolder);
 }

@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.databinding.Observable;
-import android.databinding.ObservableInt;
 import android.os.Bundle;
 import android.support.annotation.FloatRange;
 import android.support.annotation.Nullable;
@@ -67,11 +66,14 @@ public class FileListFragment extends BaseFragment implements FileListView, OnBa
 
     @Nullable
     private FileListFragmentCallback mCallback;
-    private Observable.OnPropertyChangedCallback mSelectedCountCallback = new Observable.OnPropertyChangedCallback() {
+    private Observable.OnPropertyChangedCallback mSelectedFilesCallback = new Observable.OnPropertyChangedCallback() {
         @Override
         public void onPropertyChanged(Observable observable, int i) {
             if (mCallback != null) {
-                mCallback.onSelectedCountChanged(((ObservableInt) observable).get());
+                mCallback.onSelectedFilesChanged(
+                        mViewModel.getSelectedCount().get(),
+                        mViewModel.getSelectionHasFolder().get()
+                );
             }
         }
     };
@@ -93,7 +95,7 @@ public class FileListFragment extends BaseFragment implements FileListView, OnBa
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPresenter.initWith(getArguments().getString(ARGS_TYPE), (MainFilesCallback) getActivity());
-        mViewModel.getSelectedCount().addOnPropertyChangedCallback(mSelectedCountCallback);
+        mViewModel.getSelectedCount().addOnPropertyChangedCallback(mSelectedFilesCallback);
     }
 
     @Nullable
@@ -129,7 +131,7 @@ public class FileListFragment extends BaseFragment implements FileListView, OnBa
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mViewModel.getSelectedCount().removeOnPropertyChangedCallback(mSelectedCountCallback);
+        mViewModel.getSelectedCount().removeOnPropertyChangedCallback(mSelectedFilesCallback);
     }
 
     @Override

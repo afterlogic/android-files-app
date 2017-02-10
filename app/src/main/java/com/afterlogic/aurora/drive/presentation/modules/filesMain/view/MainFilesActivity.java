@@ -9,9 +9,10 @@ import android.support.v7.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.BR;
+import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
+import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.databinding.ActivityMainFilesBinding;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryComponent;
@@ -20,11 +21,11 @@ import com.afterlogic.aurora.drive.presentation.common.modules.view.ViewPresente
 import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FileListFragment;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FileListFragmentCallback;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.presenter.MainFilesPresenter;
+import com.afterlogic.aurora.drive.presentation.modules.filesMain.viewModel.MainFilesModel;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.viewModel.MainFilesViewModel;
+import com.annimon.stream.Stream;
 
 import javax.inject.Inject;
-
-import static android.R.attr.fragment;
 
 /**
  * Created by sashka on 03.02.17.<p/>
@@ -126,6 +127,13 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Ma
         super.setTitle(title);
     }
 
+    @Override
+    public void onSelectedFilesChanged(int selected, boolean hasFolder) {
+        MainFilesModel model = mViewModel.getModel();
+        model.setSelectedCount(selected);
+        model.setSetSelectedHasFolder(hasFolder);
+    }
+
     @Nullable
     private FileListFragment getCurrentFragment(){
         if (mAdapter.getCount() == 0) return null;
@@ -176,6 +184,17 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Ma
         mMultiChoiseActionMode.setTitle(getString(R.string.title_action_selected, mViewModel.getSelectedCount()));
     }
 
+    private void updateMultiChoiseAvailableActions(){
+        if (mMultiChoiseActionMode == null) return;
+
+        boolean hasFolder = mViewModel.getSelectedHasFolder();
+        Menu menu = mMultiChoiseActionMode.getMenu();
+        Stream.of(R.id.action_offline, R.id.action_download, R.id.action_send)
+                .map(menu::findItem)
+                .filter(ObjectsUtil::nonNull)
+                .forEach(item -> item.setVisible(!hasFolder));
+    }
+
     private void ifCurrentFragment(Consumer<FileListFragment> fragmentConsumer){
         FileListFragment fragment = getCurrentFragment();
         if (fragment != null){
@@ -199,6 +218,7 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Ma
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 mode.getMenuInflater().inflate(R.menu.menu_multichoise, menu);
+                updateMultiChoiseAvailableActions();
                 return true;
             }
 
@@ -223,11 +243,6 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Ma
         updateMultiChoiseCount();
     }
 
-    @Override
-    public void onSelectedCountChanged(int selected) {
-        mViewModel.getModel().setSelectedCount(selected);
-    }
-
     private class OnViewModelPropertyChangedCallback extends Observable.OnPropertyChangedCallback{
 
         @SuppressWarnings("ConstantConditions")
@@ -239,6 +254,7 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Ma
                 case BR.login: updateLogoutMenuByViewModel(); break;
                 case BR.multichoiseMode: updateMultiChoiseMode(); break;
                 case BR.selectedCount: updateMultiChoiseCount(); break;
+                case BR.selectedHasFolder: updateMultiChoiseAvailableActions(); break;
             }
         }
     }

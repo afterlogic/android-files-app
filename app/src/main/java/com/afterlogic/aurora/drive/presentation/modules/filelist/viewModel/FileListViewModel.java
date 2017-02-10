@@ -43,12 +43,18 @@ public class FileListViewModel implements SwipeRefreshLayout.OnRefreshListener{
     private final ObservableList<AuroraFile> mMultiChoiseResult = new ObservableArrayList<>();
     private final ObservableInt mSelectedCount = new ObservableInt(0);
     private boolean mMultiChoise = false;
+    private final ObservableBoolean mSelectionHasFolder = new ObservableBoolean();
 
     @Inject
     public FileListViewModel(AppResources appResources) {
         mAppResources = appResources;
         mMultiChoiseResult.addOnListChangedCallback(new SimpleOnObservableListChagnedListener<>(
-                () -> mSelectedCount.set(mMultiChoiseResult.size())
+                () -> {
+                    mSelectionHasFolder.set(
+                            Stream.of(mMultiChoiseResult).anyMatch(AuroraFile::isFolder)
+                    );
+                    mSelectedCount.set(mMultiChoiseResult.size());
+                }
         ));
     }
 
@@ -66,6 +72,10 @@ public class FileListViewModel implements SwipeRefreshLayout.OnRefreshListener{
 
     public ObservableInt getSelectedCount(){
         return mSelectedCount;
+    }
+
+    public ObservableBoolean getSelectionHasFolder(){
+        return mSelectionHasFolder;
     }
 
     @Override
