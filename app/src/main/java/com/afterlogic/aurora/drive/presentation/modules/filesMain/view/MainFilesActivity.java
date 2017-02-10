@@ -5,10 +5,12 @@ import android.databinding.Observable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
+import android.support.v7.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.BR;
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.databinding.ActivityMainFilesBinding;
 import com.afterlogic.aurora.drive.model.AuroraFile;
@@ -16,18 +18,20 @@ import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFacto
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.ViewPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FileListFragment;
+import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FileListFragmentCallback;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.presenter.MainFilesPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.viewModel.MainFilesViewModel;
-import com.android.databinding.library.baseAdapters.BR;
 
 import javax.inject.Inject;
+
+import static android.R.attr.fragment;
 
 /**
  * Created by sashka on 03.02.17.<p/>
  * mail: sunnyday.development@gmail.com
  */
 
-public class MainFilesActivity extends BaseActivity implements MainFilesView, MainFilesCallback {
+public class MainFilesActivity extends BaseActivity implements MainFilesView, MainFilesCallback, FileListFragmentCallback {
 
     @Inject @ViewPresenter
     protected MainFilesPresenter mPresenter;
@@ -41,6 +45,8 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Ma
 
     private ActivityMainFilesBinding mBinding;
     private MenuItem mLogoutMenuItem;
+
+    private ActionMode mMultiChoiseActionMode;
 
     @Override
     protected void assembly(ModulesFactoryComponent modulesFactory) {
@@ -69,6 +75,7 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Ma
 
         updateTitleByViewModel();
         updateHomeButtonByViewModel();
+        updateMultiChoiseMode();
         mViewModel.addOnPropertyChangedCallback(mPropertyChangedCallback);
     }
 
@@ -86,9 +93,11 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Ma
             case R.id.action_logout:
                 mPresenter.onLogout();
                 return true;
+            case R.id.action_multichoise:
+                mViewModel.getModel().setMultiChoiseMode(true);
+                return true;
 
-            default:
-                return super.onOptionsItemSelected(item);
+            default: return super.onOptionsItemSelected(item);
         }
     }
 
@@ -100,16 +109,16 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Ma
 
     @Override
     public void onOpenFolder(AuroraFile folder) {
-        mViewModel.getController().setCurrentFolder(folder);
+        mViewModel.getModel().setCurrentFolder(folder);
     }
 
     @Override
     public void onBackPressed() {
-        if (getCurrentFragment() == null || !getCurrentFragment().onBackPressed()){
-            if (!collapseFabAction()) {
-                super.onBackPressed();
-            }
-        }
+        if (collapseFabAction()) return;
+        if (getCurrentFragment() != null && getCurrentFragment().onBackPressed()) return;
+        if (mPresenter.onBackPressed()) return;
+
+        super.onBackPressed();
     }
 
     @Override
@@ -146,6 +155,27 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Ma
         ab.setDisplayHomeAsUpEnabled(mViewModel.getLocked());
     }
 
+    private void updateMultiChoiseMode(){
+        boolean active = mViewModel.getMultichoiseMode();
+        if (active){
+            if (mMultiChoiseActionMode == null){
+                startMultiChoseActionMode();
+            }
+        } else {
+            if (mMultiChoiseActionMode != null){
+                mMultiChoiseActionMode.finish();
+            }
+        }
+
+        ifCurrentFragment(fragment -> fragment.setMultiChoiseMode(active));
+    }
+
+    private void updateMultiChoiseCount(){
+        if (mMultiChoiseActionMode == null) return;
+
+        mMultiChoiseActionMode.setTitle(getString(R.string.title_action_selected, mViewModel.getSelectedCount()));
+    }
+
     private void ifCurrentFragment(Consumer<FileListFragment> fragmentConsumer){
         FileListFragment fragment = getCurrentFragment();
         if (fragment != null){
@@ -164,6 +194,40 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Ma
         ifCurrentFragment(fragmentConsumer);
     }
 
+    private void startMultiChoseActionMode(){
+        mMultiChoiseActionMode = startSupportActionMode(new ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                mode.getMenuInflater().inflate(R.menu.menu_multichoise, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                ifCurrentFragment(fragment -> fragment.onOptionsItemSelected(item));
+                mPresenter.onMultiChoiseAction();
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                mMultiChoiseActionMode = null;
+                mViewModel.getModel().setMultiChoiseMode(false);
+            }
+        });
+        updateMultiChoiseCount();
+    }
+
+    @Override
+    public void onSelectedCountChanged(int selected) {
+        mViewModel.getModel().setSelectedCount(selected);
+    }
+
     private class OnViewModelPropertyChangedCallback extends Observable.OnPropertyChangedCallback{
 
         @SuppressWarnings("ConstantConditions")
@@ -173,6 +237,8 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Ma
                 case BR.locked: updateHomeButtonByViewModel(); break;
                 case BR.folderTitle: updateTitleByViewModel(); break;
                 case BR.login: updateLogoutMenuByViewModel(); break;
+                case BR.multichoiseMode: updateMultiChoiseMode(); break;
+                case BR.selectedCount: updateMultiChoiseCount(); break;
             }
         }
     }

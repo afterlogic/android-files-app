@@ -14,6 +14,8 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.presenter.FileListPresenter;
 
+import java.util.List;
+
 /**
  * Created by sashka on 07.02.17.<p/>
  * mail: sunnyday.development@gmail.com
@@ -23,16 +25,21 @@ public class FileViewModel extends BaseObservable implements View.OnClickListene
 
     private final OptWeakRef<FileListPresenter> mPresenter;
     private final AppResources mAppResources;
+    private final List<AuroraFile> mSelected;
 
     private final FileModel mModel = new FileModelImpl();
 
     private AuroraFile mAuroraFile;
     private Uri mThumbNail = null;
 
-    public FileViewModel(AuroraFile auroraFile, OptWeakRef<FileListPresenter> presenter, AppResources appResources) {
+    public FileViewModel(AuroraFile auroraFile,
+                         List<AuroraFile> multiChoise,
+                         OptWeakRef<FileListPresenter> presenter,
+                         AppResources appResources) {
         mAuroraFile = auroraFile;
         mPresenter = presenter;
         mAppResources = appResources;
+        mSelected = multiChoise;
     }
 
     @Bindable
@@ -52,6 +59,11 @@ public class FileViewModel extends BaseObservable implements View.OnClickListene
                 return mAppResources.getResourceUri(fileIconRes);
             }
         }
+    }
+
+    @Bindable
+    public boolean getSelected(){
+        return mSelected.contains(mAuroraFile);
     }
 
     public Uri getStatusIcon(){

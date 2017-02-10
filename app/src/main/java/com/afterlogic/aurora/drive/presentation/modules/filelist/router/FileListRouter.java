@@ -24,5 +24,7 @@ public interface FileListRouter {
 
     void openSendTo(AuroraFile source, File file);
 
+    void openSendTo(List<File> files);
+
     void openUploadFileChooser();
 }

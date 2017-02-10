@@ -16,4 +16,10 @@ public interface MainFilesModel {
     void setCurrentFolder(AuroraFile folder);
 
     void setLogin(String login);
+
+    void setMultiChoiseMode(boolean multiChoise);
+
+    boolean isInMultiChoise();
+
+    void setSelectedCount(int count);
 }

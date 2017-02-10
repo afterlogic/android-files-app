@@ -8,13 +8,16 @@ import android.support.v4.content.FileProvider;
 
 import com.afterlogic.aurora.drive._unrefactored.core.util.IntentUtil;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.FileViewActivity;
+import com.afterlogic.aurora.drive.core.common.streams.ExtCollectors;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.modules.router.BaseRouter;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FileListView;
+import com.annimon.stream.Stream;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -103,6 +106,29 @@ public class FileListRouterImpl extends BaseRouter<FileListView, BaseActivity> i
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setType(source.getContentType());
             intent.putExtra(Intent.EXTRA_STREAM, fileUri);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            activity.startActivity(
+                    Intent.createChooser(intent, activity.getString(prompt_send_by_email_chooser))
+            );
+        });
+    }
+
+    @Override
+    public void openSendTo(List<File> files) {
+        ifViewActive(activity -> {
+
+            ArrayList<Uri> fileUris = Stream.of(files)
+                    .map(file -> FileProvider.getUriForFile(
+                            activity, activity.getPackageName() + ".fileProvider", file
+                    ))
+                    .collect(ExtCollectors.toArrayList());
+
+            //Start 'send' intent, for attaching to email
+            Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setType("*/*");
+            intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, fileUris);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
             activity.startActivity(

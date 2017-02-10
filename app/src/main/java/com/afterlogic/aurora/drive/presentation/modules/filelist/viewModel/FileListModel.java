@@ -29,4 +29,12 @@ public interface FileListModel {
     void addFile(AuroraFile file);
 
     List<AuroraFile> getFiles();
+
+    void setMultiChoiseMode(boolean mode);
+
+    boolean isMultiChoise();
+
+    List<AuroraFile> getMultiChoise();
+
+    void toggleSelected(AuroraFile file);
 }

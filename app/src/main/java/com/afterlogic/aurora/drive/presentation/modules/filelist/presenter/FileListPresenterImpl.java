@@ -2,8 +2,10 @@ package com.afterlogic.aurora.drive.presentation.modules.filelist.presenter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
@@ -23,6 +25,7 @@ import com.afterlogic.aurora.drive.presentation.modules.filelist.viewModel.FileL
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesCallback;
 import com.annimon.stream.Stream;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -112,6 +115,11 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
 
     @Override
     public void onFileClick(AuroraFile file) {
+        if (mModel.isMultiChoise()){
+            mModel.toggleSelected(file);
+            return;
+        }
+
         if (file.isFolder()){
             mPath.add(0, file);
             onRefresh();
@@ -157,6 +165,11 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
 
     @Override
     public void onFileLongClick(AuroraFile file) {
+        if (mModel.isMultiChoise()){
+            mModel.toggleSelected(file);
+            return;
+        }
+
         getView().showFileActions(file);
     }
 
@@ -168,24 +181,66 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
     }
 
     @Override
-    public void onDownload(AuroraFile file) {
-        mInteractor.downloadToDownloads(file)
-                .compose(this::progressibleLoadTask)
-                .subscribe(
-                        //TODO dialog: open file?
-                        localFile -> mRouter.openFile(file, localFile),
-                        this::onErrorObtained
-                );
+    public void onDownload(@Nullable AuroraFile file) {
+        if (file == null && !mModel.isMultiChoise()) {
+            MyLog.majorException("Download file with null.");
+            return;
+        }
+
+        //Check on multichoise (file is null when multichoise)
+        if (file == null){
+            List<AuroraFile> files = mModel.getMultiChoise();
+            Stream.of(files)
+                    .map(mInteractor::downloadToDownloads)
+                    .collect(Observables.Collectors.concatObservables())
+                    .compose(this::progressibleLoadTask)
+                    .ignoreElements()
+                    .subscribe(
+                            () -> getView().showMessage(
+                                    String.format("%d files success downloaded.", files.size()),
+                                    PresentationView.TYPE_MESSAGE_MAJOR
+                            ),
+                            this::onErrorObtained
+                    );
+        } else {
+            mInteractor.downloadToDownloads(file)
+                    .compose(this::progressibleLoadTask)
+                    .subscribe(
+                            //TODO dialog: open file?
+                            localFile -> mRouter.openFile(file, localFile),
+                            this::onErrorObtained
+                    );
+        }
     }
 
     @Override
-    public void onSendTo(AuroraFile file) {
-        mInteractor.downloadForOpen(file)
-                .compose(this::progressibleLoadTask)
-                .subscribe(
-                        localFile -> mRouter.openSendTo(file, localFile),
-                        this::onErrorObtained
-                );
+    public void onSendTo(@Nullable AuroraFile file) {
+        if (file == null && !mModel.isMultiChoise()) {
+            MyLog.majorException("SendTo file with null.");
+            return;
+        }
+
+        if (file == null){
+            List<AuroraFile> files = mModel.getMultiChoise();
+            List<File> results = new ArrayList<>();
+            Stream.of(files)
+                    .map(mInteractor::downloadForOpen)
+                    .collect(Observables.Collectors.concatObservables())
+                    .compose(this::progressibleLoadTask)
+                    .subscribe(
+                            results::add,
+                            this::onErrorObtained,
+                            () -> mRouter.openSendTo(results)
+                    );
+
+        } else {
+            mInteractor.downloadForOpen(file)
+                    .compose(this::progressibleLoadTask)
+                    .subscribe(
+                            localFile -> mRouter.openSendTo(file, localFile),
+                            this::onErrorObtained
+                    );
+        }
     }
 
     @Override
@@ -201,18 +256,40 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
     }
 
     @Override
-    public void onToggleOffline(AuroraFile file) {
+    public void onToggleOffline(@Nullable AuroraFile file) {
 
     }
 
+    //TODO text to resources
     @Override
-    public void onDelete(AuroraFile file) {
-        mInteractor.deleteFile(file)
-                //TODO text to resources
-                .doOnSubscribe(disposable -> getView().showProgress("Deleting:", file.getName()))
+    public void onDelete(@Nullable AuroraFile file) {
+        if (file == null && !mModel.isMultiChoise()) {
+            MyLog.majorException("Delete file with null.");
+            return;
+        }
+
+        Completable deleteRequest;
+        String message;
+        //Check on multichoise (file is null when multichoise)
+        if (file == null){
+            List<AuroraFile> files = mModel.getMultiChoise();
+            message = String.format("%d files", files.size());
+            deleteRequest = Stream.of(files)
+                    .map(deleteFile -> mInteractor.deleteFile(deleteFile)
+                            .doOnComplete(() -> mModel.removeFile(deleteFile))
+                    )
+                    .collect(Observables.Collectors.concatCompletable());
+        } else {
+            message = file.getName();
+            deleteRequest = mInteractor.deleteFile(file)
+                    .doOnComplete(() -> mModel.removeFile(file));
+        }
+
+        deleteRequest
+                .doOnSubscribe(disposable -> getView().showProgress("Deleting:", message))
                 .doFinally(() -> getView().hideProgress())
                 .subscribe(
-                        () -> mModel.removeFile(file),
+                        () -> {},
                         this::onErrorObtained
                 );
     }
@@ -251,6 +328,11 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
                         },
                         this::onUploadError
                 );
+    }
+
+    @Override
+    public void onMultiChoseMode(boolean multiChoiseMode) {
+        mModel.setMultiChoiseMode(multiChoiseMode);
     }
 
     private AuroraFile getCurrentFolder(){
@@ -338,11 +420,6 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
         );
     }
 
-    private <T> Observable<T> trackCurrentTask(Observable<T> observable){
-        return observable.doOnSubscribe(disposable -> mCurrentFileTask = disposable)
-                .doFinally(() -> mCurrentFileTask = null);
-    }
-
     private <T> Observable<T> progressibleLoadTask(Observable<Progressible<T>> observable){
         return observable.startWith(checkAndWaitPermissionResult(
                 FILES_STORAGE_ACCESS,
@@ -356,11 +433,14 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
                 })
                 .filter(Progressible::isDone)
                 .map(Progressible::getData)
-                .doFinally(() -> {
-                    getView().hideProgress();
-                    mCurrentFileTask = null;
-                })
+                .doOnSubscribe(disposable -> getView().showLoadProgress("", -1))
+                .doFinally(() -> getView().hideProgress())
                 .compose(this::trackCurrentTask);
+    }
+
+    private <T> Observable<T> trackCurrentTask(Observable<T> observable){
+        return observable.doOnSubscribe(disposable -> mCurrentFileTask = disposable)
+                .doFinally(() -> mCurrentFileTask = null);
     }
 
     private <T> Observable<T> checkAndWaitPermissionResult(int requestId, String... perms){

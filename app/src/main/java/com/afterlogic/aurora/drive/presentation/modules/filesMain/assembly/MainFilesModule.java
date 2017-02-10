@@ -39,7 +39,7 @@ public class MainFilesModule extends PresentationModule<MainFilesView> {
 
     @Provides
     MainFilesModel model(MainFilesViewModel model){
-        return model.getController();
+        return model.getModel();
     }
 
     @Provides

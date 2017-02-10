@@ -20,6 +20,7 @@
         android:minHeight="48dp"
         android:background="@drawable/bg_simple_highlight"
         android:gravity="center"
+        app:selected="@{viewModel.selected}"
         bind:onClick="@{viewModel}"
         bind:onLongClick="@{viewModel}"
         style="@style/RootLayout.Item">

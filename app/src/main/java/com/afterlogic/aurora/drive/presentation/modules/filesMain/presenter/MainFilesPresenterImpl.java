@@ -47,4 +47,18 @@ public class MainFilesPresenterImpl extends BasePresenter<MainFilesView> impleme
                 .onErrorComplete()
                 .subscribe(mRouter::openLogin);
     }
+
+    @Override
+    public void onMultiChoiseAction() {
+        mModel.setMultiChoiseMode(false);
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (mModel.isInMultiChoise()){
+            mModel.setMultiChoiseMode(false);
+            return true;
+        }
+        return false;
+    }
 }

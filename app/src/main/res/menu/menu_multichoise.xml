@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
-        android:id="@+id/action_delete"
+        android:id="@id/action_delete"
         android:title="@string/prompt_delete"
         android:icon="@drawable/ic_action_delete"
-        app:showAsAction="ifRoom"
-        android:visible="false"/>
+        app:showAsAction="always"/>
 
     <item
-        android:id="@+id/action_download"
+        android:id="@id/action_download"
         android:title="@string/prompt_action_download"
         android:icon="@drawable/ic_download"
-        app:showAsAction="ifRoom"
-        android:visible="false"/>
+        app:showAsAction="always"/>
 
-    <!--
     <item
-        android:id="@+id/action_send"
+        android:id="@id/action_send"
         android:title="@string/prompt_send"
-        android:icon="@drawable/ic_download"
-        app:showAsAction="ifRoom"
-        android:visible="false"/>
-     -->
+        android:icon="@drawable/ic_share"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_offline"
+        android:title="@string/prompt_action_make_offline"
+        android:icon="@drawable/ic_offline_white"
+        android:checkable="true"
+        app:showAsAction="always"/>
 </menu>

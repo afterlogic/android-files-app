@@ -40,7 +40,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_gravity="bottom"
-                android:visibility="@{viewModel.locked || viewModel.fileTypes.size() == 0 ? View.GONE : View.VISIBLE}"
+                android:visibility="@{viewModel.locked || viewModel.fileTypes.size() == 0 || viewModel.multichoiseMode ? View.GONE : View.VISIBLE}"
                 app:layout_scrollFlags="scroll|enterAlways"/>
 
         </android.support.design.widget.AppBarLayout>

@@ -1,5 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.filesMain.presenter;
 
+import com.afterlogic.aurora.drive.presentation.common.interfaces.OnBackPressedListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.presenter.Presenter;
 
 /**
@@ -7,6 +8,7 @@ import com.afterlogic.aurora.drive.presentation.common.modules.presenter.Present
  * mail: sunnyday.development@gmail.com
  */
 
-public interface MainFilesPresenter extends Presenter {
+public interface MainFilesPresenter extends Presenter, OnBackPressedListener {
     void onLogout();
+    void onMultiChoiseAction();
 }

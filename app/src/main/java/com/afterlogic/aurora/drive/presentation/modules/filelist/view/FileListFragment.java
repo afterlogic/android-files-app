@@ -4,11 +4,14 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.databinding.Observable;
+import android.databinding.ObservableInt;
 import android.os.Bundle;
 import android.support.annotation.FloatRange;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -62,6 +65,25 @@ public class FileListFragment extends BaseFragment implements FileListView, OnBa
 
     private ProgressDialog mProgressDialog;
 
+    @Nullable
+    private FileListFragmentCallback mCallback;
+    private Observable.OnPropertyChangedCallback mSelectedCountCallback = new Observable.OnPropertyChangedCallback() {
+        @Override
+        public void onPropertyChanged(Observable observable, int i) {
+            if (mCallback != null) {
+                mCallback.onSelectedCountChanged(((ObservableInt) observable).get());
+            }
+        }
+    };
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof FileListFragmentCallback){
+            mCallback = (FileListFragmentCallback) context;
+        }
+    }
+
     @Override
     protected void assembly(ModulesFactoryComponent modulesFactory) {
         modulesFactory.fileList().inject(this);
@@ -71,6 +93,7 @@ public class FileListFragment extends BaseFragment implements FileListView, OnBa
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPresenter.initWith(getArguments().getString(ARGS_TYPE), (MainFilesCallback) getActivity());
+        mViewModel.getSelectedCount().addOnPropertyChangedCallback(mSelectedCountCallback);
     }
 
     @Nullable
@@ -87,9 +110,26 @@ public class FileListFragment extends BaseFragment implements FileListView, OnBa
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_delete: mPresenter.onDelete(null); break;
+            case R.id.action_download: mPresenter.onDownload(null); break;
+            case R.id.action_send: mPresenter.onSendTo(null); break;
+            case R.id.action_offline: mPresenter.onToggleOffline(null); break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         hideProgress();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mViewModel.getSelectedCount().removeOnPropertyChangedCallback(mSelectedCountCallback);
     }
 
     @Override
@@ -265,5 +305,9 @@ public class FileListFragment extends BaseFragment implements FileListView, OnBa
 
     public void uploadFile(){
         mPresenter.onFileUpload();
+    }
+
+    public void setMultiChoiseMode(boolean mode){
+        mPresenter.onMultiChoseMode(mode);
     }
 }
