@@ -79,7 +79,7 @@
     <string name="alert_message_remote_deleted_save_local">Remote file success deleted, but it was marked as offline. Save local version to \'Downloads\'?</string>
     <string name="toast_choose_directory_for_files_upload">Choose directory for files upload.</string>
     <string name="multichoise">Multichoise</string>
-    <string name="title_action_selected">"Selected: %d"</string>
+    <string name="title_action_selected">"%d selected"</string>
     <string name="toast_cant_upload_permission_not_granted">Permission not granted. Can\'t upload file.</string>
     <string name="dialog_files_title_uploading">Uploading…</string>
     <string name="dialog_files_title_dowloading">Downloading…</string>

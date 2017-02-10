@@ -2,18 +2,22 @@ package com.afterlogic.aurora.drive.presentation.modules.filelist.viewModel;
 
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableBoolean;
+import android.databinding.ObservableInt;
 import android.databinding.ObservableList;
 import android.net.Uri;
 import android.support.v4.widget.SwipeRefreshLayout;
 
+import com.afterlogic.aurora.drive.BR;
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.SimpleOnObservableListChagnedListener;
 import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.presenter.FileListPresenter;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.WeakHashMap;
@@ -36,9 +40,22 @@ public class FileListViewModel implements SwipeRefreshLayout.OnRefreshListener{
 
     private final ObservableBoolean mRefreshing = new ObservableBoolean(true);
 
+    private final ObservableList<AuroraFile> mMultiChoiseResult = new ObservableArrayList<>();
+    private final ObservableInt mSelectedCount = new ObservableInt(0);
+    private boolean mMultiChoise = false;
+    private final ObservableBoolean mSelectionHasFolder = new ObservableBoolean();
+
     @Inject
     public FileListViewModel(AppResources appResources) {
         mAppResources = appResources;
+        mMultiChoiseResult.addOnListChangedCallback(new SimpleOnObservableListChagnedListener<>(
+                () -> {
+                    mSelectionHasFolder.set(
+                            Stream.of(mMultiChoiseResult).anyMatch(AuroraFile::isFolder)
+                    );
+                    mSelectedCount.set(mMultiChoiseResult.size());
+                }
+        ));
     }
 
     public FileListModel getModel(){
@@ -51,6 +68,14 @@ public class FileListViewModel implements SwipeRefreshLayout.OnRefreshListener{
 
     public ObservableBoolean getRefreshing(){
         return mRefreshing;
+    }
+
+    public ObservableInt getSelectedCount(){
+        return mSelectedCount;
+    }
+
+    public ObservableBoolean getSelectionHasFolder(){
+        return mSelectionHasFolder;
     }
 
     @Override
@@ -70,10 +95,11 @@ public class FileListViewModel implements SwipeRefreshLayout.OnRefreshListener{
             synchronized (FileListViewModel.this){
                 mFiles.clear();
                 mFilesMap.clear();
+                mMultiChoiseResult.clear();
 
                 List<FileViewModel> viewModels = Stream.of(files)
                         .map((auroraFile) -> {
-                            FileViewModel viewModel = new FileViewModel(auroraFile, mPresenter, mAppResources);
+                            FileViewModel viewModel = viewModel(auroraFile);
                             mFilesMap.put(auroraFile, viewModel);
                             return viewModel;
                         })
@@ -95,7 +121,7 @@ public class FileListViewModel implements SwipeRefreshLayout.OnRefreshListener{
 
         @Override
         public void changeFile(AuroraFile previous, AuroraFile newFile) {
-            FileViewModel newModel = new FileViewModel(newFile, mPresenter, mAppResources);
+            FileViewModel newModel = viewModel(newFile);
             FileViewModel prevModel = mFilesMap.remove(previous);
             mFiles.set(mFiles.indexOf(prevModel), newModel);
             mFilesMap.put(newFile, newModel);
@@ -106,12 +132,13 @@ public class FileListViewModel implements SwipeRefreshLayout.OnRefreshListener{
 
         @Override
         public void removeFile(AuroraFile file) {
-            mFiles.remove(mFilesMap.remove(file));
+            FileViewModel viewModel = mFilesMap.get(file);
+            mFiles.remove(viewModel);
         }
 
         @Override
         public void addFile(AuroraFile file) {
-            FileViewModel newModel = new FileViewModel(file, mPresenter, mAppResources);
+            FileViewModel newModel = viewModel(file);
             mFiles.add(newModel);
             Collections.sort(mFiles, (l, r) ->
                     FileUtil.AURORA_FILE_COMPARATOR.compare(l.getModel().getFile(), r.getModel().getFile())
@@ -124,6 +151,42 @@ public class FileListViewModel implements SwipeRefreshLayout.OnRefreshListener{
             return Stream.of(mFiles)
                     .map(file -> file.getModel().getFile())
                     .collect(Collectors.toList());
+        }
+
+        @Override
+        public void setMultiChoiseMode(boolean mode) {
+            if (mode == mMultiChoise) return;
+            mMultiChoise = mode;
+
+            if (!mMultiChoise){
+                mMultiChoiseResult.clear();
+                Stream.of(mFiles).forEach(file -> file.notifyPropertyChanged(BR.selected));
+            }
+        }
+
+        @Override
+        public boolean isMultiChoise() {
+            return mMultiChoise;
+        }
+
+        @Override
+        public List<AuroraFile> getMultiChoise() {
+            return new ArrayList<>(mMultiChoiseResult);
+        }
+
+        @Override
+        public void toggleSelected(AuroraFile file) {
+            if (mMultiChoiseResult.contains(file)){
+                mMultiChoiseResult.remove(file);
+            } else {
+                mMultiChoiseResult.add(file);
+            }
+
+            mFilesMap.get(file).notifyPropertyChanged(BR.selected);
+        }
+
+        private FileViewModel viewModel(AuroraFile file){
+            return new FileViewModel(file, mMultiChoiseResult, mPresenter, mAppResources);
         }
     }
 }

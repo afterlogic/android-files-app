@@ -6,8 +6,7 @@
         android:id="@+id/action_multichoise"
         android:title="@string/multichoise"
         android:icon="@drawable/ic_action_multichoise"
-        app:showAsAction="ifRoom"
-        android:visible="false"/>
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_offline_mode"
