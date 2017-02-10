@@ -74,7 +74,7 @@
     <string name="alert_message_remote_deleted_save_local">Облачый файл удален. Он был помечен как доступный оффлайн. Сохранить локальную версию?</string>
     <string name="toast_choose_directory_for_files_upload">Выберите папку для загрузки файлов.</string>
     <string name="multichoise">Выбрать несколько</string>
-    <string name="title_action_selected">"Выбрано: %d"</string>
+    <string name="title_action_selected">"%d выбрано"</string>
     <string name="toast_cant_upload_permission_not_granted">Нет требуемых разрешений. Невозможно загрузить файлы.</string>
     <string name="dialog_files_title_uploading">Загрузка…</string>
     <string name="dialog_files_title_dowloading">Скачивание…</string>

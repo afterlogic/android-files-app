@@ -6,7 +6,7 @@
     <item
         android:id="@id/action_rename"
         android:title="@string/prompt_rename"
-        android:icon="@drawable/ic_action_delete"
+        android:icon="@drawable/ic_edit_white_18dp"
         app:showAsAction="never"/>
 
     <item
@@ -24,13 +24,13 @@
     <item
         android:id="@id/action_send"
         android:title="@string/prompt_send"
-        android:icon="@drawable/ic_share"
+        android:icon="@drawable/ic_share_white_18dp"
         app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_offline"
         android:title="@string/prompt_action_make_offline"
-        android:icon="@drawable/ic_offline_white"
+        android:icon="@drawable/ic_offline_white_18dp"
         android:checkable="true"
         app:showAsAction="never"/>
 </menu>
