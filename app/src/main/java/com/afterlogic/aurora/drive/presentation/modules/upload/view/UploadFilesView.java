@@ -1,5 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.upload.view;
 
+import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.FilesListView;
 
 /**
@@ -8,4 +9,5 @@ import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.FilesLis
  */
 
 public interface UploadFilesView extends FilesListView {
+    void showNewFolderNameDialog(Consumer<String> nameConsumer);
 }

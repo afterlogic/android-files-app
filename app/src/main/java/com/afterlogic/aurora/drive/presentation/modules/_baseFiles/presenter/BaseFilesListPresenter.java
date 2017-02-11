@@ -1,10 +1,15 @@
 package com.afterlogic.aurora.drive.presentation.modules._baseFiles.presenter;
 
+import android.content.Context;
+
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.model.Progressible;
+import com.afterlogic.aurora.drive.model.error.PermissionDeniedError;
 import com.afterlogic.aurora.drive.presentation.common.modules.presenter.BasePresenter;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
+import com.afterlogic.aurora.drive.presentation.common.util.PermissionUtil;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.interactor.FilesListInteractor;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.FilesListView;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFilesListModel;
@@ -15,7 +20,12 @@ import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Completable;
+import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
+
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static com.afterlogic.aurora.drive.model.events.PermissionGrantEvent.FILES_STORAGE_ACCESS;
 
 /**
  * Created by sashka on 10.02.17.<p/>
@@ -26,6 +36,7 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
 
     private final FilesListInteractor mInteractor;
     private final BaseFilesListModel mModel;
+    private final Context mAppContext;
 
     private String mType;
 
@@ -35,10 +46,11 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
     private Disposable mThumbnailRequest = null;
     private Disposable mCurrentFileTask = null;
 
-    public BaseFilesListPresenter(ViewState<V> viewState, FilesListInteractor interactor, BaseFilesListModel model) {
+    public BaseFilesListPresenter(ViewState<V> viewState, FilesListInteractor interactor, BaseFilesListModel model, Context appContext) {
         super(viewState);
         mInteractor = interactor;
         mModel = model;
+        mAppContext = appContext;
     }
 
     @Override
@@ -97,13 +109,58 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
         }
     }
 
-    private AuroraFile getCurrentFolder(){
+    protected AuroraFile getCurrentFolder(){
         return mPath.get(0);
     }
 
     @Override
     public boolean onBackPressed() {
         return popPath();
+    }
+
+    public   <T> Observable<T> trackCurrentTask(Observable<T> observable){
+        return observable.doOnSubscribe(disposable -> mCurrentFileTask = disposable)
+                .doFinally(() -> mCurrentFileTask = null);
+    }
+
+    public <T> Observable<T> progressibleLoadTask(Observable<Progressible<T>> observable){
+        return observable.startWith(checkAndWaitPermissionResult(
+                FILES_STORAGE_ACCESS,
+                new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}
+        ))//----|
+                //TODO load progress title (download/upload)
+                .doOnNext(progress -> {
+                    float value = progress.getMax() > 0 ?
+                            (float) progress.getProgress() / progress.getMax() : -1;
+                    getView().showLoadProgress(progress.getName(), value * 100);
+                })
+                .filter(Progressible::isDone)
+                .map(Progressible::getData)
+                .doOnSubscribe(disposable -> getView().showLoadProgress("", -1))
+                .doFinally(() -> getView().hideProgress())
+                .compose(this::trackCurrentTask);
+    }
+
+    public  <T> Observable<T> checkAndWaitPermissionResult(int requestId, String... perms){
+        return Observable.defer(() -> {
+            if (!PermissionUtil.isAllGranted(mAppContext, perms)){
+                return Observable.<T>error(new PermissionDeniedError(requestId, perms));
+            } else {
+                return Observable.<T>empty();
+            }
+        })//----|
+                .doOnError(this::onErrorObtained)
+                .retryWhen(attempts -> observePermissions(requestId, true));
+
+    }
+
+    public Completable updateFileThumb(AuroraFile file){
+        if (!file.hasThumbnail()) return Completable.complete();
+
+        return mInteractor.getThumbnail(file)
+                .doOnSuccess(thumb -> mModel.setThumbNail(file, thumb))
+                .toCompletable()
+                .onErrorComplete();
     }
 
     private boolean popPath(){
@@ -126,14 +183,5 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
                 .doFinally(() -> mThumbnailRequest = null)
                 .subscribe();
 
-    }
-
-    private Completable updateFileThumb(AuroraFile file){
-        if (!file.hasThumbnail()) return Completable.complete();
-
-        return mInteractor.getThumbnail(file)
-                .doOnSuccess(thumb -> mModel.setThumbNail(file, thumb))
-                .toCompletable()
-                .onErrorComplete();
     }
 }

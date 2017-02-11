@@ -420,7 +420,7 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
         );
     }
 
-    private <T> Observable<T> progressibleLoadTask(Observable<Progressible<T>> observable){
+    protected  <T> Observable<T> progressibleLoadTask(Observable<Progressible<T>> observable){
         return observable.startWith(checkAndWaitPermissionResult(
                 FILES_STORAGE_ACCESS,
                 new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}
@@ -438,7 +438,7 @@ public class FileListPresenterImpl extends BasePresenter<FileListView> implement
                 .compose(this::trackCurrentTask);
     }
 
-    private <T> Observable<T> trackCurrentTask(Observable<T> observable){
+    protected  <T> Observable<T> trackCurrentTask(Observable<T> observable){
         return observable.doOnSubscribe(disposable -> mCurrentFileTask = disposable)
                 .doFinally(() -> mCurrentFileTask = null);
     }

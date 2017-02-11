@@ -7,6 +7,8 @@ import com.afterlogic.aurora.drive.presentation.modules.upload.interactor.Upload
 import com.afterlogic.aurora.drive.presentation.modules.upload.interactor.UploadFilesInteractorImpl;
 import com.afterlogic.aurora.drive.presentation.modules.upload.presenter.UploadFilesPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.upload.presenter.UploadFilesPresenterImpl;
+import com.afterlogic.aurora.drive.presentation.modules.upload.router.UploadFilesRouter;
+import com.afterlogic.aurora.drive.presentation.modules.upload.router.UploadFilesRouterImpl;
 import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadFilesView;
 import com.afterlogic.aurora.drive.presentation.modules.upload.viewModel.UploadFilesBiModel;
 import com.afterlogic.aurora.drive.presentation.modules.upload.viewModel.UploadFilesModel;
@@ -46,5 +48,10 @@ public class UploadFilesModule extends PresentationModule<UploadFilesView> {
     @Provides
     UploadFilesModel model(UploadFilesBiModel model){
         return model;
+    }
+
+    @Provides
+    UploadFilesRouter router(UploadFilesRouterImpl router){
+        return router;
     }
 }

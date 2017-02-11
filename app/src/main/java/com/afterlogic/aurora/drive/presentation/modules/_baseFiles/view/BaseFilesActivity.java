@@ -37,7 +37,7 @@ public abstract class BaseFilesActivity<
     @Inject @ViewPresenter
     protected P mPresenter;
 
-    private FilesPagerAdapter mAdapter;
+    protected FilesPagerAdapter mAdapter;
 
     private SimpleListener mLocked = new SimpleListener(this::updateHomeButtonByViewModel);
     private SimpleListener mFolderTitle = new SimpleListener(this::updateTitleByViewModel);
@@ -109,7 +109,7 @@ public abstract class BaseFilesActivity<
         }
     }
 
-    private void updateHomeButtonByViewModel(){
+    protected void updateHomeButtonByViewModel(){
         ActionBar ab = getSupportActionBar();
 
         if (ab == null) return;
