@@ -7,6 +7,8 @@ import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FileListFr
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesActivity;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
 import com.afterlogic.aurora.drive.presentation.modules.start.view.StartActivity;
+import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadActivity;
+import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadFilesFragment;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.session.SessionChangedReceiver;
 
 import dagger.Subcomponent;
@@ -34,4 +36,8 @@ public interface ModulesFactoryComponent {
     Injector<MainFilesActivity> filesMain();
 
     Injector<FileListFragment> fileList();
+
+    Injector<UploadActivity> upload();
+
+    Injector<UploadFilesFragment> uploadFileList();
 }

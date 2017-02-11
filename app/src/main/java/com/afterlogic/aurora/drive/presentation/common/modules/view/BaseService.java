@@ -36,7 +36,7 @@ public abstract class BaseService extends Service implements PresentationView {
 
     private int mMessageId = 0;
 
-    protected final Set<Presenter> mPresenters = new HashSet<>();
+    final Set<Presenter> mPresenters = new HashSet<>();
 
     @Override
     public void onCreate() {
@@ -48,7 +48,7 @@ public abstract class BaseService extends Service implements PresentationView {
         ModulesFactoryComponent wireframeFactory = ((App) getApplication()).modulesFactory();
         assembly(wireframeFactory);
 
-        reflectiveCollectPresenters(this);
+        PresentationViewUtil.reflectiveCollectPresenters(this);
 
         Stream.of(mPresenters).forEach(Presenter::onStart);
     }
@@ -151,24 +151,5 @@ public abstract class BaseService extends Service implements PresentationView {
 
     private String getMajorMessageTag(int id){
         return getClass().getName() + ":" + id;
-    }
-
-    private static void reflectiveCollectPresenters(BaseService activity){
-        Stream.of(activity.getClass().getDeclaredFields())
-                .filter(field -> field.isAnnotationPresent(ViewPresenter.class) &&
-                        Presenter.class.isAssignableFrom(field.getType())
-                )
-                .forEach(field -> {
-                    try {
-                        Presenter presenter = (Presenter) field.get(activity);
-                        if (presenter != null) {
-                            activity.mPresenters.add(presenter);
-                        } else {
-                            MyLog.majorException(activity, "Field marked as ViewPresenter but it is null: " + field.getName());
-                        }
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                });
     }
 }

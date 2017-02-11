@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,13 +13,12 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Task;
-import com.afterlogic.aurora.drive.databinding.ActivitySendFilesBinding;
-import com.afterlogic.aurora.drive.model.FileInfo;
-import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.ConnectionFailedFragment;
-import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FilesListFragmentDeprecated;
+import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.FilesListFragmentDeprecated;
+import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.model.FileInfo;
+import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -38,8 +36,6 @@ public class SendFilesActivity extends ChooseFileActivity {
 
     private ArrayList<FileInfo> mFilesForUpload = new ArrayList<>();
     private AuroraFile mTargetFolder;
-
-    private ActivitySendFilesBinding mBinding;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,7 +63,7 @@ public class SendFilesActivity extends ChooseFileActivity {
 
     @Override
     protected void onSetContentView() {
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_send_files);
+        //mBinding = DataBindingUtil.setContentView(this, R.layout.activity_send_files);
     }
 
     @Override
@@ -147,13 +143,13 @@ public class SendFilesActivity extends ChooseFileActivity {
     @Override
     public void onAvailableFilesTypesChecked() {
         super.onAvailableFilesTypesChecked();
-        mBinding.setOnlineState(true);
+        //mBinding.setOnlineState(true);
     }
 
     @Override
     public void showOfflineState() {
         super.showOfflineState();
-        mBinding.setOnlineState(false);
+        //mBinding.setOnlineState(false);
     }
 
     @Override

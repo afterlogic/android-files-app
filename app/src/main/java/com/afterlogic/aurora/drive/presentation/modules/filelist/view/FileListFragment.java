@@ -19,7 +19,7 @@ import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive._unrefactored.core.util.DialogUtil;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.dialogs.FileActionsBottomSheet;
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
-import com.afterlogic.aurora.drive.databinding.FragmentFilesListBindBinding;
+import com.afterlogic.aurora.drive.databinding.FragmentFilesListBinding;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryComponent;
 import com.afterlogic.aurora.drive.presentation.common.components.view.SelectionEditText;
@@ -101,13 +101,13 @@ public class FileListFragment extends BaseFragment implements FileListView, OnBa
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_files_list_bind, container, false);
+        return inflater.inflate(R.layout.fragment_files_list, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        FragmentFilesListBindBinding binding = DataBindingUtil.bind(view);
+        FragmentFilesListBinding binding = DataBindingUtil.bind(view);
         binding.setViewModel(mViewModel);
     }
 

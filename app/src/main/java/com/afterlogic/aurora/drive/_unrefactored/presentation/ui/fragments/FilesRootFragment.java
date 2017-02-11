@@ -26,7 +26,6 @@ import com.afterlogic.aurora.drive.model.error.ApiResponseError;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.FilesListActivity;
 import com.afterlogic.aurora.drive.presentation.common.components.view.DisablableViewPager;
-import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FilesListFragmentDeprecated;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesCallback;
 import com.annimon.stream.Stream;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;

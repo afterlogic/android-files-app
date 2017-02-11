@@ -23,6 +23,15 @@ public class ViewPagerBinding {
     }
 
     @BindingAdapter({"bind:adapter", "bind:items"})
+    public static <T> void bindAdapter(ViewPager pager, ItemsAdapter<T> adapter, List<T> items){
+        if (adapter instanceof PagerAdapter) {
+            bindAdapter(pager, (PagerAdapter & ItemsAdapter<T>)adapter, items);
+        } else {
+            throw new IllegalArgumentException("Adapter must extend PagerAdapter.");
+        }
+    }
+
+    @BindingAdapter({"bind:adapter", "bind:items"})
     public static <T, A extends PagerAdapter & ItemsAdapter<T>>
     void bindAdapter(ViewPager pager, A adapter, List<T> items){
         if (adapter != null){

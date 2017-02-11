@@ -60,7 +60,7 @@ public abstract class BaseFragment extends Fragment implements PresentationView 
 
     private FirstCreateViewInterceptor mFirstCreateViewInterceptor;
 
-    protected final Set<Presenter> mPresenters = new HashSet<>();
+    final Set<Presenter> mPresenters = new HashSet<>();
 
     /**
      * Initialize module wireframe and assembly it.
@@ -96,7 +96,7 @@ public abstract class BaseFragment extends Fragment implements PresentationView 
         ModulesFactoryComponent component = ((App) getActivity().getApplication()).modulesFactory();
         assembly(component);
 
-        reflectiveCollectPresenters(this);
+        PresentationViewUtil.reflectiveCollectPresenters(this);
 
         if (savedInstanceState == null && mFirstCreateViewInterceptor != null){
             mFirstCreateViewInterceptor.onPresentationViewCreated(this);
@@ -312,27 +312,5 @@ public abstract class BaseFragment extends Fragment implements PresentationView 
 
     public interface FirstCreateViewInterceptor{
         void onPresentationViewCreated(BaseFragment view);
-    }
-
-    private static void reflectiveCollectPresenters(BaseFragment fragment){
-        Stream.of(fragment.getClass().getDeclaredFields())
-                .filter(field -> field.isAnnotationPresent(ViewPresenter.class) &&
-                        Presenter.class.isAssignableFrom(field.getType())
-                )
-                .forEach(field -> {
-                    try {
-                        boolean accessible = field.isAccessible();
-                        field.setAccessible(true);
-                        Presenter presenter = (Presenter) field.get(fragment);
-                        if (presenter != null) {
-                            fragment.mPresenters.add(presenter);
-                        } else {
-                            MyLog.majorException(fragment, "Field marked as ViewPresenter but it is null: " + field.getName());
-                        }
-                        field.setAccessible(accessible);
-                    } catch (IllegalAccessException e) {
-                        MyLog.majorException(fragment, e);
-                    }
-                });
     }
 }

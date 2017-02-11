@@ -7,10 +7,12 @@
 
     <data>
         <import type="android.view.View"/>
+        <import type="com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ItemsAdapter"/>
+        <import type="com.afterlogic.aurora.drive.model.FileType"/>
 
         <variable
             name="adapter"
-            type="com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesPagerAdapter"/>
+            type="ItemsAdapter&lt;FileType&gt;"/>
 
         <variable
             name="viewModel"

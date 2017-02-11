@@ -105,6 +105,4 @@ public class FileListInteractorImpl extends BaseInteractor implements FileListIn
         return mFilesRepository.uploadFile(folder, file)
                 .compose(this::composeDefault);
     }
-
-
 }
