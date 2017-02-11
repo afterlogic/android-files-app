@@ -7,10 +7,10 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
+import com.afterlogic.aurora.drive.model.FileType;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ItemsAdapter;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.SimpleOnObservableListChagnedListener;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FileListFragment;
-import com.afterlogic.aurora.drive.presentation.modules.filesMain.viewModel.FileType;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +20,7 @@ import java.util.UUID;
  * mail: sunnyday.development@gmail.com
  */
 
-public class MainFilesPagerAdapter extends FragmentStatePagerAdapter implements ItemsAdapter<FileType>{
+public class MainFilesPagerAdapter extends FragmentStatePagerAdapter implements ItemsAdapter<FileType> {
 
     private List<FileType> mFileTypes;
 

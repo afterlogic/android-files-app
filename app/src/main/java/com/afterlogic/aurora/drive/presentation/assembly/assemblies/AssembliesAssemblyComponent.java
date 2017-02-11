@@ -9,6 +9,10 @@ import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginComp
 import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginModule;
 import com.afterlogic.aurora.drive.presentation.modules.start.assembly.StartComponent;
 import com.afterlogic.aurora.drive.presentation.modules.start.assembly.StartModule;
+import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadComponent;
+import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadFilesComponent;
+import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadFilesModule;
+import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadModule;
 
 import dagger.Subcomponent;
 
@@ -21,6 +25,7 @@ import dagger.Subcomponent;
  * NOTE:
  * For default component creation method in BaseWireframe all methods must be called 'plus'.
  */
+@SuppressWarnings("unused")
 @Subcomponent(modules = AssembliesAssemblyModule.class)
 public interface AssembliesAssemblyComponent {
 
@@ -33,4 +38,8 @@ public interface AssembliesAssemblyComponent {
     MainFilesComponent plus(MainFilesModule module);
 
     FileListComponent plus(FileListModule module);
+
+    UploadComponent plus(UploadModule module);
+
+    UploadFilesComponent plus(UploadFilesModule module);
 }

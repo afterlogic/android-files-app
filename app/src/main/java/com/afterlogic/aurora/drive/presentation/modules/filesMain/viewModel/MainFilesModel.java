@@ -1,6 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.filesMain.viewModel;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.model.FileType;
 
 import java.util.List;
 

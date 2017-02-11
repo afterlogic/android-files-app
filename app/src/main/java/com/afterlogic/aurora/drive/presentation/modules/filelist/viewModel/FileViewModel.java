@@ -108,11 +108,5 @@ public class FileViewModel extends BaseObservable implements View.OnClickListene
             return mAuroraFile;
         }
 
-        @Override
-        public void updateBy(AuroraFile file) {
-            mAuroraFile = file;
-            notifyPropertyChanged(BR.fileName);
-            notifyPropertyChanged(BR.fileIcon);
-        }
     }
 }

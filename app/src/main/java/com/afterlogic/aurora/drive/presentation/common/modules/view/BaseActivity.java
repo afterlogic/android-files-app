@@ -51,7 +51,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Presenta
     private boolean mAddSubmoduleAvailable = true;
     private PresentationModulesStore mPresentationModulesStore;
 
-    protected final Set<Presenter> mPresenters = new HashSet<>();
+    final Set<Presenter> mPresenters = new HashSet<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,7 +78,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Presenta
         assembly(component);
         Stream.of(mSubmodules).forEach(subView -> subView.assembly(component));
 
-        reflectiveCollectPresenters(this);
+        PresentationViewUtil.reflectiveCollectPresenters(this);
     }
 
     protected void assembly(ModulesFactoryComponent modulesFactory){
@@ -272,27 +272,5 @@ public abstract class BaseActivity extends AppCompatActivity implements Presenta
         } else {
             mStartWaiters.add(runnable);
         }
-    }
-
-    private static void reflectiveCollectPresenters(BaseActivity activity){
-        Stream.of(activity.getClass().getDeclaredFields())
-                .filter(field -> field.isAnnotationPresent(ViewPresenter.class) &&
-                        Presenter.class.isAssignableFrom(field.getType())
-                )
-                .forEach(field -> {
-                    boolean accessible = field.isAccessible();
-                    field.setAccessible(true);
-                    try {
-                        Presenter presenter = (Presenter) field.get(activity);
-                        if (presenter != null) {
-                            activity.mPresenters.add(presenter);
-                        } else {
-                            MyLog.majorException(activity, "Field marked as ViewPresenter but it is null: " + field.getName());
-                        }
-                    } catch (IllegalAccessException e) {
-                        MyLog.majorException(e);
-                    }
-                    field.setAccessible(accessible);
-                });
     }
 }

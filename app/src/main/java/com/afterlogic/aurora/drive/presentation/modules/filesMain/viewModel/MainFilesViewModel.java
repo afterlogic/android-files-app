@@ -7,6 +7,7 @@ import android.databinding.ObservableList;
 
 import com.afterlogic.aurora.drive.BR;
 import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.model.FileType;
 import com.annimon.stream.Stream;
 
 import java.util.List;

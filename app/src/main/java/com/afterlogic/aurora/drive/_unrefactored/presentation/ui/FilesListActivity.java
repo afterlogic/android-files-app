@@ -28,7 +28,7 @@ import com.afterlogic.aurora.drive.model.error.ApiError;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.adapters.FilesAdapter;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.dialogs.FileActionsBottomSheet;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesCallback;
-import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FilesListFragmentDeprecated;
+import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.FilesListFragmentDeprecated;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.FilesRootFragment;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.OfflineFilesFragment;
 import com.afterlogic.aurora.drive.model.AuroraFile;
@@ -148,7 +148,7 @@ public class FilesListActivity extends BaseFileActionActivity implements
 
     @Override
     public int getActivityLayout() {
-        return R.layout.activity_tabs;
+        return -1;
     }
 
     @Nullable

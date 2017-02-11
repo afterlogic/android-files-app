@@ -10,6 +10,10 @@ import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginInje
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
 import com.afterlogic.aurora.drive.presentation.modules.start.assembly.StartInjector;
 import com.afterlogic.aurora.drive.presentation.modules.start.view.StartActivity;
+import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadFilesInjector;
+import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadInjector;
+import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadActivity;
+import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadFilesFragment;
 
 import dagger.Module;
 import dagger.Provides;
@@ -56,6 +60,16 @@ public class ModulesFactoryModule {
 
     @Provides
     Injector<FileListFragment> fileList(FileListInjector injector){
+        return injector;
+    }
+
+    @Provides
+    Injector<UploadActivity> upload(UploadInjector injector){
+        return injector;
+    }
+
+    @Provides
+    Injector<UploadFilesFragment> uploadFilesList(UploadFilesInjector injector){
         return injector;
     }
 }

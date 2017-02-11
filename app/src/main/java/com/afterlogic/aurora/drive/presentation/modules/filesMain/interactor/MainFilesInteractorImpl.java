@@ -9,7 +9,7 @@ import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.presentation.common.modules.interactor.BaseInteractor;
-import com.afterlogic.aurora.drive.presentation.modules.filesMain.viewModel.FileType;
+import com.afterlogic.aurora.drive.model.FileType;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 

@@ -12,5 +12,4 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
 public interface FileModel {
     void setThumbNail(Uri uri);
     AuroraFile getFile();
-    void updateBy(AuroraFile file);
 }
