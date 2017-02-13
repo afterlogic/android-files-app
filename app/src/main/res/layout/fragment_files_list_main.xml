@@ -6,10 +6,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BindHelper"
+        <import type="com.afterlogic.aurora.drive.presentation.modules.main.view.MainBindHelper"
                 alias="bindHelper"/>
         <import type="com.afterlogic.aurora.drive.presentation.common.binding.bindingAdapters.RecyclerViewBinding"
                 alias="recyclerBinding"/>
+
         <variable
             name="viewModel"
             type="com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFilesListViewModel"/>

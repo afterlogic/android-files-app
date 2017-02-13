@@ -26,7 +26,7 @@ public abstract class BaseFilesListBiModel<T extends BaseFileItemViewModel> impl
 
     private final OptWeakRef<? extends FilesListPresenter> mPresenter;
 
-    private final ObservableList<T> mFiles = new ObservableArrayList<>();
+    protected final ObservableList<T> mFiles = new ObservableArrayList<>();
     private final WeakHashMap<AuroraFile, T> mFilesMap = new WeakHashMap<>();
     private final ObservableBoolean mRefreshing = new ObservableBoolean(true);
     private final ObservableField<AuroraFile> mCurrentFolder = new ObservableField<>();

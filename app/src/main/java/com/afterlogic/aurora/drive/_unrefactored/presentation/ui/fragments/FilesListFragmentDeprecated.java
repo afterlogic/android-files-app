@@ -9,15 +9,12 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive._unrefactored.core.util.AccountUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.DialogUtil;
-import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.api.ValidApiCallback;
 import com.afterlogic.aurora.drive._unrefactored.core.util.interfaces.OnItemClickListener;
 import com.afterlogic.aurora.drive._unrefactored.core.util.interfaces.OnItemLongClickListener;
@@ -34,7 +31,8 @@ import com.afterlogic.aurora.drive.model.error.ApiError;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnBackPressedListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseFragment;
-import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesCallback;
+import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.FilesListCallback;
 import com.annimon.stream.Stream;
 
 import java.io.File;
@@ -76,7 +74,7 @@ public class FilesListFragmentDeprecated extends BaseFragment implements
     private String mType;
     private ArrayList<AuroraFile> mFolders;
 
-    private MainFilesCallback mCallback;
+    private FilesListCallback mCallback;
 
     private final List<Runnable> mOnRefreshActions = new ArrayList<>();
 
@@ -126,7 +124,7 @@ public class FilesListFragmentDeprecated extends BaseFragment implements
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mCallback = (MainFilesCallback) context;
+        mCallback = (FilesListCallback) context;
     }
 
     @Override
@@ -171,12 +169,6 @@ public class FilesListFragmentDeprecated extends BaseFragment implements
         if (mNeedRefresh || mFolders == null || currentContent == null) return;
 
         mFiles.addAll(currentContent);
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_files_list, container, false);
     }
 
     @Override

@@ -12,21 +12,20 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.SparseArray;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
-import com.afterlogic.aurora.drive.presentation.common.interfaces.OnBackPressedListener;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiCallback;
+import com.afterlogic.aurora.drive._unrefactored.presentation.ui.FilesListActivity;
+import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
+import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.error.ApiError;
 import com.afterlogic.aurora.drive.model.error.ApiResponseError;
-import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive._unrefactored.presentation.ui.FilesListActivity;
 import com.afterlogic.aurora.drive.presentation.common.components.view.DisablableViewPager;
-import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesCallback;
+import com.afterlogic.aurora.drive.presentation.common.interfaces.OnBackPressedListener;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.FilesListCallback;
 import com.annimon.stream.Stream;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
@@ -44,7 +43,7 @@ import java.util.Set;
  */
 public class FilesRootFragment extends Fragment implements
         View.OnClickListener,
-        MainFilesCallback,
+        FilesListCallback,
         OnBackPressedListener,
         SwipeRefreshLayout.OnRefreshListener
 {
@@ -105,12 +104,6 @@ public class FilesRootFragment extends Fragment implements
         //setRetainInstance(true);
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_files_root, container, false);
-    }
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -136,7 +129,7 @@ public class FilesRootFragment extends Fragment implements
         }
         //[END Init FAB menu]
 
-        mViewPager = (DisablableViewPager) view.findViewById(R.id.types_pager);
+        //mViewPager = (DisablableViewPager) view.findViewById(R.id.types_pager);
         mViewPager.setAdapter(mFilesTypesAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -206,7 +199,7 @@ public class FilesRootFragment extends Fragment implements
     }
 
     /**
-     * {@link MainFilesCallback#onOpenFolder(AuroraFile)}  implementation.
+     * {@link FilesListCallback#onOpenFolder(AuroraFile)}  implementation.
      */
     @Override
     public void onOpenFolder(AuroraFile folder) {

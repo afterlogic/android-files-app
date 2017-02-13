@@ -10,18 +10,17 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.databinding.ItemListOfflineHeaderBinding;
-import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive._unrefactored.core.util.interfaces.OnItemClickListener;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.DBHelper;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.dao.WatchingFileDAO;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.model.WatchingFile;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.FilesListActivity;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.adapters.FilesAdapter;
-import com.afterlogic.aurora.drive._unrefactored.core.util.interfaces.OnItemClickListener;
-import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesCallback;
+import com.afterlogic.aurora.drive.databinding.ItemListOfflineHeaderBinding;
+import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.FilesListCallback;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ public class OfflineFilesFragment extends Fragment implements
     private static final String KEY_MANUAL = OfflineFilesFragment.class.getName() + ".KEY_MANUAL";
 
     private List<AuroraFile> mFiles = new ArrayList<>();
-    private MainFilesCallback mCallback;
+    private FilesListCallback mCallback;
     private DBHelper mDB;
     private boolean mManualMode = false;
 
@@ -57,7 +56,7 @@ public class OfflineFilesFragment extends Fragment implements
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mCallback = (MainFilesCallback) context;
+        mCallback = (FilesListCallback) context;
     }
 
     @Override
@@ -69,12 +68,6 @@ public class OfflineFilesFragment extends Fragment implements
         if (getArguments() != null){
             mManualMode = getArguments().getBoolean(KEY_MANUAL, false);
         }
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_files_list, container, false);
     }
 
     @Override

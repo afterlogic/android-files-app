@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules._baseFiles.view;
+package com.afterlogic.aurora.drive.presentation.modules.main.view;
 
 import android.support.v7.widget.RecyclerView;
 
@@ -11,11 +11,11 @@ import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.Bas
 import java.util.WeakHashMap;
 
 /**
- * Created by sashka on 11.02.17.<p/>
+ * Created by sashka on 13.02.17.<p/>
  * mail: sunnyday.development@gmail.com
  */
 
-public class BindHelper {
+public class MainBindHelper {
 
     private static final WeakHashMap<RecyclerView, RecyclerViewModelAdapter<BaseFileItemViewModel>> FILES_ADAPTERS = new WeakHashMap<>();
 
@@ -23,7 +23,7 @@ public class BindHelper {
         return list -> {
             RecyclerViewModelAdapter<BaseFileItemViewModel> adapter = FILES_ADAPTERS.get(list);
             if (adapter == null){
-                adapter = new SimpleRecyclerViewModelAdapter<>(R.layout.item_list_file_base);
+                adapter = new SimpleRecyclerViewModelAdapter<>(R.layout.item_list_file_main);
                 FILES_ADAPTERS.put(list, adapter);
             }
             return adapter;

@@ -27,7 +27,7 @@ import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiCallback;
 import com.afterlogic.aurora.drive.model.error.ApiError;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.adapters.FilesAdapter;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.dialogs.FileActionsBottomSheet;
-import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesCallback;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.FilesListCallback;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.FilesListFragmentDeprecated;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.FilesRootFragment;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.OfflineFilesFragment;
@@ -46,7 +46,7 @@ import java.util.List;
  * mail: sunnyday.development@gmail.com
  */
 public class FilesListActivity extends BaseFileActionActivity implements
-        MainFilesCallback,
+        FilesListCallback,
         FileActionsBottomSheet.FileActionListener,
         FilesRootFragment.FilesRootFragmentCallback,
         FilesAdapter.MultichoiseListener
@@ -266,7 +266,7 @@ public class FilesListActivity extends BaseFileActionActivity implements
     }
 
     /**
-     * {@link MainFilesCallback#onOpenFolder(AuroraFile)}  implementation.
+     * {@link FilesListCallback#onOpenFolder(AuroraFile)}  implementation.
      */
     @Override
     public void onOpenFolder(AuroraFile folder) {
@@ -277,7 +277,7 @@ public class FilesListActivity extends BaseFileActionActivity implements
     }
 
     /**
-     * {@link MainFilesCallback#showActions(AuroraFile)}  implementation.
+     * {@link FilesListCallback#showActions(AuroraFile)}  implementation.
      */
     public void showActions(AuroraFile file) {
         FileActionsBottomSheet actions = FileActionsBottomSheet.newInstance(file);
@@ -285,7 +285,7 @@ public class FilesListActivity extends BaseFileActionActivity implements
     }
 
     /**
-     * {@link MainFilesCallback#onFileClicked(AuroraFile, List)}  implementation.
+     * {@link FilesListCallback#onFileClicked(AuroraFile, List)}  implementation.
      */
     public void onFileClicked(AuroraFile file, List<AuroraFile> all) {
         if (file.isLink()){
@@ -330,7 +330,7 @@ public class FilesListActivity extends BaseFileActionActivity implements
     }
 
     /**
-     * {@link MainFilesCallback#createFolder(String, String, String)}  implementation.
+     * {@link FilesListCallback#createFolder(String, String, String)}  implementation.
      */
     public void createFolder(String path, final String type, String folderName) {
 

@@ -5,10 +5,10 @@ import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseCo
 import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseFilesComponent;
 import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseFilesModule;
 import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseModule;
-import com.afterlogic.aurora.drive.presentation.modules.filelist.assembly.FileListComponent;
-import com.afterlogic.aurora.drive.presentation.modules.filelist.assembly.FileListModule;
-import com.afterlogic.aurora.drive.presentation.modules.filesMain.assembly.MainFilesComponent;
-import com.afterlogic.aurora.drive.presentation.modules.filesMain.assembly.MainFilesModule;
+import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFileListComponent;
+import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFileListModule;
+import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFilesComponent;
+import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFilesModule;
 import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginComponent;
 import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginModule;
 import com.afterlogic.aurora.drive.presentation.modules.start.assembly.StartComponent;
@@ -40,7 +40,7 @@ public interface AssembliesAssemblyComponent {
     StartComponent plus(StartModule module);
 
     MainFilesComponent plus(MainFilesModule module);
-    FileListComponent plus(FileListModule module);
+    MainFileListComponent plus(MainFileListModule module);
 
     UploadComponent plus(UploadModule module);
     UploadFilesComponent plus(UploadFilesModule module);
