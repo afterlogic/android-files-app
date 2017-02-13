@@ -1,6 +1,10 @@
 package com.afterlogic.aurora.drive.presentation.assembly.assemblies;
 
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationModulesStore;
+import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseComponent;
+import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseFilesComponent;
+import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseFilesModule;
+import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseModule;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.assembly.FileListComponent;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.assembly.FileListModule;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.assembly.MainFilesComponent;
@@ -36,10 +40,11 @@ public interface AssembliesAssemblyComponent {
     StartComponent plus(StartModule module);
 
     MainFilesComponent plus(MainFilesModule module);
-
     FileListComponent plus(FileListModule module);
 
     UploadComponent plus(UploadModule module);
-
     UploadFilesComponent plus(UploadFilesModule module);
+
+    ChoiseComponent plus(ChoiseModule module);
+    ChoiseFilesComponent plus(ChoiseFilesModule module);
 }

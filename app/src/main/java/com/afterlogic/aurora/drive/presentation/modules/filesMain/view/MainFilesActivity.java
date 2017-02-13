@@ -15,10 +15,9 @@ import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.databinding.ActivityMainFilesBinding;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.ViewPresenter;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.FilesPagerAdapter;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FileListFragment;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FileListFragmentCallback;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.presenter.MainFilesPresenter;
@@ -52,7 +51,7 @@ public class MainFilesActivity extends BaseActivity implements MainFilesView, Ma
 
     @Override
     protected void assembly(ModulesFactoryComponent modulesFactory) {
-        modulesFactory.filesMain().inject(this);
+        modulesFactory.main().inject(this);
     }
 
     @Override

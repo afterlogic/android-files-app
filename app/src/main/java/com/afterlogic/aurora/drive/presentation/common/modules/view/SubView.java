@@ -2,7 +2,7 @@ package com.afterlogic.aurora.drive.presentation.common.modules.view;
 
 import android.os.Bundle;
 
-import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.Stoppable;
 
 /**

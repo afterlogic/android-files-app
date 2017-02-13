@@ -1,7 +1,11 @@
-package com.afterlogic.aurora.drive.presentation.assembly.wireframes;
+package com.afterlogic.aurora.drive.presentation.assembly.modules;
 
 import com.afterlogic.aurora.drive.presentation.assembly.assemblies.AssembliesAssemblyComponent;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.Injector;
+import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseFilesInjector;
+import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseInjector;
+import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseActivity;
+import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseFilesFragment;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.assembly.FileListInjector;
 import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FileListFragment;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.assembly.MainFilesInjector;
@@ -70,6 +74,16 @@ public class ModulesFactoryModule {
 
     @Provides
     Injector<UploadFilesFragment> uploadFilesList(UploadFilesInjector injector){
+        return injector;
+    }
+
+    @Provides
+    Injector<ChoiseActivity> choise(ChoiseInjector injector){
+        return injector;
+    }
+
+    @Provides
+    Injector<ChoiseFilesFragment> choiseFileList(ChoiseFilesInjector injector){
         return injector;
     }
 }

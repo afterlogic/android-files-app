@@ -3,8 +3,8 @@ package com.afterlogic.aurora.drive.presentation.assembly.presentation;
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.PresentationScope;
 import com.afterlogic.aurora.drive.presentation.assembly.assemblies.AssembliesAssemblyComponent;
 import com.afterlogic.aurora.drive.presentation.assembly.assemblies.AssembliesAssemblyModule;
-import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryComponent;
-import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryModule;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryModule;
 
 import dagger.Subcomponent;
 

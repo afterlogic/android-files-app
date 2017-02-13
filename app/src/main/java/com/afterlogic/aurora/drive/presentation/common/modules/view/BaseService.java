@@ -14,7 +14,7 @@ import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.application.App;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.consts.NotificationConst;
-import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
 import com.afterlogic.aurora.drive.presentation.common.modules.presenter.Presenter;
 import com.annimon.stream.Stream;
 

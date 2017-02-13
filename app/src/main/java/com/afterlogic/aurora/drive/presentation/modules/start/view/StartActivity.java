@@ -3,7 +3,7 @@ package com.afterlogic.aurora.drive.presentation.modules.start.view;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.ViewPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.start.presenter.StartPresenter;
