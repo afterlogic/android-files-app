@@ -13,6 +13,7 @@ import java.io.File;
  * mail: sunnyday.development@gmail.com
  */
 public class AuroraFile implements Parcelable, Cloneable{
+
     private static final String[] PREVIEWABLE_CONTENT_TYPES = {
             "image/jpeg",
             "image/pjpeg",
@@ -52,7 +53,8 @@ public class AuroraFile implements Parcelable, Cloneable{
 
     private int mIsPreviewAble = -1;
 
-    private boolean mIsOffline;
+    @NonNull
+    private OfflineInfo mOfflineInfo = new OfflineInfo(OfflineType.NOT_OFFLINE, SyncState.UNKNOWN);
 
     public static AuroraFile create(@NonNull AuroraFile parent, @NonNull String name, boolean mIsFolder){
         AuroraFile file = new AuroraFile();
@@ -93,7 +95,7 @@ public class AuroraFile implements Parcelable, Cloneable{
             file.mThumbnailLink = local.getAbsolutePath();
         }
         file.mLinkUrl = local.getAbsolutePath();
-        file.mIsOffline = true;
+        file.mOfflineInfo = new OfflineInfo(OfflineType.OFFLINE, SyncState.UNKNOWN);
         return file;
     }
 
@@ -209,8 +211,14 @@ public class AuroraFile implements Parcelable, Cloneable{
         return mLastModified;
     }
 
+    @Deprecated
     public boolean isOfflineMode() {
-        return mIsOffline;
+        return mOfflineInfo.getOfflineType() == OfflineType.OFFLINE;
+    }
+
+    @NonNull
+    public OfflineInfo getOfflineInfo() {
+        return mOfflineInfo;
     }
 
     public AuroraFile getParentFolder(){

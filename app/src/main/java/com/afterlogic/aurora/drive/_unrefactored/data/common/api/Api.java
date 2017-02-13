@@ -2,11 +2,10 @@ package com.afterlogic.aurora.drive._unrefactored.data.common.api;
 
 import android.support.annotation.Nullable;
 
-import com.afterlogic.aurora.drive._unrefactored.core.util.ApiCompatibilityUtil;
-import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.model.FileInfo;
 import com.afterlogic.aurora.drive._unrefactored.model.UploadResult;
 import com.afterlogic.aurora.drive._unrefactored.model.project7.ApiResponseP7;
+import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.model.FileInfo;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 
@@ -108,9 +107,10 @@ public class Api extends AuroraApi{
     }
 
     public static Call<ResponseBody> downloadFile(final AuroraFile file){
-        Single<ResponseBody> observable = getApiProvider()
-                .getFilesRepository().downloadFileBody(file);
-        return ApiCompatibilityUtil.transparentCall(observable);
+        //Single<ResponseBody> observable = getApiProvider()
+        //        .getFilesRepository().downloadFileBody(file);
+        //return ApiCompatibilityUtil.transparentCall(observable);
+        return null;
     }
 
     /**

@@ -14,18 +14,40 @@ import javax.inject.Inject;
  */
 public class DataBaseProviderImpl implements DataBaseProvider {
 
+    private final Context mAppContext;
+
     private DaoSession mDaoSession;
+    private DbOpenHelper mOpenHelper;
+    private boolean mInstantiated = false;
 
     @Inject DataBaseProviderImpl(Context context) {
-        DbOpenHelper openHelper = new DbOpenHelper(context, "cache.bd");
-        DaoMaster master = new DaoMaster(openHelper.getWritableDb());
-
-        mDaoSession = master.newSession();
-        mDaoSession.clear();
+        mAppContext = context;
     }
 
     @Override
     public OfflineFileInfoEntityDao offlineFileInfo() {
-        return mDaoSession.getOfflineFileInfoEntityDao();
+        return getSession().getOfflineFileInfoEntityDao();
+    }
+
+    @Override
+    public synchronized void reset() {
+        if (!mInstantiated) return;
+
+        mDaoSession.clear();
+        mOpenHelper.close();
+        mDaoSession = null;
+        mOpenHelper = null;
+        mInstantiated = false;
+    }
+
+    private synchronized DaoSession getSession(){
+        if (mInstantiated) return mDaoSession;
+
+        mOpenHelper = new DbOpenHelper(mAppContext, "cache.bd");
+        DaoMaster master = new DaoMaster(mOpenHelper.getWritableDb());
+
+        mDaoSession = master.newSession();
+        mInstantiated = true;
+        return mDaoSession;
     }
 }

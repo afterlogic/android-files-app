@@ -11,7 +11,6 @@ import java.util.List;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
-import okhttp3.ResponseBody;
 
 /**
  * Created by sashka on 19.10.16.<p/>
@@ -37,8 +36,6 @@ public interface FilesRepository {
 
     Completable delete(AuroraFile files);
     Completable delete(List<AuroraFile> files);
-
-    Single<ResponseBody> downloadFileBody(AuroraFile file);
 
     Observable<Progressible<File>> download(AuroraFile file, File target);
 

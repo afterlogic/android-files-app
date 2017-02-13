@@ -2,6 +2,7 @@ package com.afterlogic.aurora.drive.data.modules.files.model.db;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Unique;
 import org.greenrobot.greendao.annotation.Generated;
 
 /**
@@ -12,22 +13,57 @@ import org.greenrobot.greendao.annotation.Generated;
 public class OfflineFileInfoEntity {
 
     @Id(autoincrement = true)
-    private Long mId;
+    private Long id;
 
-    @Generated(hash = 1723627213)
-    public OfflineFileInfoEntity(Long mId) {
-        this.mId = mId;
+    @Unique
+    private String path;
+
+    private String type;
+
+    private String offlineType;
+
+    @Generated(hash = 614231716)
+    public OfflineFileInfoEntity(Long id, String path, String type,
+            String offlineType) {
+        this.id = id;
+        this.path = path;
+        this.type = type;
+        this.offlineType = offlineType;
     }
 
     @Generated(hash = 1353197095)
     public OfflineFileInfoEntity() {
     }
 
-    public Long getMId() {
-        return this.mId;
+    public Long getId() {
+        return this.id;
     }
 
-    public void setMId(Long mId) {
-        this.mId = mId;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getPath() {
+        return this.path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getType() {
+        return this.type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getOfflineType() {
+        return this.offlineType;
+    }
+
+    public void setOfflineType(String offlineType) {
+        this.offlineType = offlineType;
     }
 }

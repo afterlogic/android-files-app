@@ -473,11 +473,11 @@ public class SyncService extends Service {
          * @return true if succes sync.
          */
         private boolean downloadSync(WatchingFile watchingFile, SyncTarget target) throws IOException {
-            Single<ResponseBody> observable = mApi.getFilesRepository()
-                    .downloadFileBody(target.getRemote());
-            Call<ResponseBody> call = ApiCompatibilityUtil.transparentCall(observable);
+            //Single<ResponseBody> observable = mApi.getFilesRepository()
+            //        .downloadFileBody(target.getRemote());
+            //Call<ResponseBody> call = ApiCompatibilityUtil.transparentCall(observable);
 
-            Response<ResponseBody> response = call.execute();
+            Response<ResponseBody> response = null;//call.execute();
             if (response.isSuccessful()){
 
                 File dir = target.getLocal().getParentFile();

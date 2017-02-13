@@ -1,11 +1,8 @@
 package com.afterlogic.aurora.drive._unrefactored.data.common;
 
-import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
+import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
 
 /**
  * Created by sashka on 17.10.16.<p/>
@@ -13,24 +10,15 @@ import javax.inject.Provider;
  */
 public class ApiProvider {
 
-    @Inject
-    SessionManager mSessionManager;
-
-    @Inject
-    Provider<AuthRepository> mUserRepositoryProvider;
-
-    @Inject
-    Provider<FilesRepository> mFilesRepositoryProvider;
-
     public SessionManager getSessionManager() {
-        return mSessionManager;
+        return null;
     }
 
     public AuthRepository getUserRepository() {
-        return mUserRepositoryProvider.get();
+        return null;
     }
 
     public FilesRepository getFilesRepository(){
-        return mFilesRepositoryProvider.get();
+        return null;
     }
 }
