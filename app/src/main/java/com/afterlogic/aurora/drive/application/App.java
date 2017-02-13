@@ -6,7 +6,7 @@ import com.afterlogic.aurora.drive.application.assembly.ApplicationAssemblyCompo
 import com.afterlogic.aurora.drive.application.assembly.ApplicationAssemblyModule;
 import com.afterlogic.aurora.drive.application.assembly.DaggerApplicationAssemblyComponent;
 import com.afterlogic.aurora.drive.application.configurators.application.ApplicationConfigurationCallback;
-import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
 
 
 /**

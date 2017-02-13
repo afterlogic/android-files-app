@@ -21,7 +21,7 @@ import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.dialogs.
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.databinding.FragmentFilesListBinding;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
 import com.afterlogic.aurora.drive.presentation.common.components.view.SelectionEditText;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnBackPressedListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseFragment;
@@ -88,7 +88,7 @@ public class FileListFragment extends BaseFragment implements FileListView, OnBa
 
     @Override
     protected void assembly(ModulesFactoryComponent modulesFactory) {
-        modulesFactory.fileList().inject(this);
+        modulesFactory.mainFileList().inject(this);
     }
 
     @Override

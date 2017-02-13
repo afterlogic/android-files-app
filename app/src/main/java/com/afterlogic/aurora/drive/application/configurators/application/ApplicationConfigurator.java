@@ -17,8 +17,8 @@ import com.afterlogic.aurora.drive.data.modules.prefs.Pref;
 import com.afterlogic.aurora.drive.presentation.assembly.assemblies.AssembliesAssemblyModule;
 import com.afterlogic.aurora.drive.presentation.assembly.presentation.PresentationAssemblyComponent;
 import com.afterlogic.aurora.drive.presentation.assembly.presentation.PresentationAssemblyModule;
-import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryComponent;
-import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryModule;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryModule;
 
 import javax.inject.Inject;
 

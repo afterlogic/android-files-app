@@ -20,7 +20,7 @@ import com.afterlogic.aurora.drive.application.App;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.model.events.ActivityResultEvent;
 import com.afterlogic.aurora.drive.model.events.PermissionGrantEvent;
-import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.Stoppable;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationModulesStore;
 import com.afterlogic.aurora.drive.presentation.common.modules.presenter.Presenter;

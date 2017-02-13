@@ -31,7 +31,7 @@ import com.afterlogic.aurora.drive._unrefactored.presentation.ui.FilesListActivi
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.adapters.FilesAdapter;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.error.ApiError;
-import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnBackPressedListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseFragment;
 import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesCallback;

@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.application.configurators.application;
 
-import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
 
 /**
  * Created by sashka on 31.08.16.<p/>
