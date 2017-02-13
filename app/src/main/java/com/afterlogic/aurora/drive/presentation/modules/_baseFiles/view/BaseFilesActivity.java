@@ -17,7 +17,6 @@ import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity
 import com.afterlogic.aurora.drive.presentation.common.modules.view.ViewPresenter;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.presenter.FilesPresenter;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFilesViewModel;
-import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesCallback;
 
 import javax.inject.Inject;
 
@@ -29,7 +28,7 @@ import javax.inject.Inject;
 public abstract class BaseFilesActivity<
         VM extends BaseFilesViewModel,
         P extends FilesPresenter
-> extends BaseActivity implements MainFilesCallback{
+> extends BaseActivity implements FilesListCallback {
 
     @Inject
     protected VM mViewModel;
@@ -94,7 +93,7 @@ public abstract class BaseFilesActivity<
     }
 
     @Nullable
-    private BaseFilesListFragment getCurrentFragment(){
+    protected BaseFilesListFragment getCurrentFragment(){
         if (mAdapter.getCount() == 0) return null;
 
         return mAdapter.getPrimaryFragment();

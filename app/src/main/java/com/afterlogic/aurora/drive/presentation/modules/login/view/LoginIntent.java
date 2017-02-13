@@ -3,7 +3,7 @@ package com.afterlogic.aurora.drive.presentation.modules.login.view;
 import android.content.Context;
 import android.content.Intent;
 
-import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesActivity;
+import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFilesActivity;
 
 /**
  * Created by sashka on 03.02.17.<p/>

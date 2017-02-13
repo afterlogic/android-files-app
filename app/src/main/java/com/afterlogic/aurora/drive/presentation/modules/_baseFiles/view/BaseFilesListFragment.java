@@ -18,7 +18,6 @@ import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseFragment
 import com.afterlogic.aurora.drive.presentation.common.modules.view.ViewPresenter;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.presenter.FilesListPresenter;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFilesListViewModel;
-import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesCallback;
 
 import java.text.NumberFormat;
 
@@ -140,9 +139,9 @@ public abstract class BaseFilesListFragment<VM extends BaseFilesListViewModel, P
     }
 
     private void updateActvityCurrentFolder(){
-        if (getActivity() instanceof MainFilesCallback){
+        if (getActivity() instanceof FilesListCallback){
             AuroraFile folder = (AuroraFile) mViewModel.getCurrentFolder().get();
-            ((MainFilesCallback) getActivity()).onOpenFolder(folder);
+            ((FilesListCallback) getActivity()).onOpenFolder(folder);
         }
     }
 }

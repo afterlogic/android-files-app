@@ -1,6 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.common.binding.bindingAdapters;
 
 import android.databinding.BindingAdapter;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.afterlogic.aurora.drive.R;
@@ -64,5 +65,9 @@ public class RecyclerViewBinding {
     @BindingAdapter("bind:layoutManager")
     public static void setRecyclerLayoutManager(RecyclerView list, RecyclerView.LayoutManager manger){
         list.setLayoutManager(manger);
+    }
+
+    public static ViewProvider<RecyclerView.LayoutManager, RecyclerView> linearLayoutManager(){
+        return list -> new LinearLayoutManager(list.getContext());
     }
 }

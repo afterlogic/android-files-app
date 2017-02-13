@@ -5,8 +5,8 @@ import com.afterlogic.aurora.drive.presentation.common.modules.assembly.Injector
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationModulesStore;
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseActivity;
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseFilesFragment;
-import com.afterlogic.aurora.drive.presentation.modules.filelist.view.FileListFragment;
-import com.afterlogic.aurora.drive.presentation.modules.filesMain.view.MainFilesActivity;
+import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFileListFragment;
+import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFilesActivity;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
 import com.afterlogic.aurora.drive.presentation.modules.start.view.StartActivity;
 import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadActivity;
@@ -36,7 +36,7 @@ public interface ModulesFactoryComponent {
     Injector<StartActivity> start();
 
     Injector<MainFilesActivity> main();
-    Injector<FileListFragment> mainFileList();
+    Injector<MainFileListFragment> mainFileList();
 
     Injector<UploadActivity> upload();
     Injector<UploadFilesFragment> uploadFileList();
