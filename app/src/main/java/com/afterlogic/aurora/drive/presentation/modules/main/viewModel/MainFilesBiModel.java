@@ -5,7 +5,9 @@ import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
+import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFilesBiModel;
+import com.afterlogic.aurora.drive.presentation.modules.main.presenter.MainFilesPresenter;
 
 import javax.inject.Inject;
 
@@ -21,7 +23,8 @@ public class MainFilesBiModel extends BaseFilesBiModel implements MainFilesViewM
     private final ObservableInt mSelectedCount = new ObservableInt(0);
     private final ObservableBoolean mSelectedHasFolder = new ObservableBoolean(false);
 
-    @Inject MainFilesBiModel() {
+    @Inject MainFilesBiModel(OptWeakRef<MainFilesPresenter> presenter) {
+        super(presenter);
     }
 
     public MainFilesModel getModel(){

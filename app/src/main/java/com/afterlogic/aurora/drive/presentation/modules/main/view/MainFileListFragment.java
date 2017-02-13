@@ -21,7 +21,7 @@ import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryC
 import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
 import com.afterlogic.aurora.drive.presentation.common.components.view.SelectionEditText;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnBackPressedListener;
-import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
+import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesListFragment;
 import com.afterlogic.aurora.drive.presentation.modules.main.presenter.MainFileListPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.main.viewModel.MainFileListViewModel;

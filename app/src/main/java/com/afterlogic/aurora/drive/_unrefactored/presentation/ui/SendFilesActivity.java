@@ -18,7 +18,7 @@ import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.Conne
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.fragments.FilesListFragmentDeprecated;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileInfo;
-import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
+import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;

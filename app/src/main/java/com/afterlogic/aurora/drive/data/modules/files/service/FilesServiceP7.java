@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.data.modules.files.p7.service;
+package com.afterlogic.aurora.drive.data.modules.files.service;
 
 import com.afterlogic.aurora.drive._unrefactored.model.AuroraFilesResponse;
 import com.afterlogic.aurora.drive._unrefactored.model.project7.ApiResponseP7;

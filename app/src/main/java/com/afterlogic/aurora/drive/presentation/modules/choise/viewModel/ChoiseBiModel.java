@@ -1,7 +1,9 @@
 package com.afterlogic.aurora.drive.presentation.modules.choise.viewModel;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
+import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFilesBiModel;
+import com.afterlogic.aurora.drive.presentation.modules.choise.presenter.ChoisePresenter;
 
 import javax.inject.Inject;
 
@@ -13,7 +15,7 @@ import javax.inject.Inject;
 public class ChoiseBiModel extends BaseFilesBiModel implements ChoiseModel, ChoiseViewModel {
 
     @Inject
-    ChoiseBiModel() {
-        super();
+    ChoiseBiModel(OptWeakRef<ChoisePresenter> presenter) {
+        super(presenter);
     }
 }

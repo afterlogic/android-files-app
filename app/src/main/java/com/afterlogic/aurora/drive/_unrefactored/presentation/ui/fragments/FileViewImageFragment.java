@@ -22,7 +22,7 @@ import com.afterlogic.aurora.drive._unrefactored.data.common.db.model.WatchingFi
 import com.afterlogic.aurora.drive._unrefactored.presentation.services.SyncService;
 import com.afterlogic.aurora.drive.application.App;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
-import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
+import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;

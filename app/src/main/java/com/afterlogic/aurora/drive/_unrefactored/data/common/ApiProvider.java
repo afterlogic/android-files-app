@@ -2,7 +2,7 @@ package com.afterlogic.aurora.drive._unrefactored.data.common;
 
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
-import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
+import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 
 /**
  * Created by sashka on 17.10.16.<p/>

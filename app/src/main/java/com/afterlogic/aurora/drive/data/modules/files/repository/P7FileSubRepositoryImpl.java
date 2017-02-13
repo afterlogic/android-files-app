@@ -1,6 +1,5 @@
-package com.afterlogic.aurora.drive.data.modules.files.p7.repository;
+package com.afterlogic.aurora.drive.data.modules.files.repository;
 
-import android.content.Context;
 import android.net.Uri;
 
 import com.afterlogic.aurora.drive.R;
@@ -16,13 +15,12 @@ import com.afterlogic.aurora.drive.data.common.mapper.MapperUtil;
 import com.afterlogic.aurora.drive.data.common.network.DynamicDomainProvider;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.common.network.p7.Api7;
+import com.afterlogic.aurora.drive.data.common.repository.AuthorizedRepository;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
-import com.afterlogic.aurora.drive.data.modules.files.BaseFilesRepository;
-import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
-import com.afterlogic.aurora.drive.data.modules.files.p7.mapper.file.factory.AuroraFileP7MapperFactory;
-import com.afterlogic.aurora.drive.data.modules.files.p7.mapper.uploadResult.factory.UploadResultP7MapperFactory;
-import com.afterlogic.aurora.drive.data.modules.files.p7.service.FilesServiceP7;
+import com.afterlogic.aurora.drive.data.modules.files.mapper.p7.file.factory.AuroraFileP7MapperFactory;
+import com.afterlogic.aurora.drive.data.modules.files.mapper.p7.uploadResult.factory.UploadResultP7MapperFactory;
+import com.afterlogic.aurora.drive.data.modules.files.service.FilesServiceP7;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.FileInfo;
@@ -43,11 +41,13 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import okhttp3.ResponseBody;
 
+import static com.afterlogic.aurora.drive.data.modules.files.repository.FileRepositoryUtil.CHECKED_TYPES;
+
 /**
  * Created by sashka on 19.10.16.<p/>
  * mail: sunnyday.development@gmail.com
  */
-public class FilesRepositoryP7Impl extends BaseFilesRepository implements FilesRepository {
+public class P7FileSubRepositoryImpl extends AuthorizedRepository implements FileSubRepository {
 
     private static final String FILES_P_7 = "filesP7";
 
@@ -63,16 +63,15 @@ public class FilesRepositoryP7Impl extends BaseFilesRepository implements FilesR
 
     @SuppressWarnings("WeakerAccess")
     @Inject
-    FilesRepositoryP7Impl(SharedObservableStore cache,
-                          AuroraFileP7MapperFactory mapperFactory,
-                          FilesServiceP7 cloudService,
-                          DynamicDomainProvider dynamicDomainProvider,
-                          SessionManager sessionManager,
-                          UploadResultP7MapperFactory uploadResultP7MapperFactory,
-                          AppResources appResources,
-                          AuthRepository authRepository,
-                          Context appContext) {
-        super(cache, FILES_P_7, authRepository, appContext);
+    P7FileSubRepositoryImpl(SharedObservableStore cache,
+                            AuroraFileP7MapperFactory mapperFactory,
+                            FilesServiceP7 cloudService,
+                            DynamicDomainProvider dynamicDomainProvider,
+                            SessionManager sessionManager,
+                            UploadResultP7MapperFactory uploadResultP7MapperFactory,
+                            AppResources appResources,
+                            AuthRepository authRepository) {
+        super(cache, FILES_P_7, authRepository);
         mFileNetToBlMapper = mapperFactory.netToBl();
         mFileBlToNetMapper = mapperFactory.blToNet();
         mCloudService = cloudService;
@@ -96,25 +95,39 @@ public class FilesRepositoryP7Impl extends BaseFilesRepository implements FilesR
                                 }
                             })
                             .blockingGet();
-                    return files != null ? type : null;
+                    if (files != null) {
+                        CHECKED_TYPES.put(type, files);
+                        return type;
+                    } else {
+                        return null;
+                    }
+
                 })
                 .filter(ObjectsUtil::nonNull)
                 .collect(Collectors.toList())
-        );
+        )//-----|
+                .doFinally(FileRepositoryUtil::startClearCheckedCountDown);
     }
 
     @Override
     public Single<List<AuroraFile>> getFiles(AuroraFile folder) {
-        return withReloginNetMapper(
-                () -> mCloudService.getFiles(folder.getFullPath(), folder.getType(), null)
-                        .map(response -> response),
-                files -> MapperUtil.list(mFileNetToBlMapper)
-                        .map(files.getFiles())
-        );
+        return Single.defer(() -> {
+            if ("".equals(folder.getFullPath()) && CHECKED_TYPES.containsKey(folder.getType())){
+                List<AuroraFile> cached = CHECKED_TYPES.remove(folder.getType());
+                return Single.just(cached);
+            } else {
+                return withReloginNetMapper(
+                        () -> mCloudService.getFiles(folder.getFullPath(), folder.getType(), null)
+                                .map(response -> response),
+                        files -> MapperUtil.list(mFileNetToBlMapper)
+                                .map(files.getFiles())
+                );
+            }
+        });
     }
 
     @Override
-    protected Completable renameByApi(AuroraFile file, String newName) {
+    public Completable rename(AuroraFile file, String newName) {
         return withNetMapper(mCloudService.renameFile(
                 file.getType(),
                 file.getPath(),
@@ -125,7 +138,7 @@ public class FilesRepositoryP7Impl extends BaseFilesRepository implements FilesR
     }
 
     @Override
-    protected Observable<Progressible<UploadResult>> uploadFileToServer(AuroraFile folder, FileInfo fileInfo) {
+    public Observable<Progressible<UploadResult>> uploadFileToServer(AuroraFile folder, FileInfo fileInfo) {
 
         SimpleObservableSource<Progressible<UploadResult>> progressSource = new SimpleObservableSource<>();
 
@@ -153,7 +166,7 @@ public class FilesRepositoryP7Impl extends BaseFilesRepository implements FilesR
     }
 
     @Override
-    protected Completable deleteByApi(String type, List<AuroraFile> files) {
+    public Completable delete(String type, List<AuroraFile> files) {
         return Completable.defer(() -> {
             List<AuroraFileP7> mapped = MapperUtil.listOrEmpty(files, mFileBlToNetMapper);
             return withNetMapper(mCloudService.deleteFiles(type, mapped))
@@ -220,7 +233,7 @@ public class FilesRepositoryP7Impl extends BaseFilesRepository implements FilesR
     }
 
     @Override
-    protected Single<ResponseBody> downloadFileBody(AuroraFile file) {
+    public Single<ResponseBody> downloadFileBody(AuroraFile file) {
         return mCloudService.download(mFileBlToNetMapper.map(file));
     }
 

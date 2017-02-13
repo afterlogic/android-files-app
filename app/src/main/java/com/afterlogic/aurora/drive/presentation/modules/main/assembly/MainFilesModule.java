@@ -1,6 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.assembly;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
+import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationModule;
 import com.afterlogic.aurora.drive.presentation.modules.main.interactor.MainFilesInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.main.interactor.MainFilesInteractorImpl;
@@ -24,7 +25,13 @@ import dagger.Provides;
 public class MainFilesModule extends PresentationModule<MainFilesView> {
 
     @Provides @ModuleScope
-    MainFilesPresenter presenter(MainFilesPresenterImpl presenter){
+    OptWeakRef<MainFilesPresenter> weakPresenter(){
+        return OptWeakRef.empty();
+    }
+
+    @Provides @ModuleScope
+    MainFilesPresenter presenter(MainFilesPresenterImpl presenter, OptWeakRef<MainFilesPresenter> weakPresenter){
+        weakPresenter.set(presenter);
         return presenter;
     }
 

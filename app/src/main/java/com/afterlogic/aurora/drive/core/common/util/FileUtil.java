@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.common.util;
+package com.afterlogic.aurora.drive.core.common.util;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -8,6 +8,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
@@ -16,13 +17,17 @@ import android.widget.ImageView;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive._unrefactored.core.util.DownloadType;
 import com.afterlogic.aurora.drive._unrefactored.core.util.DrawableUtil;
+import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
-import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
+import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileInfo;
 import com.bumptech.glide.Glide;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLConnection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -282,6 +287,7 @@ public class FileUtil {
      * @param ctx - application context.
      * @return - return cached local file.
      */
+    @Deprecated
     public static File getCacheFile(AuroraFile file, Context ctx){
         File dir = new File(
                 getCacheFileDir(ctx),
@@ -296,6 +302,7 @@ public class FileUtil {
      * @param ctx - application context.
      * @return - return local offline file.
      */
+    @Deprecated
     public static File getOfflineFile(AuroraFile file, Context ctx){
         File dir = new File(
                 getOfflineFileDir(ctx),
@@ -309,6 +316,7 @@ public class FileUtil {
      * @param ctx - application context.
      * @return - return dir where modulesStore cached files.
      */
+    @Deprecated
     public static File getCacheFileDir(Context ctx){
         return new File(ctx.getExternalCacheDir(), "files/");
     }
@@ -318,6 +326,7 @@ public class FileUtil {
      * @param ctx - application context.
      * @return - return dir where modulesStore offline files.
      */
+    @Deprecated
     public static File getOfflineFileDir(Context ctx){
         return new File(ctx.getExternalFilesDir(null), "offline/");
     }
@@ -430,5 +439,50 @@ public class FileUtil {
             default:
                 return getCacheFile(file, ctx);
         }
+    }
+
+    public static void writeFile(InputStream is, File target) throws IOException {
+        writeFile(is, target, -1, null);
+    }
+
+    public static void writeFile(InputStream is, File target, @Nullable Consumer<Long> writtenConsumer) throws IOException {
+        writeFile(is, target, -1, writtenConsumer);
+    }
+
+    public static void writeFile(InputStream is, File target, long maxSize, @Nullable Consumer<Long> writtenConsumer) throws IOException {
+        if (target.exists() && !target.delete()){
+            throw new IOException("Cant delete exists file..");
+        }
+
+        File dir = target.getParentFile();
+        if (!dir.exists() && !dir.mkdirs()) {
+            throw new IOException("Make dirs failed.");
+        }
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(target);
+
+            int readed;
+            long totalReaded = 0;
+            byte[] buffer = new byte[2048];
+
+            if (writtenConsumer != null) {
+                writtenConsumer.consume(totalReaded);
+            }
+            while ((readed = is.read(buffer)) != -1 && (maxSize == -1 || totalReaded < maxSize)) {
+                fos.write(buffer, 0, readed);
+                totalReaded += readed;
+                if (writtenConsumer != null) {
+                    writtenConsumer.consume(totalReaded);
+                }
+            }
+        } finally {
+            IOUtil.closeQuietly(fos);
+        }
+    }
+
+    public static File getFile(File rootDir, AuroraFile file){
+        return new File(rootDir, file.getType() + "/" + file.getFullPath());
     }
 }

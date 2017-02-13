@@ -11,6 +11,7 @@ import javax.inject.Provider;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.Reusable;
 
 /**
  * Created by sashka on 03.02.17.<p/>
@@ -22,7 +23,7 @@ import dagger.Provides;
 })
 public class AuthDataModule{
 
-    @Provides
+    @Provides @Reusable
     AuthRepository repository(ApiConfigurator configurator, @P7 Provider<AuthRepository> p7, @P8 Provider<AuthRepository> p8){
         return MultiApiUtil.chooseByApiVersion(configurator, p7, p8);
     }

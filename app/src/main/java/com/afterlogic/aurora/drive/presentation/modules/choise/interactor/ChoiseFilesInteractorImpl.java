@@ -4,10 +4,10 @@ import android.content.Context;
 
 import com.afterlogic.aurora.drive._unrefactored.core.util.DownloadType;
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
-import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
+import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
-import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
+import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.interactor.BaseFilesListInteractor;
 
 import java.io.File;

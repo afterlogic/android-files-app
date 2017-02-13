@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.data.modules.files.p7.mapper.file.factory;
+package com.afterlogic.aurora.drive.data.modules.files.mapper.p7.file.factory;
 
 import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
 import com.afterlogic.aurora.drive.model.AuroraFile;

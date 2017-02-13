@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.data.modules.files.p8.service;
+package com.afterlogic.aurora.drive.data.modules.files.service;
 
 import android.content.Context;
 import android.support.annotation.Nullable;

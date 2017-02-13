@@ -2,8 +2,8 @@ package com.afterlogic.aurora.drive.data.common.service;
 
 import com.afterlogic.aurora.drive.core.common.interfaces.Creator;
 
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
@@ -16,9 +16,9 @@ import io.reactivex.functions.Action;
  */
 public class LocalService {
 
-    protected <D> Maybe<Collection<D>> resultOrEmptyMaybe(Creator<Collection<D>> collectionCreator){
+    protected <D> Maybe<List<D>> resultOrEmptyMaybe(Creator<List<D>> collectionCreator){
         return Maybe.defer(() -> {
-            Collection<D> collection = collectionCreator.create();
+            List<D> collection = collectionCreator.create();
             if (collection == null || collection.isEmpty()){
                 return Maybe.empty();
             } else {
@@ -27,9 +27,9 @@ public class LocalService {
         });
     }
 
-    protected <D> Single<Collection<D>> resultOrEmptyCollection(Creator<Collection<D>> collectionCreator){
+    protected <D> Single<List<D>> resultOrEmptyList(Creator<List<D>> collectionCreator){
         return Single.defer(() -> {
-            Collection<D> collection = collectionCreator.create();
+            List<D> collection = collectionCreator.create();
             if (collection == null){
                 collection = Collections.emptyList();
             }
@@ -37,7 +37,7 @@ public class LocalService {
         });
     }
 
-    protected  <C> Maybe<C> valueOrEmpty(Creator<C> valueCreator){
+    protected  <C> Maybe<C> resultOrEmpty(Creator<C> valueCreator){
         return Maybe.defer(() -> {
             C value = valueCreator.create();
             if (value == null){

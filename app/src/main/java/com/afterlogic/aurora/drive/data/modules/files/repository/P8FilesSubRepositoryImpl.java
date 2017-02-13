@@ -1,6 +1,5 @@
-package com.afterlogic.aurora.drive.data.modules.files.p8.repository;
+package com.afterlogic.aurora.drive.data.modules.files.repository;
 
-import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Base64;
@@ -11,16 +10,17 @@ import com.afterlogic.aurora.drive._unrefactored.model.project8.ApiResponseP8;
 import com.afterlogic.aurora.drive._unrefactored.model.project8.AuroraFileP8;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.rx.SimpleObservableSource;
+import com.afterlogic.aurora.drive.core.common.util.FileUtil;
+import com.afterlogic.aurora.drive.core.common.util.IOUtil;
 import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
 import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
 import com.afterlogic.aurora.drive.data.common.mapper.MapperUtil;
+import com.afterlogic.aurora.drive.data.common.repository.AuthorizedRepository;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
-import com.afterlogic.aurora.drive.data.modules.files.BaseFilesRepository;
 import com.afterlogic.aurora.drive.data.modules.files.FilesDataModule;
-import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
-import com.afterlogic.aurora.drive.data.modules.files.p8.service.FilesServiceP8;
+import com.afterlogic.aurora.drive.data.modules.files.service.FilesServiceP8;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.DeleteFileInfo;
 import com.afterlogic.aurora.drive.model.FileInfo;
@@ -31,6 +31,8 @@ import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -43,11 +45,13 @@ import io.reactivex.Single;
 import okhttp3.MediaType;
 import okhttp3.ResponseBody;
 
+import static com.afterlogic.aurora.drive.data.modules.files.repository.FileRepositoryUtil.CHECKED_TYPES;
+
 /**
  * Created by sashka on 19.10.16.<p/>
  * mail: sunnyday.development@gmail.com
  */
-public class FilesRepositoryP8Impl extends BaseFilesRepository implements FilesRepository {
+public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements FileSubRepository {
 
     private static final String FILES_P_8 = "filesP8";
 
@@ -81,14 +85,13 @@ public class FilesRepositoryP8Impl extends BaseFilesRepository implements FilesR
 
     @SuppressWarnings("WeakerAccess")
     @Inject
-    FilesRepositoryP8Impl(SharedObservableStore cache,
-                          FilesServiceP8 filesService,
-                          AppResources appResources,
-                          AuthRepository authRepository,
-                          Context appContext,
-                          @Named(FilesDataModule.THUMB_DIR) File thumbDir,
-                          @Named(FilesDataModule.CACHE_DIR) File cacheDir) {
-        super(cache, FILES_P_8, authRepository, appContext);
+    P8FilesSubRepositoryImpl(SharedObservableStore cache,
+                             FilesServiceP8 filesService,
+                             AppResources appResources,
+                             AuthRepository authRepository,
+                             @Named(FilesDataModule.THUMB_DIR) File thumbDir,
+                             @Named(FilesDataModule.CACHE_DIR) File cacheDir) {
+        super(cache, FILES_P_8, authRepository);
         mFilesService = filesService;
         mAppResources = appResources;
         mThumbDir = thumbDir;
@@ -109,49 +112,76 @@ public class FilesRepositoryP8Impl extends BaseFilesRepository implements FilesR
                                 }
                             })
                             .blockingGet();
-                    return files != null ? type : null;
+                    if (files != null) {
+                        CHECKED_TYPES.put(type, files);
+                        return type;
+                    } else {
+                        return null;
+                    }
                 })
                 .filter(ObjectsUtil::nonNull)
                 .collect(Collectors.toList())
-        );
+        )//-----|
+                .doFinally(FileRepositoryUtil::startClearCheckedCountDown);
     }
 
     @Override
     public Single<List<AuroraFile>> getFiles(AuroraFile folder) {
-        return withReloginNetMapper(
-                () -> mFilesService.getFiles(folder.getType(), folder.getFullPath(), "")
-                        .map(response -> response),
-                result -> MapperUtil.list(mFileMapper).map(result.getFiles())
-        );
+        return Single.defer(() -> {
+            if ("".equals(folder.getFullPath()) && CHECKED_TYPES.containsKey(folder.getType())){
+                List<AuroraFile> cached = CHECKED_TYPES.remove(folder.getType());
+                return Single.just(cached);
+            } else {
+                return withReloginNetMapper(
+                        () -> mFilesService.getFiles(folder.getType(), folder.getFullPath(), "")
+                                .map(response -> response),
+                        result -> MapperUtil.list(mFileMapper).map(result.getFiles())
+                );
+            }
+        });
     }
 
     @Override
     public final Single<Uri> getFileThumbnail(AuroraFile file) {
-        Single<ResponseBody> thumbRequest = withNetMapper(
-                mFilesService.getFileThumbnail(
-                        file.getType(),
-                        file.getPath(),
-                        file.getName(),
-                        file.getHash()
-                ).map(response -> response),
-                result -> ResponseBody.create(MediaType.parse("image/*"), Base64.decode(result, 0))
-        );
-        return loadFileToCache(file, mThumbDir, thumbRequest);
+        return Single.defer(() -> {
+            File cache = FileUtil.getFile(mThumbDir, file);
+            if (cache.exists() && cache.lastModified() == file.getLastModified()){
+                return Single.just(Uri.fromFile(cache));
+            } else {
+                Single<ResponseBody> thumbRequest = withNetMapper(
+                        mFilesService.getFileThumbnail(
+                                file.getType(),
+                                file.getPath(),
+                                file.getName(),
+                                file.getHash()
+                        ).map(response -> response),
+                        result -> ResponseBody.create(MediaType.parse("image/*"), Base64.decode(result, 0))
+                );
+                return loadFileToCache(file, mThumbDir, thumbRequest);
+            }
+        });
     }
 
     @Override
     public final Single<Uri> viewFile(AuroraFile file) {
-        Single<ResponseBody> viewRequest = mFilesService.viewFile(
-                file.getType(),
-                file.getPath(),
-                file.getName(),
-                file.getHash()
-        );
-        return loadFileToCache(file, mCacheDir, viewRequest);
+        return Single.defer(() -> {
+            File cache = FileUtil.getFile(mCacheDir, file);
+            if (cache.exists() && cache.lastModified() == file.getLastModified()){
+                return Single.just(Uri.fromFile(cache));
+            } else {
+                Single<ResponseBody> viewRequest = mFilesService.viewFile(
+                        file.getType(),
+                        file.getPath(),
+                        file.getName(),
+                        file.getHash()
+                );
+                return loadFileToCache(file, mCacheDir, viewRequest);
+            }
+        });
     }
 
     @Override
-    protected Completable renameByApi(AuroraFile file, String newName) {
+    public Completable rename(AuroraFile file, String newName) {
         return withNetMapper(mFilesService.renameFile(
                 file.getType(),
                 file.getPath(),
@@ -189,12 +219,12 @@ public class FilesRepositoryP8Impl extends BaseFilesRepository implements FilesR
     }
 
     @Override
-    protected Single<ResponseBody> downloadFileBody(AuroraFile file) {
+    public Single<ResponseBody> downloadFileBody(AuroraFile file) {
         return mFilesService.downloadFile(file.getType(), file.getPath(), file.getName(), file.getHash());
     }
 
     @Override
-    protected Observable<Progressible<UploadResult>> uploadFileToServer(AuroraFile folder, @NonNull FileInfo fileInfo) {
+    public Observable<Progressible<UploadResult>> uploadFileToServer(AuroraFile folder, @NonNull FileInfo fileInfo) {
         SimpleObservableSource<Progressible<UploadResult>> progressSource = new SimpleObservableSource<>();
 
         Observable<Progressible<UploadResult>> request = withNetMapper(
@@ -221,7 +251,7 @@ public class FilesRepositoryP8Impl extends BaseFilesRepository implements FilesR
     }
 
     @Override
-    protected Completable deleteByApi(String type, List<AuroraFile> files) {
+    public Completable delete(String type, List<AuroraFile> files) {
         return Completable.defer(() -> {
             List<DeleteFileInfo> deleteInfo = Stream.of(files)
                     .map(mDeleteFileMapper::map)
@@ -233,14 +263,19 @@ public class FilesRepositoryP8Impl extends BaseFilesRepository implements FilesR
         });
     }
 
-    private Single<Uri> loadFileToCache(AuroraFile file, File cacheDir, Single<ResponseBody> cloud){
-        return Single.defer(() -> {
-            File cache = getCacheFile(cacheDir, file);
-            if (cache.exists()){
-                return Single.just(Uri.fromFile(cache));
-            } else {
-                return cloud.map(result -> saveIntoCache(result, file, cacheDir));
+    private Single<Uri> loadFileToCache(AuroraFile file, File rootDir, Single<ResponseBody> cloud){
+        return cloud.map(body -> {
+            File cache = FileUtil.getFile(rootDir, file);
+            InputStream is = body.byteStream();
+            try {
+                FileUtil.writeFile(body.byteStream(), cache);
+                if (!cache.setLastModified(file.getLastModified())){
+                    throw new IOException("Can't set last modified.");
+                }
+            } finally {
+                IOUtil.closeQuietly(is);
             }
+            return Uri.fromFile(cache);
         });
     }
 }

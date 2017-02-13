@@ -16,4 +16,5 @@ public interface BaseFilesModel {
 
     void setCurrentFolder(AuroraFile folder);
 
+    void setRefreshing(boolean refreshing);
 }

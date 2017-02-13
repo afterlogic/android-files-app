@@ -6,8 +6,10 @@ import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 import android.databinding.ObservableList;
 
+import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileType;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.presenter.FilesPresenter;
 import com.annimon.stream.Stream;
 
 import java.util.List;
@@ -19,6 +21,8 @@ import java.util.List;
 
 public class BaseFilesBiModel implements BaseFilesModel, BaseFilesViewModel {
 
+    private final OptWeakRef<? extends FilesPresenter> mPresenter;
+
     private final ObservableField<String> mFolderTitle = new ObservableField<>();
     private final ObservableBoolean mRefreshing = new ObservableBoolean(true);
     private final ObservableBoolean mLocked = new ObservableBoolean(false);
@@ -26,6 +30,10 @@ public class BaseFilesBiModel implements BaseFilesModel, BaseFilesViewModel {
     private final ObservableList<FileType> mFileTypes = new ObservableArrayList<>();
 
     private String mCurrentFileType = null;
+
+    public BaseFilesBiModel(OptWeakRef<? extends FilesPresenter> presenter) {
+        mPresenter = presenter;
+    }
 
     @Override
     public ObservableList<FileType> getFileTypes() {
@@ -62,8 +70,6 @@ public class BaseFilesBiModel implements BaseFilesModel, BaseFilesViewModel {
         mFileTypes.clear();
         mFileTypes.addAll(types);
 
-        mRefreshing.set(false);
-
         updateCurrentPosition();
         updateLocked();
     }
@@ -81,6 +87,11 @@ public class BaseFilesBiModel implements BaseFilesModel, BaseFilesViewModel {
         updateLocked();
     }
 
+    @Override
+    public void setRefreshing(boolean refreshing) {
+        mRefreshing.set(refreshing);
+    }
+
     private void updateCurrentPosition(){
         int position = Stream.of(mFileTypes)
                 .filter(type -> type.getFilesType().equals(mCurrentFileType))
@@ -92,5 +103,10 @@ public class BaseFilesBiModel implements BaseFilesModel, BaseFilesViewModel {
 
     private void updateLocked(){
         mLocked.set(mCurrentPosition.get() != -1);
+    }
+
+    @Override
+    public void onRefresh() {
+        mPresenter.ifPresent(FilesPresenter::refresh);
     }
 }

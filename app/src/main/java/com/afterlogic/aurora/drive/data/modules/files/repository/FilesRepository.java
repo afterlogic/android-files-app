@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.data.modules.files;
+package com.afterlogic.aurora.drive.data.modules.files.repository;
 
 import android.net.Uri;
 
@@ -40,4 +40,6 @@ public interface FilesRepository {
     Observable<Progressible<File>> download(AuroraFile file, File target);
 
     Observable<Progressible<AuroraFile>> uploadFile(AuroraFile folder, Uri fileUri);
+
+    Completable setOffline(AuroraFile file, boolean offline);
 }

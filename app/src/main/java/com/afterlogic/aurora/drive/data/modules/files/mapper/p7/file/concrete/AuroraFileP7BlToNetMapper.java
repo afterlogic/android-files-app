@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.data.modules.files.p7.mapper.file.concrete;
+package com.afterlogic.aurora.drive.data.modules.files.mapper.p7.file.concrete;
 
 import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
 import com.afterlogic.aurora.drive.model.AuroraFile;
@@ -8,10 +8,10 @@ import com.afterlogic.aurora.drive._unrefactored.model.project7.AuroraFileP7;
  * Created by sashka on 10.11.16.<p/>
  * mail: sunnyday.development@gmail.com
  */
-public class AuroraFileP7NetToBlMapper implements Mapper<AuroraFile, AuroraFileP7> {
+public class AuroraFileP7BlToNetMapper implements Mapper<AuroraFileP7, AuroraFile> {
     @Override
-    public AuroraFile map(AuroraFileP7 source) {
-        return new AuroraFile(
+    public AuroraFileP7 map(AuroraFile source) {
+        return new AuroraFileP7(
                 source.getName(),
                 source.getPath(),
                 source.getFullPath(),
@@ -25,7 +25,7 @@ public class AuroraFileP7NetToBlMapper implements Mapper<AuroraFile, AuroraFileP
                 source.getHash(),
                 source.getType(),
                 source.getSize(),
-                source.getLastModified() * 1000
+                source.getLastModified() / 1000
         );
     }
 }

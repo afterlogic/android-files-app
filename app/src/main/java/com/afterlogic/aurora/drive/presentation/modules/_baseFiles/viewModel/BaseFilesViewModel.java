@@ -4,6 +4,7 @@ import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 import android.databinding.ObservableList;
+import android.support.v4.widget.SwipeRefreshLayout;
 
 import com.afterlogic.aurora.drive.model.FileType;
 
@@ -12,7 +13,7 @@ import com.afterlogic.aurora.drive.model.FileType;
  * mail: sunnyday.development@gmail.com
  */
 
-public interface BaseFilesViewModel {
+public interface BaseFilesViewModel extends SwipeRefreshLayout.OnRefreshListener{
 
     ObservableList<FileType> getFileTypes();
 
