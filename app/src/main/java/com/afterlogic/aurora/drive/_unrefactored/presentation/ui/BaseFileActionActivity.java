@@ -43,7 +43,7 @@ import com.afterlogic.aurora.drive._unrefactored.data.common.db.dao.WatchingFile
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.model.WatchingFile;
 import com.afterlogic.aurora.drive._unrefactored.presentation.receivers.SyncResolveReceiver;
 import com.afterlogic.aurora.drive._unrefactored.presentation.services.FileLoadService;
-import com.afterlogic.aurora.drive._unrefactored.presentation.services.SyncService;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncService;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.base.BaseFileDownloadActivity;
 import com.afterlogic.aurora.drive.presentation.common.components.view.SelectionEditText;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
@@ -437,10 +437,10 @@ abstract class BaseFileActionActivity extends BaseFileDownloadActivity{
             try {
                 File local = new File(watchingFile.getLocalFilePath());
                 if (local.exists()) {
-                    File localTarget =
-                            watchingFile.getType() == WatchingFile.TYPE_OFFLINE ?
-                                    FileUtil.getOfflineFile(newFile, ctx) :
-                                    FileUtil.getCacheFile(newFile, ctx);
+                    File localTarget = null;
+                            //watchingFile.getType() == WatchingFile.TYPE_OFFLINE ?
+                            //        FileUtil.getOfflineFile(newFile, ctx) :
+                            //        FileUtil.getCacheFile(newFile, ctx);
                     //local target must be not exist
                     boolean success = !localTarget.exists() || localTarget.delete();
 
@@ -461,10 +461,10 @@ abstract class BaseFileActionActivity extends BaseFileDownloadActivity{
                                 if (newWatching.getType() == WatchingFile.TYPE_OFFLINE) {
                                     //If offline set sync state to need sync
                                     newWatching.setSyncStatus(WatchingFile.SYNC_NEED);
-                                    SyncService.FileSyncAdapter.requestSync(
-                                            newWatching.getRemoteUniqueSpec(),
-                                            AccountUtil.getCurrentAccount(ctx)
-                                    );
+                                    //SyncService.requestSync(
+                                    //        newWatching.getRemoteUniqueSpec(),
+                                    //        AccountUtil.getCurrentAccount(ctx)
+                                    //);
                                 } else {
                                     //if cached remove new local file if it exist
                                     if (localTarget.exists()){
@@ -619,7 +619,7 @@ abstract class BaseFileActionActivity extends BaseFileDownloadActivity{
                 SyncResolveReceiver.ACTION_RESOLVE_REMOTE_NOT_EXIST);
         saveIntent.putExtra(SyncResolveReceiver.KEY_SAVE_LOCAL, saveToDownloads);
         saveIntent.putExtra(
-                SyncService.FileSyncAdapter.KEY_CHANGED_REMOTE_FILE_SPEC,
+                SyncService.KEY_TARGET,
                 file.getRemoteUniqueSpec()
         );
         saveIntent.setPackage(BuildConfig.APPLICATION_ID);
@@ -716,11 +716,11 @@ abstract class BaseFileActionActivity extends BaseFileDownloadActivity{
         if (accounts.length == 0) return;
 
         if (offline){
-            File local = FileUtil.getOfflineFile(file, this);
+            File local = null;//FileUtil.getOfflineFile(file, this);
             WatchingFileManager.from(this)
                     .addWatching(file, local, WatchingFile.TYPE_OFFLINE, false);
-            SyncService.FileSyncAdapter.requestSync(
-                    WatchingFile.Spec.getRemoteUniqueSpec(file), accounts[0]);
+            //SyncService.requestSync(
+            //        WatchingFile.Spec.getRemoteUniqueSpec(file), accounts[0]);
         } else {
             DBHelper db = new DBHelper(this);
             WatchingFileDAO dao = db.getWatchingFileDAO();
@@ -745,7 +745,7 @@ abstract class BaseFileActionActivity extends BaseFileDownloadActivity{
             }
 
             if (activeSync){
-                SyncService.FileSyncAdapter.requestSync(null, accounts[0]);
+                //SyncService.requestSync(null, accounts[0]);
             }
             db.close();
         }

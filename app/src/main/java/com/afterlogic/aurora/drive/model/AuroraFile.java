@@ -211,6 +211,26 @@ public class AuroraFile implements Parcelable, Cloneable{
         return mLastModified;
     }
 
+    public void setThumbnailLink(String thumbnailLink) {
+        mThumbnailLink = thumbnailLink;
+    }
+
+    public void setHasThumb(boolean thumb) {
+        mThumb = thumb;
+    }
+
+    public void setLastModified(long lastModified) {
+        mLastModified = lastModified;
+    }
+
+    public void setOfflineInfo(@NonNull OfflineInfo offlineInfo) {
+        mOfflineInfo = offlineInfo;
+    }
+
+    public void setContentType(String contentType) {
+        mContentType = contentType;
+    }
+
     @Deprecated
     public boolean isOfflineMode() {
         return mOfflineInfo.getOfflineType() == OfflineType.OFFLINE;

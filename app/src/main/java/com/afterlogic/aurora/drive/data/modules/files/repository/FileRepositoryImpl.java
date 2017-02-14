@@ -5,22 +5,30 @@ import android.net.Uri;
 
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
+import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.core.common.util.IOUtil;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
+import com.afterlogic.aurora.drive.data.common.mapper.BiMapper;
+import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
+import com.afterlogic.aurora.drive.data.common.mapper.MapperUtil;
 import com.afterlogic.aurora.drive.data.common.repository.AuthorizedRepository;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.data.modules.files.FilesDataModule;
+import com.afterlogic.aurora.drive.data.modules.files.mapper.general.FilesMapperFactory;
+import com.afterlogic.aurora.drive.data.modules.files.model.db.OfflineFileInfoEntity;
+import com.afterlogic.aurora.drive.data.modules.files.service.FilesLocalService;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileInfo;
+import com.afterlogic.aurora.drive.model.OfflineInfo;
+import com.afterlogic.aurora.drive.model.OfflineType;
 import com.afterlogic.aurora.drive.model.Progressible;
+import com.afterlogic.aurora.drive.model.SyncState;
 import com.afterlogic.aurora.drive.model.error.FileAlreadyExistError;
 import com.afterlogic.aurora.drive.model.error.FileNotExistError;
-import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.annimon.stream.Stream;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
@@ -31,9 +39,7 @@ import javax.inject.Named;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
 import io.reactivex.Single;
-import okhttp3.ResponseBody;
 
 /**
  * Created by sashka on 19.10.16.<p/>
@@ -45,22 +51,31 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
 
     private final Context mAppContext;
     private final FileSubRepository mFileSubRepo;
+    private final FilesLocalService mLocalService;
 
     private final File mCacheDir;
     private final File mOfflineDir;
 
+    private final Mapper<AuroraFile, OfflineFileInfoEntity> mOfflineToBlMapper;
+
     @Inject
     FileRepositoryImpl(SharedObservableStore cache,
-                              AuthRepository authRepository,
-                              Context appContext,
-                              FileSubRepository fileSubRepo,
-                              @Named(FilesDataModule.CACHE_DIR) File cacheDir,
-                              @Named(FilesDataModule.OFFLINE_DIR) File offlineDir) {
+                       AuthRepository authRepository,
+                       Context appContext,
+                       FileSubRepository fileSubRepo,
+                       FilesLocalService localService,
+                       @Named(FilesDataModule.CACHE_DIR) File cacheDir,
+                       @Named(FilesDataModule.OFFLINE_DIR) File offlineDir,
+                       FilesMapperFactory mapperFactory) {
         super(cache, FILES, authRepository);
         mAppContext = appContext;
         mFileSubRepo = fileSubRepo;
+        mLocalService = localService;
         mCacheDir = cacheDir;
         mOfflineDir = offlineDir;
+
+        BiMapper<AuroraFile, OfflineFileInfoEntity, File> offlineToBl = mapperFactory.offlineToBl();
+        mOfflineToBlMapper = offlineFileInfo -> offlineToBl.map(offlineFileInfo, mOfflineDir);
     }
 
     @Override
@@ -70,7 +85,8 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
 
     @Override
     public Single<List<AuroraFile>> getFiles(AuroraFile folder) {
-        return mFileSubRepo.getFiles(folder);
+        return mFileSubRepo.getFiles(folder)
+                .map(files -> MapperUtil.listOrEmpty(files, this::checkOffline));
     }
 
     @Override
@@ -169,35 +185,46 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
     }
 
     @Override
-    public Completable setOffline(AuroraFile file, boolean offline) {
-        return null;
+    public Observable<Progressible<AuroraFile>> rewriteFile(AuroraFile file, Uri fileUri) {return Observable.defer(() -> {
+        FileInfo fileInfo = FileUtil.fileInfo(fileUri, mAppContext);
+
+        AuroraFile folder = file.getParentFolder();
+        //check file and delete previous
+        return checkFileExisting(file)
+                .andThen(delete(file))
+                .compose(Observables.completeOnError(FileNotExistError.class))
+                //upload
+                .andThen(mFileSubRepo.uploadFileToServer(folder, fileInfo))
+                .flatMap(progress -> {
+                    if (!progress.isDone()){
+                        return Observable.just(progress.map(null));
+                    } else {
+                        //TODO get uploaded file name
+                        return checkFile(AuroraFile.create(folder, fileInfo.getName(), false))
+                                .map(progress::map)
+                                .toObservable()
+                                .startWith(new Progressible<>(null, -1, 0, progress.getName()));
+                    }
+                });
+    });
     }
 
-    /**
-     * Read {@link ResponseBody} to local file.
-     * @param is - resource input stream.
-     * @param target - local file target.
-     */
-    private void saveFile(InputStream is, AuroraFile source, File target, ObservableEmitter<Progressible<File>> progressEmmiter) throws IOException{
-
-        FileOutputStream fos = null;
-        try{
-            fos = new FileOutputStream(target);
-            progressEmmiter.onNext(new Progressible<>(null, source.getSize(), 0, source.getName()));
-
-            byte[] buffer = new byte[2048];
-            int count;
-            long totalRead = 0;
-            while ((count = is.read(buffer)) != -1 && totalRead < source.getSize()){
-                count = (int) Math.min(source.getSize() - totalRead, count);
-                fos.write(buffer, 0, count);
-                totalRead += count;
-                progressEmmiter.onNext(new Progressible<>(null, source.getSize(), totalRead, source.getName()));
+    @Override
+    public Completable setOffline(AuroraFile file, boolean offline) {
+        return Completable.defer(() -> {
+            String pathSpec = file.getType() + file.getFullPath();
+            if (offline){
+                return mLocalService.addOffline(new OfflineFileInfoEntity(pathSpec, OfflineType.OFFLINE.toString(), -1));
+            } else {
+                return mLocalService.removeOffline(pathSpec);
             }
-        } finally {
-            IOUtil.closeQuietly(is);
-            IOUtil.closeQuietly(fos);
-        }
+        });
+    }
+
+    @Override
+    public Single<List<AuroraFile>> getOfflineFiles() {
+        return mLocalService.getOffline()
+                .map(offline -> MapperUtil.listOrEmpty(offline, mOfflineToBlMapper));
     }
 
     private void checkFilesType(String type, List<AuroraFile> files) throws IllegalArgumentException{
@@ -227,20 +254,24 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
     private Observable<Progressible<File>> downloadFile(AuroraFile file, File target){
         Observable<Progressible<File>> request = mFileSubRepo.downloadFileBody(file)
                 .flatMapObservable(fileBody -> Observable.create(emitter -> {
-                    File dir = target.getParentFile();
 
-                    if (!dir.exists() && !dir.mkdirs()){
-                        throw new IOException("Can't create dir: " + dir.toString());
+                    long maxSize = file.getSize();
+
+                    InputStream is = fileBody.byteStream();
+                    try{
+                        FileUtil.writeFile(is, target, maxSize,
+                                written -> emitter.onNext(
+                                        new Progressible<>(null, maxSize, written, file.getName())
+                                )
+                        );
+                    } finally {
+                        IOUtil.closeQuietly(is);
                     }
-
-                    long size = file.getSize();
-                    saveFile(fileBody.byteStream(), file, target, emitter);
 
                     if (!target.setLastModified(file.getLastModified())){
                         MyLog.majorException(new IOException("Can't set last modified: " + target.getPath()));
                     }
 
-                    emitter.onNext(new Progressible<>(target, size, size, file.getName()));
                     emitter.onComplete();
                 }));
         return Observable.concat(
@@ -256,5 +287,14 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
                 .filter(local -> local.lastModified() == file.getLastModified())
                 .findFirst()
                 .orElse(null);
+    }
+
+    private AuroraFile checkOffline(AuroraFile file){
+        String fileSpec = file.getType() + file.getFullPath();
+        OfflineFileInfoEntity offlineIfno = mLocalService.get(fileSpec).blockingGet();
+        if (offlineIfno != null){
+            file.setOfflineInfo(new OfflineInfo(OfflineType.OFFLINE, SyncState.UNKNOWN));
+        }
+        return file;
     }
 }

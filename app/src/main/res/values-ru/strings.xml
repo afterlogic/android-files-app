@@ -91,6 +91,7 @@
     <string name="prompt_online_mode">Онлайн режим</string>
     <string name="prompt_offline_file_not_exist">Файл отсутствует. Возможно он еще не синхронизирован.</string>
     <string name="content_descroption_file_icon">Иконка файла</string>
+    <string name="prompt_syncing">Синхронизация</string>
 
     <plurals name="prompt_upload_files_count">
         <item quantity="one">%d файлa</item>

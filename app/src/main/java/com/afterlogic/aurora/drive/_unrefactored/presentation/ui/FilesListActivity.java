@@ -312,7 +312,7 @@ public class FilesListActivity extends BaseFileActionActivity implements
                     if (!file.isOfflineMode()) {
                         downloadFile(file, DownloadType.DOWNLOAD_OPEN);
                     } else {
-                        File localFile = FileUtil.getOfflineFile(file, getApplicationContext());
+                        File localFile = null;//FileUtil.getOfflineFile(file, getApplicationContext());
                         if (localFile.exists()){
                             onFileDownloaded(file, localFile, DownloadType.DOWNLOAD_OPEN);
                         } else {

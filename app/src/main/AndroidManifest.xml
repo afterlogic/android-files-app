@@ -171,7 +171,7 @@
 
         <!--[START Sync process]-->
         <service
-            android:name="._unrefactored.presentation.services.SyncService"
+            android:name=".presentation.modulesBackground.sync.view.SyncService"
             android:exported="true"
             android:process=":sync">
             <intent-filter>

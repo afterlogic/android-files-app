@@ -9,6 +9,7 @@ import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.model.OfflineType;
 import com.afterlogic.aurora.drive.model.error.FileAlreadyExistError;
 import com.afterlogic.aurora.drive.model.error.FileNotExistError;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.PresentationView;
@@ -190,7 +191,11 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
 
     @Override
     public void onToggleOffline(@Nullable AuroraFile file) {
-
+        mInteractor.setOffline(file, file.getOfflineInfo().getOfflineType() != OfflineType.OFFLINE)
+                .subscribe(
+                        () -> {},
+                        this::onErrorObtained
+                );
     }
 
     //TODO text to resources

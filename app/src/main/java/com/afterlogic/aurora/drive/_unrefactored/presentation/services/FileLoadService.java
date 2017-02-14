@@ -21,7 +21,6 @@ import android.widget.Toast;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive._unrefactored.core.util.AccountUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.DownloadType;
-import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.WatchingFileManager;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiTask;
@@ -30,6 +29,7 @@ import com.afterlogic.aurora.drive._unrefactored.data.common.db.DBHelper;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.model.WatchingFile;
 import com.afterlogic.aurora.drive._unrefactored.model.UploadResult;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
+import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.core.common.util.IOUtil;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileInfo;
@@ -203,7 +203,7 @@ public class FileLoadService extends Service {
      * @param type - download type.
      */
     private File dowloadFromWeb(int taskId, final AuroraFile file, DownloadType type) throws IOException {
-        File target = FileUtil.getTargetFileByType(file, type, this);
+        File target = null;//FileUtil.getTargetFileByType(file, type, this);
         File dir;
         if (target.isDirectory()){
             dir = target;
@@ -309,8 +309,8 @@ public class FileLoadService extends Service {
                                 Account account = AccountUtil.getCurrentAccount(
                                         FileLoadService.this);
                                 //Request sync cause local file is newer than remote
-                                SyncService.FileSyncAdapter
-                                        .requestSync(watching.getRemoteUniqueSpec(), account);
+                                //SyncService
+                                //        .requestSync(watching.getRemoteUniqueSpec(), account);
                             });
                         }
                         return local;
@@ -338,7 +338,7 @@ public class FileLoadService extends Service {
 
         if (downloadType == DownloadType.DOWNLOAD_TO_DOWNLOADS) {
             //Copy to downloads
-            File target = FileUtil.getDownloadsFile(file);
+            File target = null;//FileUtil.getDownloadsFile(file);
             if (saveFile(taskId, new FileInputStream(local), file.getSize(), target)){
                 addFileToDownloads(target);
             }
@@ -441,7 +441,7 @@ public class FileLoadService extends Service {
         int suffix = 0;
         while (!override && Api.callSync(Api.checkFile(remoteTarget)) != null){
             suffix++;
-            String name = FileUtil.appendSufixToFileName(file.getName(), "(" + suffix + ")");
+            String name = null;//FileUtil.appendSufixToFileName(file.getName(), "(" + suffix + ")");
             targetFile = new FileInfo(name, file.getSize(), file.getMime(), file.getUri());
             remoteTarget = AuroraFile.parse(targetFolder.getFullPath() +
                     "/" + targetFile.getName(), targetFolder.getType(), false);

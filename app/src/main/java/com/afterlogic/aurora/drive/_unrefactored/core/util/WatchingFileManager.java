@@ -2,12 +2,11 @@ package com.afterlogic.aurora.drive._unrefactored.core.util;
 
 import android.content.Context;
 
-import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.DBHelper;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.dao.WatchingFileDAO;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.model.WatchingFile;
 import com.afterlogic.aurora.drive._unrefactored.presentation.services.FileObserverService;
-import com.afterlogic.aurora.drive._unrefactored.presentation.services.SyncService;
+import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.j256.ormlite.stmt.DeleteBuilder;
 
 import java.io.File;
@@ -43,7 +42,7 @@ public class WatchingFileManager {
             WatchingFile watchingFile = new WatchingFile(remote, local, type, synced);
             dao.createOrUpdate(watchingFile);
 
-            SyncService.FileSyncAdapter.sendSyncStateChangedBroadcast(watchingFile, 0, 0, mContext);
+            //SyncService.FileSyncAdapter.sendSyncStateChangedBroadcast(watchingFile, 0, 0, mContext);
 
         } catch (SQLException e) {
             e.printStackTrace();

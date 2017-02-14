@@ -20,7 +20,7 @@ import io.reactivex.Single;
  * mail: sunnyday.development@gmail.com
  */
 
-public class FilesLocalServiceImpl extends LocalService{
+public class FilesLocalServiceImpl extends LocalService implements FilesLocalService {
 
     private final OfflineFileInfoEntityDao mOfflineFileInfoDao;
 
@@ -28,14 +28,17 @@ public class FilesLocalServiceImpl extends LocalService{
         mOfflineFileInfoDao = db.offlineFileInfo();
     }
 
+    @Override
     public Completable addOffline(OfflineFileInfoEntity entity){
         return defer(() -> mOfflineFileInfoDao.insertOrReplaceInTx(entity));
     }
 
+    @Override
     public Completable removeOffline(String pathSpec){
         return defer(() -> mOfflineFileInfoDao.deleteByKey(pathSpec));
     }
 
+    @Override
     public Single<List<OfflineFileInfoEntity>> getOffline(){
         return resultOrEmptyList(() -> mOfflineFileInfoDao.queryBuilder()
                 .where(Properties.OfflineType.eq(OfflineType.OFFLINE.toString()))
@@ -43,6 +46,7 @@ public class FilesLocalServiceImpl extends LocalService{
         );
     }
 
+    @Override
     public Maybe<OfflineFileInfoEntity> get(String pathSpec){
         return resultOrEmpty(() -> mOfflineFileInfoDao.load(pathSpec));
     }

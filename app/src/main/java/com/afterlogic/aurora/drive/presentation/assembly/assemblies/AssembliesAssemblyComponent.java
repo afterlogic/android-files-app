@@ -17,6 +17,8 @@ import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadCo
 import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadFilesComponent;
 import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadFilesModule;
 import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadModule;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.assembly.SyncComponent;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.assembly.SyncModule;
 
 import dagger.Subcomponent;
 
@@ -47,4 +49,6 @@ public interface AssembliesAssemblyComponent {
 
     ChoiseComponent plus(ChoiseModule module);
     ChoiseFilesComponent plus(ChoiseFilesModule module);
+
+    SyncComponent plus(SyncModule module);
 }

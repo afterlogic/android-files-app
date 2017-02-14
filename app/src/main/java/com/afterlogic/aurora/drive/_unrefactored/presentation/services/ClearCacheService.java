@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.DBHelper;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.dao.WatchingFileDAO;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.model.WatchingFile;
@@ -50,8 +49,8 @@ public class ClearCacheService extends Service {
         mDb = new DBHelper(this);
         mDao = mDb.getWatchingFileDAO();
 
-        mCacheDir = FileUtil.getCacheFileDir(this);
-        mOfflineDir = FileUtil.getOfflineFileDir(this);
+        mCacheDir = getExternalCacheDir();
+        mOfflineDir = getExternalFilesDir("offline");
     }
 
     @Override

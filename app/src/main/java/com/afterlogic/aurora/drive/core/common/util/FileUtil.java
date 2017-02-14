@@ -2,27 +2,18 @@ package com.afterlogic.aurora.drive.core.common.util;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
-import android.widget.ImageView;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive._unrefactored.core.util.DownloadType;
-import com.afterlogic.aurora.drive._unrefactored.core.util.DrawableUtil;
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
-import com.afterlogic.aurora.drive.core.common.logging.MyLog;
-import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileInfo;
-import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -34,10 +25,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.reactivex.Maybe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 
 /**
@@ -87,87 +74,6 @@ public class FileUtil {
         for (String ext:extensions){
             iconMap.put(ext, icon);
         }
-    }
-
-    /**
-     * Update file icon.
-     *
-     * @param icon - icon {@link ImageView}. It used when set default icon.
-     * @param file - current {@link AuroraFile}.
-     * @param ctx - application context.
-     */
-    public static void updateIcon(@NonNull ImageView icon, @NonNull AuroraFile file,
-                                  @NonNull FilesRepository filesRepository, @NonNull Context ctx){
-        Disposable currentDisposable = (Disposable) icon.getTag(R.id.load_thumb_disposable);
-        if (currentDisposable != null){
-            currentDisposable.dispose();
-            icon.setTag(R.id.load_thumb_disposable, null);
-        }
-
-        if (file.isFolder()){
-            icon.setImageDrawable(
-                    DrawableUtil.getTintedDrawable(R.drawable.ic_folder, R.color.colorPrimary, ctx)
-            );
-        }else{
-
-            //Set default icon
-            icon.setImageDrawable(
-                    getContentIcon(file, ctx)
-            );
-
-            //[START Try get thumbnail]
-            if (file.hasThumbnail()) {
-                Disposable disposable = getThumbnailRequest(file, filesRepository)
-                        .doFinally(() -> icon.setTag(R.id.load_thumb_disposable, null))
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                uri -> loadThumbnail(uri, icon),
-                                error -> MyLog.majorException("FileUtil", error)
-                        );
-                icon.setTag(R.id.load_thumb_disposable, disposable);
-
-            }
-            //[END Try get thumbnail]
-        }
-    }
-
-    private static Maybe<Uri> getThumbnailRequest(AuroraFile file, FilesRepository repository){
-        return Maybe.defer(() -> {
-            if (file.isOfflineMode()){
-                return Maybe.just(Uri.fromFile(new File(file.getThumbnailLink())));
-            } else {
-                if (!TextUtils.isEmpty(file.getThumbnailLink())) {
-                    return Maybe.just(Uri.parse(file.getThumbnailLink()));
-                } else if (!TextUtils.isEmpty(file.getContentType())) {
-                    return repository.getFileThumbnail(file).toMaybe();
-                }
-            }
-            return Maybe.empty();
-        });
-    }
-
-    private static void loadThumbnail(Uri uri, ImageView image){
-        try {
-            Glide.with(image.getContext())
-                    .load(uri)
-                    .override(96, 96)
-                    .centerCrop()
-                    .into(image);
-        } catch (Exception e){
-            MyLog.majorException("FileUtil", e.getMessage());
-        }
-    }
-
-    /**
-     * Get icon by file content-type and file name extensions.
-     *
-     * @param file - target file.
-     * @param ctx - application context.
-     * @return - icon drawable for extension or icon for undefined type.
-     */
-    private static Drawable getContentIcon(AuroraFile file, Context ctx){
-        return ContextCompat.getDrawable(ctx, getFileIconRes(file));
     }
 
     /**
@@ -246,92 +152,6 @@ public class FileUtil {
     }
 
     /**
-     * Get file in downloads folder for remote {@link AuroraFile}
-     * @param file - target remote file.
-     * @return - file in 'Downloads' folder.
-     */
-    public static File getDownloadsFile(AuroraFile file){
-        //If to downloads folder
-        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        File targetFile = new File(dir, file.getName());
-        //Check is file exist
-        if (targetFile.exists()) {
-            //[START Create new unique name]
-            int suffixInt = 0;
-            do {
-                suffixInt++;
-                String fileName = file.getName();
-                String suffix = "(" + suffixInt + ")";
-                fileName = appendSufixToFileName(fileName, suffix);
-                targetFile = new File(dir, fileName);
-            } while (targetFile.exists());
-            //[END Create new unique name]
-        }
-        return targetFile;
-    }
-
-    public static String appendSufixToFileName(String fileName, String suffix){
-        int dot = fileName.lastIndexOf('.');
-        int insertion;
-        if (dot != -1 && dot != fileName.length() - 1) {
-            insertion = dot;
-        } else {
-            insertion = fileName.length();
-        }
-        return fileName.substring(0, insertion) + suffix + fileName.substring(insertion);
-    }
-
-    /**
-     * Get cached file for remote file.
-     * @param file - target remote file.
-     * @param ctx - application context.
-     * @return - return cached local file.
-     */
-    @Deprecated
-    public static File getCacheFile(AuroraFile file, Context ctx){
-        File dir = new File(
-                getCacheFileDir(ctx),
-                file.getType().toLowerCase() + File.separator + file.getPath()
-        );
-        return new File(dir, file.getName());
-    }
-
-    /**
-     * Get offline file for remote file.
-     * @param file - target remote file.
-     * @param ctx - application context.
-     * @return - return local offline file.
-     */
-    @Deprecated
-    public static File getOfflineFile(AuroraFile file, Context ctx){
-        File dir = new File(
-                getOfflineFileDir(ctx),
-                file.getType().toLowerCase() + File.separator + file.getPath()
-        );
-        return new File(dir, file.getName());
-    }
-
-    /**
-     * Get dir for cached files.
-     * @param ctx - application context.
-     * @return - return dir where modulesStore cached files.
-     */
-    @Deprecated
-    public static File getCacheFileDir(Context ctx){
-        return new File(ctx.getExternalCacheDir(), "files/");
-    }
-
-    /**
-     * Get dir for offline files.
-     * @param ctx - application context.
-     * @return - return dir where modulesStore offline files.
-     */
-    @Deprecated
-    public static File getOfflineFileDir(Context ctx){
-        return new File(ctx.getExternalFilesDir(null), "offline/");
-    }
-
-    /**
      * Read file info. Prepare uri for uploading.
      * @param uri - target uri.
      * @param ctx - application context.
@@ -350,7 +170,7 @@ public class FileUtil {
     /**
      * Create {@link FileInfo} from file uri.
      */
-    public static FileInfo fileInfoFromFile(File file) {
+    private static FileInfo fileInfoFromFile(File file) {
 
         String fileName = file.getName();
         String mime = URLConnection.guessContentTypeFromName(file.getName());
@@ -364,7 +184,7 @@ public class FileUtil {
     /**
      * Create {@link FileInfo} from content uri.
      */
-    public static FileInfo fileInfoFromContentUri(final Uri uri, final Context ctx) {
+    private static FileInfo fileInfoFromContentUri(final Uri uri, final Context ctx) {
         Cursor cursor;
         String fileName;
         MediaType mediaType = null;
@@ -430,17 +250,6 @@ public class FileUtil {
                 fileName.substring(fileName.lastIndexOf(".") + 1) : null;
     }
 
-    public static File getTargetFileByType(AuroraFile file, DownloadType type, Context ctx){
-        switch (type){
-            case DOWNLOAD_TO_DOWNLOADS:
-                return getDownloadsFile(file);
-            case DOWNLOAD_FOR_OFFLINE:
-                return getOfflineFile(file, ctx);
-            default:
-                return getCacheFile(file, ctx);
-        }
-    }
-
     public static void writeFile(InputStream is, File target) throws IOException {
         writeFile(is, target, -1, null);
     }
@@ -483,6 +292,6 @@ public class FileUtil {
     }
 
     public static File getFile(File rootDir, AuroraFile file){
-        return new File(rootDir, file.getType() + "/" + file.getFullPath());
+        return new File(rootDir, file.getType() + file.getFullPath());
     }
 }

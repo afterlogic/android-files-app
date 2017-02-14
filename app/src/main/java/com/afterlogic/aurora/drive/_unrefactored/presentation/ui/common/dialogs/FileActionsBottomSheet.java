@@ -15,13 +15,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;
-import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
-import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.adapters.FileActionsMenuAdapter;
-import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.WatchingFileManager;
 import com.afterlogic.aurora.drive._unrefactored.core.util.interfaces.OnItemClickListener;
+import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.adapters.FileActionsMenuAdapter;
+import com.afterlogic.aurora.drive.model.AuroraFile;
 
 /**
  * Created by sashka on 23.03.16.
@@ -80,8 +77,8 @@ public class FileActionsBottomSheet extends BottomSheetDialogFragment implements
         ImageView icon = (ImageView) view.findViewById(R.id.icon);
 
         name.setText(mAuroraFile.getName());
-        FilesRepository filesRepository = Api.getApiProvider().getFilesRepository();
-        FileUtil.updateIcon(icon, mAuroraFile, filesRepository, getContext());
+
+        //TODO file icon
 
         FileActionsMenuAdapter menuContent = new FileActionsMenuAdapter(this)
                         .addAction(R.id.action_rename, R.string.prompt_rename, R.drawable.ic_edit)
@@ -104,9 +101,14 @@ public class FileActionsBottomSheet extends BottomSheetDialogFragment implements
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        dismiss();
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
-        dismiss();
     }
 
     @Override

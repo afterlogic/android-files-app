@@ -1,7 +1,5 @@
 package com.afterlogic.aurora.drive._unrefactored.presentation.services;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -13,9 +11,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive._unrefactored.core.util.AccountUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.DeepFolderObserver;
-import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.interfaces.FileEventListener;
 import com.afterlogic.aurora.drive._unrefactored.core.util.task.TaskProgressNotifier;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;
@@ -23,6 +19,7 @@ import com.afterlogic.aurora.drive._unrefactored.data.common.api.Task;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.DBHelper;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.dao.WatchingFileDAO;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.model.WatchingFile;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncService;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -62,13 +59,13 @@ public class FileObserverService extends Service implements FileEventListener {
         }
 
         Log.d(TAG, "Service started.");
-        File offline = FileUtil.getOfflineFileDir(this);
+        File offline = getExternalFilesDir("offline");
         if (offline.exists() || offline.mkdirs()) {
             mOfflineObserver = new DeepFolderObserver(offline, EVENTS, this);
             mOfflineObserver.startWatching();
         }
 
-        File cacheFile = FileUtil.getCacheFileDir(this);
+        File cacheFile = new File(getExternalCacheDir(), "files/");
         if (cacheFile.exists() || cacheFile.mkdirs()) {
             mCacheObserver = new DeepFolderObserver(cacheFile, EVENTS, this);
             mCacheObserver.startWatching();
@@ -126,22 +123,11 @@ public class FileObserverService extends Service implements FileEventListener {
                     mHandler.postDelayed(() -> {
                         Log.d(TAG, "Delayed sync for: " + spec);
                         if (currentRequest == mRequstId) {
-                            sync(spec);
+                            SyncService.requestSync(this);
                         }
                     }, 1000);
                 }
             }
-        }
-    }
-
-    /**
-     * Upload changes to server.
-     */
-    private void sync(String path){
-        AccountManager ac = AccountManager.get(this);
-        Account[] accounts = ac.getAccountsByType(AccountUtil.ACCOUNT_TYPE);
-        if (accounts.length > 0){
-            SyncService.FileSyncAdapter.requestSync(path, accounts[0]);
         }
     }
 

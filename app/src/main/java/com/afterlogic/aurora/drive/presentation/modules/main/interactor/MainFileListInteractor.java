@@ -30,4 +30,6 @@ public interface MainFileListInteractor extends FilesListInteractor {
     Single<AuroraFile> createFolder(AuroraFile parentFolder, String name);
 
     Observable<Progressible<AuroraFile>> uploadFile(AuroraFile folder, Uri file);
+
+    Completable setOffline(AuroraFile file, boolean offline);
 }

@@ -23,15 +23,14 @@ import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiCallback;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.DBHelper;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.dao.WatchingFileDAO;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.model.WatchingFile;
-import com.afterlogic.aurora.drive._unrefactored.presentation.services.SyncService;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.FilesListActivity;
 import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.adapters.FilesAdapter;
+import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.error.ApiError;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnBackPressedListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseFragment;
-import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.FilesListCallback;
 import com.annimon.stream.Stream;
 
@@ -346,8 +345,8 @@ public class FilesListFragmentDeprecated extends BaseFragment implements
                     //Start sync if need it
                     if (!local.exists() || watchingFile.isNeedSync(remote, local)){
                         Account account = AccountUtil.getCurrentAccount(getContext());
-                        SyncService.FileSyncAdapter.requestSync(
-                                watchingFile.getRemoteUniqueSpec(), account);
+                        //SyncService.requestSync(
+                        //        watchingFile.getRemoteUniqueSpec(), account);
                     }
                 }
             }

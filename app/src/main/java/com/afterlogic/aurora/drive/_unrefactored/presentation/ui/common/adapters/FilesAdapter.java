@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive._unrefactored.core.util.DrawableUtil;
-import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive._unrefactored.core.util.interfaces.OnItemClickListener;
 import com.afterlogic.aurora.drive._unrefactored.core.util.interfaces.OnItemLongClickListener;
 import com.afterlogic.aurora.drive._unrefactored.data.common.api.Api;
@@ -25,7 +24,7 @@ import com.afterlogic.aurora.drive._unrefactored.data.common.db.dao.WatchingFile
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.model.WatchingFile;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive._unrefactored.presentation.services.SyncService;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncService;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
@@ -89,7 +88,7 @@ public class FilesAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     public void startListenSync(Context ctx){
         ctx.registerReceiver(mSyncUpdateReceiver,
-                new IntentFilter(SyncService.FileSyncAdapter.ACTION_SYNC_STATUS_CHANGED));
+                new IntentFilter(SyncService.ACTION_SYNC_STATUS_CHANGED));
     }
 
     public void stopListenSync(Context ctx){
@@ -167,7 +166,7 @@ public class FilesAdapter extends RecyclerView.Adapter<ViewHolder> {
         //[END Update status icon]
 
         //Image thumbnail target
-        FileUtil.updateIcon(holder.icon, file, mFileRepository, holder.itemView.getContext());
+        //FileUtil.updateIcon(holder.icon, file, mFileRepository, holder.itemView.getContext());
     }
 
     @Override
@@ -333,9 +332,9 @@ public class FilesAdapter extends RecyclerView.Adapter<ViewHolder> {
      * @param data - message intent.
      */
     private void onSyncReceived(Intent data){
-        WatchingFile target = data.getParcelableExtra(SyncService.FileSyncAdapter.KEY_SYNC_TARGET);
-        int progress = data.getIntExtra(SyncService.FileSyncAdapter.KEY_PROGRESS, 0);
-        int maxProgress = data.getIntExtra(SyncService.FileSyncAdapter.KEY_MAX_PROGRESS, 0);
+        WatchingFile target = data.getParcelableExtra(SyncService.KEY_SYNC_TARGET);
+        int progress = data.getIntExtra(SyncService.KEY_PROGRESS, 0);
+        int maxProgress = data.getIntExtra(SyncService.KEY_MAX_PROGRESS, 0);
 
         FileViewHolder holder = mSyncableViewHolders.get(target.getRemoteUniqueSpec());
         if (holder != null){

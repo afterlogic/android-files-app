@@ -5,23 +5,26 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive._unrefactored.core.util.DownloadType;
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
+import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
-import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.interactor.BaseFilesListInteractor;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncService;
 
 import java.io.File;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
+import static com.afterlogic.aurora.drive.data.modules.files.FilesDataModule.CACHE_DIR;
+import static com.afterlogic.aurora.drive.data.modules.files.FilesDataModule.DOWNLOADS_DIR;
 
 /**
  * Created by sashka on 07.02.17.<p/>
@@ -32,27 +35,35 @@ public class MainFileListInteractorImpl extends BaseFilesListInteractor implemen
 
     private final FilesRepository mFilesRepository;
     private final Context mAppContext;
+    private final File mCacheDir;
+    private final File mDownloadsDir;
 
     @Inject
     MainFileListInteractorImpl(ObservableScheduler scheduler,
-                               FilesRepository filesRepository, Context appContext) {
+                               FilesRepository filesRepository,
+                               Context appContext,
+                               @Named(CACHE_DIR) File cacheDir,
+                               @Named(DOWNLOADS_DIR) File downloadsDir) {
         super(scheduler, filesRepository);
         mFilesRepository = filesRepository;
         mAppContext = appContext;
+        mCacheDir = cacheDir;
+        mDownloadsDir = downloadsDir;
     }
 
     @Override
     public Observable<Progressible<File>> downloadForOpen(AuroraFile file) {
-        return mFilesRepository.download(file, FileUtil.getTargetFileByType(file, DownloadType.DOWNLOAD_OPEN, mAppContext))
+        File target = FileUtil.getFile(mCacheDir, file);
+        return mFilesRepository.download(file, target)
                 .compose(this::composeDefault);
     }
 
     @Override
     public Observable<Progressible<File>> downloadToDownloads(AuroraFile file) {
-        return mFilesRepository.download(file, FileUtil.getTargetFileByType(file, DownloadType.DOWNLOAD_TO_DOWNLOADS, mAppContext))
+        File target = FileUtil.getFile(mDownloadsDir, file);
+        return mFilesRepository.download(file, target)
                 .doOnNext(progress -> {
                     if (progress.isDone()){
-                        File target = progress.getData();
                         DownloadManager dm = (DownloadManager) mAppContext.getSystemService(DOWNLOAD_SERVICE);
                         dm.addCompletedDownload(
                                 target.getName(),
@@ -91,6 +102,17 @@ public class MainFileListInteractorImpl extends BaseFilesListInteractor implemen
     @Override
     public Observable<Progressible<AuroraFile>> uploadFile(AuroraFile folder, Uri file) {
         return mFilesRepository.uploadFile(folder, file)
+                .compose(this::composeDefault);
+    }
+
+    @Override
+    public Completable setOffline(AuroraFile file, boolean offline) {
+        return mFilesRepository.setOffline(file, offline)
+                .andThen(Completable.fromAction(() -> {
+                    if (offline) {
+                        SyncService.requestSync(file, mAppContext);
+                    }
+                }))
                 .compose(this::composeDefault);
     }
 }

@@ -19,7 +19,7 @@ import com.afterlogic.aurora.drive._unrefactored.data.common.ApiProvider;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.DBHelper;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.dao.WatchingFileDAO;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.model.WatchingFile;
-import com.afterlogic.aurora.drive._unrefactored.presentation.services.SyncService;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncService;
 import com.afterlogic.aurora.drive.application.App;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
@@ -63,7 +63,7 @@ public class FileViewImageFragment extends Fragment{
     private BroadcastReceiver mSyncUpdateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            WatchingFile target = intent.getParcelableExtra(SyncService.FileSyncAdapter.KEY_SYNC_TARGET);
+            WatchingFile target = intent.getParcelableExtra(SyncService.KEY_SYNC_TARGET);
             onSyncStateChanged(target);
         }
     };
@@ -140,7 +140,7 @@ public class FileViewImageFragment extends Fragment{
                     );
         } else {
             getContext().registerReceiver(mSyncUpdateReceiver,
-                    new IntentFilter(SyncService.FileSyncAdapter.ACTION_SYNC_STATUS_CHANGED));
+                    new IntentFilter(SyncService.ACTION_SYNC_STATUS_CHANGED));
 
             if (mWatchingFile.getSyncStatus() == WatchingFile.SYNCED){
                 onSyncStateChanged(mWatchingFile);

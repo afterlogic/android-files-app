@@ -12,6 +12,7 @@ import com.afterlogic.aurora.drive.presentation.modules.start.view.StartActivity
 import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadActivity;
 import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadFilesFragment;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.session.SessionChangedReceiver;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncService;
 
 import dagger.Subcomponent;
 
@@ -43,4 +44,6 @@ public interface ModulesFactoryComponent {
 
     Injector<ChoiseActivity> choise();
     Injector<ChoiseFilesFragment> choiseFileList();
+
+    Injector<SyncService> sync();
 }

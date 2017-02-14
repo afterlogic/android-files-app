@@ -2,7 +2,6 @@ package com.afterlogic.aurora.drive._unrefactored.presentation.receivers;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -10,15 +9,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationManagerCompat;
 
-import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive._unrefactored.core.util.AccountUtil;
+import com.afterlogic.aurora.drive._unrefactored.core.util.NotificationUtil;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.DBHelper;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.dao.WatchingFileDAO;
 import com.afterlogic.aurora.drive._unrefactored.data.common.db.model.WatchingFile;
-import com.afterlogic.aurora.drive._unrefactored.presentation.services.SyncService;
-import com.afterlogic.aurora.drive.core.common.util.FileUtil;
-import com.afterlogic.aurora.drive._unrefactored.core.util.NotificationUtil;
-import com.afterlogic.aurora.drive._unrefactored.core.util.AccountUtil;
+import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncService;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -55,8 +52,8 @@ public class SyncResolveReceiver extends BroadcastReceiver {
      * @param intent - result intent from notification.
      */
     private void receiveConflict(Context context, Intent intent){
-        String spec = intent.getStringExtra(SyncService.FileSyncAdapter.KEY_CHANGED_REMOTE_FILE_SPEC);
-        int type = intent.getIntExtra(SyncService.FileSyncAdapter.KEY_RESOLVE_CONFLICT, 0);
+        String spec = intent.getStringExtra(SyncService.KEY_TARGET);
+        int type = intent.getIntExtra(SyncService.KEY_RESOLVE_CONFLICT, 0);
 
         //Start sync
         AccountManager ac = AccountManager.get(context);
@@ -64,8 +61,8 @@ public class SyncResolveReceiver extends BroadcastReceiver {
         if (accounts.length > 0){
 
             Bundle extras = new Bundle();
-            extras.putString(SyncService.FileSyncAdapter.KEY_CHANGED_REMOTE_FILE_SPEC, spec);
-            extras.putInt( SyncService.FileSyncAdapter.KEY_RESOLVE_CONFLICT, type);
+            extras.putString(SyncService.KEY_TARGET, spec);
+            extras.putInt( SyncService.KEY_RESOLVE_CONFLICT, type);
 
             extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
             extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
@@ -85,7 +82,7 @@ public class SyncResolveReceiver extends BroadcastReceiver {
      * @param i - result intent from notification.
      */
     private void receiveRemoteNotExist(Context ctx, Intent i){
-        String spec = i.getStringExtra(SyncService.FileSyncAdapter.KEY_CHANGED_REMOTE_FILE_SPEC);
+        String spec = i.getStringExtra(SyncService.KEY_TARGET);
         boolean saveLocal = i.getBooleanExtra(KEY_SAVE_LOCAL, false);
 
         //Hide notification
@@ -103,7 +100,7 @@ public class SyncResolveReceiver extends BroadcastReceiver {
                     AuroraFile remote =
                             AuroraFile.parse(
                                     file.getRemoteFilePath(), file.getRemoteAuroraType(), false);
-                    File target = FileUtil.getDownloadsFile(remote);
+                    /*File target = FileUtil.getDownloadsFile(remote);
                     if (local.renameTo(target)){
                         DownloadManager dm = (DownloadManager)
                                 ctx.getSystemService(Context.DOWNLOAD_SERVICE);
@@ -111,7 +108,7 @@ public class SyncResolveReceiver extends BroadcastReceiver {
                                 ctx.getString(R.string.prompt_downloaded_file_description), true,
                                 FileUtil.getFileMimeType(target), target.getPath(), target.length(), true);
                         dao.delete(file);
-                    }
+                    }*/
                 } else {
                     dao.delete(file);
                 }

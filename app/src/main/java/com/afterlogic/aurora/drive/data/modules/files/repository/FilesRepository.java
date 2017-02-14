@@ -41,5 +41,9 @@ public interface FilesRepository {
 
     Observable<Progressible<AuroraFile>> uploadFile(AuroraFile folder, Uri fileUri);
 
+    Observable<Progressible<AuroraFile>> rewriteFile(AuroraFile target, Uri source);
+
     Completable setOffline(AuroraFile file, boolean offline);
+
+    Single<List<AuroraFile>> getOfflineFiles();
 }
