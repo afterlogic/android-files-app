@@ -166,7 +166,7 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
     public final Single<Uri> viewFile(AuroraFile file) {
         return Single.defer(() -> {
             File cache = FileUtil.getFile(mCacheDir, file);
-            if (cache.exists() && cache.lastModified() == file.getLastModified()){
+            if (cache.exists() && cache.length() > 0 && cache.lastModified() == file.getLastModified()){
                 return Single.just(Uri.fromFile(cache));
             } else {
                 Single<ResponseBody> viewRequest = mFilesService.viewFile(

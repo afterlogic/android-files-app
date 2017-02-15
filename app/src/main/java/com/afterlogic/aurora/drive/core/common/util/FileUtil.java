@@ -279,7 +279,10 @@ public class FileUtil {
             if (writtenConsumer != null) {
                 writtenConsumer.consume(totalReaded);
             }
-            while ((readed = is.read(buffer)) != -1 && (maxSize == -1 && totalReaded < maxSize)) {
+            while ((readed = is.read(buffer)) != -1 && (maxSize == -1 || totalReaded < maxSize)) {
+                if (maxSize != -1){
+                    readed = (int) Math.min(maxSize - totalReaded, readed);
+                }
                 fos.write(buffer, 0, readed);
                 totalReaded += readed;
                 if (writtenConsumer != null) {
