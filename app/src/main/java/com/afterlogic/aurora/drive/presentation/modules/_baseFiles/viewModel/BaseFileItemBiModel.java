@@ -25,7 +25,6 @@ public class BaseFileItemBiModel implements BaseFileItemViewModel, BaseFileItemM
     private final ObservableField<String> mFileName = new ObservableField<>();
     private final ObservableField<Uri> mFileIcon = new ObservableField<>();
     private final ObservableField<Uri> mStatusIcon = new ObservableField<>();
-    private final ObservableInt mProgress = new ObservableInt(-1);
 
     private AuroraFile mAuroraFile;
 
@@ -90,11 +89,6 @@ public class BaseFileItemBiModel implements BaseFileItemViewModel, BaseFileItemM
     @Override
     public BaseFileItemModel getModel() {
         return this;
-    }
-
-    @Override
-    public ObservableInt getProgress() {
-        return mProgress;
     }
 
     @Override

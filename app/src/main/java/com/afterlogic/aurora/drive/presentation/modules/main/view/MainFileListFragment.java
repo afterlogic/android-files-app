@@ -13,17 +13,17 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive._unrefactored.core.util.DialogUtil;
-import com.afterlogic.aurora.drive._unrefactored.presentation.ui.common.dialogs.FileActionsBottomSheet;
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
+import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FilesSelection;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
 import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
 import com.afterlogic.aurora.drive.presentation.common.components.view.SelectionEditText;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnBackPressedListener;
-import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesListFragment;
 import com.afterlogic.aurora.drive.presentation.modules.main.presenter.MainFileListPresenter;
+import com.afterlogic.aurora.drive.presentation.modules.main.viewModel.MainFileItemViewModel;
 import com.afterlogic.aurora.drive.presentation.modules.main.viewModel.MainFileListViewModel;
 
 /**
@@ -31,9 +31,12 @@ import com.afterlogic.aurora.drive.presentation.modules.main.viewModel.MainFileL
  * mail: sunnyday.development@gmail.com
  */
 
-public class MainFileListFragment extends BaseFilesListFragment<MainFileListViewModel, MainFileListPresenter> implements MainFileListView, OnBackPressedListener, FileActionsBottomSheet.FileActionListener {
+public class MainFileListFragment extends BaseFilesListFragment<MainFileListViewModel, MainFileListPresenter> implements MainFileListView, OnBackPressedListener, FileActionsBottomSheet.FileActionCallback {
 
     private static final String ARGS_TYPE = MainFileListFragment.class.getName() + ".TYPE";
+    private static final String FILE_ACTIONS = MainFileListFragment.class.getName()  + ".file_actions";
+
+    private FileActionsBottomSheet mFileActions;
 
     public static MainFileListFragment newInstance(String type) {
 
@@ -48,6 +51,7 @@ public class MainFileListFragment extends BaseFilesListFragment<MainFileListView
     private FileListFragmentCallback mCallback;
 
     private SimpleListener mMultiChoiseListener = new SimpleListener(this::updateSelection);
+    private SimpleListener mFileForActionsListener = new SimpleListener(this::updateFileActions);
 
     @Override
     public void onAttach(Context context) {
@@ -65,7 +69,11 @@ public class MainFileListFragment extends BaseFilesListFragment<MainFileListView
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mFileActions = (FileActionsBottomSheet) getFragmentManager().findFragmentByTag(FILE_ACTIONS);
+
         mViewModel.getSelection().addOnPropertyChangedCallback(mMultiChoiseListener);
+        mViewModel.getFileRequeireActions().addOnPropertyChangedCallback(mFileForActionsListener);
+        updateFileActions();
     }
 
     @Nullable
@@ -75,14 +83,13 @@ public class MainFileListFragment extends BaseFilesListFragment<MainFileListView
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.action_delete: mPresenter.onDelete(null); break;
-            case R.id.action_download: mPresenter.onDownload(null); break;
-            case R.id.action_send: mPresenter.onSendTo(null); break;
-            case R.id.action_offline: mPresenter.onToggleOffline(null); break;
-        }
-        return super.onOptionsItemSelected(item);
+        return onFileActionWithResult(item.getItemId()) || super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -95,18 +102,12 @@ public class MainFileListFragment extends BaseFilesListFragment<MainFileListView
     public void onDestroy() {
         super.onDestroy();
         mViewModel.getSelection().removeOnPropertyChangedCallback(mMultiChoiseListener);
+        mViewModel.getFileRequeireActions().removeOnPropertyChangedCallback(mFileForActionsListener);
     }
 
     @Override
     public boolean onBackPressed() {
         return mPresenter.onBackPressed();
-    }
-
-    @Override
-    public void showFileActions(AuroraFile file) {
-        FileActionsBottomSheet actions = FileActionsBottomSheet.newInstance(file);
-        actions.setTargetFragment(this, 0);
-        actions.show(getFragmentManager(), "file_actions");
     }
 
     @Override
@@ -171,6 +172,7 @@ public class MainFileListFragment extends BaseFilesListFragment<MainFileListView
 
     @Override
     public void showNewFolderNameDialog(Consumer<String> newNameConsumer) {
+        @SuppressLint("InflateParams")
         View inputView = LayoutInflater.from(getContext())
                 .inflate(R.layout.item_layout_dialog_input, null);
 
@@ -200,19 +202,18 @@ public class MainFileListFragment extends BaseFilesListFragment<MainFileListView
     }
 
     @Override
-    public void onFileAction(int action, AuroraFile file) {
-        switch (action){
-            case R.id.action_download: mPresenter.onDownload(file); break;
-            case R.id.action_delete: mPresenter.onDelete(file); break;
-            case R.id.action_send: mPresenter.onSendTo(file); break;
-            case R.id.action_rename: mPresenter.onRename(file); break;
+    public void onFileAction(int action) {
+        onFileActionWithResult(action);
+    }
 
-            case R.id.action_offline:
-            case R.id.action_offline_on:
-            case R.id.action_offline_off:
-                mPresenter.onToggleOffline(file);
-                break;
-        }
+    @Override
+    public MainFileItemViewModel getFileActionTarget() {
+        return mViewModel.getFileRequeireActions().get();
+    }
+
+    @Override
+    public void onCancelFileActions() {
+        mViewModel.onCancelFileActions();
     }
 
     public void createFolder(){
@@ -227,6 +228,18 @@ public class MainFileListFragment extends BaseFilesListFragment<MainFileListView
         mPresenter.onMultiChoseMode(mode);
     }
 
+    private boolean onFileActionWithResult(int action){
+        switch (action){
+            case R.id.action_download: mPresenter.onDownload(); return true;
+            case R.id.action_delete: mPresenter.onDelete(); return true;
+            case R.id.action_send: mPresenter.onSendTo(); return true;
+            case R.id.action_rename: mPresenter.onRename(); return true;
+            case R.id.action_offline: mPresenter.onToggleOffline(); return true;
+
+            default: return false;
+        }
+    }
+
     private void updateSelection(){
         if (mCallback != null) {
             FilesSelection selection = mViewModel.getSelection().get();
@@ -234,6 +247,23 @@ public class MainFileListFragment extends BaseFilesListFragment<MainFileListView
                     selection.getCount(),
                     selection.hasFolder()
             );
+        }
+    }
+
+    private void updateFileActions(){
+        hideFileActions();
+
+        if (mViewModel.getFileRequeireActions().get() != null) {
+            mFileActions = FileActionsBottomSheet.newInstance();
+            mFileActions.setTargetFragment(this, 0);
+            mFileActions.show(getFragmentManager(), FILE_ACTIONS);
+        }
+    }
+
+    private void hideFileActions(){
+        if (mFileActions != null){
+            mFileActions.dismissAllowingStateLoss();
+            mFileActions = null;
         }
     }
 }

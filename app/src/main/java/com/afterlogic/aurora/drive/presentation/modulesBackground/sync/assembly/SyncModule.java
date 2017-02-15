@@ -6,6 +6,9 @@ import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.interacto
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.presenter.SyncPresenter;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.presenter.SyncPresenterImpl;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncView;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncBiModel;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncModel;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncViewModel;
 
 import dagger.Module;
 import dagger.Provides;
@@ -25,5 +28,15 @@ public class SyncModule extends PresentationModule<SyncView>{
     @Provides
     SyncInteractor interactor(SyncInteractorImpl interactor){
         return interactor;
+    }
+
+    @Provides
+    SyncModel model(SyncBiModel model){
+        return model;
+    }
+
+    @Provides
+    SyncViewModel viewModel(SyncBiModel model){
+        return model;
     }
 }

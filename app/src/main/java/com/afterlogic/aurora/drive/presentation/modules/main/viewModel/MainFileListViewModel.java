@@ -13,6 +13,8 @@ import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.Bas
 public interface MainFileListViewModel extends BaseFilesListViewModel<MainFileItemViewModel>{
 
     MainFilesListModel getModel();
-
     ObservableField<FilesSelection> getSelection();
+    ObservableField<MainFileItemViewModel> getFileRequeireActions();
+
+    void onCancelFileActions();
 }

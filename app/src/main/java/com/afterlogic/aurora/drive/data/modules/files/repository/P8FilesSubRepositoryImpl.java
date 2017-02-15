@@ -233,14 +233,14 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
                         folder.getFullPath(),
                         fileInfo,
                         (max, value) -> progressSource.onNext(new Progressible<>(
-                                null, max, value, fileInfo.getName()
+                                null, max, value, fileInfo.getName(), false
                         ))
                 ).map(response -> response),
                 result -> new UploadResult()
         )//-----|
                 .doOnEvent((uploadResult, throwable) -> progressSource.complete())
                 .doOnDispose(progressSource::clear)
-                .map(result -> new Progressible<>(result, 0, 0, fileInfo.getName()))
+                .map(result -> new Progressible<>(result, 0, 0, fileInfo.getName(), true))
                 .toObservable()
                 .doFinally(() -> MyLog.d("Request released."));
 

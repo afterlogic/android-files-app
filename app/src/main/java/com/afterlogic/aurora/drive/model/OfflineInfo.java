@@ -8,18 +8,12 @@ package com.afterlogic.aurora.drive.model;
 public class OfflineInfo {
 
     private OfflineType mOfflineType;
-    private SyncState mSyncState;
 
-    public OfflineInfo(OfflineType offlineType, SyncState syncState) {
+    public OfflineInfo(OfflineType offlineType) {
         mOfflineType = offlineType;
-        mSyncState = syncState;
     }
 
     public OfflineType getOfflineType() {
         return mOfflineType;
-    }
-
-    public SyncState getSyncState() {
-        return mSyncState;
     }
 }

@@ -6,9 +6,6 @@ import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.data.common.mapper.BiMapper;
 import com.afterlogic.aurora.drive.data.modules.files.model.db.OfflineFileInfoEntity;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.model.OfflineInfo;
-import com.afterlogic.aurora.drive.model.OfflineType;
-import com.afterlogic.aurora.drive.model.SyncState;
 
 import java.io.File;
 
@@ -43,10 +40,6 @@ class OfflineToBlMapper implements BiMapper<AuroraFile, OfflineFileInfoEntity, F
             auroraFile.setContentType("*/*");
         }
 
-        auroraFile.setOfflineInfo(new OfflineInfo(
-                OfflineType.OFFLINE,
-                SyncState.UNKNOWN
-        ));
         return auroraFile;
     }
 }

@@ -1,12 +1,15 @@
 package com.afterlogic.aurora.drive.presentation.modulesBackground.sync.presenter;
 
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
+import com.afterlogic.aurora.drive.core.common.util.Holder;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.presentation.common.modules.presenter.BasePresenter;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.interactor.SyncInteractor;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncView;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncModel;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
 
 import javax.inject.Inject;
 
@@ -21,13 +24,17 @@ public class SyncPresenterImpl extends BasePresenter<SyncView> implements SyncPr
 
     private final SyncInteractor mInteractor;
 
-    @Inject SyncPresenterImpl(ViewState<SyncView> viewState, SyncInteractor interactor) {
+    private final SyncModel mModel;
+
+    @Inject SyncPresenterImpl(ViewState<SyncView> viewState, SyncInteractor interactor, SyncModel model) {
         super(viewState);
         mInteractor = interactor;
+        mModel = model;
     }
 
     @Override
     public void onSyncPerformed() {
+        Holder<Progressible<CheckPair>> last = new Holder<>();
         mInteractor.getOfflineFiles()
                 .toObservable()
                 .compose(Observables::forEach)
@@ -35,17 +42,24 @@ public class SyncPresenterImpl extends BasePresenter<SyncView> implements SyncPr
                 .flatMap(this::check)
                 .filter(check -> check.getSyncType() != SyncType.NO_NEED)
                 .flatMap(this::sync)
+                .map(this::mapProgressToPercent)
+                .filter(progress -> last.get() == null ||
+                        last.get().getData() != progress.getData() ||
+                        last.get().getProgress() != progress.getProgress()
+                )
                 .doOnNext(progress -> {
-                    float p = (float)progress.getProgress();
-                    float max = progress.getMax();
-                    getView().notifyProgress(
-                            progress.getName(),
-                            max > 0 ? p / max * 100 : -1
-                    );
+                    last.set(progress);
+
+                    AuroraFile local = progress.getData().getLocal();
+                    mModel.setCurrentSyncProgress(new SyncProgress(
+                            local.getType() + local.getFullPath(),
+                            local.getName(),
+                            (int) progress.getProgress(),
+                            progress.isDone()
+                    ));
                 })
-                .filter(Progressible::isDone)
                 .ignoreElements()
-                .doFinally(() -> getView().hideProgressNotify())
+                .doFinally(() -> mModel.setCurrentSyncProgress(null))
                 .subscribe(
                         () -> {},
                         this::onErrorObtained
@@ -78,7 +92,7 @@ public class SyncPresenterImpl extends BasePresenter<SyncView> implements SyncPr
                         .map(progress -> progress.map(checkPair));
 
             default:
-                return Observable.just(new Progressible<>(checkPair, 0, 0, checkPair.getLocal().getName()));
+                return Observable.just(new Progressible<>(checkPair, 0, 0, checkPair.getLocal().getName(), true));
         }
     }
 
@@ -88,5 +102,13 @@ public class SyncPresenterImpl extends BasePresenter<SyncView> implements SyncPr
 
     private Observable<Progressible<AuroraFile>> download(AuroraFile remote){
         return mInteractor.download(remote);
+    }
+
+    private <T> Progressible<T> mapProgressToPercent(Progressible<T> progress){
+        float p = progress.getMax() > 0 ?
+                ((float)progress.getProgress() / progress.getMax()) * 100 : -1;
+        progress.setMax(100);
+        progress.setProgress((long) p);
+        return progress;
     }
 }

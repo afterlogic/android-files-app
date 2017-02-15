@@ -1,5 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.viewModel;
 
+import android.support.annotation.IntRange;
+
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFileItemModel;
 
 /**
@@ -8,4 +10,6 @@ import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.Bas
  */
 
 public interface MainFileItemModel extends BaseFileItemModel{
+    void setOffline(boolean offline);
+    void setSyncProgress(@IntRange(from = -1, to = 100) int progress);
 }

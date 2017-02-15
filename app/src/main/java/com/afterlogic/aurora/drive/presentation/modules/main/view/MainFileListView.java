@@ -11,8 +11,6 @@ import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.FilesLis
 
 public interface MainFileListView extends FilesListView {
 
-    void showFileActions(AuroraFile file);
-
     void showRenameDialog(AuroraFile file, Consumer<String> newNameConsumer);
 
     void showNewFolderNameDialog(Consumer<String> newNameConsumer);

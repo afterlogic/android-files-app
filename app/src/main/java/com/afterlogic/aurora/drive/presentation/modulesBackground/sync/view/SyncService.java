@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.SyncResult;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.FloatRange;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
@@ -24,9 +23,12 @@ import com.afterlogic.aurora.drive._unrefactored.presentation.receivers.SyncReso
 import com.afterlogic.aurora.drive.core.consts.NotificationConst;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseService;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.ViewPresenter;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.presenter.SyncPresenter;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncViewModel;
 
 import java.io.File;
 
@@ -38,8 +40,12 @@ import javax.inject.Inject;
  */
 public class SyncService extends BaseService implements SyncView {
 
+    public static final String ACTION_SYNC_STARTED =
+            FileSyncAdapter.class.getName() + ".ACTION_SYNC_STARTED";
     public static final String ACTION_SYNC_STATUS_CHANGED =
             FileSyncAdapter.class.getName() + ".ACTION_SYNC_STATUS_CHANGED";
+    public static final String ACTION_BIND_SYNC_LISTENER =
+            FileSyncAdapter.class.getName() + ".ACTION_BIND_SYNC_LISTENER";
     public static final String KEY_TARGET =
             FileSyncAdapter.class.getName() + ".KEY_TARGET";
     public static final String KEY_MAX_PROGRESS =
@@ -51,11 +57,18 @@ public class SyncService extends BaseService implements SyncView {
     public static final String KEY_RESOLVE_CONFLICT =
             FileSyncAdapter.class.getName() + ".KEY_RESOLVE_CONFLICT";
 
+    private final SimpleListener mProgressListener = new SimpleListener(this::updateProgressNotify);
+
     @Inject @ViewPresenter
     protected SyncPresenter mPresenter;
 
+    @Inject
+    protected SyncViewModel mViewModel;
+
     private FileSyncAdapter mFileSyncAdapter;
     private NotificationManagerCompat mNotificationManager;
+
+    private SyncMessenger mMessenger;
 
     /**
      * Request sync for all files.
@@ -91,31 +104,46 @@ public class SyncService extends BaseService implements SyncView {
         super.onCreate();
         mNotificationManager = NotificationManagerCompat.from(getApplicationContext());
         mFileSyncAdapter = new FileSyncAdapter(getApplicationContext(), mPresenter);
+
+        mViewModel.getCurrentSyncProgress().addOnPropertyChangedCallback(mProgressListener);
+        mMessenger = new SyncMessenger();
+
+        sendBroadcast(new Intent(ACTION_SYNC_STARTED));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mViewModel.getCurrentSyncProgress().removeOnPropertyChangedCallback(mProgressListener);
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return mFileSyncAdapter.getSyncAdapterBinder();
+        if (ACTION_BIND_SYNC_LISTENER.equals(intent.getAction())){
+            return mMessenger.getBinder();
+        } else {
+            return mFileSyncAdapter.getSyncAdapterBinder();
+        }
     }
 
-    @Override
-    public void notifyProgress(String fileName, @FloatRange(from = -1, to = 100) float progress) {
+    private void updateProgressNotify(){
+        SyncProgress progress = mViewModel.getCurrentSyncProgress().get();
+        if (progress == null){
+            mNotificationManager.cancel(NotificationConst.SYNC_PROGRESS);
+        } else {
+            NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(getApplicationContext())
+                    .setContentTitle(getString(R.string.prompt_syncing))
+                    .setProgress(100, progress.getProgress(), progress.getProgress() == -1)
+                    .setContentText(progress.getFileName())
+                    .setSmallIcon(R.drawable.ic_folder)
+                    .setOngoing(true);
 
-        NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(getApplicationContext())
-                .setContentTitle(getString(R.string.prompt_syncing))
-                .setProgress(100, (int) progress, progress == -1)
-                .setContentText(fileName)
-                .setSmallIcon(R.drawable.ic_folder)
-                .setOngoing(true);
-
-        mNotificationManager.notify(NotificationConst.SYNC_PROGRESS, notifyBuilder.build());
+            mNotificationManager.notify(NotificationConst.SYNC_PROGRESS, notifyBuilder.build());
+            mMessenger.notifyProgress(progress);
+        }
     }
 
-    @Override
-    public void hideProgressNotify() {
-        mNotificationManager.cancel(NotificationConst.SYNC_PROGRESS);
-    }
 
     /**
      * Created by sashka on 15.04.16.

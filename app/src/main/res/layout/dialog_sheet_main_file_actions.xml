@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="com.afterlogic.aurora.drive.presentation.common.binding.bindingAdapters.RecyclerViewBinding"/>
+
+        <variable
+            name="bindHelper"
+            type="com.afterlogic.aurora.drive.presentation.modules.main.view.MainBindHelper"/>
+        <variable
+            name="viewModel"
+            type="com.afterlogic.aurora.drive.presentation.modules.main.viewModel.FileActionDialogViewModel"/>
+    </data>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:behavior_hideable="true"
+        app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:background="@drawable/bg_simple_highlight"
+            android:gravity="center"
+            style="@style/RootLayout.Item">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:contentDescription="@string/content_descroption_file_icon"
+                bind:imageUri="@{viewModel.icon}"
+                tools:src="@mipmap/ic_launcher"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingRight="8dp"
+                android:paddingLeft="8dp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:text="@{viewModel.title}"
+                tools:text="asdfasfdasdf.sdf-asdfasdfasdfasdf-sdfasdfasdf"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorAccent"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            bind:items="@{viewModel.items}"
+            bind:adapter="@{bindHelper.fileActionsAdapter()}"
+            bind:layoutManager="@{RecyclerViewBinding.linearLayoutManager()}"
+            tools:listitem="@layout/item_list_file_action_normal"/>
+
+    </LinearLayout>
+</layout>

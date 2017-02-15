@@ -53,9 +53,6 @@ public class AuroraFile implements Parcelable, Cloneable{
 
     private int mIsPreviewAble = -1;
 
-    @NonNull
-    private OfflineInfo mOfflineInfo = new OfflineInfo(OfflineType.NOT_OFFLINE, SyncState.UNKNOWN);
-
     public static AuroraFile create(@NonNull AuroraFile parent, @NonNull String name, boolean mIsFolder){
         AuroraFile file = new AuroraFile();
         String parentFullPath = parent.getFullPath();
@@ -95,7 +92,6 @@ public class AuroraFile implements Parcelable, Cloneable{
             file.mThumbnailLink = local.getAbsolutePath();
         }
         file.mLinkUrl = local.getAbsolutePath();
-        file.mOfflineInfo = new OfflineInfo(OfflineType.OFFLINE, SyncState.UNKNOWN);
         return file;
     }
 
@@ -223,22 +219,12 @@ public class AuroraFile implements Parcelable, Cloneable{
         mLastModified = lastModified;
     }
 
-    public void setOfflineInfo(@NonNull OfflineInfo offlineInfo) {
-        mOfflineInfo = offlineInfo;
-    }
-
     public void setContentType(String contentType) {
         mContentType = contentType;
     }
 
-    @Deprecated
-    public boolean isOfflineMode() {
-        return mOfflineInfo.getOfflineType() == OfflineType.OFFLINE;
-    }
-
-    @NonNull
-    public OfflineInfo getOfflineInfo() {
-        return mOfflineInfo;
+    public String getPathSpec(){
+        return mType + mFullPath;
     }
 
     public AuroraFile getParentFolder(){

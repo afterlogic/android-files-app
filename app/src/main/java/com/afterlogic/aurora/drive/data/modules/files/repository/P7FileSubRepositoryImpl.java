@@ -147,7 +147,7 @@ public class P7FileSubRepositoryImpl extends AuthorizedRepository implements Fil
                         mFileBlToNetMapper.map(folder),
                         fileInfo,
                         (max, value) -> progressSource.onNext(new Progressible<>(
-                                null, max, value, fileInfo.getName()
+                                null, max, value, fileInfo.getName(), false
                         ))
                 ).map(response -> response)
         )//-----|
@@ -155,7 +155,7 @@ public class P7FileSubRepositoryImpl extends AuthorizedRepository implements Fil
                 .doOnDispose(progressSource::clear)
                 .map(result -> {
                     UploadResult mapped = mUploadResultToBlMapper.map(result);
-                    return new Progressible<>(mapped, 0, 0, fileInfo.getName());
+                    return new Progressible<>(mapped, 0, 0, fileInfo.getName(), true);
                 })
                 .toObservable();
 

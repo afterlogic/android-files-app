@@ -67,6 +67,18 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
     }
 
     @Override
+    protected void onViewStart() {
+        super.onViewStart();
+        mInteractor.onStart();
+    }
+
+    @Override
+    protected void onViewStop() {
+        super.onViewStop();
+        mInteractor.onStop();
+    }
+
+    @Override
     public void onRefresh() {
         if (mThumbnailRequest != null){
             mThumbnailRequest.dispose();
@@ -172,7 +184,7 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
         return true;
     }
 
-    private void handleFilesResult(List<AuroraFile> files){
+    protected void handleFilesResult(List<AuroraFile> files){
         Collections.sort(files, FileUtil.AURORA_FILE_COMPARATOR);
 
         mModel.setFileList(files);
@@ -182,6 +194,5 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
                 .collect(Observables.Collectors.concatCompletable())
                 .doFinally(() -> mThumbnailRequest = null)
                 .subscribe();
-
     }
 }

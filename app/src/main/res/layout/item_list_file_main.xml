@@ -58,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:max="1000"
+                android:max="100"
                 android:progress="@{viewModel.progress != -1 ? viewModel.progress : 0}"
                 android:visibility="@{viewModel.progress != -1 ? View.VISIBLE : View.GONE}"
                 tools:visibility="visible"
@@ -73,8 +73,10 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:visibility="@{viewModel.statusIcon != null ? View.VISIBLE : View.GONE}"
+            android:tint="@color/colorAccent"
             bind:imageUri="@{viewModel.statusIcon}"
             tools:src="@drawable/ic_next"
-            tools:visibility="visible"/>
+            tools:visibility="visible"
+            tools:ignore="ContentDescription"/>
     </RelativeLayout>
 </layout>

@@ -46,4 +46,6 @@ public interface FilesRepository {
     Completable setOffline(AuroraFile file, boolean offline);
 
     Single<List<AuroraFile>> getOfflineFiles();
+
+    Single<Boolean> getOfflineStatus(AuroraFile file);
 }

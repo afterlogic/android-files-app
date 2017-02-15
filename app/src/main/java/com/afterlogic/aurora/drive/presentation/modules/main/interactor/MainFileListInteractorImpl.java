@@ -11,7 +11,9 @@ import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.interactor.BaseFilesListInteractor;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncListener;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncService;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
 
 import java.io.File;
 
@@ -37,6 +39,7 @@ public class MainFileListInteractorImpl extends BaseFilesListInteractor implemen
     private final Context mAppContext;
     private final File mCacheDir;
     private final File mDownloadsDir;
+    private final SyncListener mSyncListener;
 
     @Inject
     MainFileListInteractorImpl(ObservableScheduler scheduler,
@@ -49,6 +52,19 @@ public class MainFileListInteractorImpl extends BaseFilesListInteractor implemen
         mAppContext = appContext;
         mCacheDir = cacheDir;
         mDownloadsDir = downloadsDir;
+        mSyncListener = new SyncListener(appContext);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mSyncListener.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mSyncListener.onStop();
     }
 
     @Override
@@ -113,6 +129,17 @@ public class MainFileListInteractorImpl extends BaseFilesListInteractor implemen
                         SyncService.requestSync(file, mAppContext);
                     }
                 }))
+                .compose(this::composeDefault);
+    }
+
+    @Override
+    public Observable<SyncProgress> getSyncProgress() {
+        return mSyncListener.getProgressSource();
+    }
+
+    @Override
+    public Single<Boolean> getOfflineStatus(AuroraFile file) {
+        return mFilesRepository.getOfflineStatus(file)
                 .compose(this::composeDefault);
     }
 }

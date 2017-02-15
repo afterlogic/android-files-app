@@ -1,7 +1,5 @@
 package com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view;
 
-import android.support.annotation.FloatRange;
-
 import com.afterlogic.aurora.drive.presentation.common.modules.view.PresentationView;
 
 /**
@@ -10,7 +8,4 @@ import com.afterlogic.aurora.drive.presentation.common.modules.view.Presentation
  */
 
 public interface SyncView extends PresentationView {
-    void notifyProgress(String fileName, @FloatRange(from = -1, to = 100) float progress);
-
-    void hideProgressNotify();
 }

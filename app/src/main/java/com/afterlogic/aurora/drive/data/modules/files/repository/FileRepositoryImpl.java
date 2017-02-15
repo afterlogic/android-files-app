@@ -19,10 +19,8 @@ import com.afterlogic.aurora.drive.data.modules.files.model.db.OfflineFileInfoEn
 import com.afterlogic.aurora.drive.data.modules.files.service.FilesLocalService;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileInfo;
-import com.afterlogic.aurora.drive.model.OfflineInfo;
 import com.afterlogic.aurora.drive.model.OfflineType;
 import com.afterlogic.aurora.drive.model.Progressible;
-import com.afterlogic.aurora.drive.model.SyncState;
 import com.afterlogic.aurora.drive.model.error.FileAlreadyExistError;
 import com.afterlogic.aurora.drive.model.error.FileNotExistError;
 import com.annimon.stream.Stream;
@@ -85,8 +83,7 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
 
     @Override
     public Single<List<AuroraFile>> getFiles(AuroraFile folder) {
-        return mFileSubRepo.getFiles(folder)
-                .map(files -> MapperUtil.listOrEmpty(files, this::checkOffline));
+        return mFileSubRepo.getFiles(folder);
     }
 
     @Override
@@ -148,7 +145,7 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
                     File localActual = getOfflineOrCached(file);
                     if (localActual != null){
                         if (target.equals(localActual)){
-                            return Observable.just(new Progressible<>(target, 0, 0, file.getName()));
+                            return Observable.just(new Progressible<>(target, 0, 0, file.getName(), true));
                         } else {
                             return copyFile(file.getName(), localActual, target);
                         }
@@ -164,6 +161,7 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
             FileInfo fileInfo = FileUtil.fileInfo(file, mAppContext);
 
             //check file
+            //noinspection ConstantConditions
             AuroraFile checkFile = AuroraFile.create(folder, fileInfo.getName(), false);
             return checkFileExisting(checkFile)
                     .andThen(Completable.error(new FileAlreadyExistError(checkFile)))
@@ -178,7 +176,7 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
                             return checkFile(AuroraFile.create(folder, fileInfo.getName(), false))
                                     .map(progress::map)
                                     .toObservable()
-                                    .startWith(new Progressible<>(null, -1, 0, progress.getName()));
+                                    .startWith(new Progressible<>(null, -1, 0, progress.getName(), false));
                         }
                     });
         });
@@ -199,11 +197,11 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
                     if (!progress.isDone()){
                         return Observable.just(progress.map(null));
                     } else {
-                        //TODO get uploaded file name
+                        //noinspection ConstantConditions
                         return checkFile(AuroraFile.create(folder, fileInfo.getName(), false))
                                 .map(progress::map)
                                 .toObservable()
-                                .startWith(new Progressible<>(null, -1, 0, progress.getName()));
+                                .startWith(new Progressible<>(null, -1, 0, progress.getName(), false));
                     }
                 });
     });
@@ -216,7 +214,13 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
             if (offline){
                 return mLocalService.addOffline(new OfflineFileInfoEntity(pathSpec, OfflineType.OFFLINE.toString(), -1));
             } else {
-                return mLocalService.removeOffline(pathSpec);
+                return mLocalService.removeOffline(pathSpec)
+                        .doOnComplete(() -> {
+                            File localFile = new File(mOfflineDir, file.getPathSpec());
+                            if (localFile.exists() && !localFile.delete()){
+                                MyLog.majorException(new IOException("Can't delete file."));
+                            }
+                        });
             }
         });
     }
@@ -225,6 +229,14 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
     public Single<List<AuroraFile>> getOfflineFiles() {
         return mLocalService.getOffline()
                 .map(offline -> MapperUtil.listOrEmpty(offline, mOfflineToBlMapper));
+    }
+
+    @Override
+    public Single<Boolean> getOfflineStatus(AuroraFile file) {
+        return mLocalService.get(file.getPathSpec())
+                .isEmpty()
+                .map(empty -> !empty);
+
     }
 
     private void checkFilesType(String type, List<AuroraFile> files) throws IllegalArgumentException{
@@ -241,12 +253,12 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
             try {
                 fis = new FileInputStream(source);
                 FileUtil.writeFile(fis, target, read -> emitter.onNext(
-                        new Progressible<>(null, source.length(), read, progressName)
+                        new Progressible<>(null, source.length(), read, progressName, false)
                 ));
             } finally {
                 IOUtil.closeQuietly(fis);
             }
-            emitter.onNext(new Progressible<>(target, source.length(), source.length(), progressName));
+            emitter.onNext(new Progressible<>(target, source.length(), source.length(), progressName, true));
             emitter.onComplete();
         });
     }
@@ -261,7 +273,7 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
                     try{
                         FileUtil.writeFile(is, target, maxSize,
                                 written -> emitter.onNext(
-                                        new Progressible<>(null, maxSize, written, file.getName())
+                                        new Progressible<>(null, maxSize, written, file.getName(), false)
                                 )
                         );
                     } finally {
@@ -272,10 +284,12 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
                         MyLog.majorException(new IOException("Can't set last modified: " + target.getPath()));
                     }
 
+                    emitter.onNext(new Progressible<>(target, maxSize, maxSize, file.getName(), true));
+
                     emitter.onComplete();
                 }));
         return Observable.concat(
-                Observable.just(new Progressible<>(null, 0, 0, file.getName())),
+                Observable.just(new Progressible<>(null, 0, 0, file.getName(), false)),
                 request
         );
     }
@@ -287,14 +301,5 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
                 .filter(local -> local.lastModified() == file.getLastModified())
                 .findFirst()
                 .orElse(null);
-    }
-
-    private AuroraFile checkOffline(AuroraFile file){
-        String fileSpec = file.getType() + file.getFullPath();
-        OfflineFileInfoEntity offlineIfno = mLocalService.get(fileSpec).blockingGet();
-        if (offlineIfno != null){
-            file.setOfflineInfo(new OfflineInfo(OfflineType.OFFLINE, SyncState.UNKNOWN));
-        }
-        return file;
     }
 }

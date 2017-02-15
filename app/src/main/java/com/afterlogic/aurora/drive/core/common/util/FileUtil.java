@@ -279,7 +279,7 @@ public class FileUtil {
             if (writtenConsumer != null) {
                 writtenConsumer.consume(totalReaded);
             }
-            while ((readed = is.read(buffer)) != -1 && (maxSize == -1 || totalReaded < maxSize)) {
+            while ((readed = is.read(buffer)) != -1 && (maxSize == -1 && totalReaded < maxSize)) {
                 fos.write(buffer, 0, readed);
                 totalReaded += readed;
                 if (writtenConsumer != null) {
@@ -292,6 +292,6 @@ public class FileUtil {
     }
 
     public static File getFile(File rootDir, AuroraFile file){
-        return new File(rootDir, file.getType() + file.getFullPath());
+        return new File(rootDir, file.getPathSpec());
     }
 }

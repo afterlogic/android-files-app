@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -13,7 +12,7 @@
             type="com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFileItemViewModel"/>
     </data>
 
-    <RelativeLayout
+    <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,48 +31,27 @@
             bind:imageUri="@{viewModel.fileIcon}"
             tools:src="@mipmap/ic_launcher"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_toLeftOf="@+id/status_icon"
-            android:layout_toStartOf="@id/status_icon"
-            android:layout_toRightOf="@+id/icon"
-            android:layout_toEndOf="@+id/icon"
-            android:layout_centerInParent="true">
-            <TextView
-                android:id="@+id/text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingRight="8dp"
-                android:paddingLeft="8dp"
-                android:lines="1"
-                android:ellipsize="end"
-                android:text="@{viewModel.fileName}"
-                tools:text="asdfasfdasdf.sdf-asdfasdfasdfasdf-sdfasdfasdf"/>
-            <ProgressBar
-                android:id="@+id/progress"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:max="1000"
-                android:progress="@{viewModel.progress != -1 ? viewModel.progress : 0}"
-                android:visibility="@{viewModel.progress != -1 ? View.VISIBLE : View.GONE}"
-                tools:visibility="visible"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
-        </LinearLayout>
+            android:layout_weight="1"
+            android:paddingRight="8dp"
+            android:paddingLeft="8dp"
+            android:lines="1"
+            android:ellipsize="end"
+            android:text="@{viewModel.fileName}"
+            tools:text="asdfasfdasdf.sdf-asdfasdfasdfasdf-sdfasdfasdf"/>
 
-        <ImageView
+        <android.support.v7.widget.AppCompatImageView
             android:id="@+id/status_icon"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:visibility="@{viewModel.statusIcon != null ? View.VISIBLE : View.GONE}"
+            android:tint="@color/colorAccent"
+            android:visibility="@{viewModel.statusIcon.get() != null ? View.VISIBLE : View.GONE}"
             bind:imageUri="@{viewModel.statusIcon}"
             tools:src="@drawable/ic_next"
-            tools:visibility="visible"/>
-    </RelativeLayout>
+            tools:visibility="visible"
+            tools:ignore="ContentDescription"/>
+    </LinearLayout>
 </layout>

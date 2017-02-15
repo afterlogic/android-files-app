@@ -11,6 +11,7 @@ import com.afterlogic.aurora.drive.model.FilesSelection;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.SimpleOnObservableListChagnedListener;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFilesListBiModel;
 import com.afterlogic.aurora.drive.presentation.modules.main.presenter.MainFileListPresenter;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
 import com.annimon.stream.Stream;
 
 import java.util.ArrayList;
@@ -30,7 +31,10 @@ public class MainFileListBiModel extends BaseFilesListBiModel<MainFileItemViewMo
 
     private final ObservableList<AuroraFile> mMultiChoiseResult = new ObservableArrayList<>();
     private boolean mMultiChoise = false;
-    private ObservableField<FilesSelection> mSelection = new ObservableField<>(new FilesSelection(0, false));
+    private final ObservableField<FilesSelection> mSelection = new ObservableField<>(new FilesSelection(0, false));
+
+    private AuroraFile mFileForActions;
+    private final ObservableField<MainFileItemViewModel> mFileForActionModel = new ObservableField<>();
 
     @Inject
     MainFileListBiModel(OptWeakRef<MainFileListPresenter> presenter, Provider<MainFileItemBiModel> itemProvider) {
@@ -54,6 +58,16 @@ public class MainFileListBiModel extends BaseFilesListBiModel<MainFileItemViewMo
     @Override
     public ObservableField<FilesSelection> getSelection() {
         return mSelection;
+    }
+
+    @Override
+    public ObservableField<MainFileItemViewModel> getFileRequeireActions() {
+        return mFileForActionModel;
+    }
+
+    @Override
+    public void onCancelFileActions() {
+        setFileForActions(null);
     }
 
     @Override
@@ -96,6 +110,42 @@ public class MainFileListBiModel extends BaseFilesListBiModel<MainFileItemViewMo
         } else {
             mMultiChoiseResult.add(file);
         }
+    }
+
+    @Override
+    public void setFileForActions(AuroraFile file) {
+        mFileForActions = file;
+        mFileForActionModel.set(getModel(file));
+    }
+
+    @Override
+    public AuroraFile getFileForActions() {
+        return mFileForActions;
+    }
+
+    @Override
+    public void clearSyncProgress() {
+        Stream.of(mFiles).forEach(item -> item.getModel().setSyncProgress(-1));
+    }
+
+    @Override
+    public void setSyncProgress(SyncProgress progress) {
+        Stream.of(mFiles)
+                .map(MainFileItemViewModel::getModel)
+                .filter(model -> {
+                    AuroraFile file = model.getFile();
+                    return file.getPathSpec().equals(progress.getFile());
+                })
+                .findFirst()
+                .ifPresent(model -> {
+                    int progressValue = progress.isDone() ? -1 : progress.getProgress();
+                    model.setSyncProgress(progressValue);
+                });
+    }
+
+    @Override
+    public void setOffline(AuroraFile file, boolean offline) {
+        ifModel(file, viewModel -> viewModel.getModel().setOffline(offline));
     }
 
     private void updateSelected(){

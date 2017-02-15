@@ -15,11 +15,13 @@ public class Progressible<T> {
 
     @Nullable
     private String mName;
+    private boolean mDone;
 
-    public Progressible(T data, long max, long progress, @Nullable String name) {
+    public Progressible(T data, long max, long progress, @Nullable String name, boolean done) {
         mData = data;
         mMax = max;
         mProgress = progress;
+        mDone = done;
         mName = name;
     }
 
@@ -35,8 +37,16 @@ public class Progressible<T> {
         return mProgress;
     }
 
+    public void setMax(long max) {
+        mMax = max;
+    }
+
+    public void setProgress(long progress) {
+        mProgress = progress;
+    }
+
     public boolean isDone(){
-        return mData != null;
+        return mDone;
     }
 
     @Nullable
@@ -46,7 +56,7 @@ public class Progressible<T> {
 
     public <R> Progressible<R> map(R value){
         return new Progressible<>(
-                value, mMax, mProgress, mName
+                value, mMax, mProgress, mName, mDone
         );
     }
 }

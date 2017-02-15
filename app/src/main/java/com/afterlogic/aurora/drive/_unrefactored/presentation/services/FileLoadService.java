@@ -285,7 +285,7 @@ public class FileLoadService extends Service {
      * @return - true if file cached and it's opening already handled.
      */
     private File handleCachedOrOffline(int taskId, final AuroraFile file, DownloadType downloadType) throws IOException {
-        if (file.isOfflineMode()) {
+        if (false){//file.isOfflineMode()) {
             return null;
         }
 

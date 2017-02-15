@@ -1,8 +1,5 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.presenter;
 
-import android.support.annotation.Nullable;
-
-import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnBackPressedListener;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.presenter.FilesListPresenter;
 
@@ -13,15 +10,15 @@ import com.afterlogic.aurora.drive.presentation.modules._baseFiles.presenter.Fil
 
 public interface MainFileListPresenter extends FilesListPresenter, OnBackPressedListener {
 
-    void onDownload(@Nullable AuroraFile file);
+    void onDownload();
 
-    void onSendTo(@Nullable AuroraFile file);
+    void onSendTo();
 
-    void onRename(AuroraFile file);
+    void onRename();
 
-    void onToggleOffline(@Nullable AuroraFile file);
+    void onToggleOffline();
 
-    void onDelete(@Nullable AuroraFile file);
+    void onDelete();
 
     void onCreateFolder();
 
