@@ -30,11 +30,11 @@ public abstract class BaseInjector<
      * Assembly. Create component from module.
      */
     @SuppressWarnings("unchecked")
-    protected PresentationComponent<View, Target> assembly(AssembliesAssemblyComponent component, Module module){
+    protected PresentationComponent<View, Target> assembly(Target target, AssembliesAssemblyComponent assemblies, Module module){
         try {
-            return (PresentationComponent<View, Target>) component.getClass()
+            return (PresentationComponent<View, Target>) assemblies.getClass()
                     .getMethod("plus", module.getClass())
-                    .invoke(component, module);
+                    .invoke(assemblies, module);
         } catch (Exception e) {
             MyLog.majorException(this, e);
             throw new IllegalArgumentException("Can't find or invoke method plus(" + module.getClass().getSimpleName() + ") in AssembliesAssemblyComponent.");
@@ -62,7 +62,7 @@ public abstract class BaseInjector<
         }
 
         if (component == null){
-            component = assembly(mAssembliesComponent, createModule());
+            component = assembly(target, mAssembliesComponent, createModule());
 
             Class componentClass = component.getClass();
             if (!componentClass.isAnnotationPresent(DoNotStore.class)) {

@@ -4,6 +4,7 @@ import android.databinding.BindingAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 
+import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ItemsAdapter;
 import com.afterlogic.aurora.drive.presentation.common.components.view.DisablableViewPager;
 
@@ -17,7 +18,7 @@ import java.util.List;
 public class ViewPagerBinding {
 
     @BindingAdapter({"bind:adapter", "bind:items"})
-    public static <T, A extends PagerAdapter & ItemsAdapter<T>>
+    public static <T, A extends ItemsAdapter<T>>
     void bindAdapter(ViewPager pager, ViewProvider<A, ViewPager> adapterProvider, List<T> items){
         bindAdapter(pager, adapterProvider.provide(pager), items);
     }
@@ -47,10 +48,22 @@ public class ViewPagerBinding {
         pager.setSwipeEnabled(enabled);
     }
 
+    @BindingAdapter("bind:onPageChanged")
+    public static void bindOnPageChanged(ViewPager pager, ViewPager.OnPageChangeListener listener){
+        ViewPager.OnPageChangeListener previous = (ViewPager.OnPageChangeListener) pager.getTag(R.id.bind_pager_listener);
+        if (previous != null){
+            pager.removeOnPageChangeListener(previous);
+        }
+        pager.setTag(R.id.bind_pager_listener, listener);
+        pager.addOnPageChangeListener(listener);
+    }
+
     @BindingAdapter({"bind:currentItem"})
     public static void bindCurrentItem(ViewPager pager, int position){
         if (position != -1){
-            pager.setCurrentItem(position);
+            if (pager.getCurrentItem() != position) {
+                pager.setCurrentItem(position);
+            }
         }
     }
 }

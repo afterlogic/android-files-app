@@ -43,6 +43,11 @@ public abstract class PresentationModule<View extends PresentationView> {
     }
 
     @Provides
+    protected View provideViewProxy(){
+        return mView.getViewProxy();
+    }
+
+    @Provides
     protected PresentationModule<View> provideSelf(){
         return this;
     }
