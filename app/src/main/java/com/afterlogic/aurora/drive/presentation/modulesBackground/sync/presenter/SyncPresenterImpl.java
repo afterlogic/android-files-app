@@ -43,7 +43,9 @@ public class SyncPresenterImpl extends BasePresenter<SyncView> implements SyncPr
                 .filter(check -> check.getSyncType() != SyncType.NO_NEED)
                 .flatMap(this::sync)
                 .map(this::mapProgressToPercent)
-                .filter(progress -> last.get() == null ||
+                .filter(progress ->
+                        progress.isDone() ||
+                        last.get() == null ||
                         last.get().getData() != progress.getData() ||
                         last.get().getProgress() != progress.getProgress()
                 )

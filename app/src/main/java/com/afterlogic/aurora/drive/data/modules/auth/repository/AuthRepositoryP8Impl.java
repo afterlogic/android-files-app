@@ -2,7 +2,7 @@ package com.afterlogic.aurora.drive.data.modules.auth.repository;
 
 import android.content.Context;
 
-import com.afterlogic.aurora.drive._unrefactored.model.ApiResponse;
+import com.afterlogic.aurora.drive.data.model.ApiResponse;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.session.SessionTrackUtil;
 import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;

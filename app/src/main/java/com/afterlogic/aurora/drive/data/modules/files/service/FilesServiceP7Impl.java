@@ -9,12 +9,12 @@ import com.afterlogic.aurora.drive.data.common.network.ExtRequestBody;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.common.network.p7.Api7;
 import com.afterlogic.aurora.drive.data.common.network.p7.AuthorizedServiceP7;
-import com.afterlogic.aurora.drive._unrefactored.model.AuroraFilesResponse;
+import com.afterlogic.aurora.drive.data.model.AuroraFilesResponse;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.FileInfo;
-import com.afterlogic.aurora.drive._unrefactored.model.project7.ApiResponseP7;
-import com.afterlogic.aurora.drive._unrefactored.model.project7.AuroraFileP7;
-import com.afterlogic.aurora.drive._unrefactored.model.project7.UploadResultP7;
+import com.afterlogic.aurora.drive.data.model.project7.ApiResponseP7;
+import com.afterlogic.aurora.drive.data.model.project7.AuroraFileP7;
+import com.afterlogic.aurora.drive.data.model.project7.UploadResultP7;
 import com.google.gson.Gson;
 
 import java.util.List;

@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.List;
 
 import io.reactivex.Completable;
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
@@ -37,7 +38,7 @@ public interface FilesRepository {
     Completable delete(AuroraFile files);
     Completable delete(List<AuroraFile> files);
 
-    Observable<Progressible<File>> download(AuroraFile file, File target);
+    Observable<Progressible<File>> downloadOrGetOffline(AuroraFile file, File target);
 
     Observable<Progressible<AuroraFile>> uploadFile(AuroraFile folder, Uri fileUri);
 
@@ -45,6 +46,7 @@ public interface FilesRepository {
 
     Completable setOffline(AuroraFile file, boolean offline);
 
+    Maybe<AuroraFile> getOfflineFile(String pathSpec);
     Single<List<AuroraFile>> getOfflineFiles();
 
     Single<Boolean> getOfflineStatus(AuroraFile file);

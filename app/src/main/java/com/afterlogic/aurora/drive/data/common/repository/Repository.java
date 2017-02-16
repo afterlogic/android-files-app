@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.data.common.repository;
 
-import com.afterlogic.aurora.drive._unrefactored.model.ApiResponse;
+import com.afterlogic.aurora.drive.data.model.ApiResponse;
 import com.afterlogic.aurora.drive.data.common.Observator;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
 import com.afterlogic.aurora.drive.data.common.mapper.Mapper;

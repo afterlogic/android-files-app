@@ -5,9 +5,9 @@ import android.support.annotation.NonNull;
 import android.util.Base64;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive._unrefactored.model.UploadResult;
-import com.afterlogic.aurora.drive._unrefactored.model.project8.ApiResponseP8;
-import com.afterlogic.aurora.drive._unrefactored.model.project8.AuroraFileP8;
+import com.afterlogic.aurora.drive.data.model.UploadResult;
+import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
+import com.afterlogic.aurora.drive.data.model.project8.AuroraFileP8;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.rx.SimpleObservableSource;
 import com.afterlogic.aurora.drive.core.common.util.FileUtil;

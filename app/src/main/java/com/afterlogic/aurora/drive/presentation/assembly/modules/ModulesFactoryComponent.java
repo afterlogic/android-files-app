@@ -1,6 +1,5 @@
 package com.afterlogic.aurora.drive.presentation.assembly.modules;
 
-import com.afterlogic.aurora.drive._unrefactored.data.common.ApiProvider;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.Injector;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationModulesStore;
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseActivity;
@@ -11,6 +10,7 @@ import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity
 import com.afterlogic.aurora.drive.presentation.modules.start.view.StartActivity;
 import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadActivity;
 import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadFilesFragment;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.view.FileObserverService;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.session.SessionChangedReceiver;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncService;
 
@@ -24,9 +24,6 @@ import dagger.Subcomponent;
  */
 @Subcomponent(modules = {ModulesFactoryModule.class})
 public interface ModulesFactoryComponent {
-
-    //TODO remove ApiProvider
-    void inject(ApiProvider apiProvider);
 
     void inject(SessionChangedReceiver sessionChangedReceiver);
 
@@ -46,4 +43,5 @@ public interface ModulesFactoryComponent {
     Injector<ChoiseFilesFragment> choiseFileList();
 
     Injector<SyncService> sync();
+    Injector<FileObserverService> fileObserver();
 }

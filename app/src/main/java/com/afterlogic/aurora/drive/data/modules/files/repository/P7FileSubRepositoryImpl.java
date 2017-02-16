@@ -3,10 +3,10 @@ package com.afterlogic.aurora.drive.data.modules.files.repository;
 import android.net.Uri;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive._unrefactored.model.UploadResult;
-import com.afterlogic.aurora.drive._unrefactored.model.project7.ApiResponseP7;
-import com.afterlogic.aurora.drive._unrefactored.model.project7.AuroraFileP7;
-import com.afterlogic.aurora.drive._unrefactored.model.project7.UploadResultP7;
+import com.afterlogic.aurora.drive.data.model.UploadResult;
+import com.afterlogic.aurora.drive.data.model.project7.ApiResponseP7;
+import com.afterlogic.aurora.drive.data.model.project7.AuroraFileP7;
+import com.afterlogic.aurora.drive.data.model.project7.UploadResultP7;
 import com.afterlogic.aurora.drive.core.common.rx.SimpleObservableSource;
 import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;

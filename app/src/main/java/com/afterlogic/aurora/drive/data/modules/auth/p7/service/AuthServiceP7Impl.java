@@ -6,7 +6,7 @@ import com.afterlogic.aurora.drive.data.common.network.p7.AuthorizedServiceP7;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.AuthToken;
 import com.afterlogic.aurora.drive.model.SystemAppData;
-import com.afterlogic.aurora.drive._unrefactored.model.project7.ApiResponseP7;
+import com.afterlogic.aurora.drive.data.model.project7.ApiResponseP7;
 
 import java.util.HashMap;
 

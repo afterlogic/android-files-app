@@ -2,8 +2,8 @@ package com.afterlogic.aurora.drive.data.modules.files.mapper.p7.uploadResult.fa
 
 import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
 import com.afterlogic.aurora.drive.data.modules.files.mapper.p7.uploadResult.concrete.UploadResultP7toBlMapper;
-import com.afterlogic.aurora.drive._unrefactored.model.UploadResult;
-import com.afterlogic.aurora.drive._unrefactored.model.project7.UploadResultP7;
+import com.afterlogic.aurora.drive.data.model.UploadResult;
+import com.afterlogic.aurora.drive.data.model.project7.UploadResultP7;
 
 import javax.inject.Inject;
 

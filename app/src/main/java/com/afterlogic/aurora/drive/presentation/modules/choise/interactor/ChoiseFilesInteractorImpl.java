@@ -37,7 +37,7 @@ public class ChoiseFilesInteractorImpl extends BaseFilesListInteractor implement
 
     @Override
     public Observable<Progressible<File>> download(AuroraFile file) {
-        return mFilesRepository.download(file, FileUtil.getFile(mCacheDir, file))
+        return mFilesRepository.downloadOrGetOffline(file, FileUtil.getFile(mCacheDir, file))
                 .compose(this::composeDefault);
     }
 }

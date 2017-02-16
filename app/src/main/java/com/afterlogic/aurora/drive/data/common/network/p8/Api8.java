@@ -1,9 +1,9 @@
 package com.afterlogic.aurora.drive.data.common.network.p8;
 
 import com.afterlogic.aurora.drive.model.AuthToken;
-import com.afterlogic.aurora.drive._unrefactored.model.project8.ApiResponseP8;
-import com.afterlogic.aurora.drive._unrefactored.model.project8.FilesResponseP8;
-import com.afterlogic.aurora.drive._unrefactored.model.project8.UploadResultP8;
+import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
+import com.afterlogic.aurora.drive.data.model.project8.FilesResponseP8;
+import com.afterlogic.aurora.drive.data.model.project8.UploadResultP8;
 
 import java.util.List;
 import java.util.Map;

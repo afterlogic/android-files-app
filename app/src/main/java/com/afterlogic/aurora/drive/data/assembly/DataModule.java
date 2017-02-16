@@ -5,7 +5,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
 
-import com.afterlogic.aurora.drive._unrefactored.core.util.AccountUtil;
+import com.afterlogic.aurora.drive.core.common.util.AccountUtil;
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.DataScope;
 import com.afterlogic.aurora.drive.core.consts.Const;
 import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;

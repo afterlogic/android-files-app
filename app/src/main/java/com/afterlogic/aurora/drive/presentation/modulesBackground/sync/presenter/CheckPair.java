@@ -9,7 +9,6 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
  * mail: sunnyday.development@gmail.com
  */
 
-@SuppressWarnings("WeakerAccess")
 class CheckPair {
 
     private final AuroraFile mLocal;

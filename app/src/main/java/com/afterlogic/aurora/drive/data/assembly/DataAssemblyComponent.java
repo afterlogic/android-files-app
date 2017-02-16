@@ -1,6 +1,5 @@
 package com.afterlogic.aurora.drive.data.assembly;
 
-import com.afterlogic.aurora.drive._unrefactored.data.common.ApiProvider;
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.DataScope;
 import com.afterlogic.aurora.drive.data.common.db.DataBaseModule;
 import com.afterlogic.aurora.drive.data.common.db.DataBaseProvider;
@@ -23,9 +22,6 @@ import dagger.Subcomponent;
 })
 public interface DataAssemblyComponent {
     PresentationAssemblyComponent plus(PresentationAssemblyModule module);
-
-    //TODO remove ApiProvider
-    void inject(ApiProvider apiProvider);
 
     AppPrefs prefs();
     DataBaseProvider dataBase();

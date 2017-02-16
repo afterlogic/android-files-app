@@ -2,7 +2,7 @@ package com.afterlogic.aurora.drive.data.modules.files.repository;
 
 import android.net.Uri;
 
-import com.afterlogic.aurora.drive._unrefactored.model.UploadResult;
+import com.afterlogic.aurora.drive.data.model.UploadResult;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileInfo;
 import com.afterlogic.aurora.drive.model.Progressible;

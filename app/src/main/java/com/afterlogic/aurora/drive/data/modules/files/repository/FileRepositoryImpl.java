@@ -36,6 +36,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.reactivex.Completable;
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
@@ -53,6 +54,7 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
 
     private final File mCacheDir;
     private final File mOfflineDir;
+    private final File mDownloadsDir;
 
     private final Mapper<AuroraFile, OfflineFileInfoEntity> mOfflineToBlMapper;
 
@@ -64,6 +66,7 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
                        FilesLocalService localService,
                        @Named(FilesDataModule.CACHE_DIR) File cacheDir,
                        @Named(FilesDataModule.OFFLINE_DIR) File offlineDir,
+                       @Named(FilesDataModule.DOWNLOADS_DIR) File downloadsDir,
                        FilesMapperFactory mapperFactory) {
         super(cache, FILES, authRepository);
         mAppContext = appContext;
@@ -71,6 +74,7 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
         mLocalService = localService;
         mCacheDir = cacheDir;
         mOfflineDir = offlineDir;
+        mDownloadsDir = downloadsDir;
 
         BiMapper<AuroraFile, OfflineFileInfoEntity, File> offlineToBl = mapperFactory.offlineToBl();
         mOfflineToBlMapper = offlineFileInfo -> offlineToBl.map(offlineFileInfo, mOfflineDir);
@@ -139,19 +143,55 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
     }
 
     @Override
-    public final Observable<Progressible<File>> download(AuroraFile file, File target) {
+    public final Observable<Progressible<File>> downloadOrGetOffline(AuroraFile file, File target) {
         return mFileSubRepo.checkFile(file)
+                .onErrorResumeNext(error -> getOfflineFile(file.getPathSpec())
+                        .flatMap(offlineFile -> offlineFile.getLastModified() != -1 ? Maybe.just(offlineFile) : Maybe.empty())
+                        .switchIfEmpty(Maybe.error(error))
+                        .toSingle()
+                )
                 .flatMapObservable(checked -> {
-                    File localActual = getOfflineOrCached(file);
-                    if (localActual != null){
-                        if (target.equals(localActual)){
-                            return Observable.just(new Progressible<>(target, 0, 0, file.getName(), true));
+                    boolean isOffline = !mLocalService.get(file.getPathSpec()).isEmpty().blockingGet();
+                    boolean toDownloads = target.getPath().startsWith(mDownloadsDir.getPath());
+
+                    if (isOffline){
+                        File offlineFile = new File(mOfflineDir, checked.getPathSpec());
+                        if (offlineFile.exists() && offlineFile.lastModified() >= checked.getLastModified()){
+                            return Observable.just(new Progressible<>(offlineFile, 0, 0, checked.getName(), true));
                         } else {
-                            return copyFile(file.getName(), localActual, target);
+                            Observable<Progressible<File>> download = downloadFile(checked, target)
+                                    .map(progress -> {
+                                        if (toDownloads && progress.getProgress() > 0) {
+                                            progress.setProgress((long) (progress.getProgress() * 0.9f));
+                                        }
+                                        return progress;
+                                    });
+                            Observable<Progressible<File>> copyFile = copyFile(checked.getName(), offlineFile, target)
+                                    .map(progress -> {
+                                        if (toDownloads && progress.getProgress() > 0){
+                                            progress.setProgress((long) (progress.getMax() * 0.9f + progress.getProgress() * 0.1f));
+                                        }
+                                        return progress;
+                                    });
+                            return Observable.concat(
+                                    download,
+                                    toDownloads ? copyFile : Observable.empty()
+                            );
                         }
+
                     } else {
-                        return downloadFile(file, target);
+                        File localActual = new File(mCacheDir, checked.getPathSpec());
+                        if (localActual.exists() && localActual.lastModified() == checked.getLastModified()){
+                            if (toDownloads){
+                                return copyFile(checked.getName(), localActual, target);
+                            } else {
+                                return Observable.just(new Progressible<>(localActual, 0, 0, checked.getName(), true));
+                            }
+                        } else {
+                            return downloadFile(checked, target);
+                        }
                     }
+
                 });
     }
 
@@ -212,7 +252,13 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
         return Completable.defer(() -> {
             String pathSpec = file.getType() + file.getFullPath();
             if (offline){
-                return mLocalService.addOffline(new OfflineFileInfoEntity(pathSpec, OfflineType.OFFLINE.toString(), -1));
+                return mLocalService.addOffline(new OfflineFileInfoEntity(pathSpec, OfflineType.OFFLINE.toString(), -1))
+                        .doOnComplete(() -> {
+                            File cached = new File(mCacheDir, file.getPathSpec());
+                            if (cached.exists() && !cached.delete()){
+                                MyLog.majorException(new IOException("Can't delete file."));
+                            }
+                        });
             } else {
                 return mLocalService.removeOffline(pathSpec)
                         .doOnComplete(() -> {
@@ -223,6 +269,12 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
                         });
             }
         });
+    }
+
+    @Override
+    public Maybe<AuroraFile> getOfflineFile(String pathSpec) {
+        return mLocalService.get(pathSpec)
+                .map(mOfflineToBlMapper::map);
     }
 
     @Override
@@ -292,14 +344,5 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
                 Observable.just(new Progressible<>(null, 0, 0, file.getName(), false)),
                 request
         );
-    }
-
-    private File getOfflineOrCached(AuroraFile file){
-        return Stream.of(mOfflineDir, mCacheDir)
-                .map(dir -> FileUtil.getFile(dir, file))
-                .filter(File::exists)
-                .filter(local -> local.lastModified() == file.getLastModified())
-                .findFirst()
-                .orElse(null);
     }
 }

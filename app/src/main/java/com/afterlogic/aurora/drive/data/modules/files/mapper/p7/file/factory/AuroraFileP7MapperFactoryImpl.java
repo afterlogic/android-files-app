@@ -4,7 +4,7 @@ import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
 import com.afterlogic.aurora.drive.data.modules.files.mapper.p7.file.concrete.AuroraFileP7BlToNetMapper;
 import com.afterlogic.aurora.drive.data.modules.files.mapper.p7.file.concrete.AuroraFileP7NetToBlMapper;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive._unrefactored.model.project7.AuroraFileP7;
+import com.afterlogic.aurora.drive.data.model.project7.AuroraFileP7;
 
 import javax.inject.Inject;
 

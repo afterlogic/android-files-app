@@ -2,7 +2,7 @@ package com.afterlogic.aurora.drive.data.modules.files.mapper.p7.file.concrete;
 
 import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive._unrefactored.model.project7.AuroraFileP7;
+import com.afterlogic.aurora.drive.data.model.project7.AuroraFileP7;
 
 /**
  * Created by sashka on 10.11.16.<p/>

@@ -18,6 +18,8 @@ import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadFi
 import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadInjector;
 import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadActivity;
 import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadFilesFragment;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.assembly.FileObserverInjector;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.view.FileObserverService;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.assembly.SyncInjector;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncService;
 
@@ -91,6 +93,11 @@ public class ModulesFactoryModule {
 
     @Provides
     Injector<SyncService> sync(SyncInjector injector){
+        return injector;
+    }
+
+    @Provides
+    Injector<FileObserverService> fileObserver(FileObserverInjector injector){
         return injector;
     }
 }

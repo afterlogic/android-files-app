@@ -1,9 +1,9 @@
 package com.afterlogic.aurora.drive.data.modules.files.service;
 
-import com.afterlogic.aurora.drive._unrefactored.model.AuroraFilesResponse;
-import com.afterlogic.aurora.drive._unrefactored.model.project7.ApiResponseP7;
-import com.afterlogic.aurora.drive._unrefactored.model.project7.AuroraFileP7;
-import com.afterlogic.aurora.drive._unrefactored.model.project7.UploadResultP7;
+import com.afterlogic.aurora.drive.data.model.AuroraFilesResponse;
+import com.afterlogic.aurora.drive.data.model.project7.ApiResponseP7;
+import com.afterlogic.aurora.drive.data.model.project7.AuroraFileP7;
+import com.afterlogic.aurora.drive.data.model.project7.UploadResultP7;
 import com.afterlogic.aurora.drive.core.common.interfaces.ProgressListener;
 import com.afterlogic.aurora.drive.model.FileInfo;
 

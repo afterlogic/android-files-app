@@ -1,8 +1,8 @@
 package com.afterlogic.aurora.drive.data.modules.files.service;
 
-import com.afterlogic.aurora.drive._unrefactored.model.project8.ApiResponseP8;
-import com.afterlogic.aurora.drive._unrefactored.model.project8.FilesResponseP8;
-import com.afterlogic.aurora.drive._unrefactored.model.project8.UploadResultP8;
+import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
+import com.afterlogic.aurora.drive.data.model.project8.FilesResponseP8;
+import com.afterlogic.aurora.drive.data.model.project8.UploadResultP8;
 import com.afterlogic.aurora.drive.core.common.interfaces.ProgressListener;
 import com.afterlogic.aurora.drive.model.DeleteFileInfo;
 import com.afterlogic.aurora.drive.model.FileInfo;

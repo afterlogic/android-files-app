@@ -1,12 +1,12 @@
 package com.afterlogic.aurora.drive.data.common.network.p8;
 
 import com.afterlogic.aurora.drive.BuildConfig;
+import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.data.common.annotations.P8;
 import com.afterlogic.aurora.drive.data.common.network.DynamicDomainProvider;
 import com.afterlogic.aurora.drive.data.common.network.DynamicEndPointInterceptor;
-import com.afterlogic.aurora.drive._unrefactored.model.project8.ApiResponseP8;
-import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.data.common.network.p8.converter.ApiResponseConverter8;
+import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -35,10 +35,6 @@ public class P8NetworkDataModule {
                 DynamicEndPointInterceptor.DYNAMIC_BASE_URL,
                 domainProvider
         ));
-
-        //Upload files interceptor
-        UploadInterceptor uploadInterceptor = new UploadInterceptor();
-        clientBuilder.addInterceptor(uploadInterceptor);
 
         //Add logging for debug
         if (BuildConfig.DEBUG) {

@@ -69,7 +69,7 @@ public class SyncInteractorImpl extends BaseInteractor implements SyncInteractor
     public Observable<Progressible<AuroraFile>> download(AuroraFile file) {
         return Observable.defer(() -> {
             File realFile = FileUtil.getFile(mOfflineFolder, file);
-            return mFilesRepository.download(file, realFile)
+            return mFilesRepository.downloadOrGetOffline(file, realFile)
                     .map(progress -> progress.map(file));
         });
     }

@@ -20,7 +20,7 @@ public class Progressible<T> {
     public Progressible(T data, long max, long progress, @Nullable String name, boolean done) {
         mData = data;
         mMax = max;
-        mProgress = progress;
+        mProgress = Math.min(progress, max);
         mDone = done;
         mName = name;
     }

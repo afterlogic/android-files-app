@@ -4,7 +4,7 @@ import com.afterlogic.aurora.drive.BuildConfig;
 import com.afterlogic.aurora.drive.data.common.annotations.P7;
 import com.afterlogic.aurora.drive.data.common.network.DynamicDomainProvider;
 import com.afterlogic.aurora.drive.data.common.network.DynamicEndPointInterceptor;
-import com.afterlogic.aurora.drive._unrefactored.model.project7.ApiResponseP7;
+import com.afterlogic.aurora.drive.data.model.project7.ApiResponseP7;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;

@@ -140,7 +140,7 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
                 FILES_STORAGE_ACCESS,
                 new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}
         ))//----|
-                //TODO load progress title (download/upload)
+                //TODO load progress title (downloadOrGetOffline/upload)
                 .doOnNext(progress -> {
                     float value = progress.getMax() > 0 ?
                             (float) progress.getProgress() / progress.getMax() : -1;

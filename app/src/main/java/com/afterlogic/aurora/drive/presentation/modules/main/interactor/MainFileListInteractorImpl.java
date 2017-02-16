@@ -70,14 +70,14 @@ public class MainFileListInteractorImpl extends BaseFilesListInteractor implemen
     @Override
     public Observable<Progressible<File>> downloadForOpen(AuroraFile file) {
         File target = FileUtil.getFile(mCacheDir, file);
-        return mFilesRepository.download(file, target)
+        return mFilesRepository.downloadOrGetOffline(file, target)
                 .compose(this::composeDefault);
     }
 
     @Override
     public Observable<Progressible<File>> downloadToDownloads(AuroraFile file) {
         File target = FileUtil.getFile(mDownloadsDir, file);
-        return mFilesRepository.download(file, target)
+        return mFilesRepository.downloadOrGetOffline(file, target)
                 .doOnNext(progress -> {
                     if (progress.isDone()){
                         DownloadManager dm = (DownloadManager) mAppContext.getSystemService(DOWNLOAD_SERVICE);
