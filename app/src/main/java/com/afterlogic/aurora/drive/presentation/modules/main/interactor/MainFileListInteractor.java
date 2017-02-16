@@ -5,6 +5,7 @@ import android.net.Uri;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.interactor.FilesListInteractor;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
 
 import java.io.File;
 
@@ -30,4 +31,10 @@ public interface MainFileListInteractor extends FilesListInteractor {
     Single<AuroraFile> createFolder(AuroraFile parentFolder, String name);
 
     Observable<Progressible<AuroraFile>> uploadFile(AuroraFile folder, Uri file);
+
+    Completable setOffline(AuroraFile file, boolean offline);
+
+    Observable<SyncProgress> getSyncProgress();
+
+    Single<Boolean> getOfflineStatus(AuroraFile file);
 }

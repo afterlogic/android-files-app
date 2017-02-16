@@ -5,7 +5,7 @@ import android.databinding.ObservableField;
 import android.text.TextUtils;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiUtil;
+import com.afterlogic.aurora.drive.core.common.util.HttpUrlUtil;
 import com.afterlogic.aurora.drive.core.common.util.Holder;
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.core.consts.Const;
@@ -155,7 +155,7 @@ public class LoginViewModel{
                 }
 
                 return new AuroraSession(
-                        ApiUtil.parseCompleted(mHost.get(), "https"),
+                        HttpUrlUtil.parseCompleted(mHost.get(), "https"),
                         mLogin.get(),
                         mPassword.get(),
                         Const.ApiVersion.API_NONE
@@ -196,7 +196,7 @@ public class LoginViewModel{
         }
 
         private boolean isDomainValid(String domain){
-            return ApiUtil.parseCompleted(domain, "https") != null;
+            return HttpUrlUtil.parseCompleted(domain, "https") != null;
         }
     }
 }

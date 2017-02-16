@@ -11,23 +11,46 @@ import org.greenrobot.greendao.annotation.Generated;
 @Entity
 public class OfflineFileInfoEntity {
 
-    @Id(autoincrement = true)
-    private Long mId;
+    @Id
+    private String pathSpec;
 
-    @Generated(hash = 1723627213)
-    public OfflineFileInfoEntity(Long mId) {
-        this.mId = mId;
+    private String offlineType;
+
+    private long lastUse;
+
+    @Generated(hash = 1610096244)
+    public OfflineFileInfoEntity(String pathSpec, String offlineType,
+            long lastUse) {
+        this.pathSpec = pathSpec;
+        this.offlineType = offlineType;
+        this.lastUse = lastUse;
     }
 
     @Generated(hash = 1353197095)
     public OfflineFileInfoEntity() {
     }
 
-    public Long getMId() {
-        return this.mId;
+    public String getPathSpec() {
+        return this.pathSpec;
     }
 
-    public void setMId(Long mId) {
-        this.mId = mId;
+    public void setPathSpec(String pathSpec) {
+        this.pathSpec = pathSpec;
+    }
+
+    public String getOfflineType() {
+        return this.offlineType;
+    }
+
+    public void setOfflineType(String offlineType) {
+        this.offlineType = offlineType;
+    }
+
+    public long getLastUse() {
+        return this.lastUse;
+    }
+
+    public void setLastUse(long lastUse) {
+        this.lastUse = lastUse;
     }
 }

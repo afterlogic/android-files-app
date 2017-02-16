@@ -2,7 +2,6 @@ package com.afterlogic.aurora.drive.presentation.modules.main.presenter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.Nullable;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
@@ -55,6 +54,36 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
     }
 
     @Override
+    protected void onPresenterStart() {
+        super.onPresenterStart();
+        mInteractor.getSyncProgress()
+                .subscribe(
+                        mModel::setSyncProgress,
+                        this::onErrorObtained
+                );
+    }
+
+    @Override
+    protected void onViewStop() {
+        super.onViewStop();
+        mModel.clearSyncProgress();
+    }
+
+    @Override
+    protected void handleFilesResult(List<AuroraFile> files) {
+        super.handleFilesResult(files);
+        Stream.of(files)
+                .map(file -> mInteractor.getOfflineStatus(file)
+                        .doOnSuccess(offline -> mModel.setOffline(file, offline))
+                        .toCompletable()
+                        .onErrorComplete()
+                )
+                .collect(Observables.Collectors.concatCompletable())
+                .subscribe(() -> {}, this::onErrorObtained);
+
+    }
+
+    @Override
     public void onFileClick(AuroraFile file) {
         if (mModel.isMultiChoise()){
             mModel.toggleSelected(file);
@@ -79,25 +108,12 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setType(file.getContentType());
 
-                    if (!file.isOfflineMode()) {
-                        mInteractor.downloadForOpen(file)
-                                .compose(this::progressibleLoadTask)
-                                .subscribe(
-                                        localFile -> mRouter.openFile(file, localFile),
-                                        this::onErrorObtained
-                                );
-                    } else {
-                        //TODO open offline
-                        //File localFile = FileUtil.getOfflineFile(file, getApplicationContext());
-                        //if (localFile.exists()){
-                        //    onFileDownloaded(file, localFile, DownloadType.DOWNLOAD_OPEN);
-                        //} else {
-                        //    getView().showMessage(
-                        //            R.string.prompt_offline_file_not_exist,
-                        //            PresentationView.TYPE_MESSAGE_MAJOR
-                        //    );
-                        //}
-                    }
+                    mInteractor.downloadForOpen(file)
+                            .compose(this::progressibleLoadTask)
+                            .subscribe(
+                                    localFile -> mRouter.openFile(file, localFile),
+                                    this::onErrorObtained
+                            );
                 }
             }
         }
@@ -110,11 +126,13 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
             return;
         }
 
-        getView().showFileActions(file);
+        mModel.setFileForActions(file);
     }
 
     @Override
-    public void onDownload(@Nullable AuroraFile file) {
+    public void onDownload() {
+        AuroraFile file = onFileAction();
+
         if (file == null && !mModel.isMultiChoise()) {
             MyLog.majorException("Download file with null.");
             return;
@@ -147,7 +165,9 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
     }
 
     @Override
-    public void onSendTo(@Nullable AuroraFile file) {
+    public void onSendTo() {
+        AuroraFile file = onFileAction();
+
         if (file == null && !mModel.isMultiChoise()) {
             MyLog.majorException("SendTo file with null.");
             return;
@@ -177,7 +197,9 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
     }
 
     @Override
-    public void onRename(AuroraFile file) {
+    public void onRename() {
+        AuroraFile file = onFileAction();
+
         getView().showRenameDialog(file, name -> mInteractor.rename(file, name)
                 .doOnSubscribe(disposable -> getView().showProgress("Renaming:", file.getName()))
                 .doFinally(() -> getView().hideProgress())
@@ -189,13 +211,46 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
     }
 
     @Override
-    public void onToggleOffline(@Nullable AuroraFile file) {
+    public void onToggleOffline() {
+        AuroraFile file = onFileAction();
 
+        if (file == null && !mModel.isMultiChoise()) {
+            MyLog.majorException("onToggleOffline file with null.");
+            return;
+        }
+
+        if (file == null){
+            List<AuroraFile> items = mModel.getMultiChoise();
+            //At first get avarage offline status (if any not offline set all to offline)
+            Stream.of(items)
+                    .map(fileItem -> mInteractor.getOfflineStatus(fileItem).toObservable())
+                    .collect(Observables.Collectors.concatObservables())
+                    .any(offline -> !offline)
+                    .flatMapCompletable(multiOffline ->
+                            Stream.of(items)
+                            .map(multiFile -> mInteractor.getOfflineStatus(multiFile)
+                                    .filter(itemOffline -> itemOffline != multiOffline)
+                                    .flatMapCompletable(itemOffline -> mInteractor.setOffline(multiFile, multiOffline))
+                                    .doOnComplete(() -> mModel.setOffline(multiFile, multiOffline))
+                            )
+                            .collect(Observables.Collectors.concatCompletable())
+                    )
+                    .subscribe(() -> {}, this::onErrorObtained);
+        } else {
+            mInteractor.getOfflineStatus(file)
+                    .map(offline -> !offline)
+                    .flatMapCompletable(offline -> mInteractor.setOffline(file, offline)
+                            .doOnComplete(() -> mModel.setOffline(file, offline))
+                    )
+                    .subscribe(() -> {}, this::onErrorObtained);
+        }
     }
 
     //TODO text to resources
     @Override
-    public void onDelete(@Nullable AuroraFile file) {
+    public void onDelete() {
+        AuroraFile file = onFileAction();
+
         if (file == null && !mModel.isMultiChoise()) {
             MyLog.majorException("Delete file with null.");
             return;
@@ -313,4 +368,9 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
         );
     }
 
+    private AuroraFile onFileAction(){
+        AuroraFile file = mModel.getFileForActions();
+        mModel.setFileForActions(null);
+        return file;
+    }
 }

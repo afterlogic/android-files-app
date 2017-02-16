@@ -12,4 +12,5 @@ public interface FilesPresenter extends Presenter{
 
     void onCurrentFolderChanged(AuroraFile folder);
 
+    void refresh();
 }

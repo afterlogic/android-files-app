@@ -9,7 +9,7 @@ import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
+import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.presenter.FilesListPresenter;
 
 /**
@@ -25,7 +25,6 @@ public class BaseFileItemBiModel implements BaseFileItemViewModel, BaseFileItemM
     private final ObservableField<String> mFileName = new ObservableField<>();
     private final ObservableField<Uri> mFileIcon = new ObservableField<>();
     private final ObservableField<Uri> mStatusIcon = new ObservableField<>();
-    private final ObservableInt mProgress = new ObservableInt(-1);
 
     private AuroraFile mAuroraFile;
 
@@ -90,11 +89,6 @@ public class BaseFileItemBiModel implements BaseFileItemViewModel, BaseFileItemM
     @Override
     public BaseFileItemModel getModel() {
         return this;
-    }
-
-    @Override
-    public ObservableInt getProgress() {
-        return mProgress;
     }
 
     @Override

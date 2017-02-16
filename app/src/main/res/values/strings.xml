@@ -97,6 +97,7 @@
     <string name="prompt_online_mode">Online mode</string>
     <string name="prompt_offline_file_not_exist">Offline file not exists. Maybe it not synced yet.</string>
     <string name="content_descroption_file_icon">File icon</string>
+    <string name="prompt_syncing">Синхронизация</string>
 
     <plurals name="prompt_upload_files_count">
         <item quantity="one">%d file</item>

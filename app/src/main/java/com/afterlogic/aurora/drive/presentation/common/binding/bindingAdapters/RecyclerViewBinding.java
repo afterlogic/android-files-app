@@ -5,7 +5,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.RecyclerViewModelAdapter;
+import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ItemsAdapter;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import java.util.List;
 public class RecyclerViewBinding {
 
     @BindingAdapter({"bind:adapter"})
-    public static <T extends RecyclerView.Adapter> void setRecyclerViewAdapter(RecyclerView list, ViewProvider<T, RecyclerView> adapter){
+    public static void setRecyclerViewAdapter(RecyclerView list, ViewProvider<? extends RecyclerView.Adapter, RecyclerView> adapter){
         setRecyclerViewAdapter(list, adapter.provide(list));
     }
 
@@ -29,16 +29,16 @@ public class RecyclerViewBinding {
     }
 
     @BindingAdapter({"bind:adapter", "bind:items"})
-    public static <VM> void setRecyclerAdapterWithItems(RecyclerView list, ViewProvider<RecyclerViewModelAdapter<VM>, RecyclerView> adapter, List<VM> items){
+    public static <VM> void setRecyclerAdapterWithItems(RecyclerView list, ViewProvider<? extends ItemsAdapter<VM>, RecyclerView> adapter, List<VM> items){
         setRecyclerAdapterWithItems(list, adapter.provide(list), items);
     }
 
     @BindingAdapter({"bind:adapter", "bind:items"})
-    public static <VM> void setRecyclerAdapterWithItems(RecyclerView list, RecyclerViewModelAdapter<VM> adapter, List<VM> items){
+    public static <VM, A extends ItemsAdapter<VM>> void setRecyclerAdapterWithItems(RecyclerView list, A adapter, List<VM> items){
         if (adapter != null) {
             adapter.setItems(items);
         }
-        setRecyclerViewAdapter(list, adapter);
+        setRecyclerViewAdapter(list, (RecyclerView.Adapter)adapter);
     }
 
     @BindingAdapter("bind:decoration")

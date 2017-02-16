@@ -3,7 +3,7 @@ package com.afterlogic.aurora.drive.presentation.modules.upload.interactor;
 import android.net.Uri;
 
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
-import com.afterlogic.aurora.drive.data.modules.files.FilesRepository;
+import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.interactor.BaseFilesListInteractor;

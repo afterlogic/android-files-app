@@ -30,7 +30,7 @@ public abstract class BaseService extends Service implements PresentationView {
 
     private boolean mIsActive;
 
-    protected abstract void assembly(ModulesFactoryComponent wireframeFactory);
+    protected abstract void assembly(ModulesFactoryComponent modulesFactory);
 
     private UUID mUUID;
 

@@ -56,30 +56,6 @@
         </activity>
 
         <activity
-            android:name="._unrefactored.presentation.ui.FilesListActivity"
-            android:label="@string/app_name" >
-        </activity>
-
-        <activity
-            android:name="._unrefactored.presentation.ui.FileViewActivity"
-            android:label="@string/app_name" >
-        </activity>
-
-        <activity
-            android:name="._unrefactored.presentation.ui.ChooseFileActivity"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.GET_CONTENT"/>
-                <category android:name="android.intent.category.OPENABLE"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:mimeType="*/*"/>
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name="._unrefactored.presentation.ui.AccountInfoPreferenceActivity"/>
-
-        <activity
             android:name=".presentation.modules.main.view.MainFilesActivity"
             android:label="@string/app_name"/>
 
@@ -105,7 +81,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name="._unrefactored.presentation.services.AuthenticatorService">
+        <service android:name=".presentation.modulesBackground.authenticator.AuthenticatorService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
@@ -113,46 +89,18 @@
                        android:resource="@xml/authentificator" />
         </service>
 
-        <service android:name="._unrefactored.presentation.services.FileObserverService"
+        <service android:name=".presentation.modulesBackground.fileListener.view.FileObserverService"
                  android:exported="false"/>
 
-        <service android:name="._unrefactored.presentation.services.ClearCacheService"
-                 android:exported="false"/>
-
-        <receiver android:name="._unrefactored.presentation.receivers.BootReceiver">
+        <receiver android:name=".presentation.modulesBackground.receivers.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
 
-        <receiver android:name="._unrefactored.presentation.receivers.AccountLoginStateReceiver"
-                  android:exported="false"
-                  android:permission="com.afterlogic.aurora.CATCH_LOGIN">
-            <intent-filter>
-                <action android:name="com.afterlogic.aurora.aurorapi.ACTION_AURORA_LOG_IN"/>
-                <action android:name="com.afterlogic.aurora.aurorapi.ACTION_AURORA_LOG_OUT"/>
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name="._unrefactored.presentation.receivers.SyncResolveReceiver"
-                  android:exported="false">
-            <intent-filter>
-                <action android:name="com.afterlogic.aurora.drive.ACTION_RESOLVE_SYNC_CONFLICT"/>
-                <action android:name="com.afterlogic.aurora.drive.ACTION_RESOLVE_REMOTE_NOT_EXIST"/>
-            </intent-filter>
-        </receiver>
         <!--[END Main process]-->
 
         <!--[START File load process]-->
-        <service
-            android:name="._unrefactored.presentation.services.FileLoadService"
-            android:process=":load"
-            android:exported="false"/>
-
-        <service
-            android:name=".presentation.modulesBackground.fileLoad.view.FileLoadService"
-            android:process=":load"
-            android:exported="false"/>
 
         <receiver android:name=".presentation.modulesBackground.session.SessionChangedReceiver_LoadProcess"
                   android:process=":load"
@@ -162,7 +110,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="._unrefactored.presentation.receivers.AccountActionReceiver">
+        <receiver android:name=".presentation.modulesBackground.receivers.AccountActionReceiver">
             <intent-filter>
                 <action android:name="android.accounts.LOGIN_ACCOUNTS_CHANGED"/>
             </intent-filter>
@@ -171,7 +119,7 @@
 
         <!--[START Sync process]-->
         <service
-            android:name="._unrefactored.presentation.services.SyncService"
+            android:name=".presentation.modulesBackground.sync.view.SyncService"
             android:exported="true"
             android:process=":sync">
             <intent-filter>

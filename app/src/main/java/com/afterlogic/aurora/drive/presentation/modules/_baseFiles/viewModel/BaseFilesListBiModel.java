@@ -5,10 +5,12 @@ import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableList;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 
+import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
+import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.presenter.FilesListPresenter;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
@@ -128,4 +130,18 @@ public abstract class BaseFilesListBiModel<T extends BaseFileItemViewModel> impl
     }
 
     protected abstract T viewModel(AuroraFile file);
+
+    @Nullable
+    protected T getModel(AuroraFile file){
+        if (file == null) return null;
+
+        return mFilesMap.get(file);
+    }
+
+    protected void ifModel(AuroraFile file, Consumer<T> consumer){
+        T model = getModel(file);
+        if (model != null){
+            consumer.consume(model);
+        }
+    }
 }

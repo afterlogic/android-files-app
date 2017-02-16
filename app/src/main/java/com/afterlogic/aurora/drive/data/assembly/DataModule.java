@@ -5,7 +5,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
 
-import com.afterlogic.aurora.drive._unrefactored.core.util.AccountUtil;
+import com.afterlogic.aurora.drive.core.common.util.AccountUtil;
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.DataScope;
 import com.afterlogic.aurora.drive.core.consts.Const;
 import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
@@ -45,7 +45,6 @@ public class DataModule {
     private ApiConfigurator mApiConfigurator = new ApiConfigurator();
     private SessionManager mSessionManager = new SessionManager(mApiConfigurator);
 
-
     @Provides @DataScope
     SessionManager sessionManager(Context context){
         if (mSessionManager.getSession() == null) {
@@ -61,8 +60,8 @@ public class DataModule {
     }
 
     @Provides @DataScope
-    ApiConfigurator apiConfigurator(){
-        AuroraSession session = mSessionManager.getSession();
+    ApiConfigurator apiConfigurator(SessionManager sessionManager){
+        AuroraSession session = sessionManager.getSession();
         if (session != null && session.getApiVersion() != Const.ApiVersion.API_NONE && mApiConfigurator.getCurrentApiVersion() == Const.ApiVersion.API_NONE){
             mApiConfigurator.setDomain(session.getDomain(), session.getApiVersion());
         }

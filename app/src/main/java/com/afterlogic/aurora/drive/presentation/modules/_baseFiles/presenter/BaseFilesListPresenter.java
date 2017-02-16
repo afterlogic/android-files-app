@@ -8,7 +8,7 @@ import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.model.error.PermissionDeniedError;
 import com.afterlogic.aurora.drive.presentation.common.modules.presenter.BasePresenter;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
-import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
+import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.presentation.common.util.PermissionUtil;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.interactor.FilesListInteractor;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.FilesListView;
@@ -64,6 +64,18 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
 
         mPath.add(AuroraFile.parse("", mType, true));
         onRefresh();
+    }
+
+    @Override
+    protected void onViewStart() {
+        super.onViewStart();
+        mInteractor.onStart();
+    }
+
+    @Override
+    protected void onViewStop() {
+        super.onViewStop();
+        mInteractor.onStop();
     }
 
     @Override
@@ -128,7 +140,7 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
                 FILES_STORAGE_ACCESS,
                 new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}
         ))//----|
-                //TODO load progress title (download/upload)
+                //TODO load progress title (downloadOrGetOffline/upload)
                 .doOnNext(progress -> {
                     float value = progress.getMax() > 0 ?
                             (float) progress.getProgress() / progress.getMax() : -1;
@@ -172,7 +184,7 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
         return true;
     }
 
-    private void handleFilesResult(List<AuroraFile> files){
+    protected void handleFilesResult(List<AuroraFile> files){
         Collections.sort(files, FileUtil.AURORA_FILE_COMPARATOR);
 
         mModel.setFileList(files);
@@ -182,6 +194,5 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
                 .collect(Observables.Collectors.concatCompletable())
                 .doFinally(() -> mThumbnailRequest = null)
                 .subscribe();
-
     }
 }

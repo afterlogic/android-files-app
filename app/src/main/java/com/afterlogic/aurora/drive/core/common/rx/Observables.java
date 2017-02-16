@@ -1,6 +1,7 @@
 package com.afterlogic.aurora.drive.core.common.rx;
 
 import com.annimon.stream.Collector;
+import com.annimon.stream.Stream;
 import com.annimon.stream.function.BiConsumer;
 import com.annimon.stream.function.Supplier;
 
@@ -25,6 +26,13 @@ public class Observables {
                 return Completable.error(error);
             }
         });
+    }
+
+    public static  <T> Observable<T> forEach(Observable<List<T>> observable){
+        return observable.flatMap(items -> Stream.of(items)
+                .map(Observable::just)
+                .collect(Collectors.concatObservables())
+        );
     }
 
     public static class Collectors {

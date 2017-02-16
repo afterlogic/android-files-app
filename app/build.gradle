@@ -155,10 +155,8 @@ dependencies {
 
     //Floating action button
     compile "com.getbase:floatingactionbutton:${fabVersion}"
-
     //Material progress bar
     compile 'me.zhanghai.android.materialprogressbar:library:1.1.5'
-    compile 'com.j256.ormlite:ormlite-android:4.48'
 
     //DB
     compile "org.greenrobot:greendao:${greenDaoVersion}"

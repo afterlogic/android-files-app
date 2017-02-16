@@ -53,6 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            bind:onRefresh="@{viewModel}"
             bind:refreshing="@{viewModel.refreshing}"
             bind:colorSchemeResources="@{@intArray/swipe_refresh_color_scheme}">
             <ScrollView

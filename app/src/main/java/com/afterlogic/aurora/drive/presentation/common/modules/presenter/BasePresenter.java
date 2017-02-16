@@ -5,6 +5,7 @@ import android.os.Bundle;
 import com.afterlogic.aurora.drive.BuildConfig;
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
+import com.afterlogic.aurora.drive.core.common.rx.SimpleObservableSource;
 import com.afterlogic.aurora.drive.model.error.ActivityResultError;
 import com.afterlogic.aurora.drive.model.error.BaseError;
 import com.afterlogic.aurora.drive.model.error.PermissionDeniedError;
@@ -22,8 +23,6 @@ import java.util.List;
 import java.util.UUID;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.exceptions.CompositeException;
 
 /**
@@ -48,23 +47,7 @@ public abstract class BasePresenter<V extends PresentationView> implements Prese
 
     private List<Stoppable> mStoppableList = new ArrayList<>();
 
-    private Observable<Boolean> mLifeCycle = Observable.create(new ObservableOnSubscribe<Boolean>() {
-        @Override
-        public void subscribe(ObservableEmitter<Boolean> e) throws Exception {
-            e.onNext(mIsActive);
-            registerStoppable(new Stoppable() {
-                @Override
-                public void onStart() {
-                    e.onNext(true);
-                }
-
-                @Override
-                public void onStop() {
-                    e.onNext(false);
-                }
-            });
-        }
-    });
+    private SimpleObservableSource<ViewEvent> mViewEventSource = new SimpleObservableSource<>();
 
     public BasePresenter(ViewState<V> viewState) {
         mView = viewState.getViewProxy();
@@ -121,6 +104,17 @@ public abstract class BasePresenter<V extends PresentationView> implements Prese
     protected void onPresenterStart(){
         registerStoppable(new PermisionResultListener(this::onPermissionEvent));
         registerStoppable(new ActivityResultListener(this::onActivityResult));
+        registerStoppable(new Stoppable() {
+            @Override
+            public void onStart() {
+                mViewEventSource.onNext(ViewEvent.START);
+            }
+
+            @Override
+            public void onStop() {
+                mViewEventSource.onNext(ViewEvent.STOP);
+            }
+        });
     }
 
     /**
@@ -231,6 +225,7 @@ public abstract class BasePresenter<V extends PresentationView> implements Prese
             }
         }
 
+        MyLog.e(error.getMessage());
         if (BuildConfig.DEBUG) {
             mView.showMessage(error.getMessage(), PresentationView.TYPE_MESSAGE_MINOR);
         }
@@ -261,14 +256,10 @@ public abstract class BasePresenter<V extends PresentationView> implements Prese
     }
 
     public <T> Observable<T> untilStopView(Observable<T> source){
-        return source.takeUntil(getLifeCycle().filter(live -> !live));
+        return source.takeUntil(getLifeCycle().filter(event -> event == ViewEvent.STOP));
     }
 
-    protected Observable<Boolean> startWithView(){
-        return mLifeCycle.filter(live -> live);
-    }
-
-    protected Observable<Boolean> getLifeCycle(){
-        return mLifeCycle;
+    protected Observable<ViewEvent> getLifeCycle(){
+        return Observable.defer(() -> mViewEventSource);
     }
 }

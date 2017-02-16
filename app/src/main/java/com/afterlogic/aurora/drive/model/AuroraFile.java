@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
-import com.afterlogic.aurora.drive.presentation.common.util.FileUtil;
+import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 
 import java.io.File;
 
@@ -13,6 +13,7 @@ import java.io.File;
  * mail: sunnyday.development@gmail.com
  */
 public class AuroraFile implements Parcelable, Cloneable{
+
     private static final String[] PREVIEWABLE_CONTENT_TYPES = {
             "image/jpeg",
             "image/pjpeg",
@@ -51,8 +52,6 @@ public class AuroraFile implements Parcelable, Cloneable{
     private long mLastModified;
 
     private int mIsPreviewAble = -1;
-
-    private boolean mIsOffline;
 
     public static AuroraFile create(@NonNull AuroraFile parent, @NonNull String name, boolean mIsFolder){
         AuroraFile file = new AuroraFile();
@@ -93,7 +92,6 @@ public class AuroraFile implements Parcelable, Cloneable{
             file.mThumbnailLink = local.getAbsolutePath();
         }
         file.mLinkUrl = local.getAbsolutePath();
-        file.mIsOffline = true;
         return file;
     }
 
@@ -209,8 +207,24 @@ public class AuroraFile implements Parcelable, Cloneable{
         return mLastModified;
     }
 
-    public boolean isOfflineMode() {
-        return mIsOffline;
+    public void setThumbnailLink(String thumbnailLink) {
+        mThumbnailLink = thumbnailLink;
+    }
+
+    public void setHasThumb(boolean thumb) {
+        mThumb = thumb;
+    }
+
+    public void setLastModified(long lastModified) {
+        mLastModified = lastModified;
+    }
+
+    public void setContentType(String contentType) {
+        mContentType = contentType;
+    }
+
+    public String getPathSpec(){
+        return mType + mFullPath;
     }
 
     public AuroraFile getParentFolder(){

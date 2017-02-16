@@ -4,9 +4,10 @@ import android.support.v7.widget.RecyclerView;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.presentation.common.binding.bindingAdapters.ViewProvider;
-import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.RecyclerViewModelAdapter;
+import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ItemsAdapter;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.SimpleRecyclerViewModelAdapter;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFileItemViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.main.viewModel.FileActionItemViewModel;
 
 import java.util.WeakHashMap;
 
@@ -17,14 +18,28 @@ import java.util.WeakHashMap;
 
 public class MainBindHelper {
 
-    private static final WeakHashMap<RecyclerView, RecyclerViewModelAdapter<BaseFileItemViewModel>> FILES_ADAPTERS = new WeakHashMap<>();
+    private static final WeakHashMap<RecyclerView, ItemsAdapter<BaseFileItemViewModel>> FILES_ADAPTERS = new WeakHashMap<>();
+    private static final WeakHashMap<RecyclerView, ItemsAdapter<FileActionItemViewModel>> FILE_ACTION_ADAPTERS = new WeakHashMap<>();
 
-    public static ViewProvider<RecyclerViewModelAdapter<BaseFileItemViewModel>, RecyclerView> filesListAdapter(){
+    @SuppressWarnings("unused")
+    public static ViewProvider<ItemsAdapter<BaseFileItemViewModel>, RecyclerView> filesListAdapter(){
         return list -> {
-            RecyclerViewModelAdapter<BaseFileItemViewModel> adapter = FILES_ADAPTERS.get(list);
+            ItemsAdapter<BaseFileItemViewModel> adapter = FILES_ADAPTERS.get(list);
             if (adapter == null){
                 adapter = new SimpleRecyclerViewModelAdapter<>(R.layout.item_list_file_main);
                 FILES_ADAPTERS.put(list, adapter);
+            }
+            return adapter;
+        };
+    }
+
+    @SuppressWarnings("unused")
+    public static ViewProvider<ItemsAdapter<FileActionItemViewModel>, RecyclerView> fileActionsAdapter(){
+        return list -> {
+            ItemsAdapter<FileActionItemViewModel> adapter = FILE_ACTION_ADAPTERS.get(list);
+            if (adapter == null){
+                adapter = new FileActionsMenuAdapter();
+                FILE_ACTION_ADAPTERS.put(list, adapter);
             }
             return adapter;
         };

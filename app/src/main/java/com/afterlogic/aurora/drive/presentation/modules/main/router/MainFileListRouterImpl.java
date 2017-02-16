@@ -6,13 +6,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.content.FileProvider;
 
-import com.afterlogic.aurora.drive._unrefactored.core.util.IntentUtil;
-import com.afterlogic.aurora.drive._unrefactored.presentation.ui.FileViewActivity;
 import com.afterlogic.aurora.drive.core.common.streams.ExtCollectors;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.modules.router.BaseRouter;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
+import com.afterlogic.aurora.drive.presentation.common.util.IntentUtil;
 import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFileListView;
 import com.annimon.stream.Stream;
 
@@ -45,9 +44,7 @@ public class MainFileListRouterImpl extends BaseRouter<MainFileListView, BaseAct
 
     @Override
     public void openImagePreview(AuroraFile target, List<AuroraFile> dirContent) {
-        ifViewActive(activity -> activity.startActivity(
-                FileViewActivity.IntentCreator.newInstance(dirContent, target, activity)
-        ));
+        //TODO open preview
     }
 
     @Override

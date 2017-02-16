@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.data.modules.auth.p8.service;
 
 import com.afterlogic.aurora.drive.model.AuthToken;
-import com.afterlogic.aurora.drive._unrefactored.model.project8.ApiResponseP8;
+import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
 
 import io.reactivex.Single;
 

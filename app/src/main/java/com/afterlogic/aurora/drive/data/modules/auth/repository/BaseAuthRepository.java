@@ -5,7 +5,7 @@ import android.accounts.AccountManager;
 import android.content.Context;
 import android.os.Build;
 
-import com.afterlogic.aurora.drive._unrefactored.core.util.AccountUtil;
+import com.afterlogic.aurora.drive.core.common.util.AccountUtil;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.session.SessionTrackUtil;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;

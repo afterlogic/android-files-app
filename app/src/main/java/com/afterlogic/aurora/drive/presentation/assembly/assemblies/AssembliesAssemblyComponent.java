@@ -5,18 +5,22 @@ import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseCo
 import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseFilesComponent;
 import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseFilesModule;
 import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseModule;
+import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginComponent;
+import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginModule;
 import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFileListComponent;
 import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFileListModule;
 import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFilesComponent;
 import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFilesModule;
-import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginComponent;
-import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginModule;
 import com.afterlogic.aurora.drive.presentation.modules.start.assembly.StartComponent;
 import com.afterlogic.aurora.drive.presentation.modules.start.assembly.StartModule;
 import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadComponent;
 import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadFilesComponent;
 import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadFilesModule;
 import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadModule;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.assembly.FileObserverComponent;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.assembly.FileObserverModule;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.assembly.SyncComponent;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.assembly.SyncModule;
 
 import dagger.Subcomponent;
 
@@ -47,4 +51,8 @@ public interface AssembliesAssemblyComponent {
 
     ChoiseComponent plus(ChoiseModule module);
     ChoiseFilesComponent plus(ChoiseFilesModule module);
+
+    SyncComponent plus(SyncModule module);
+
+    FileObserverComponent plus(FileObserverModule module);
 }

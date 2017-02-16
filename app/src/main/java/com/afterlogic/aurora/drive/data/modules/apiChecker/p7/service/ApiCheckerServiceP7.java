@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.data.modules.apiChecker.p7.service;
 
 import com.afterlogic.aurora.drive.model.SystemAppData;
-import com.afterlogic.aurora.drive._unrefactored.model.project7.ApiResponseP7;
+import com.afterlogic.aurora.drive.data.model.project7.ApiResponseP7;
 
 import io.reactivex.Single;
 import okhttp3.HttpUrl;
