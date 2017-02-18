@@ -33,22 +33,22 @@ public abstract class PresentationModule<View extends PresentationView> {
     }
 
     @Provides
-    protected ViewState<View> provideViewState(){
+    public ViewState<View> provideViewState(){
         return mView;
     }
 
     @Provides
-    protected OptWeakRef<View> provideView(){
+    public OptWeakRef<View> provideView(){
         return mView.getView();
     }
 
     @Provides
-    protected View provideViewProxy(){
+    public View provideViewProxy(){
         return mView.getViewProxy();
     }
 
     @Provides
-    protected PresentationModule<View> provideSelf(){
+    public PresentationModule<View> provideSelf(){
         return this;
     }
 

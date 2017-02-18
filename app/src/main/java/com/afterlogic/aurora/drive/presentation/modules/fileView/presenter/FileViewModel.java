@@ -15,4 +15,8 @@ public interface FileViewModel {
     void setItems(List<AuroraFile> fileList);
     @Nullable
     AuroraFile getCurrent();
+
+    void remove(AuroraFile file);
+    void rename(AuroraFile file, String name);
+    void setOffline(AuroraFile file, boolean offline);
 }

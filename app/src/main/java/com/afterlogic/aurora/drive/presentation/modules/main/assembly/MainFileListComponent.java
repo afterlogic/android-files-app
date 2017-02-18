@@ -2,8 +2,8 @@ package com.afterlogic.aurora.drive.presentation.modules.main.assembly;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationComponent;
-import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFileListFragment;
 import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFileListView;
+import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFileListFragment;
 
 import dagger.Subcomponent;
 

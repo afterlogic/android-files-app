@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.modules.fileView.viewModel.FileViewImageItemViewModel;
 
 import java.util.List;
 
@@ -29,5 +28,17 @@ public interface FileViewViewModel extends ViewPager.OnPageChangeListener{
 
     ObservableBoolean getFullscreenMode();
 
+    ObservableBoolean getCurrentOffline();
+
     void onItemClick();
+
+    void onDelete();
+
+    void onRename();
+
+    void onOffline();
+
+    void onDownload();
+
+    void onSend();
 }
