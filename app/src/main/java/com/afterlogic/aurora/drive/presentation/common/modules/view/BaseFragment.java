@@ -70,11 +70,6 @@ public abstract class BaseFragment extends Fragment implements PresentationView 
         MyLog.d(this, "onCreate");
         super.onCreate(savedInstanceState);
 
-        //Safe arguments
-        if (getArguments() == null){
-            setArguments(Bundle.EMPTY);
-        }
-
         mOnSaveInstanceStateCalled = false;
         mPresentationModulesStore = ((App) getActivity().getApplication())
                 .modulesFactory().modulesStore();

@@ -14,14 +14,16 @@
             type="com.afterlogic.aurora.drive.presentation.modules.fileView.viewModel.FileViewViewModel"/>
     </data>
 
-    <android.support.design.widget.CoordinatorLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appbar"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
+            android:theme="@style/AppTheme.AppBarOverlay"
             android:visibility="@{viewModel.fullscreenMode ? View.GONE : View.VISIBLE}"
             >
 
@@ -29,24 +31,29 @@
                 android:id="@+id/toolbar"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_width="match_parent"
-                style="@style/AppToolbar">
+                app:popupTheme="@style/AppTheme.PopupOverlay">
             </android.support.v7.widget.Toolbar>
+
         </android.support.design.widget.AppBarLayout>
 
-        <com.afterlogic.aurora.drive.presentation.common.components.view.DisablableViewPager
-            android:id="@+id/files"
-            android:layout_height="match_parent"
+        <FrameLayout
             android:layout_width="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            bind:swipeEnabled="@{!viewModel.fullscreenMode}"
-            bind:onPageChanged="@{viewModel}"
-            bind:currentItem="@{viewModel.currentPosition}"
-            bind:items="@{viewModel.items}"
-            bind:adapter="@{Binder.itemsAdapter()}">
+            android:layout_height="match_parent">
 
-        </com.afterlogic.aurora.drive.presentation.common.components.view.DisablableViewPager>
+            <com.afterlogic.aurora.drive.presentation.common.components.view.DisablableViewPager
+                android:id="@+id/files"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                bind:swipeEnabled="@{!viewModel.fullscreenMode}"
+                bind:onPageChanged="@{viewModel}"
+                bind:currentItem="@{viewModel.currentPosition}"
+                bind:items="@{viewModel.items}"
+                bind:adapter="@{Binder.itemsAdapter()}"/>
 
-        <include layout="@layout/view_compat_appbar_shadow"/>
+            <include layout="@layout/view_compat_appbar_shadow"/>
 
-    </android.support.design.widget.CoordinatorLayout>
+        </FrameLayout>
+
+    </LinearLayout>
 </layout>

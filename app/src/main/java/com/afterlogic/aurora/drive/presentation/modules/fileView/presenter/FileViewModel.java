@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.fileView.viewModel;
+package com.afterlogic.aurora.drive.presentation.modules.fileView.presenter;
 
 import android.support.annotation.Nullable;
 

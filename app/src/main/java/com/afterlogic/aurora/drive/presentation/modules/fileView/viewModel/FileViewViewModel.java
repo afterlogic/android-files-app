@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.presentation.modules.fileView.viewModel.FileViewImageItemViewModel;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public interface FileViewViewModel extends ViewPager.OnPageChangeListener{
 
     void viewCreatedWith(@Nullable AuroraFile target, List<AuroraFile> files);
 
-    ObservableList<AuroraFile> getItems();
+    ObservableList<FileViewImageItemViewModel> getItems();
 
     ObservableField<String> getTitle();
 

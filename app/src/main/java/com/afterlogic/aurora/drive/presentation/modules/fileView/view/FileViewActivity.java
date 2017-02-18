@@ -20,6 +20,7 @@ import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.Item
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.ViewPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.presenter.FileViewPresenter;
+import com.afterlogic.aurora.drive.presentation.modules.fileView.viewModel.FileViewImageItemViewModel;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.viewModel.FileViewViewModel;
 import com.annimon.stream.Stream;
 
@@ -74,9 +75,13 @@ public class FileViewActivity extends BaseActivity implements FileViewPresentati
 
         ActivityViewFileBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_view_file);
         binding.setViewModel(mViewModel);
+        setSupportActionBar(binding.toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mViewModel.getFullscreenMode().addOnPropertyChangedCallback(mFullscreenListener);
         mViewModel.getTitle().addOnPropertyChangedCallback(mTitleListener);
+
+        updateTitle();
     }
 
     @Override
@@ -91,17 +96,17 @@ public class FileViewActivity extends BaseActivity implements FileViewPresentati
     }
 
     private void updateFullscreenMode(){
-        boolean fullscreen = mViewModel.getFullscreenMode().get();
+        //no-op
     }
 
 
     public static class Binder{
 
-        private static final WeakHashMap<ViewPager, ItemsAdapter<AuroraFile>> PAGER_ADAPTERS = new WeakHashMap<>();
+        private static final WeakHashMap<ViewPager, ItemsAdapter<FileViewImageItemViewModel>> PAGER_ADAPTERS = new WeakHashMap<>();
 
-        public static ViewProvider<ItemsAdapter<AuroraFile>, ViewPager> itemsAdapter(){
+        public static ViewProvider<ItemsAdapter<FileViewImageItemViewModel>, ViewPager> itemsAdapter(){
             return pager -> {
-                ItemsAdapter<AuroraFile> adapter = PAGER_ADAPTERS.get(pager);
+                ItemsAdapter<FileViewImageItemViewModel> adapter = PAGER_ADAPTERS.get(pager);
                 if (adapter == null){
                     FragmentManager fm = ((BaseActivity) pager.getContext()).getSupportFragmentManager();
                     adapter = new FilesItemsAdapter(fm);

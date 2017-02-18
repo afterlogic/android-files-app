@@ -2,44 +2,57 @@ package com.afterlogic.aurora.drive.presentation.modules.fileView.presenter;
 
 import android.net.Uri;
 
+import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.model.Progressible;
-import com.afterlogic.aurora.drive.presentation.common.modules.presenter.BasePresenter;
-import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.interactor.FileViewImageItemInteractor;
-import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewImageItemView;
-import com.afterlogic.aurora.drive.presentation.modules.fileView.viewModel.FileViewImageItemModel;
 
 import javax.inject.Inject;
+
+import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by sashka on 16.02.17.<p/>
  * mail: sunnyday.development@gmail.com
  */
 
-public class FileViewImageItemPresenterImpl extends BasePresenter<FileViewImageItemView> implements FileVIewImageItemPresenter {
+public class FileViewImageItemPresenterImpl implements FileViewImageItemPresenter {
 
     private final FileViewImageItemInteractor mInteractor;
-    private final FileViewImageItemModel mModel;
+    private FileViewImageItemModel mModel;
 
-    @Inject FileViewImageItemPresenterImpl(ViewState<FileViewImageItemView> viewState, FileViewImageItemInteractor interactor, FileViewImageItemModel model) {
-        super(viewState);
+    private Disposable mCurrentTask;
+
+    @Inject FileViewImageItemPresenterImpl(FileViewImageItemInteractor interactor) {
         mInteractor = interactor;
+    }
+
+    @Override
+    public void setModel(FileViewImageItemModel model) {
         mModel = model;
     }
 
     @Override
-    protected void onPresenterStart() {
-        super.onPresenterStart();
-        mInteractor.donwloadToCache(mModel.getFile())
+    public void onStart() {
+        Observable.fromCallable(() -> mModel.getFile())
+                .flatMap(mInteractor::donwloadToCache)
                 .filter(Progressible::isDone)
                 .map(Progressible::getData)
                 .map(Uri::fromFile)
                 .doOnError(error -> mModel.setError())
-                .doOnSubscribe(disposable -> mModel.setProgress(true))
-                .doOnComplete(() -> mModel.setProgress(false))
+                .doOnSubscribe(disposable -> mCurrentTask = disposable)
+                .doFinally(() -> mCurrentTask = null)
                 .subscribe(
                         mModel::setUri,
-                        this::onErrorObtained
+                        MyLog::majorException
                 );
+    }
+
+    @Override
+    public void onStop() {
+        if (mCurrentTask != null){
+            mCurrentTask.dispose();
+            mCurrentTask = null;
+        }
     }
 }

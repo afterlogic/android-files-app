@@ -6,10 +6,8 @@ import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseFi
 import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseInjector;
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseActivity;
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseFilesFragment;
-import com.afterlogic.aurora.drive.presentation.modules.fileView.assembly.FileViewImageItemInjector;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.assembly.FileViewInjector;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewActivity;
-import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewImageItemFragment;
 import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginInjector;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
 import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFileListInjector;
@@ -107,11 +105,6 @@ public class ModulesFactoryModule {
 
     @Provides
     Injector<FileViewActivity> fileView(FileViewInjector injector){
-        return injector;
-    }
-
-    @Provides
-    Injector<FileViewImageItemFragment> fileImageItem(FileViewImageItemInjector injector){
         return injector;
     }
 }

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
 
     <data>
         <import type="android.view.View"/>
@@ -15,15 +17,20 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:foreground="@color/black"
-        android:background="@{viewModel.fullscreen ? @color/black: @color/white}">
+        android:background="@{viewModel.fullscreen ? @color/black : @color/white}">
 
         <uk.co.senab.photoview.PhotoView
             android:id="@+id/image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="fitCenter"
-            android:visibility="@{viewModel.error ? View.GONE : View.VISIBLE}"/>
+            android:visibility="@{viewModel.error ? View.GONE : View.VISIBLE}"
+            android:onClick="@{viewModel}"
+            bind:imageUri="@{viewModel.imageContent}"
+            bind:glideListener="@{viewModel}"
+            bind:zoomable="@{viewModel.fullscreen}"
+            bind:scale="@{viewModel.fullscreen ? -1f : 1f}"
+            bind:onTap="@{viewModel}"/>
 
         <TextView
             android:id="@+id/error"

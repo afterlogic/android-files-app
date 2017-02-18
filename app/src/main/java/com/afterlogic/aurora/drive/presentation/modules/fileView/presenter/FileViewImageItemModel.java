@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.fileView.viewModel;
+package com.afterlogic.aurora.drive.presentation.modules.fileView.presenter;
 
 import android.net.Uri;
 
@@ -10,9 +10,9 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
  */
 
 public interface FileViewImageItemModel {
-    void setProgress(boolean progress);
     void setUri(Uri uri);
     void setError();
+    void setAuroraFile(AuroraFile file);
 
     AuroraFile getFile();
 }

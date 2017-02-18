@@ -20,13 +20,24 @@ public class ViewPagerBinding {
     @BindingAdapter({"bind:adapter", "bind:items"})
     public static <T, A extends ItemsAdapter<T>>
     void bindAdapter(ViewPager pager, ViewProvider<A, ViewPager> adapterProvider, List<T> items){
-        bindAdapter(pager, adapterProvider.provide(pager), items);
+        bindAdapter(pager, adapterProvider, items, -1);
+    }
+
+    @BindingAdapter({"bind:adapter", "bind:items", "bind:currentItem"})
+    public static <T, A extends ItemsAdapter<T>>
+    void bindAdapter(ViewPager pager, ViewProvider<A, ViewPager> adapterProvider, List<T> items, int currentItem){
+        bindAdapter(pager, adapterProvider.provide(pager), items, currentItem);
     }
 
     @BindingAdapter({"bind:adapter", "bind:items"})
     public static <T> void bindAdapter(ViewPager pager, ItemsAdapter<T> adapter, List<T> items){
+        bindAdapter(pager, adapter, items, -1);
+    }
+
+    @BindingAdapter({"bind:adapter", "bind:items", "bind:currentItem"})
+    public static <T> void bindAdapter(ViewPager pager, ItemsAdapter<T> adapter, List<T> items, int currentItem){
         if (adapter instanceof PagerAdapter) {
-            bindAdapter(pager, (PagerAdapter & ItemsAdapter<T>)adapter, items);
+            bindAdapter(pager, (PagerAdapter & ItemsAdapter<T>)adapter, items, currentItem);
         } else {
             throw new IllegalArgumentException("Adapter must extend PagerAdapter.");
         }
@@ -35,12 +46,19 @@ public class ViewPagerBinding {
     @BindingAdapter({"bind:adapter", "bind:items"})
     public static <T, A extends PagerAdapter & ItemsAdapter<T>>
     void bindAdapter(ViewPager pager, A adapter, List<T> items){
+        bindAdapter(pager, adapter, items, -1);
+    }
+
+    @BindingAdapter({"bind:adapter", "bind:items", "bind:currentItem"})
+    public static <T, A extends PagerAdapter & ItemsAdapter<T>>
+    void bindAdapter(ViewPager pager, A adapter, List<T> items, int currentItem){
         if (adapter != null){
             adapter.setItems(items);
         }
         if (adapter != pager.getAdapter()) {
             pager.setAdapter(adapter);
         }
+        bindCurrentItem(pager, currentItem);
     }
 
     @BindingAdapter("bind:swipeEnabled")
@@ -60,9 +78,9 @@ public class ViewPagerBinding {
 
     @BindingAdapter({"bind:currentItem"})
     public static void bindCurrentItem(ViewPager pager, int position){
-        if (position != -1){
+        if (position >= 0){
             if (pager.getCurrentItem() != position) {
-                pager.setCurrentItem(position);
+                pager.setCurrentItem(position, false);
             }
         }
     }

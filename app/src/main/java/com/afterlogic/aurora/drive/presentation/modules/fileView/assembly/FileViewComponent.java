@@ -13,6 +13,5 @@ import dagger.Subcomponent;
  */
 @ModuleScope
 @Subcomponent(modules = FileViewModule.class)
-public interface FileViewComponent extends PresentationComponent<FileViewPresentationView, FileViewActivity>, FileViewImageSubcomponentCreator {
-    FileViewImageItemComponent plus(FileViewImageItemModule module);
+public interface FileViewComponent extends PresentationComponent<FileViewPresentationView, FileViewActivity>{
 }
