@@ -6,12 +6,14 @@ import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseFi
 import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseInjector;
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseActivity;
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseFilesFragment;
-import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFileListInjector;
-import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFileListFragment;
-import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFilesInjector;
-import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFilesActivity;
+import com.afterlogic.aurora.drive.presentation.modules.fileView.assembly.FileViewInjector;
+import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewActivity;
 import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginInjector;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
+import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFileListInjector;
+import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFilesInjector;
+import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFileListFragment;
+import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFilesActivity;
 import com.afterlogic.aurora.drive.presentation.modules.start.assembly.StartInjector;
 import com.afterlogic.aurora.drive.presentation.modules.start.view.StartActivity;
 import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadFilesInjector;
@@ -98,6 +100,11 @@ public class ModulesFactoryModule {
 
     @Provides
     Injector<FileObserverService> fileObserver(FileObserverInjector injector){
+        return injector;
+    }
+
+    @Provides
+    Injector<FileViewActivity> fileView(FileViewInjector injector){
         return injector;
     }
 }

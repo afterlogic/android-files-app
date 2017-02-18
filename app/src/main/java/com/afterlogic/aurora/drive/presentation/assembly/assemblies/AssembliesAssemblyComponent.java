@@ -5,6 +5,8 @@ import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseCo
 import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseFilesComponent;
 import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseFilesModule;
 import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseModule;
+import com.afterlogic.aurora.drive.presentation.modules.fileView.assembly.FileViewComponent;
+import com.afterlogic.aurora.drive.presentation.modules.fileView.assembly.FileViewModule;
 import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginComponent;
 import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginModule;
 import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFileListComponent;
@@ -55,4 +57,6 @@ public interface AssembliesAssemblyComponent {
     SyncComponent plus(SyncModule module);
 
     FileObserverComponent plus(FileObserverModule module);
+
+    FileViewComponent plus(FileViewModule module);
 }

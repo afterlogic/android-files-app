@@ -50,8 +50,12 @@ public abstract class BasePresenter<V extends PresentationView> implements Prese
     private SimpleObservableSource<ViewEvent> mViewEventSource = new SimpleObservableSource<>();
 
     public BasePresenter(ViewState<V> viewState) {
-        mView = viewState.getViewProxy();
-        registerStoppable(viewState);
+        if (viewState != null) {
+            mView = viewState.getViewProxy();
+            registerStoppable(viewState);
+        } else {
+            mView = null;
+        }
     }
 
     /**
@@ -198,7 +202,7 @@ public abstract class BasePresenter<V extends PresentationView> implements Prese
      * Run action only if view output is presented and presenter state is active.
      */
     protected void ifViewActive(Consumer<V> consumer, Runnable viewNotExistConsumer){
-        if (mIsActive){
+        if (mIsActive && mView != null){
             consumer.consume(mView);
         } else {
             viewNotExistConsumer.run();

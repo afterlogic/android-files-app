@@ -215,7 +215,7 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
         AuroraFile file = onFileAction();
 
         if (file == null && !mModel.isMultiChoise()) {
-            MyLog.majorException("onToggleOffline file with null.");
+            MyLog.majorException("onOffline file with null.");
             return;
         }
 

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.view.View"/>
+        <import type="com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewActivity.Binder"
+            alias="Binder"/>
+
+        <variable
+            name="viewModel"
+            type="com.afterlogic.aurora.drive.presentation.modules.fileView.viewModel.FileViewViewModel"/>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:theme="@style/AppTheme.AppBarOverlay"
+            android:visibility="@{viewModel.fullscreenMode ? View.GONE : View.VISIBLE}"
+            >
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_width="match_parent"
+                app:popupTheme="@style/AppTheme.PopupOverlay">
+            </android.support.v7.widget.Toolbar>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.afterlogic.aurora.drive.presentation.common.components.view.DisablableViewPager
+                android:id="@+id/files"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                bind:swipeEnabled="@{!viewModel.fullscreenMode}"
+                bind:onPageChanged="@{viewModel}"
+                bind:currentItem="@{viewModel.currentPosition}"
+                bind:items="@{viewModel.items}"
+                bind:adapter="@{Binder.itemsAdapter()}"/>
+
+            <include layout="@layout/view_compat_appbar_shadow"/>
+
+        </FrameLayout>
+
+    </LinearLayout>
+</layout>

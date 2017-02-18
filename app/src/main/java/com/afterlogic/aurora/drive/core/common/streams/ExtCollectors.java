@@ -53,4 +53,28 @@ public class ExtCollectors {
             }
         };
     }
+
+    public static <T> Collector<T, ArrayList<T>, Collection<T>> set(Collection<T> target){
+        return new Collector<T, ArrayList<T>, Collection<T>>(){
+
+            @Override
+            public Supplier<ArrayList<T>> supplier() {
+                return ArrayList::new;
+            }
+
+            @Override
+            public BiConsumer<ArrayList<T>, T> accumulator() {
+                return ArrayList::add;
+            }
+
+            @Override
+            public Function<ArrayList<T>, Collection<T>> finisher() {
+                return ts -> {
+                    target.clear();
+                    target.addAll(ts);
+                    return target;
+                };
+            }
+        };
+    }
 }

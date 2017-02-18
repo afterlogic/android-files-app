@@ -80,6 +80,7 @@
                 <data android:mimeType="*/*"/>
             </intent-filter>
         </activity>
+        <activity android:name=".presentation.modules.fileView.view.FileViewActivity"/>
 
         <service android:name=".presentation.modulesBackground.authenticator.AuthenticatorService">
             <intent-filter>

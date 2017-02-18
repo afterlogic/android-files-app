@@ -12,6 +12,7 @@ import com.afterlogic.aurora.drive.presentation.common.modules.router.BaseRouter
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.common.util.IntentUtil;
+import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewActivity;
 import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFileListView;
 import com.annimon.stream.Stream;
 
@@ -44,7 +45,10 @@ public class MainFileListRouterImpl extends BaseRouter<MainFileListView, BaseAct
 
     @Override
     public void openImagePreview(AuroraFile target, List<AuroraFile> dirContent) {
-        //TODO open preview
+        ifViewActive(activity -> {
+            Intent intent = FileViewActivity.intent(target, dirContent, activity);
+            activity.startActivity(intent);
+        });
     }
 
     @Override
