@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.assembly.modules;
 
-import com.afterlogic.aurora.drive.presentation.assembly.assemblies.AssembliesAssemblyComponent;
-import com.afterlogic.aurora.drive.presentation.common.modules.assembly.Injector;
+import com.afterlogic.aurora.drive.presentation.assembly.assemblies.ModulesComponentCreator;
+import com.afterlogic.aurora.drive.presentation.assembly.Injector;
 import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseFilesInjector;
 import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseInjector;
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseActivity;
@@ -14,6 +14,8 @@ import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFileLi
 import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFilesInjector;
 import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFileListFragment;
 import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFilesActivity;
+import com.afterlogic.aurora.drive.presentation.modules.offline.assembly.OfflineInjector;
+import com.afterlogic.aurora.drive.presentation.modules.offline.view.OfflineActivity;
 import com.afterlogic.aurora.drive.presentation.modules.start.assembly.StartInjector;
 import com.afterlogic.aurora.drive.presentation.modules.start.view.StartActivity;
 import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadFilesInjector;
@@ -35,21 +37,21 @@ import dagger.Provides;
  * Presentation module's wireframes factory module.
  */
 @Module
-public class ModulesFactoryModule {
+public class InjectorsModule {
 
-    private AssembliesAssemblyComponent mPresentationAssemblyComponent;
+    private ModulesComponentCreator mPresentationAssemblyComponent;
 
-    public ModulesFactoryModule(AssembliesAssemblyComponent presentationAssemblyComponent) {
+    public InjectorsModule(ModulesComponentCreator presentationAssemblyComponent) {
         mPresentationAssemblyComponent = presentationAssemblyComponent;
     }
 
     /**
-     * Provide {@link AssembliesAssemblyComponent} for creating and accessing to module's assembly
+     * Provide {@link ModulesComponentCreator} for creating and accessing to module's assembly
      * component when create wireframe for it.
-     * @return - app configured {@link AssembliesAssemblyComponent}.
+     * @return - app configured {@link ModulesComponentCreator}.
      */
     @Provides
-    AssembliesAssemblyComponent provideAssemblies(){
+    ModulesComponentCreator provideAssemblies(){
         return mPresentationAssemblyComponent;
     }
 
@@ -105,6 +107,11 @@ public class ModulesFactoryModule {
 
     @Provides
     Injector<FileViewActivity> fileView(FileViewInjector injector){
+        return injector;
+    }
+
+    @Provides
+    Injector<OfflineActivity> offline(OfflineInjector injector){
         return injector;
     }
 }

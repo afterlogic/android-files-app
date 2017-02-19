@@ -13,7 +13,7 @@ import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.databinding.ActivityMainBinding;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesActivity;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesListFragment;
@@ -40,7 +40,7 @@ public class MainFilesActivity extends BaseFilesActivity<MainFilesViewModel, Mai
     private final SimpleListener mSelectedFolderListener = new SimpleListener(this::updateMultiChoiseAvailableActions);
 
     @Override
-    protected void assembly(ModulesFactoryComponent modulesFactory) {
+    protected void assembly(InjectorsComponent modulesFactory) {
         modulesFactory.main().inject(this);
     }
 

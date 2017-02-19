@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.assembly.modules;
 
-import com.afterlogic.aurora.drive.presentation.common.modules.assembly.Injector;
+import com.afterlogic.aurora.drive.presentation.assembly.Injector;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationModulesStore;
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseActivity;
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseFilesFragment;
@@ -8,6 +8,7 @@ import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewAc
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
 import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFileListFragment;
 import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFilesActivity;
+import com.afterlogic.aurora.drive.presentation.modules.offline.view.OfflineActivity;
 import com.afterlogic.aurora.drive.presentation.modules.start.view.StartActivity;
 import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadActivity;
 import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadFilesFragment;
@@ -21,10 +22,10 @@ import dagger.Subcomponent;
  * Created by sashka on 31.08.16.<p/>
  * mail: sunnyday.development@gmail.com
  *
- * See {@link ModulesFactoryModule}.
+ * See {@link InjectorsModule}.
  */
-@Subcomponent(modules = {ModulesFactoryModule.class})
-public interface ModulesFactoryComponent {
+@Subcomponent(modules = {InjectorsModule.class})
+public interface InjectorsComponent {
 
     void inject(SessionChangedReceiver sessionChangedReceiver);
 
@@ -47,4 +48,6 @@ public interface ModulesFactoryComponent {
     Injector<FileObserverService> fileObserver();
 
     Injector<FileViewActivity> fileView();
+
+    Injector<OfflineActivity> offline();
 }

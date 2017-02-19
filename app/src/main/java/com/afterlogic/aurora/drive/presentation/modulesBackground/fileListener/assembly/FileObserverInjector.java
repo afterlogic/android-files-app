@@ -2,9 +2,9 @@ package com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.
 
 import android.support.annotation.NonNull;
 
-import com.afterlogic.aurora.drive.presentation.assembly.assemblies.AssembliesAssemblyComponent;
-import com.afterlogic.aurora.drive.presentation.common.modules.assembly.BaseInjector;
-import com.afterlogic.aurora.drive.presentation.common.modules.assembly.Injector;
+import com.afterlogic.aurora.drive.presentation.assembly.assemblies.ModulesComponentCreator;
+import com.afterlogic.aurora.drive.presentation.common.modules.assembly.OldBaseInjector;
+import com.afterlogic.aurora.drive.presentation.assembly.Injector;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.view.FileObserverService;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.view.FileObserverView;
 
@@ -15,9 +15,9 @@ import javax.inject.Inject;
  * mail: sunnyday.development@gmail.com
  */
 
-public class FileObserverInjector extends BaseInjector<FileObserverService, FileObserverView, FileObserverModule> implements Injector<FileObserverService> {
+public class FileObserverInjector extends OldBaseInjector<FileObserverService, FileObserverView, FileObserverModule> implements Injector<FileObserverService> {
 
-    @Inject FileObserverInjector(AssembliesAssemblyComponent component) {
+    @Inject FileObserverInjector(ModulesComponentCreator component) {
         super(component);
     }
 

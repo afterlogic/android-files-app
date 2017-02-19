@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesActivity;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesListFragment;
@@ -24,7 +24,7 @@ public class ChoiseActivity extends BaseFilesActivity<ChoiseViewModel, ChoisePre
     private SimpleListener mLockedListener = new SimpleListener(this::updateActionBar);
 
     @Override
-    protected void assembly(ModulesFactoryComponent modulesFactory) {
+    protected void assembly(InjectorsComponent modulesFactory) {
         modulesFactory.choise().inject(this);
     }
 

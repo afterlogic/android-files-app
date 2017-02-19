@@ -20,7 +20,7 @@ import com.afterlogic.aurora.drive.application.App;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.model.events.ActivityResultEvent;
 import com.afterlogic.aurora.drive.model.events.PermissionGrantEvent;
-import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.Stoppable;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationModulesStore;
 import com.afterlogic.aurora.drive.presentation.common.modules.presenter.Presenter;
@@ -38,6 +38,7 @@ import java.util.UUID;
  *
  * Base module fragment with base presenter interaction.
  */
+@Deprecated
 public abstract class BaseFragment extends Fragment implements PresentationView {
 
     private static final String MODULE_UUID = ".MODULE_UUID";
@@ -72,7 +73,7 @@ public abstract class BaseFragment extends Fragment implements PresentationView 
 
         mOnSaveInstanceStateCalled = false;
         mPresentationModulesStore = ((App) getActivity().getApplication())
-                .modulesFactory().modulesStore();
+                .getInjectors().modulesStore();
 
         mAddSubmoduleAvailable = true;
         onCreateSubView(savedInstanceState);
@@ -88,7 +89,7 @@ public abstract class BaseFragment extends Fragment implements PresentationView 
             Stream.of(mSubmodules).forEach(instantiable -> instantiable.restoreInstance(savedInstanceState));
         }
 
-        ModulesFactoryComponent component = ((App) getActivity().getApplication()).modulesFactory();
+        InjectorsComponent component = ((App) getActivity().getApplication()).getInjectors();
         assembly(component);
 
         PresentationViewUtil.reflectiveCollectPresenters(this);
@@ -106,7 +107,7 @@ public abstract class BaseFragment extends Fragment implements PresentationView 
     /**
      * Assembly module wireframe.
      */
-    protected abstract void assembly(ModulesFactoryComponent modulesFactory);
+    protected abstract void assembly(InjectorsComponent modulesFactory);
 
     /**
      * Restore presenter state.

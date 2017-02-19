@@ -15,6 +15,7 @@ import dagger.Provides;
  *
  * Base presentation module's module.
  */
+@Deprecated
 @Module
 public abstract class PresentationModule<View extends PresentationView> {
 

@@ -2,9 +2,9 @@ package com.afterlogic.aurora.drive.presentation.modules.choise.assembly;
 
 import android.support.annotation.NonNull;
 
-import com.afterlogic.aurora.drive.presentation.assembly.assemblies.AssembliesAssemblyComponent;
-import com.afterlogic.aurora.drive.presentation.common.modules.assembly.BaseInjector;
-import com.afterlogic.aurora.drive.presentation.common.modules.assembly.Injector;
+import com.afterlogic.aurora.drive.presentation.assembly.assemblies.ModulesComponentCreator;
+import com.afterlogic.aurora.drive.presentation.common.modules.assembly.OldBaseInjector;
+import com.afterlogic.aurora.drive.presentation.assembly.Injector;
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseFilesFragment;
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseFilesView;
 
@@ -15,10 +15,10 @@ import javax.inject.Inject;
  * mail: sunnyday.development@gmail.com
  */
 
-public class ChoiseFilesInjector extends BaseInjector<ChoiseFilesFragment, ChoiseFilesView, ChoiseFilesModule> implements Injector<ChoiseFilesFragment> {
+public class ChoiseFilesInjector extends OldBaseInjector<ChoiseFilesFragment, ChoiseFilesView, ChoiseFilesModule> implements Injector<ChoiseFilesFragment> {
 
     @Inject
-    ChoiseFilesInjector(AssembliesAssemblyComponent component) {
+    ChoiseFilesInjector(ModulesComponentCreator component) {
         super(component);
     }
 

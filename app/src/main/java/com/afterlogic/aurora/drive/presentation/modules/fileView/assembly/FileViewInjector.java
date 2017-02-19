@@ -2,8 +2,8 @@ package com.afterlogic.aurora.drive.presentation.modules.fileView.assembly;
 
 import android.support.annotation.NonNull;
 
-import com.afterlogic.aurora.drive.presentation.assembly.assemblies.AssembliesAssemblyComponent;
-import com.afterlogic.aurora.drive.presentation.common.modules.assembly.BaseInjector;
+import com.afterlogic.aurora.drive.presentation.assembly.assemblies.ModulesComponentCreator;
+import com.afterlogic.aurora.drive.presentation.common.modules.assembly.OldBaseInjector;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewActivity;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewPresentationView;
 
@@ -14,9 +14,9 @@ import javax.inject.Inject;
  * mail: sunnyday.development@gmail.com
  */
 
-public class FileViewInjector extends BaseInjector<FileViewActivity, FileViewPresentationView, FileViewModule> {
+public class FileViewInjector extends OldBaseInjector<FileViewActivity, FileViewPresentationView, FileViewModule> {
 
-    @Inject FileViewInjector(AssembliesAssemblyComponent component) {
+    @Inject FileViewInjector(ModulesComponentCreator component) {
         super(component);
     }
 

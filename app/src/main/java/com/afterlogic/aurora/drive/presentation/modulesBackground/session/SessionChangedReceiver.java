@@ -23,7 +23,7 @@ public class SessionChangedReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getBooleanExtra(SessionTrackUtil.SESSOIN_CHANGED, false)) {
-            ((App) context.getApplicationContext()).modulesFactory().inject(this);
+            ((App) context.getApplicationContext()).getInjectors().inject(this);
 
             AuroraSession session = intent.getParcelableExtra(SessionTrackUtil.SESSION_DATA);
             mSessionManager.setSession(session);

@@ -17,7 +17,7 @@ import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.util.AccountUtil;
 import com.afterlogic.aurora.drive.core.consts.NotificationConst;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseService;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.ViewPresenter;
@@ -80,7 +80,7 @@ public class SyncService extends BaseService implements SyncView {
     }
 
     @Override
-    protected void assembly(ModulesFactoryComponent modulesFactory) {
+    protected void assembly(InjectorsComponent modulesFactory) {
         modulesFactory.sync().inject(this);
     }
 

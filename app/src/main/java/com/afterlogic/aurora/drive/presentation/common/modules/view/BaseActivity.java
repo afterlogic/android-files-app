@@ -17,7 +17,7 @@ import com.afterlogic.aurora.drive.application.App;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.model.events.ActivityResultEvent;
 import com.afterlogic.aurora.drive.model.events.PermissionGrantEvent;
-import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.Stoppable;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationModulesStore;
 import com.afterlogic.aurora.drive.presentation.common.modules.presenter.Presenter;
@@ -35,6 +35,7 @@ import java.util.UUID;
  *
  * Base for all activities in project.
  */
+@Deprecated
 public abstract class BaseActivity extends AppCompatActivity implements PresentationView{
 
     private static final String MODULE_UUID = ".MODULE_UUID";
@@ -60,7 +61,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Presenta
 
         App app = ((App) getApplication());
 
-        mPresentationModulesStore = app.modulesFactory().modulesStore();
+        mPresentationModulesStore = app.getInjectors().modulesStore();
 
         mAddSubmoduleAvailable = true;
         onCreateSubView(savedInstanceState);
@@ -74,14 +75,14 @@ public abstract class BaseActivity extends AppCompatActivity implements Presenta
             Stream.of(mSubmodules).forEach(subModule -> subModule.restoreInstance(savedInstanceState));
         }
 
-        ModulesFactoryComponent component = app.modulesFactory();
+        InjectorsComponent component = app.getInjectors();
         assembly(component);
         Stream.of(mSubmodules).forEach(subView -> subView.assembly(component));
 
         PresentationViewUtil.reflectiveCollectPresenters(this);
     }
 
-    protected void assembly(ModulesFactoryComponent modulesFactory){
+    protected void assembly(InjectorsComponent modulesFactory){
         //no-op
     }
 

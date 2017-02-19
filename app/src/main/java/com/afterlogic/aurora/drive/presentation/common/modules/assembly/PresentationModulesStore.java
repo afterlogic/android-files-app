@@ -1,6 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.common.modules.assembly;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.afterlogic.aurora.drive.presentation.common.modules.view.PresentationView;
 
@@ -12,6 +13,7 @@ import java.util.UUID;
  * Created by sashka on 01.12.16.<p/>
  * mail: sunnyday.development@gmail.com
  */
+@Deprecated
 public class PresentationModulesStore {
 
     private Map<UUID, PresentationComponent> mComponentMap = new HashMap<>();
@@ -27,6 +29,7 @@ public class PresentationModulesStore {
     }
 
     @SuppressWarnings("unchecked")
+    @Nullable
     public <V extends PresentationView, T extends V> PresentationComponent<V, T> get(@NonNull UUID uuid){
         return (PresentationComponent<V, T>) mComponentMap.get(uuid);
     }

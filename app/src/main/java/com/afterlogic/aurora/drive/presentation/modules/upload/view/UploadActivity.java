@@ -14,7 +14,7 @@ import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.core.common.streams.ExtCollectors;
 import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.databinding.ActivityUploadBinding;
-import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesActivity;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesListFragment;
@@ -40,7 +40,7 @@ public class UploadActivity extends BaseFilesActivity<UploadViewModel, UploadPre
     private SimpleListener mLockedListener = new SimpleListener(this::updateActionBar);
 
     @Override
-    protected void assembly(ModulesFactoryComponent modulesFactory) {
+    protected void assembly(InjectorsComponent modulesFactory) {
         modulesFactory.upload().inject(this);
     }
 

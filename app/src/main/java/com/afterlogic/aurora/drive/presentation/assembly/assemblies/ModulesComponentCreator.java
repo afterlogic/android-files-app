@@ -1,5 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.assembly.assemblies;
 
+import com.afterlogic.aurora.drive.presentation.assembly.MVVMComponentsStore;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationModulesStore;
 import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseComponent;
 import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseFilesComponent;
@@ -13,6 +14,7 @@ import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFileLi
 import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFileListModule;
 import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFilesComponent;
 import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFilesModule;
+import com.afterlogic.aurora.drive.presentation.modules.offline.assembly.OfflineComponent;
 import com.afterlogic.aurora.drive.presentation.modules.start.assembly.StartComponent;
 import com.afterlogic.aurora.drive.presentation.modules.start.assembly.StartModule;
 import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadComponent;
@@ -37,9 +39,12 @@ import dagger.Subcomponent;
  */
 @SuppressWarnings("unused")
 @Subcomponent(modules = AssembliesAssemblyModule.class)
-public interface AssembliesAssemblyComponent {
+public interface ModulesComponentCreator {
 
+    @Deprecated
     PresentationModulesStore store();
+
+    MVVMComponentsStore mvvmStore();
 
     LoginComponent plus(LoginModule module);
 
@@ -59,4 +64,6 @@ public interface AssembliesAssemblyComponent {
     FileObserverComponent plus(FileObserverModule module);
 
     FileViewComponent plus(FileViewModule module);
+
+    OfflineComponent offline();
 }

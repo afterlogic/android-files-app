@@ -14,7 +14,7 @@ import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.application.App;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.consts.NotificationConst;
-import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.modules.presenter.Presenter;
 import com.annimon.stream.Stream;
 
@@ -26,11 +26,12 @@ import java.util.UUID;
  * Created by sashka on 26.10.16.<p/>
  * mail: sunnyday.development@gmail.com
  */
+@Deprecated
 public abstract class BaseService extends Service implements PresentationView {
 
     private boolean mIsActive;
 
-    protected abstract void assembly(ModulesFactoryComponent modulesFactory);
+    protected abstract void assembly(InjectorsComponent modulesFactory);
 
     private UUID mUUID;
 
@@ -45,7 +46,7 @@ public abstract class BaseService extends Service implements PresentationView {
 
         mIsActive = true;
 
-        ModulesFactoryComponent wireframeFactory = ((App) getApplication()).modulesFactory();
+        InjectorsComponent wireframeFactory = ((App) getApplication()).getInjectors();
         assembly(wireframeFactory);
 
         PresentationViewUtil.reflectiveCollectPresenters(this);
@@ -58,7 +59,7 @@ public abstract class BaseService extends Service implements PresentationView {
         MyLog.d("onDestroy()");
         Stream.of(mPresenters).forEach(Presenter::onStop);
         mIsActive = false;
-        ((App) getApplication()).modulesFactory().modulesStore().remove(getModuleUuid());
+        ((App) getApplication()).getInjectors().modulesStore().remove(getModuleUuid());
 
         if (mMessageId > 0){
             NotificationManagerCompat nm  = NotificationManagerCompat.from(this);

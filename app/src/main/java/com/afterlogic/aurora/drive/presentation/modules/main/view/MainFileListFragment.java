@@ -12,12 +12,12 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.util.DialogUtil;
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FilesSelection;
-import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
 import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
 import com.afterlogic.aurora.drive.presentation.common.components.view.SelectionEditText;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnBackPressedListener;
@@ -62,7 +62,7 @@ public class MainFileListFragment extends BaseFilesListFragment<MainFileListView
     }
 
     @Override
-    protected void assembly(ModulesFactoryComponent modulesFactory) {
+    protected void assembly(InjectorsComponent modulesFactory) {
         modulesFactory.mainFileList().inject(this);
     }
 

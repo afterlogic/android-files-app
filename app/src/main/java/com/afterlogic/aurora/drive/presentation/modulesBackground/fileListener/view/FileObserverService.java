@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseService;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.ViewPresenter;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.presenter.FileObserverPresenter;
@@ -27,7 +27,7 @@ public class FileObserverService extends BaseService implements FileObserverView
     }
 
     @Override
-    protected void assembly(ModulesFactoryComponent modulesFactory) {
+    protected void assembly(InjectorsComponent modulesFactory) {
         modulesFactory.fileObserver().inject(this);
     }
 

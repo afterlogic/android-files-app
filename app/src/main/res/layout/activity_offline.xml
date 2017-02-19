@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BindHelper"/>
+        <variable
+            name="viewModel"
+            type="com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.OfflineViewModel"/>
+    </data>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        bind:adapter="@{BindHelper.filesListAdapter()}"
+        >
+
+    </android.support.v7.widget.RecyclerView>
+</layout>

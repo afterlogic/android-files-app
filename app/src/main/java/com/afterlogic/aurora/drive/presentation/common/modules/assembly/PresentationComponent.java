@@ -8,6 +8,7 @@ import com.afterlogic.aurora.drive.presentation.common.modules.view.Presentation
  *
  * Base module assembly component with default di injection.
  */
+@Deprecated
 public interface PresentationComponent<View extends PresentationView, Target extends View> {
     void inject(Target target);
 
