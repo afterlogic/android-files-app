@@ -37,8 +37,8 @@ public abstract class BaseFilesPresenter<V extends PresentationView> extends Bas
     }
 
     @Override
-    protected void onViewStart() {
-        super.onViewStart();
+    protected void onPresenterStart() {
+        super.onPresenterStart();
         refresh();
     }
 

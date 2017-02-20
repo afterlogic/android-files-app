@@ -1,6 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter;
 
 import android.content.Context;
+import android.os.SystemClock;
 
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.core.common.util.FileUtil;
@@ -40,6 +41,8 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
     private String mLastRefreshFolder = null;
     private final List<AuroraFile> mPath = new ArrayList<>();
 
+    private long mStopTime = 0;
+
     private Disposable mThumbnailRequest = null;
 
     public BaseFilesListPresenter(ViewState<V> viewState, FilesListInteractor interactor, BaseFilesListModel model, Context appContext, FilesRouter router) {
@@ -57,14 +60,16 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
     @Override
     protected void onPresenterStart() {
         super.onPresenterStart();
-
         mPath.add(AuroraFile.parse("", mType, true));
-        onRefresh();
     }
 
     @Override
     protected void onViewStart() {
         super.onViewStart();
+        //Do not refresh on fast stop/start
+        if (mStopTime == 0 || SystemClock.elapsedRealtime() - mStopTime > 1000) {
+            onRefresh();
+        }
         mInteractor.onStart();
     }
 
@@ -72,6 +77,7 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
     protected void onViewStop() {
         super.onViewStop();
         mInteractor.onStop();
+        mStopTime = SystemClock.elapsedRealtime();
     }
 
     @Override
