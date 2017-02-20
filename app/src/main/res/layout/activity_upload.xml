@@ -51,7 +51,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:text="@string/prompt_error_occurred"
+            android:text="@string/prompt_connection_to_server_failed"
             android:padding="32dp"
             android:gravity="center_horizontal"
             android:visibility="@{viewModel.errorState &amp;&amp; !viewModel.refreshing ? View.VISIBLE : View.GONE}"/>
