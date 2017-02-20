@@ -32,6 +32,8 @@
                 android:id="@+id/list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:paddingBottom="64dp"
+                android:clipToPadding="false"
                 bind:layoutManager="@{recyclerBinding.linearLayoutManager()}"
                 bind:adapter="@{bindHelper.filesListAdapter(viewModel)}"
                 bind:items="@{viewModel.items}"

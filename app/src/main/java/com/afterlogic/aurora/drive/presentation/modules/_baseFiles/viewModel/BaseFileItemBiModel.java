@@ -1,5 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel;
 
+import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.net.Uri;
 import android.view.View;
@@ -25,6 +26,7 @@ public class BaseFileItemBiModel implements BaseFileItemViewModel, BaseFileItemM
     private final ObservableField<String> mFileName = new ObservableField<>();
     private final ObservableField<Uri> mFileIcon = new ObservableField<>();
     private final ObservableField<Uri> mStatusIcon = new ObservableField<>();
+    private final ObservableBoolean mIsFolder = new ObservableBoolean();
 
     private AuroraFile mAuroraFile;
 
@@ -64,6 +66,7 @@ public class BaseFileItemBiModel implements BaseFileItemViewModel, BaseFileItemM
         mFileName.set(mAuroraFile.getName());
         setThumbNail(null);
         setStatusIcon(null);
+        mIsFolder.set(file.isFolder());
     }
 
     @Override
@@ -89,6 +92,11 @@ public class BaseFileItemBiModel implements BaseFileItemViewModel, BaseFileItemM
     @Override
     public BaseFileItemModel getModel() {
         return this;
+    }
+
+    @Override
+    public ObservableBoolean getIsFolder() {
+        return mIsFolder;
     }
 
     @Override

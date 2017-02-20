@@ -60,4 +60,12 @@ public class ImageViewBinding {
         view.setOnViewTapListener(listener);
     }
 
+    @BindingAdapter("bind:tintColor")
+    public static void bindTintColor(ImageView view, int color){
+        if (color != -1) {
+            view.setColorFilter(color);
+        } else {
+            view.clearColorFilter();
+        }
+    }
 }

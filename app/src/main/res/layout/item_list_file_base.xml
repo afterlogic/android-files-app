@@ -29,6 +29,8 @@
             android:layout_height="32dp"
             android:contentDescription="@string/content_descroption_file_icon"
             bind:imageUri="@{viewModel.fileIcon}"
+            bind:tintColor="@{viewModel.isFolder ? @color/colorPrimary : @color/colorAccent}"
+            tools:tint="@color/colorPrimary"
             tools:src="@mipmap/ic_launcher"/>
 
         <TextView
@@ -50,6 +52,8 @@
             android:tint="@color/colorAccent"
             android:visibility="@{viewModel.statusIcon.get() != null ? View.VISIBLE : View.GONE}"
             bind:imageUri="@{viewModel.statusIcon}"
+            bind:tintColor="@{viewModel.isFolder ? @color/colorPrimary : @color/colorAccent}"
+            tools:tint="@color/colorPrimary"
             tools:src="@drawable/ic_next"
             tools:visibility="visible"
             tools:ignore="ContentDescription"/>

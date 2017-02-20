@@ -31,6 +31,8 @@
             android:layout_height="32dp"
             android:contentDescription="@string/content_descroption_file_icon"
             bind:imageUri="@{viewModel.fileIcon}"
+            bind:tintColor="@{viewModel.isFolder ? @color/colorPrimary : -1}"
+            tools:tint="@color/colorPrimary"
             tools:src="@mipmap/ic_launcher"/>
 
         <LinearLayout
@@ -73,8 +75,9 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:visibility="@{viewModel.statusIcon != null ? View.VISIBLE : View.GONE}"
-            android:tint="@color/colorAccent"
             bind:imageUri="@{viewModel.statusIcon}"
+            bind:tintColor="@{viewModel.isFolder ? @color/colorPrimary : @color/colorAccent}"
+            tools:tint="@color/colorPrimary"
             tools:src="@drawable/ic_next"
             tools:visibility="visible"
             tools:ignore="ContentDescription"/>

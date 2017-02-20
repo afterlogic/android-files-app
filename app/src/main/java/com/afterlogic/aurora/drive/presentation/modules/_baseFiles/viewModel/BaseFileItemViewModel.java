@@ -1,5 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel;
 
+import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.net.Uri;
 import android.view.View;
@@ -20,4 +21,6 @@ public interface BaseFileItemViewModel extends View.OnLongClickListener, View.On
     ObservableField<Uri> getStatusIcon();
 
     BaseFileItemModel getModel();
+
+    ObservableBoolean getIsFolder();
 }
