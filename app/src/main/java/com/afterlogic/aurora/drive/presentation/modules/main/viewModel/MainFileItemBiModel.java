@@ -12,7 +12,8 @@ import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFileItemBiModel;
-import com.afterlogic.aurora.drive.presentation.modules.main.presenter.MainFileListPresenter;
+import com.afterlogic.aurora.drive.presentation.modules.main.model.MainFileItemModel;
+import com.afterlogic.aurora.drive.presentation.modules.main.model.presenter.MainFileListPresenter;
 
 import javax.inject.Inject;
 

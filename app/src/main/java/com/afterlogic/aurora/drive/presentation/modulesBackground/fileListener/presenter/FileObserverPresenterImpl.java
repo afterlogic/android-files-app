@@ -4,7 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.common.modules.presenter.BasePresenter;
+import com.afterlogic.aurora.drive.presentation.common.modules.model.presenter.BasePresenter;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.interactor.FileObserverInteractor;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.view.FileObserverView;

@@ -8,9 +8,9 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.util.DialogUtil;
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
-import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesListFragment;
 import com.afterlogic.aurora.drive.presentation.modules.upload.presenter.UploadFilesPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.upload.viewModel.UploadFilesViewModel;
@@ -25,7 +25,7 @@ import java.util.List;
 public class UploadFilesFragment extends BaseFilesListFragment<UploadFilesViewModel, UploadFilesPresenter> implements UploadFilesView{
 
     @Override
-    protected void assembly(ModulesFactoryComponent modulesFactory) {
+    protected void assembly(InjectorsComponent modulesFactory) {
         modulesFactory.uploadFileList().inject(this);
     }
 

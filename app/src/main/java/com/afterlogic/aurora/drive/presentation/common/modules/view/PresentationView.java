@@ -13,6 +13,7 @@ import java.util.UUID;
  *
  * Base view input.
  */
+@Deprecated
 public interface PresentationView extends ViewContext{
     int TYPE_MESSAGE_MAJOR = 1;
     int TYPE_MESSAGE_MINOR = 0;

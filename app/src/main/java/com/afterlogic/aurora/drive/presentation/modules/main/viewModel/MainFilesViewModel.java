@@ -7,6 +7,7 @@ import android.databinding.ObservableList;
 
 import com.afterlogic.aurora.drive.model.FileType;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFilesViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.main.model.MainFilesModel;
 
 /**
  * Created by sashka on 03.02.17.<p/>
@@ -26,4 +27,6 @@ public interface MainFilesViewModel extends BaseFilesViewModel{
     ObservableInt getSelectedCount();
 
     ObservableBoolean getSelectedHasFolder();
+
+    void onOfflineModeSelected();
 }

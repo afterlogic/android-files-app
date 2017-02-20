@@ -11,7 +11,7 @@ import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.core.common.util.FileUtil;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.presenter.FilesListPresenter;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter.FilesListPresenter;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 

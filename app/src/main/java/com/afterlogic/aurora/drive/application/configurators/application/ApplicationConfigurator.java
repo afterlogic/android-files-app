@@ -3,6 +3,7 @@ package com.afterlogic.aurora.drive.application.configurators.application;
 import android.content.Context;
 import android.content.Intent;
 
+import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.view.FileObserverService;
 import com.afterlogic.aurora.drive.application.assembly.ApplicationAssemblyComponent;
 import com.afterlogic.aurora.drive.core.assembly.CoreAssemblyModule;
@@ -14,8 +15,7 @@ import com.afterlogic.aurora.drive.data.modules.prefs.Pref;
 import com.afterlogic.aurora.drive.presentation.assembly.assemblies.AssembliesAssemblyModule;
 import com.afterlogic.aurora.drive.presentation.assembly.presentation.PresentationAssemblyComponent;
 import com.afterlogic.aurora.drive.presentation.assembly.presentation.PresentationAssemblyModule;
-import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
-import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryModule;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsModule;
 
 import javax.inject.Inject;
 
@@ -65,16 +65,16 @@ public class ApplicationConfigurator implements Configurable {
         PresentationAssemblyComponent presentationComponent =
                 dataComponent.plus(new PresentationAssemblyModule());
 
-        ModulesFactoryModule modulesModule = new ModulesFactoryModule(
+        InjectorsModule modulesModule = new InjectorsModule(
                 presentationComponent.plus(new AssembliesAssemblyModule())
         );
 
-        ModulesFactoryComponent modulesComponent = presentationComponent
+        InjectorsComponent modulesComponent = presentationComponent
                 .plus(modulesModule);
 
         mContext.startService(new Intent(mContext, FileObserverService.class));
 
-        mConfigurationCallback.onWireframeFactoryConfigured(modulesComponent);
+        mConfigurationCallback.onInjectorsConfigured(modulesComponent);
     }
 
     private void updateApp(int from, int to, DataAssemblyComponent data){

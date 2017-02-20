@@ -3,7 +3,7 @@ package com.afterlogic.aurora.drive.presentation.modules.upload.interactor;
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.interactor.BaseFilesInteractor;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.interactor.BaseFilesInteractor;
 
 import javax.inject.Inject;
 

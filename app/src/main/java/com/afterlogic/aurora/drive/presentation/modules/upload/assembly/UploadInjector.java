@@ -2,9 +2,9 @@ package com.afterlogic.aurora.drive.presentation.modules.upload.assembly;
 
 import android.support.annotation.NonNull;
 
-import com.afterlogic.aurora.drive.presentation.assembly.assemblies.AssembliesAssemblyComponent;
-import com.afterlogic.aurora.drive.presentation.common.modules.assembly.BaseInjector;
-import com.afterlogic.aurora.drive.presentation.common.modules.assembly.Injector;
+import com.afterlogic.aurora.drive.presentation.assembly.assemblies.ModulesComponentCreator;
+import com.afterlogic.aurora.drive.presentation.common.modules.assembly.OldBaseInjector;
+import com.afterlogic.aurora.drive.presentation.assembly.Injector;
 import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadActivity;
 import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadView;
 
@@ -15,9 +15,9 @@ import javax.inject.Inject;
  * mail: sunnyday.development@gmail.com
  */
 
-public class UploadInjector extends BaseInjector<UploadActivity, UploadView, UploadModule> implements Injector<UploadActivity> {
+public class UploadInjector extends OldBaseInjector<UploadActivity, UploadView, UploadModule> implements Injector<UploadActivity> {
 
-    @Inject UploadInjector(AssembliesAssemblyComponent component) {
+    @Inject UploadInjector(ModulesComponentCreator component) {
         super(component);
     }
 

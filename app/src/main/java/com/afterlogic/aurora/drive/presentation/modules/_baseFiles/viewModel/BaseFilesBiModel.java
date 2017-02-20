@@ -9,7 +9,7 @@ import android.databinding.ObservableList;
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileType;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.presenter.FilesPresenter;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter.FilesPresenter;
 import com.annimon.stream.Stream;
 
 import java.util.List;

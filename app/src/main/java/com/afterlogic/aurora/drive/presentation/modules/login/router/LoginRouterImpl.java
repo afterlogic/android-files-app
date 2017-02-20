@@ -3,7 +3,7 @@ package com.afterlogic.aurora.drive.presentation.modules.login.router;
 import android.app.Activity;
 import android.content.Intent;
 
-import com.afterlogic.aurora.drive.presentation.common.modules.router.BaseRouter;
+import com.afterlogic.aurora.drive.presentation.common.modules.model.router.BaseRouter;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginView;

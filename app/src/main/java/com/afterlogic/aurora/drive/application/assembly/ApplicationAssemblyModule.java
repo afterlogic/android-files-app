@@ -2,6 +2,7 @@ package com.afterlogic.aurora.drive.application.assembly;
 
 import android.content.Context;
 
+import com.afterlogic.aurora.drive.application.App;
 import com.afterlogic.aurora.drive.application.configurators.application.ApplicationConfigurator;
 import com.afterlogic.aurora.drive.application.configurators.thirdParties.ThirdPartiesConfigurator;
 import com.afterlogic.aurora.drive.core.common.annotation.qualifer.Application;
@@ -21,14 +22,19 @@ import dagger.Provides;
 @Module
 public class ApplicationAssemblyModule {
 
-    private Context mAppContext;
+    private App mAppContext;
 
-    public ApplicationAssemblyModule(Context appContext) {
+    public ApplicationAssemblyModule(App appContext) {
         mAppContext = appContext;
     }
 
     @Provides
     Context provideApplicationContext(){
+        return mAppContext;
+    }
+
+    @Provides
+    App application(){
         return mAppContext;
     }
 

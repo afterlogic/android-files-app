@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
-import com.afterlogic.aurora.drive.presentation.common.modules.presenter.Presenter;
+import com.afterlogic.aurora.drive.presentation.common.modules.model.presenter.Presenter;
 import com.annimon.stream.Stream;
 
 import java.util.HashSet;
@@ -17,6 +17,7 @@ import java.util.UUID;
  * Created by sashka on 15.11.16.<p/>
  * mail: sunnyday.development@gmail.com
  */
+@Deprecated
 public abstract class BaseSubView<C extends Context> implements SubView {
 
     private final int mId;

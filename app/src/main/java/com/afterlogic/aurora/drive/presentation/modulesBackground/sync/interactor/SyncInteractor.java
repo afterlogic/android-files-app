@@ -2,7 +2,7 @@ package com.afterlogic.aurora.drive.presentation.modulesBackground.sync.interact
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
-import com.afterlogic.aurora.drive.presentation.common.modules.interactor.Interactor;
+import com.afterlogic.aurora.drive.presentation.common.modules.model.interactor.Interactor;
 
 import java.util.List;
 

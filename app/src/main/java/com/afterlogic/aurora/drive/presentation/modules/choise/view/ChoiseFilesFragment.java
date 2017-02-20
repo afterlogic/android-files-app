@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.choise.view;
 
-import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesListFragment;
 import com.afterlogic.aurora.drive.presentation.modules.choise.presenter.ChoiseFilesPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.choise.viewModel.ChoiseFilesViewModel;
@@ -13,7 +13,7 @@ import com.afterlogic.aurora.drive.presentation.modules.choise.viewModel.ChoiseF
 public class ChoiseFilesFragment extends BaseFilesListFragment<ChoiseFilesViewModel, ChoiseFilesPresenter> implements ChoiseFilesView {
 
     @Override
-    protected void assembly(ModulesFactoryComponent modulesFactory) {
+    protected void assembly(InjectorsComponent modulesFactory) {
         modulesFactory.choiseFileList().inject(this);
     }
 }

@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.common.modules.view;
 
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
-import com.afterlogic.aurora.drive.presentation.common.modules.presenter.Presenter;
+import com.afterlogic.aurora.drive.presentation.common.modules.model.presenter.Presenter;
 import com.annimon.stream.Stream;
 
 import java.lang.reflect.Field;

@@ -28,6 +28,7 @@ import java.util.UUID;
  *
  * Single fragment activity. Create single fragment or restore it.
  */
+@Deprecated
 public abstract class SingleFragmentActivity extends BaseActivity implements FragmentManager.OnBackStackChangedListener{
 
     //Activity layout id

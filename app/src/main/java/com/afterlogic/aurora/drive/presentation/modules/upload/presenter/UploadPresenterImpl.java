@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.upload.presenter;
 
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.presenter.BaseFilesPresenter;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter.BaseFilesPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.upload.interactor.UploadInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadView;
 import com.afterlogic.aurora.drive.presentation.modules.upload.viewModel.UploadModel;

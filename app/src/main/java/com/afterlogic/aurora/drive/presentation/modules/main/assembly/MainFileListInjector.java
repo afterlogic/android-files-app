@@ -2,9 +2,9 @@ package com.afterlogic.aurora.drive.presentation.modules.main.assembly;
 
 import android.support.annotation.NonNull;
 
-import com.afterlogic.aurora.drive.presentation.assembly.assemblies.AssembliesAssemblyComponent;
-import com.afterlogic.aurora.drive.presentation.common.modules.assembly.BaseInjector;
-import com.afterlogic.aurora.drive.presentation.common.modules.assembly.Injector;
+import com.afterlogic.aurora.drive.presentation.assembly.assemblies.ModulesComponentCreator;
+import com.afterlogic.aurora.drive.presentation.common.modules.assembly.OldBaseInjector;
+import com.afterlogic.aurora.drive.presentation.assembly.Injector;
 import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFileListFragment;
 import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFileListView;
 
@@ -15,10 +15,10 @@ import javax.inject.Inject;
  * mail: sunnyday.development@gmail.com
  */
 
-public class MainFileListInjector extends BaseInjector<MainFileListFragment, MainFileListView, MainFileListModule> implements Injector<MainFileListFragment> {
+public class MainFileListInjector extends OldBaseInjector<MainFileListFragment, MainFileListView, MainFileListModule> implements Injector<MainFileListFragment> {
 
     @Inject
-    MainFileListInjector(AssembliesAssemblyComponent component) {
+    MainFileListInjector(ModulesComponentCreator component) {
         super(component);
     }
 

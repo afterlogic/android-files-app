@@ -2,7 +2,7 @@ package com.afterlogic.aurora.drive.presentation.modules.fileView.interactor;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.interactor.FilesListInteractor;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.interactor.FilesListInteractor;
 
 import java.io.File;
 

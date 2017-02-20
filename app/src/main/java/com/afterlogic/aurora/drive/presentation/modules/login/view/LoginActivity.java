@@ -6,7 +6,7 @@ import android.view.inputmethod.EditorInfo;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.databinding.ActivityLoginBinding;
-import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.ViewPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.login.presenter.LoginPresenter;
@@ -26,7 +26,7 @@ public class LoginActivity extends BaseActivity implements LoginView{
     protected LoginViewModel mViewModel;
 
     @Override
-    protected void assembly(ModulesFactoryComponent modulesFactory) {
+    protected void assembly(InjectorsComponent modulesFactory) {
         modulesFactory.login().inject(this);
     }
 

@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.login.presenter;
 
-import com.afterlogic.aurora.drive.presentation.common.modules.presenter.Presenter;
+import com.afterlogic.aurora.drive.presentation.common.modules.model.presenter.Presenter;
 
 /**
  * Created by sashka on 02.02.17.<p/>

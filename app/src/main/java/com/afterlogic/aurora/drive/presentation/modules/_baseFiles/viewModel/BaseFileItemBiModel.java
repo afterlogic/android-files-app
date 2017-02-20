@@ -1,7 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel;
 
 import android.databinding.ObservableField;
-import android.databinding.ObservableInt;
 import android.net.Uri;
 import android.view.View;
 
@@ -10,7 +9,7 @@ import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.core.common.util.FileUtil;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.presenter.FilesListPresenter;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter.FilesListPresenter;
 
 /**
  * Created by sashka on 10.02.17.<p/>

@@ -15,7 +15,7 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.ViewPresenter;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.presenter.FilesPresenter;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter.FilesPresenter;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFilesViewModel;
 
 import javax.inject.Inject;

@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.databinding.FragmentViewImageBinding;
-import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseFragment;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.viewModel.FileViewImageItemViewModel;
 
@@ -23,7 +23,7 @@ public class FileViewImageItemFragment extends BaseFragment implements FileViewI
     private FileViewImageItemViewModel mViewModel;
 
     @Override
-    protected void assembly(ModulesFactoryComponent modulesFactory) {
+    protected void assembly(InjectorsComponent modulesFactory) {
 
     }
 

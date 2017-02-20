@@ -1,5 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.view;
 
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
@@ -13,13 +15,13 @@ import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.databinding.ActivityMainBinding;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesActivity;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesListFragment;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.FilesListCallback;
-import com.afterlogic.aurora.drive.presentation.modules.main.presenter.MainFilesPresenter;
-import com.afterlogic.aurora.drive.presentation.modules.main.viewModel.MainFilesModel;
+import com.afterlogic.aurora.drive.presentation.modules.main.model.MainFilesModel;
+import com.afterlogic.aurora.drive.presentation.modules.main.model.presenter.MainFilesPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.main.viewModel.MainFilesViewModel;
 import com.annimon.stream.Stream;
 
@@ -39,8 +41,13 @@ public class MainFilesActivity extends BaseFilesActivity<MainFilesViewModel, Mai
     private final SimpleListener mSelectedCountListener = new SimpleListener(this::updateMultiChoiseCount);
     private final SimpleListener mSelectedFolderListener = new SimpleListener(this::updateMultiChoiseAvailableActions);
 
+    public static Intent intent(Context context){
+        Intent intent = new Intent(context, MainFilesActivity.class);
+        return intent;
+    }
+
     @Override
-    protected void assembly(ModulesFactoryComponent modulesFactory) {
+    protected void assembly(InjectorsComponent modulesFactory) {
         modulesFactory.main().inject(this);
     }
 
@@ -87,6 +94,9 @@ public class MainFilesActivity extends BaseFilesActivity<MainFilesViewModel, Mai
                 return true;
             case R.id.action_multichoise:
                 mViewModel.getModel().setMultiChoiseMode(true);
+                return true;
+            case R.id.action_offline_mode:
+                mViewModel.onOfflineModeSelected();
                 return true;
 
             default: return super.onOptionsItemSelected(item);

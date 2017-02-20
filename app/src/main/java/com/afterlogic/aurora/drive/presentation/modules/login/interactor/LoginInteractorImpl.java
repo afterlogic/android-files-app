@@ -8,7 +8,7 @@ import com.afterlogic.aurora.drive.data.modules.apiChecker.checker.ApiChecker;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.error.UnknownApiVersionError;
-import com.afterlogic.aurora.drive.presentation.common.modules.interactor.BaseInteractor;
+import com.afterlogic.aurora.drive.presentation.common.modules.model.interactor.BaseInteractor;
 import com.annimon.stream.Stream;
 
 import java.util.ArrayList;

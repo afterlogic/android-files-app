@@ -24,7 +24,7 @@ import com.afterlogic.aurora.drive.core.common.streams.ExtCollectors;
 import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.databinding.ActivityViewFileBinding;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.assembly.modules.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
 import com.afterlogic.aurora.drive.presentation.common.binding.bindingAdapters.ViewProvider;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ItemsAdapter;
@@ -80,7 +80,7 @@ public class FileViewActivity extends BaseActivity implements FileViewPresentati
     }
 
     @Override
-    protected void assembly(ModulesFactoryComponent modulesFactory) {
+    protected void assembly(InjectorsComponent modulesFactory) {
         modulesFactory.fileView().inject(this);
     }
 

@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.fileView.presenter;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.common.modules.presenter.LoadPresenter;
+import com.afterlogic.aurora.drive.presentation.common.modules.model.presenter.LoadPresenter;
 
 /**
  * Created by sashka on 16.02.17.<p/>

@@ -7,7 +7,8 @@ import android.databinding.ObservableInt;
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFilesBiModel;
-import com.afterlogic.aurora.drive.presentation.modules.main.presenter.MainFilesPresenter;
+import com.afterlogic.aurora.drive.presentation.modules.main.model.MainFilesModel;
+import com.afterlogic.aurora.drive.presentation.modules.main.model.presenter.MainFilesPresenter;
 
 import javax.inject.Inject;
 
@@ -22,9 +23,11 @@ public class MainFilesBiModel extends BaseFilesBiModel implements MainFilesViewM
     private final ObservableBoolean mMultichoiseMode = new ObservableBoolean(false);
     private final ObservableInt mSelectedCount = new ObservableInt(0);
     private final ObservableBoolean mSelectedHasFolder = new ObservableBoolean(false);
+    private OptWeakRef<MainFilesPresenter> mPresenter;
 
     @Inject MainFilesBiModel(OptWeakRef<MainFilesPresenter> presenter) {
         super(presenter);
+        mPresenter = presenter;
     }
 
     public MainFilesModel getModel(){
@@ -49,6 +52,11 @@ public class MainFilesBiModel extends BaseFilesBiModel implements MainFilesViewM
     @Override
     public ObservableBoolean getSelectedHasFolder() {
         return mSelectedHasFolder;
+    }
+
+    @Override
+    public void onOfflineModeSelected() {
+        mPresenter.ifPresent(MainFilesPresenter::onOfflineModeSelected);
     }
 
     @Override

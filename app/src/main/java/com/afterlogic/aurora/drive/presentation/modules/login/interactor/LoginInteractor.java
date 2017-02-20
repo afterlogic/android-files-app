@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.login.interactor;
 
 import com.afterlogic.aurora.drive.model.AuroraSession;
-import com.afterlogic.aurora.drive.presentation.common.modules.interactor.Interactor;
+import com.afterlogic.aurora.drive.presentation.common.modules.model.interactor.Interactor;
 
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
