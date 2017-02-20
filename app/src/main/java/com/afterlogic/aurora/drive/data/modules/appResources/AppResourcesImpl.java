@@ -54,4 +54,9 @@ public class AppResourcesImpl implements AppResources {
                 .appendPath(resources.getResourceEntryName(id))
                 .build();
     }
+
+    @Override
+    public String getPlurals(int id, int count, Object... args) {
+        return mContext.getResources().getQuantityString(id, count, args);
+    }
 }

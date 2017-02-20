@@ -1,7 +1,10 @@
 package com.afterlogic.aurora.drive.presentation.common.modules.model.presenter;
 
 import android.content.Context;
+import android.os.PowerManager;
 
+import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.core.common.util.Holder;
 import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.model.error.PermissionDeniedError;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.LoadView;
@@ -9,6 +12,7 @@ import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.Vi
 import com.afterlogic.aurora.drive.presentation.common.util.PermissionUtil;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableTransformer;
 import io.reactivex.disposables.Disposable;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
@@ -21,8 +25,10 @@ import static com.afterlogic.aurora.drive.model.events.PermissionGrantEvent.FILE
  */
 
 public class BaseLoadPresenter<V extends LoadView> extends BasePresenter<V> implements LoadPresenter{
+
     private final Context mAppContext;
     private Disposable mCurrentFileTask = null;
+    private static long sWakeLockId = 0;
 
     public BaseLoadPresenter(ViewState<V> viewState, Context appContext) {
         super(viewState);
@@ -41,21 +47,15 @@ public class BaseLoadPresenter<V extends LoadView> extends BasePresenter<V> impl
                 .doFinally(() -> mCurrentFileTask = null);
     }
 
-    public <T> Observable<T> progressibleLoadTask(Observable<Progressible<T>> observable){
-        return observable.startWith(checkAndWaitPermissionResult(
+    public <T> ObservableTransformer<Progressible<T>, T> progressibleLoadTask(boolean download){
+        return observable -> observable.startWith(checkAndWaitPermissionResult(
                 FILES_STORAGE_ACCESS,
                 new String[]{WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE}
         ))//----|
-                //TODO load progress title (downloadOrGetOffline/upload)
-                .doOnNext(progress -> {
-                    float value = progress.getMax() > 0 ?
-                            (float) progress.getProgress() / progress.getMax() : -1;
-                    getView().showLoadProgress(progress.getName(), value * 100);
-                })
+                .compose(notifyPercentProgress(download))
                 .filter(Progressible::isDone)
                 .map(Progressible::getData)
-                .doOnSubscribe(disposable -> getView().showLoadProgress("", -1))
-                .doFinally(() -> getView().hideProgress())
+                .compose(this::wakeLock)
                 .compose(this::trackCurrentTask);
     }
 
@@ -70,5 +70,33 @@ public class BaseLoadPresenter<V extends LoadView> extends BasePresenter<V> impl
                 .doOnError(this::onErrorObtained)
                 .retryWhen(attempts -> observePermissions(requestId, true));
 
+    }
+
+    public  <T> ObservableTransformer<Progressible<T>, Progressible<T>> notifyPercentProgress(boolean download){
+        String progressTitle = download ? mAppContext.getString(R.string.dialog_files_title_dowloading) :
+                mAppContext.getString(R.string.dialog_files_title_uploading);
+        return observable -> observable
+                .doOnNext(progress -> {
+                    float value = progress.getMax() > 0 && progress.getProgress() >= 0?
+                            (float) progress.getProgress() / progress.getMax() : -1;
+                    getView().showLoadProgress(
+                            progress.getName(),
+                            progressTitle,
+                            value * 100
+                    );
+                })
+                .doFinally(() -> getView().hideProgress());
+    }
+
+    public  <T> Observable<T> wakeLock(Observable<T> observable){
+        Holder<PowerManager.WakeLock> wakeLockHolder = new Holder<>();
+        return observable
+                .doOnSubscribe(disposable -> {
+                    PowerManager pm = (PowerManager) mAppContext.getSystemService(Context.POWER_SERVICE);
+                    PowerManager.WakeLock wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "loadTask:" + sWakeLockId++);
+                    wakeLock.acquire();
+                    wakeLockHolder.set(wakeLock);
+                })
+                .doFinally(() -> wakeLockHolder.get().release());
     }
 }

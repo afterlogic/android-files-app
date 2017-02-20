@@ -46,7 +46,10 @@ public class UploadFilesPresenterImpl extends BaseFilesListPresenter<UploadFiles
     @Override
     public void onCreateFolder() {
         getView().showNewFolderNameDialog(name -> mInteractor.createFolder(getCurrentFolder(), name)
-                .doOnSubscribe(disposable -> getView().showProgress("Folder creation:", name))
+                .doOnSubscribe(disposable -> getView().showProgress(
+                        mAppResources.getString(R.string.prompt_dialog_title_folder_cration),
+                        name
+                ))
                 .doFinally(() -> getView().hideProgress())
                 .subscribe(
                         file -> {
@@ -65,7 +68,7 @@ public class UploadFilesPresenterImpl extends BaseFilesListPresenter<UploadFiles
                         .onErrorResumeNext(Observable.empty())
                 )
                 .collect(Observables.Collectors.concatObservables())
-                .compose(this::progressibleLoadTask)
+                .compose(progressibleLoadTask(false))
                 .subscribe(
                         uploadedFile -> {
                             mModel.addFile(uploadedFile);

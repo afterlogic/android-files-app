@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.login.presenter;
+package com.afterlogic.aurora.drive.presentation.modules.login.model.presenter;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.util.ErrorUtil;
@@ -9,8 +9,8 @@ import com.afterlogic.aurora.drive.model.error.UnknownApiVersionError;
 import com.afterlogic.aurora.drive.presentation.common.modules.model.presenter.BasePresenter;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.PresentationView;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
-import com.afterlogic.aurora.drive.presentation.modules.login.interactor.LoginInteractor;
-import com.afterlogic.aurora.drive.presentation.modules.login.router.LoginRouter;
+import com.afterlogic.aurora.drive.presentation.modules.login.model.interactor.LoginInteractor;
+import com.afterlogic.aurora.drive.presentation.modules.login.model.router.LoginRouter;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginView;
 import com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginModel;
 

@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.login.viewModel;
 
 import com.afterlogic.aurora.drive.model.AuroraSession;
-import com.afterlogic.aurora.drive.presentation.modules.login.presenter.LoginPresenter;
+import com.afterlogic.aurora.drive.presentation.modules.login.model.presenter.LoginPresenter;
 
 import io.reactivex.Single;
 

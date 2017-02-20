@@ -9,7 +9,7 @@ import com.afterlogic.aurora.drive.databinding.ActivityLoginBinding;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.ViewPresenter;
-import com.afterlogic.aurora.drive.presentation.modules.login.presenter.LoginPresenter;
+import com.afterlogic.aurora.drive.presentation.modules.login.model.presenter.LoginPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginViewModel;
 
 import javax.inject.Inject;

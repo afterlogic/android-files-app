@@ -1,5 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.model.presenter;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 
@@ -8,6 +9,7 @@ import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.model.error.ActivityResultError;
 import com.afterlogic.aurora.drive.model.error.FileAlreadyExistError;
 import com.afterlogic.aurora.drive.model.error.FileNotExistError;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.PresentationView;
@@ -109,7 +111,7 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
                     intent.setType(file.getContentType());
 
                     mInteractor.downloadForOpen(file)
-                            .compose(this::progressibleLoadTask)
+                            .compose(progressibleLoadTask(true))
                             .subscribe(
                                     localFile -> mRouter.openFile(file, localFile),
                                     this::onErrorObtained
@@ -144,20 +146,19 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
             Stream.of(files)
                     .map(mInteractor::downloadToDownloads)
                     .collect(Observables.Collectors.concatObservables())
-                    .compose(this::progressibleLoadTask)
+                    .compose(progressibleLoadTask(true))
                     .ignoreElements()
                     .subscribe(
                             () -> getView().showMessage(
-                                    String.format("%d files success downloaded.", files.size()),
+                                    mAppResources.getPlurals(R.plurals.dialog_files_success_downloaded, files.size(), files.size()),
                                     PresentationView.TYPE_MESSAGE_MAJOR
                             ),
                             this::onErrorObtained
                     );
         } else {
             mInteractor.downloadToDownloads(file)
-                    .compose(this::progressibleLoadTask)
+                    .compose(progressibleLoadTask(true))
                     .subscribe(
-                            //TODO dialog: open file?
                             localFile -> mRouter.openFile(file, localFile),
                             this::onErrorObtained
                     );
@@ -179,7 +180,7 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
             Stream.of(files)
                     .map(mInteractor::downloadForOpen)
                     .collect(Observables.Collectors.concatObservables())
-                    .compose(this::progressibleLoadTask)
+                    .compose(progressibleLoadTask(true))
                     .subscribe(
                             results::add,
                             this::onErrorObtained,
@@ -188,7 +189,7 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
 
         } else {
             mInteractor.downloadForOpen(file)
-                    .compose(this::progressibleLoadTask)
+                    .compose(progressibleLoadTask(true))
                     .subscribe(
                             localFile -> mRouter.openSendTo(file, localFile),
                             this::onErrorObtained
@@ -201,7 +202,10 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
         AuroraFile file = onFileAction();
 
         getView().showRenameDialog(file, name -> mInteractor.rename(file, name)
-                .doOnSubscribe(disposable -> getView().showProgress("Renaming:", file.getName()))
+                .doOnSubscribe(disposable -> getView().showProgress(mAppResources.getString(
+                        R.string.prompt_dialog_title_renaming),
+                        file.getName() + " -> " + name
+                ))
                 .doFinally(() -> getView().hideProgress())
                 .subscribe(
                         newFile -> handleRenameResult(file, newFile),
@@ -246,7 +250,6 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
         }
     }
 
-    //TODO text to resources
     @Override
     public void onDelete() {
         AuroraFile file = onFileAction();
@@ -261,7 +264,7 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
         //Check on multichoise (file is null when multichoise)
         if (file == null){
             List<AuroraFile> files = mModel.getMultiChoise();
-            message = String.format("%d files", files.size());
+            message = mAppResources.getPlurals(R.plurals.files, files.size(), files.size());
             deleteRequest = Stream.of(files)
                     .map(deleteFile -> mInteractor.deleteFile(deleteFile)
                             .doOnComplete(() -> mModel.removeFile(deleteFile))
@@ -274,7 +277,10 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
         }
 
         deleteRequest
-                .doOnSubscribe(disposable -> getView().showProgress("Deleting:", message))
+                .doOnSubscribe(disposable -> getView().showProgress(
+                        mAppResources.getString(R.string.prompt_dialog_title_deleting),
+                        message
+                ))
                 .doFinally(() -> getView().hideProgress())
                 .subscribe(
                         () -> {},
@@ -285,8 +291,11 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
     @Override
     public void onCreateFolder() {
         getView().showNewFolderNameDialog(name -> mInteractor.createFolder(getCurrentFolder(), name)
-                //TODO text to resources
-                .doOnSubscribe(disposable -> getView().showProgress("Folder creation:", name))
+                .doOnSubscribe(disposable -> getView().showProgress(
+                        mAppResources.getString(
+                                R.string.prompt_dialog_title_folder_cration),
+                        name
+                ))
                 .doFinally(() -> getView().hideProgress())
                 .subscribe(
                         mModel::addFile,
@@ -298,17 +307,13 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
     public void onFileUpload() {
         observeActivityResult(MainFileListRouter.FILE_SELECT_CODE, true)
                 .startWith(Completable.fromAction(mRouter::openUploadFileChooser).toObservable())
-                .doOnError(error -> getView().showMessage(
-                        //TODO text to resources
-                        "Doesn't have application for choose file.",
-                        PresentationView.TYPE_MESSAGE_MAJOR
-                ))
+                .compose(Observables.emptyOnError(ActivityResultError.class))
                 .firstElement()
                 .flatMapObservable(activityResult -> mInteractor.uploadFile(
                         getCurrentFolder(),
                         activityResult.getResult().getData()
                 ))
-                .compose(this::progressibleLoadTask)
+                .compose(progressibleLoadTask(false))
                 .subscribe(
                         uploadedFile -> {
                             mModel.addFile(uploadedFile);
@@ -354,6 +359,11 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
                             R.string.prompt_file_already_exist,
                             existError.getCheckedFile().getName()
                     ),
+                    PresentationView.TYPE_MESSAGE_MAJOR
+            );
+        } else if (error instanceof ActivityNotFoundException){
+            getView().showMessage(
+                    R.string.promtp_dialog_error_message_doesnt_have_chooser,
                     PresentationView.TYPE_MESSAGE_MAJOR
             );
         } else {

@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.login.presenter;
+package com.afterlogic.aurora.drive.presentation.modules.login.model.presenter;
 
 import com.afterlogic.aurora.drive.presentation.common.modules.model.presenter.Presenter;
 

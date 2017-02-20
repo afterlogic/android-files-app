@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.login.interactor;
+package com.afterlogic.aurora.drive.presentation.modules.login.model.interactor;
 
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;

@@ -39,7 +39,7 @@ public class ChoiseFilesPresenterImpl extends BaseFilesListPresenter<ChoiseFiles
             super.onFileClick(file);
         } else {
             mInteractor.download(file)
-                    .compose(this::progressibleLoadTask)
+                    .compose(progressibleLoadTask(true))
                     .subscribe(
                             mRouter::closeWithResult,
                             this::onErrorObtained

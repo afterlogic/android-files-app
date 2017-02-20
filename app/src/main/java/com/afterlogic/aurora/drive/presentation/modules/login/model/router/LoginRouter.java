@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.login.router;
+package com.afterlogic.aurora.drive.presentation.modules.login.model.router;
 
 /**
  * Created by sashka on 02.02.17.<p/>

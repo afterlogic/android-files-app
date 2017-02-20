@@ -135,7 +135,7 @@ public class FileViewActivity extends BaseActivity implements FileViewPresentati
     }
 
     @Override
-    public void showLoadProgress(String fileName, @FloatRange(from = -1, to = 100) float progress) {
+    public void showLoadProgress(String fileName, String title, @FloatRange(from = -1, to = 100) float progress) {
         if (mProgressDialog != null) {
             if (progress != -1) {
                 mProgressDialog.setIndeterminate(false);
@@ -154,7 +154,7 @@ public class FileViewActivity extends BaseActivity implements FileViewPresentati
             mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
             mProgressDialog.setCancelable(false);
             mProgressDialog.setIndeterminate(true);
-            mProgressDialog.setTitle(R.string.dialog_downloading);
+            mProgressDialog.setTitle(title);
             mProgressDialog.setMessage(fileName);
             mProgressDialog.setButton(
                     BUTTON_NEGATIVE,

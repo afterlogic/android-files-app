@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.login.router;
+package com.afterlogic.aurora.drive.presentation.modules.login.model.router;
 
 import android.app.Activity;
 import android.content.Intent;

@@ -98,6 +98,20 @@
     <string name="prompt_offline_file_not_exist">Offline file not exists. Maybe it not synced yet.</string>
     <string name="content_descroption_file_icon">File icon</string>
     <string name="prompt_syncing">Syncing</string>
+    <string name="prompt_dialog_title_deleting">Deleting:</string>
+    <string name="prompt_dialog_title_folder_cration">Folder creating:</string>
+    <string name="promtp_dialog_error_message_doesnt_have_chooser">Doesn\'t have application for file choosing.</string>
+    <string name="prompt_dialog_title_renaming">Renaming:</string>
+
+    <plurals name="dialog_files_success_downloaded">
+        <item quantity="one">%d file success downloaded.</item>
+        <item quantity="many">%d files success downloaded.</item>
+    </plurals>
+
+    <plurals name="files">
+        <item quantity="one">%d file.</item>
+        <item quantity="many">%d files.</item>
+    </plurals>
 
     <plurals name="prompt_upload_files_count">
         <item quantity="one">%d file</item>

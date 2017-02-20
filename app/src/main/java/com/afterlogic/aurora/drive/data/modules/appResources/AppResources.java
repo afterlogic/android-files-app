@@ -20,4 +20,6 @@ public interface AppResources {
     Drawable getDrawable(@DrawableRes int id);
 
     Uri getResourceUri(int id);
+
+    String getPlurals(int id, int count, Object... args);
 }

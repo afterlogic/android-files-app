@@ -83,7 +83,7 @@ public class OfflineActivity extends BaseMVVMActivity<OfflineViewModel> {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_offline, menu);
-        MenuItem online = menu.getItem(R.id.action_online_mode);
+        MenuItem online = menu.findItem(R.id.action_online_mode);
         if (online != null){
             online.setVisible(!getViewModel().getManualMode().get());
         }
