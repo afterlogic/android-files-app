@@ -9,6 +9,7 @@ import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.core.common.util.FileUtil;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.BaseFileItemModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter.FilesListPresenter;
 
 /**

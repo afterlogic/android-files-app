@@ -21,4 +21,6 @@ public interface FilesLocalService {
     Single<List<OfflineFileInfoEntity>> getOffline();
 
     Maybe<OfflineFileInfoEntity> get(String pathSpec);
+
+    Completable clear();
 }

@@ -47,6 +47,15 @@
 
         </android.support.design.widget.AppBarLayout>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:text="@string/prompt_error_occurred"
+            android:padding="32dp"
+            android:gravity="center_horizontal"
+            android:visibility="@{viewModel.errorState &amp;&amp; !viewModel.refreshing ? View.VISIBLE : View.GONE}"/>
+
         <!-- SwipeRefresh for refreshing on error and progress indication-->
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/refresh"
@@ -99,12 +108,14 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/colorAccent"/>
+                android:background="@color/colorAccent"
+                android:visibility="@{viewModel.errorState ? View.GONE : View.VISIBLE}"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:gravity="end">
+                android:gravity="end"
+                android:visibility="@{viewModel.errorState ? View.GONE : View.VISIBLE}">
 
                 <TextView
                     android:id="@+id/upload"

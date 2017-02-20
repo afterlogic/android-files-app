@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel;
+package com.afterlogic.aurora.drive.presentation.modules._baseFiles.model;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileType;
@@ -17,4 +17,6 @@ public interface BaseFilesModel {
     void setCurrentFolder(AuroraFile folder);
 
     void setRefreshing(boolean refreshing);
+
+    void setErrorState(boolean errorState);
 }

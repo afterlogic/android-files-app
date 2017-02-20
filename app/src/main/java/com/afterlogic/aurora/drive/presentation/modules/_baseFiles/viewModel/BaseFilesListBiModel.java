@@ -11,6 +11,7 @@ import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.core.common.util.FileUtil;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.BaseFilesListModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter.FilesListPresenter;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
@@ -32,6 +33,7 @@ public abstract class BaseFilesListBiModel<T extends BaseFileItemViewModel> impl
     private final WeakHashMap<AuroraFile, T> mFilesMap = new WeakHashMap<>();
     private final ObservableBoolean mRefreshing = new ObservableBoolean(true);
     private final ObservableField<AuroraFile> mCurrentFolder = new ObservableField<>();
+    private final ObservableBoolean mErrorState = new ObservableBoolean();
 
     public BaseFilesListBiModel(OptWeakRef<? extends FilesListPresenter> presenter) {
         mPresenter = presenter;
@@ -58,12 +60,18 @@ public abstract class BaseFilesListBiModel<T extends BaseFileItemViewModel> impl
     }
 
     @Override
+    public ObservableBoolean getErrorState() {
+        return mErrorState;
+    }
+
+    @Override
     public void onRefresh() {
         mPresenter.ifPresent(FilesListPresenter::onRefresh);
     }
 
     @Override
     public void setFileList(List<AuroraFile> files) {
+        mErrorState.set(false);
         synchronized (this){
             mFiles.clear();
             mFilesMap.clear();
@@ -127,6 +135,11 @@ public abstract class BaseFilesListBiModel<T extends BaseFileItemViewModel> impl
         return Stream.of(mFiles)
                 .map(file -> file.getModel().getFile())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void setErrorState(boolean errorState) {
+        mErrorState.set(errorState);
     }
 
     protected abstract T viewModel(AuroraFile file);

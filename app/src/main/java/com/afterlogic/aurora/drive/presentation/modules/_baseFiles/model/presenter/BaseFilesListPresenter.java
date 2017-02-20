@@ -9,7 +9,7 @@ import com.afterlogic.aurora.drive.presentation.common.modules.model.presenter.B
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.interactor.FilesListInteractor;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.FilesListView;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFilesListModel;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.BaseFilesListModel;
 import com.annimon.stream.Stream;
 
 import java.util.ArrayList;
@@ -84,6 +84,10 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
         mInteractor.getFilesList(folder)
                 .doOnSubscribe(disposable -> mModel.setRefreshing(true))
                 .doFinally(() -> mModel.setRefreshing(false))
+                .doOnError(error -> {
+                    mModel.setErrorState(true);
+                    mModel.setFileList(Collections.emptyList());
+                })
                 .subscribe(
                         this::handleFilesResult,
                         this::onErrorObtained

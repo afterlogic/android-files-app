@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel;
+package com.afterlogic.aurora.drive.presentation.modules._baseFiles.model;
 
 import android.net.Uri;
 

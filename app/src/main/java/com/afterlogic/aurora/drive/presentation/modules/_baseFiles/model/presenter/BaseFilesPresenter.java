@@ -1,11 +1,12 @@
 package com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter;
 
+import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.modules.model.presenter.BasePresenter;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.PresentationView;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.interactor.FilesInteractor;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFilesModel;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.BaseFilesModel;
 
 import java.util.Collections;
 
@@ -50,6 +51,7 @@ public abstract class BaseFilesPresenter<V extends PresentationView> extends Bas
                 .doOnSubscribe(disposable -> {
                     mModel.setFileTypes(Collections.emptyList());
                     mModel.setRefreshing(true);
+                    mModel.setErrorState(false);
                 })
                 .doFinally(() -> {
                     mCurrentRefresh = null;
@@ -57,7 +59,10 @@ public abstract class BaseFilesPresenter<V extends PresentationView> extends Bas
                 })
                 .subscribe(
                         mModel::setFileTypes,
-                        this::onErrorObtained
+                        error -> {
+                            MyLog.majorException(error);
+                            mModel.setErrorState(true);
+                        }
                 );
     }
 }

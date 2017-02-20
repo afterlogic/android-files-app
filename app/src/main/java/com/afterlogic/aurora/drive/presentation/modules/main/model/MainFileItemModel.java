@@ -2,7 +2,7 @@ package com.afterlogic.aurora.drive.presentation.modules.main.model;
 
 import android.support.annotation.IntRange;
 
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFileItemModel;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.BaseFileItemModel;
 
 /**
  * Created by sashka on 07.02.17.<p/>

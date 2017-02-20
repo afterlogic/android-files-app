@@ -7,6 +7,7 @@ import android.databinding.ObservableList;
 import android.support.v4.widget.SwipeRefreshLayout;
 
 import com.afterlogic.aurora.drive.model.FileType;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.BaseFilesModel;
 
 /**
  * Created by sashka on 03.02.17.<p/>
@@ -26,4 +27,6 @@ public interface BaseFilesViewModel extends SwipeRefreshLayout.OnRefreshListener
     ObservableBoolean getLocked();
 
     ObservableInt getCurrentPagePosition();
+
+    ObservableBoolean getErrorState();
 }

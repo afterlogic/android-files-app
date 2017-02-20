@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.model;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFilesListModel;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.BaseFilesListModel;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
 
 import java.util.List;

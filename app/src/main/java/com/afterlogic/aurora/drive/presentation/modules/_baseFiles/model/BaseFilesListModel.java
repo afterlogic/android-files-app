@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel;
+package com.afterlogic.aurora.drive.presentation.modules._baseFiles.model;
 
 import android.net.Uri;
 
@@ -26,6 +26,8 @@ public interface BaseFilesListModel {
     void removeFile(AuroraFile file);
 
     void addFile(AuroraFile file);
+
+    void setErrorState(boolean errorState);
 
     List<AuroraFile> getFiles();
 }

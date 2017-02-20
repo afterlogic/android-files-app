@@ -50,4 +50,6 @@ public interface FilesRepository {
     Single<List<AuroraFile>> getOfflineFiles();
 
     Single<Boolean> getOfflineStatus(AuroraFile file);
+
+    Completable clearOfflineData();
 }

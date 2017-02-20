@@ -291,6 +291,11 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
 
     }
 
+    @Override
+    public Completable clearOfflineData() {
+        return mLocalService.clear();
+    }
+
     private void checkFilesType(String type, List<AuroraFile> files) throws IllegalArgumentException{
         boolean allInType = Stream.of(files)
                 .allMatch(file -> type.equals(file.getType()));
