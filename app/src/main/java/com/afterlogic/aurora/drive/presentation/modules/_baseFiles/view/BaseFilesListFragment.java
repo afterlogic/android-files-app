@@ -16,7 +16,7 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseFragment;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.ViewPresenter;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.presenter.FilesListPresenter;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter.FilesListPresenter;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFilesListViewModel;
 
 import java.text.NumberFormat;

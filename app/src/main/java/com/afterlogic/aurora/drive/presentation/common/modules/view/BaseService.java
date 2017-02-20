@@ -15,7 +15,7 @@ import com.afterlogic.aurora.drive.application.App;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.consts.NotificationConst;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
-import com.afterlogic.aurora.drive.presentation.common.modules.presenter.Presenter;
+import com.afterlogic.aurora.drive.presentation.common.modules.model.presenter.Presenter;
 import com.annimon.stream.Stream;
 
 import java.util.HashSet;

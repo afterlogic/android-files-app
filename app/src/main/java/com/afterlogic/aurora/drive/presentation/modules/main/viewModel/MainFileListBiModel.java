@@ -10,7 +10,8 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FilesSelection;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.SimpleOnObservableListChagnedListener;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFilesListBiModel;
-import com.afterlogic.aurora.drive.presentation.modules.main.presenter.MainFileListPresenter;
+import com.afterlogic.aurora.drive.presentation.modules.main.model.MainFilesListModel;
+import com.afterlogic.aurora.drive.presentation.modules.main.model.presenter.MainFileListPresenter;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
 import com.annimon.stream.Stream;
 
@@ -25,7 +26,7 @@ import javax.inject.Provider;
  * mail: sunnyday.development@gmail.com
  */
 @ModuleScope
-public class MainFileListBiModel extends BaseFilesListBiModel<MainFileItemViewModel> implements MainFileListViewModel, MainFilesListModel{
+public class MainFileListBiModel extends BaseFilesListBiModel<MainFileItemViewModel> implements MainFileListViewModel, MainFilesListModel {
 
     private final Provider<MainFileItemBiModel> mItemProvider;
 

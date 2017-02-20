@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.os.Build;
 import android.support.v4.content.IntentCompat;
 
 import java.util.List;
@@ -17,6 +18,13 @@ public class IntentUtil {
     public static Intent makeRestartTask(Intent intent){
         Intent result = IntentCompat.makeRestartActivityTask(intent.getComponent());
         result.putExtras(intent);
+        result.setAction(intent.getAction());
+        result.setType(intent.getType());
+        result.setData(intent.getData());
+        result.setFlags(intent.getFlags());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            result.setClipData(intent.getClipData());
+        }
         return result;
     }
 

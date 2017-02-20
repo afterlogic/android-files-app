@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.interactor;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.common.modules.interactor.Interactor;
+import com.afterlogic.aurora.drive.presentation.common.modules.model.interactor.Interactor;
 
 import java.io.File;
 

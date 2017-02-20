@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modulesBackground.sync.presenter;
 
-import com.afterlogic.aurora.drive.presentation.common.modules.presenter.Presenter;
+import com.afterlogic.aurora.drive.presentation.common.modules.model.presenter.Presenter;
 
 /**
  * Created by sashka on 13.02.17.<p/>

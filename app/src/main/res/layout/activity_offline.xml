@@ -1,20 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:bind="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BindHelper"/>
+        <import type="com.afterlogic.aurora.drive.presentation.common.binding.bindingAdapters.RecyclerViewBinding"/>
+        <import type="com.afterlogic.aurora.drive.presentation.modules.offline.view.OfflineActivity.OfflineBinder"/>
+
         <variable
             name="viewModel"
             type="com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.OfflineViewModel"/>
     </data>
 
-    <android.support.v7.widget.RecyclerView
-        android:layout_width="match_parent"
+    <android.support.design.widget.CoordinatorLayout
         android:layout_height="match_parent"
-        bind:adapter="@{BindHelper.filesListAdapter()}"
-        >
+        android:fitsSystemWindows="true"
+        android:layout_width="match_parent">
 
-    </android.support.v7.widget.RecyclerView>
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/app_bar"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/AppTheme.PopupOverlay"/>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <!-- SwipeRefresh for refreshing on error and progress indication-->
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            bind:onRefresh="@{viewModel}"
+            bind:refreshing="@{viewModel.refreshing}"
+            bind:colorSchemeResources="@{@intArray/swipe_refresh_color_scheme}">
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                bind:layoutManager="@{RecyclerViewBinding.linearLayoutManager()}"
+                bind:items="@{viewModel.items}"
+                bind:adapter="@{OfflineBinder.filesListAdapter(viewModel)}"
+                tools:listitem="@layout/item_list_file_base"
+                />
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <include layout="@layout/view_compat_appbar_shadow"/>
+
+    </android.support.design.widget.CoordinatorLayout>
 </layout>

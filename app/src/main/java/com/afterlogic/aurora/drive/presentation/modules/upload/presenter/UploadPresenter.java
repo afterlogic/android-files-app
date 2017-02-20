@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.upload.presenter;
 
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.presenter.FilesPresenter;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter.FilesPresenter;
 
 /**
  * Created by sashka on 10.02.17.<p/>

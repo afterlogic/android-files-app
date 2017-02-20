@@ -11,7 +11,6 @@
     <item
         android:id="@+id/action_offline_mode"
         android:title="@string/prompt_offline_mode"
-        android:visible="false"
         app:showAsAction="never"/>
 
     <item

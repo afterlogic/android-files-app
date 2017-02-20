@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.choise.presenter;
 
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.presenter.BaseFilesPresenter;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter.BaseFilesPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.choise.interactor.ChoiseInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseView;
 import com.afterlogic.aurora.drive.presentation.modules.choise.viewModel.ChoiseModel;

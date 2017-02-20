@@ -4,10 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
-import com.afterlogic.aurora.drive.core.common.util.FileUtil;
-
-import java.io.File;
-
 /**
  * Created by sashka on 18.03.16.
  * mail: sunnyday.development@gmail.com
@@ -51,8 +47,6 @@ public class AuroraFile implements Parcelable, Cloneable{
 
     private long mLastModified;
 
-    private int mIsPreviewAble = -1;
-
     public static AuroraFile create(@NonNull AuroraFile parent, @NonNull String name, boolean mIsFolder){
         AuroraFile file = new AuroraFile();
         String parentFullPath = parent.getFullPath();
@@ -70,7 +64,6 @@ public class AuroraFile implements Parcelable, Cloneable{
         file.mFullPath = fullPath;
         file.mType = type;
         file.mIsFolder = mIsFolder;
-        file.mIsPreviewAble = 0;
         file.mSize = -1;
         if (fullPath.contains("/")){
             int lastSeparator = fullPath.lastIndexOf("/");
@@ -80,18 +73,6 @@ public class AuroraFile implements Parcelable, Cloneable{
             file.mName = fullPath;
             file.mPath = "";
         }
-        return file;
-    }
-
-    public static AuroraFile createOffline(@NonNull String remotePath, @NonNull String remoteType,
-                                           File local){
-        AuroraFile file = parse(remotePath, remoteType, false);
-        file.mContentType = FileUtil.getFileMimeType(local);
-        if (file.mContentType.startsWith("image")){
-            file.mThumb = true;
-            file.mThumbnailLink = local.getAbsolutePath();
-        }
-        file.mLinkUrl = local.getAbsolutePath();
         return file;
     }
 
@@ -130,7 +111,6 @@ public class AuroraFile implements Parcelable, Cloneable{
         mType = in.readString();
         mSize = in.readLong();
         mLastModified = in.readLong();
-        mIsPreviewAble = in.readInt();
     }
 
     public static final Creator<AuroraFile> CREATOR = new Creator<AuroraFile>() {
@@ -238,18 +218,12 @@ public class AuroraFile implements Parcelable, Cloneable{
     }
 
     public boolean isPreviewAble(){
-        if (mIsPreviewAble != -1){
-            return mIsPreviewAble == 1;
-        } else {
-            mIsPreviewAble = 0;
-            for (String previewable:PREVIEWABLE_CONTENT_TYPES){
-                if (previewable.equals(mContentType.toLowerCase())){
-                    mIsPreviewAble = 1;
-                    return true;
-                }
+        for (String previewable:PREVIEWABLE_CONTENT_TYPES){
+            if (previewable.equals(mContentType.toLowerCase())){
+                return true;
             }
-            return false;
         }
+        return false;
     }
 
     @Override
@@ -273,7 +247,6 @@ public class AuroraFile implements Parcelable, Cloneable{
         dest.writeString(mType);
         dest.writeLong(mSize);
         dest.writeLong(mLastModified);
-        dest.writeInt(mIsPreviewAble);
     }
 
     public AuroraFile clone(){

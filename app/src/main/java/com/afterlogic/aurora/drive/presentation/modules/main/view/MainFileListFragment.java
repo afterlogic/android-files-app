@@ -22,7 +22,7 @@ import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
 import com.afterlogic.aurora.drive.presentation.common.components.view.SelectionEditText;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnBackPressedListener;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesListFragment;
-import com.afterlogic.aurora.drive.presentation.modules.main.presenter.MainFileListPresenter;
+import com.afterlogic.aurora.drive.presentation.modules.main.model.presenter.MainFileListPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.main.viewModel.MainFileItemViewModel;
 import com.afterlogic.aurora.drive.presentation.modules.main.viewModel.MainFileListViewModel;
 
@@ -33,19 +33,9 @@ import com.afterlogic.aurora.drive.presentation.modules.main.viewModel.MainFileL
 
 public class MainFileListFragment extends BaseFilesListFragment<MainFileListViewModel, MainFileListPresenter> implements MainFileListView, OnBackPressedListener, FileActionsBottomSheet.FileActionCallback {
 
-    private static final String ARGS_TYPE = MainFileListFragment.class.getName() + ".TYPE";
     private static final String FILE_ACTIONS = MainFileListFragment.class.getName()  + ".file_actions";
 
     private FileActionsBottomSheet mFileActions;
-
-    public static MainFileListFragment newInstance(String type) {
-
-        Bundle args = new Bundle();
-        args.putString(ARGS_TYPE, type);
-        MainFileListFragment fragment = new MainFileListFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Nullable
     private FileListFragmentCallback mCallback;
@@ -112,62 +102,7 @@ public class MainFileListFragment extends BaseFilesListFragment<MainFileListView
 
     @Override
     public void showRenameDialog(AuroraFile file, Consumer<String> newNameConsumer) {
-        //[START Prepare input view (disallow change file extension)]
-        @SuppressLint("InflateParams")
-        View inputView = LayoutInflater.from(getContext())
-                .inflate(R.layout.item_layout_dialog_input, null);
-        final String ext = FileUtil.getFileExtension(file.getName());
-        if (ext != null && !file.isFolder() && !file.isLink()) {
-            //Set disallow only for 'normal' file
-            final SelectionEditText input = (SelectionEditText) inputView.findViewById(R.id.input);
-            input.setOnSelectionChangeListener((start, end) -> {
-                int lenght = input.getText().length();
-                int max = lenght - ext.length() - 1;
-                boolean fixed = false;
-                if (start > max){
-                    start = max;
-                    fixed = true;
-                }
-                if (end > max){
-                    end = max;
-                    fixed = true;
-                }
-                if (fixed){
-                    input.setSelection(start, end);
-                }
-            });
-        }
-        //[END Prepare input view (disallow change file extension)]
 
-        //Show dialog
-        DialogUtil.showInputDialog(
-                inputView,
-                getString(R.string.prompt_input_new_file_name),
-                file.getName(),
-                getContext(),
-                (dialogInterface, input) -> {
-
-                    String newName = input.getText().toString();
-                    if (TextUtils.isEmpty(newName)){
-                        input.setError(getString(R.string.error_field_required));
-                        input.requestFocus();
-                        return;
-                    }
-
-                    input.clearFocus();
-
-                    InputMethodManager keyboard = (InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    keyboard.hideSoftInputFromWindow(input.getWindowToken(), 0);
-
-                    dialogInterface.dismiss();
-
-                    final String trimmed = newName.trim();
-
-                    //Check new name if it is same as old closeQuietly dialog without any action
-                    if (!newName.equals(file.getName()) && !trimmed.equals(file.getName())){
-                        newNameConsumer.consume(trimmed);
-                    }
-                });
     }
 
     @Override

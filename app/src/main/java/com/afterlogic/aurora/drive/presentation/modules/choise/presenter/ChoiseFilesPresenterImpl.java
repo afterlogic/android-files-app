@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.presenter.BaseFilesListPresenter;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter.BaseFilesListPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.choise.interactor.ChoiseFilesInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.choise.router.ChoiseFilesRouter;
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseFilesView;

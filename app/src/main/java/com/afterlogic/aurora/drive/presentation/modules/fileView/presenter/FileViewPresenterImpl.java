@@ -7,7 +7,7 @@ import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.error.FileAlreadyExistError;
 import com.afterlogic.aurora.drive.model.error.FileNotExistError;
-import com.afterlogic.aurora.drive.presentation.common.modules.presenter.BaseLoadPresenter;
+import com.afterlogic.aurora.drive.presentation.common.modules.model.presenter.BaseLoadPresenter;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.PresentationView;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.interactor.FileViewInteractor;

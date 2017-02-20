@@ -2,7 +2,7 @@ package com.afterlogic.aurora.drive.presentation.modules.upload.presenter;
 
 import android.net.Uri;
 
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.presenter.FilesListPresenter;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter.FilesListPresenter;
 
 import java.util.List;
 

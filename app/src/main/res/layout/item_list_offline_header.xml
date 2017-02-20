@@ -5,8 +5,8 @@
 
     <data>
         <variable
-            name="manualMode"
-            type="boolean"/>
+            name="viewModel"
+            type="com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.OfflineViewModel"/>
     </data>
 
     <LinearLayout
@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="@{manualMode ? @string/prompt_manual_offline_mode_title : @string/prompt_network_offline_mode_title}"
+            android:text="@{viewModel.manualMode ? @string/prompt_manual_offline_mode_title : @string/prompt_network_offline_mode_title}"
             tools:text="@string/prompt_network_offline_mode_title"
             android:textStyle="bold"/>
 

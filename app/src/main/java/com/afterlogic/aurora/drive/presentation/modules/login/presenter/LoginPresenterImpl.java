@@ -6,7 +6,7 @@ import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.error.AccountManagerError;
 import com.afterlogic.aurora.drive.model.error.AuthError;
 import com.afterlogic.aurora.drive.model.error.UnknownApiVersionError;
-import com.afterlogic.aurora.drive.presentation.common.modules.presenter.BasePresenter;
+import com.afterlogic.aurora.drive.presentation.common.modules.model.presenter.BasePresenter;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.PresentationView;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.modules.login.interactor.LoginInteractor;

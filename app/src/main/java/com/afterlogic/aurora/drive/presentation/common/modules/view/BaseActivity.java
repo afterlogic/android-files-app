@@ -20,7 +20,7 @@ import com.afterlogic.aurora.drive.model.events.PermissionGrantEvent;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.Stoppable;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationModulesStore;
-import com.afterlogic.aurora.drive.presentation.common.modules.presenter.Presenter;
+import com.afterlogic.aurora.drive.presentation.common.modules.model.presenter.Presenter;
 import com.annimon.stream.Stream;
 
 import org.greenrobot.eventbus.EventBus;

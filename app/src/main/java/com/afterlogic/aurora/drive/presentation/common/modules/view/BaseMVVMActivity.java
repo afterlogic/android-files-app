@@ -3,6 +3,7 @@ package com.afterlogic.aurora.drive.presentation.common.modules.view;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.MenuItem;
 
 import com.afterlogic.aurora.drive.BR;
 import com.afterlogic.aurora.drive.presentation.common.modules.viewModel.ViewModel;
@@ -27,12 +28,11 @@ public abstract class BaseMVVMActivity<T extends ViewModel> extends StorableMVVM
         super.onCreate(savedInstanceState);
         ViewDataBinding dataBinding = onCreateBinding(savedInstanceState);
 
+        onViewModelCreated(mViewModel, savedInstanceState);
         mViewModel.onViewCreated();
         if (mAutoBindViewModel) {
             dataBinding.setVariable(mViewModelVariable, mViewModel);
         }
-
-        onBindToViewModel(mViewModel);
     }
 
     protected abstract ViewDataBinding onCreateBinding(@Nullable Bundle savedInstanceState);
@@ -41,26 +41,41 @@ public abstract class BaseMVVMActivity<T extends ViewModel> extends StorableMVVM
     protected void onStart() {
         super.onStart();
         mViewModel.onViewStart();
+        onBindToViewModel(mViewModel);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         mViewModel.onViewStop();
+        onUnbindViewModel(mViewModel);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         mViewModel.onViewDestroyed();
-        onUnbindViewModel(mViewModel);
+    }
+
+    protected void onViewModelCreated(T viewModel, Bundle savedInstanceState){
+        //no-op
     }
 
     protected void onBindToViewModel(T viewModel){
         //no-op
     }
 
-    private void onUnbindViewModel(T viewModel){
+    protected void onUnbindViewModel(T viewModel){
         //no-op
     }
 
@@ -70,5 +85,9 @@ public abstract class BaseMVVMActivity<T extends ViewModel> extends StorableMVVM
 
     protected void setAutoBindViewModel(boolean autoBindViewModel) {
         mAutoBindViewModel = autoBindViewModel;
+    }
+
+    protected T getViewModel() {
+        return mViewModel;
     }
 }

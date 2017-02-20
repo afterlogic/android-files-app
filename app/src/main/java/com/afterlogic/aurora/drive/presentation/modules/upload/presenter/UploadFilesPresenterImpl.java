@@ -9,7 +9,7 @@ import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.error.FileAlreadyExistError;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.PresentationView;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.presenter.BaseFilesListPresenter;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter.BaseFilesListPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.upload.interactor.UploadFilesInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.upload.router.UploadFilesRouter;
 import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadFilesView;

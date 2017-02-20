@@ -1,0 +1,20 @@
+package com.afterlogic.aurora.drive.presentation.modules.offline.model.presenter;
+
+import com.afterlogic.aurora.drive.model.AuroraFile;
+
+/**
+ * Created by sashka on 19.02.17.<p/>
+ * mail: sunnyday.development@gmail.com
+ */
+
+public interface OfflinePresenter {
+    void refresh();
+
+    void downloadFile(AuroraFile file);
+    void openFile(AuroraFile file);
+    void sendFile(AuroraFile file);
+
+    void cancelCurrentLoad();
+
+    void onGoToOnline();
+}
