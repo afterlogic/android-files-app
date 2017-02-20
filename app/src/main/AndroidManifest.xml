@@ -114,7 +114,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".presentation.modulesBackground.receivers.AccountActionReceiver">
+        <receiver android:name=".presentation.modulesBackground.accountAction.AccountActionReceiver">
             <intent-filter>
                 <action android:name="android.accounts.LOGIN_ACCOUNTS_CHANGED"/>
             </intent-filter>

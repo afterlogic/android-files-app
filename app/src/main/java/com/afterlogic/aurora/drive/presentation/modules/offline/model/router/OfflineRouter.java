@@ -13,6 +13,7 @@ public interface OfflineRouter {
     void openFile(AuroraFile remote, File file);
     void openSendTo(AuroraFile source, File file);
     void goToOnline();
+    void openAuth();
 
     boolean canOpen(AuroraFile file);
 }

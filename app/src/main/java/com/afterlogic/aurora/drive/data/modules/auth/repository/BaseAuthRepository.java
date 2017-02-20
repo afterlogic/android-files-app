@@ -3,16 +3,16 @@ package com.afterlogic.aurora.drive.data.modules.auth.repository;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
-import android.os.Build;
 
 import com.afterlogic.aurora.drive.core.common.util.AccountUtil;
-import com.afterlogic.aurora.drive.presentation.modulesBackground.session.SessionTrackUtil;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.common.repository.Repository;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
+import com.afterlogic.aurora.drive.data.modules.cleaner.DataCleaner;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.error.AccountManagerError;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.session.SessionTrackUtil;
 
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
@@ -29,37 +29,22 @@ abstract class BaseAuthRepository extends Repository implements AuthRepository {
 
     private final Context mContext;
     private final SessionManager mSessionManager;
+    private final DataCleaner mDataCleaner;
 
     public BaseAuthRepository(SharedObservableStore cache,
                               String repositoryId,
                               Context context,
-                              SessionManager sessionManager) {
+                              SessionManager sessionManager,
+                              DataCleaner dataCleaner) {
         super(cache, repositoryId);
         mContext = context;
         mSessionManager = sessionManager;
+        mDataCleaner = dataCleaner;
     }
 
     @Override
     public Completable logoutAndClearData() {
-        return Completable.fromAction(() -> {
-            //[START Clear account and session data]
-            AuroraSession current = mSessionManager.getSession();
-            mSessionManager.setSession(null);
-
-            AccountManager am = (AccountManager) mContext.getSystemService(ACCOUNT_SERVICE);
-            Account account = AccountUtil.getAccount(current.getLogin(), am);
-            if (account != null) {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
-                    //noinspection deprecation
-                    am.removeAccount(account, null, null);
-                } else {
-                    am.removeAccountExplicitly(account);
-                }
-            }
-
-            SessionTrackUtil.fireSessionChanged(null, mContext);
-            //[END Clear account and session data]
-        });
+        return mDataCleaner.cleanAllUserData();
     }
 
     @Override

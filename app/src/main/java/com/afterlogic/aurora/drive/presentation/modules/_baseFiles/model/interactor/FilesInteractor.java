@@ -15,4 +15,6 @@ import io.reactivex.Single;
 public interface FilesInteractor extends Interactor {
 
     Single<List<FileType>> getAvailableFileTypes();
+
+    Single<Boolean> getAuthStatus();
 }

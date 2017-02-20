@@ -28,4 +28,6 @@ public interface FileViewInteractor extends FilesListInteractor {
     Completable setOffline(AuroraFile file, boolean offline);
 
     Single<Boolean> getOfflineStatus(AuroraFile file);
+
+    Single<Boolean> getAuthStatus();
 }

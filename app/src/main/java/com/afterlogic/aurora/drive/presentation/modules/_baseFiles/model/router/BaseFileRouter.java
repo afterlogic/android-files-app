@@ -7,6 +7,7 @@ import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity
 import com.afterlogic.aurora.drive.presentation.common.modules.view.PresentationView;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.common.util.IntentUtil;
+import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginIntent;
 import com.afterlogic.aurora.drive.presentation.modules.offline.view.OfflineActivity;
 
 import javax.inject.Inject;
@@ -29,6 +30,15 @@ public class BaseFileRouter<V extends PresentationView> extends BaseRouter<V, Ba
             Intent offline = OfflineActivity.intent(false, activity);
             activity.startActivity(IntentUtil.makeRestartTask(offline));
             activity.overridePendingTransition(0, 0);
+            activity.finish();
+        });
+    }
+
+    @Override
+    public void openAuth() {
+        ifViewActive(activity -> {
+            Intent offline = LoginIntent.intent(activity);
+            activity.startActivity(IntentUtil.makeRestartTask(offline));
             activity.finish();
         });
     }

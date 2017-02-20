@@ -5,6 +5,8 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import com.afterlogic.aurora.drive.core.consts.Const;
+
 import okhttp3.HttpUrl;
 
 /**
@@ -127,7 +129,7 @@ public class AuroraSession implements Parcelable{
     }
 
     public boolean isComplete(){
-        return mAccountId != 0 && mDomain != null &&
+        return mApiType != Const.ApiVersion.API_NONE && mAccountId != 0 && mDomain != null &&
                 !hasEmpty(mAuthToken, mDomain.toString(), mLogin, mPassword, mAppToken);
     }
 

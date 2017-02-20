@@ -8,6 +8,8 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
  */
 
 public interface OfflinePresenter {
+    void checkAuth();
+
     void refresh();
 
     void downloadFile(AuroraFile file);

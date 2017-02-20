@@ -4,6 +4,7 @@ import android.util.Pair;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
+import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.presentation.common.modules.model.interactor.BaseInteractor;
@@ -27,14 +28,17 @@ public class BaseFilesInteractor extends BaseInteractor implements FilesInteract
 
     private final FilesRepository mFilesRepository;
     private final AppResources mAppResources;
+    private final SessionManager mSessionManager;
 
     @Inject
     public BaseFilesInteractor(ObservableScheduler scheduler,
-                         FilesRepository filesRepository,
-                         AppResources appResources) {
+                               FilesRepository filesRepository,
+                               AppResources appResources,
+                               SessionManager sessionManager) {
         super(scheduler);
         mFilesRepository = filesRepository;
         mAppResources = appResources;
+        mSessionManager = sessionManager;
     }
 
     @Override
@@ -60,5 +64,10 @@ public class BaseFilesInteractor extends BaseInteractor implements FilesInteract
                     )
                     .compose(this::composeDefault);
         });
+    }
+
+    @Override
+    public Single<Boolean> getAuthStatus() {
+        return Single.fromCallable(() -> mSessionManager.getSession() != null && mSessionManager.getSession().isComplete());
     }
 }

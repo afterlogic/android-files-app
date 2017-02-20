@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
 import com.afterlogic.aurora.drive.core.common.util.AppUtil;
-import com.afterlogic.aurora.drive.data.common.db.DataBaseProvider;
+import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
@@ -25,18 +25,16 @@ import io.reactivex.Single;
 public class MainFilesInteractorImpl extends BaseFilesInteractor implements MainFilesInteractor {
 
     private final AuthRepository mAuthRepository;
-    private final FilesRepository mFilesRepository;
-    private final DataBaseProvider mDataBaseProvider;
     private final Context mAppContext;
 
     @Inject MainFilesInteractorImpl(ObservableScheduler scheduler,
                                     FilesRepository filesRepository,
                                     AppResources appResources,
-                                    AuthRepository authRepository, DataBaseProvider dataBaseProvider, Context appContext) {
-        super(scheduler, filesRepository, appResources);
-        mFilesRepository = filesRepository;
+                                    AuthRepository authRepository,
+                                    Context appContext,
+                                    SessionManager sessionManager) {
+        super(scheduler, filesRepository, appResources, sessionManager);
         mAuthRepository = authRepository;
-        mDataBaseProvider = dataBaseProvider;
         mAppContext = appContext;
     }
 
@@ -51,9 +49,7 @@ public class MainFilesInteractorImpl extends BaseFilesInteractor implements Main
     @Override
     public Completable logout() {
         return mAuthRepository.logoutAndClearData()
-                .andThen(mFilesRepository.clearOfflineData())
                 .andThen(Completable.fromAction(() -> {
-                    mDataBaseProvider.reset();
                     mAppContext.stopService(FileObserverService.intent(mAppContext));
                     AppUtil.setComponentEnabled(FileObserverService.class, false, mAppContext);
                 }))

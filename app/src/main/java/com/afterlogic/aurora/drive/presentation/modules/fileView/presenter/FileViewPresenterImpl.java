@@ -36,6 +36,19 @@ public class FileViewPresenterImpl extends BaseLoadPresenter<FileViewPresentatio
         mRouter = router;
     }
 
+    @Override
+    protected void onViewStart() {
+        super.onViewStart();
+        mInteractor.getAuthStatus()
+                .subscribe(
+                        auth -> {
+                            if (!auth){
+                                mRouter.openAuth();
+                            }
+                        },
+                        this::onErrorObtained
+                );
+    }
 
     @Override
     public void onDownload() {

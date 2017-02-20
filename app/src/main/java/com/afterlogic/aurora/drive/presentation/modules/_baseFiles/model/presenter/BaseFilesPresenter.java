@@ -43,6 +43,20 @@ public abstract class BaseFilesPresenter<V extends PresentationView> extends Bas
     }
 
     @Override
+    protected void onViewStart() {
+        super.onViewStart();
+        mInteractor.getAuthStatus()
+                .subscribe(
+                        auth -> {
+                            if (!auth){
+                                mRouter.openAuth();
+                            }
+                        },
+                        this::onErrorObtained
+                );
+    }
+
+    @Override
     public void onCurrentFolderChanged(AuroraFile folder) {
         mModel.setCurrentFolder(folder);
     }

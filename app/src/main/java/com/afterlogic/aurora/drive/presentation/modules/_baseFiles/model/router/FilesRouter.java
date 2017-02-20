@@ -7,4 +7,5 @@ package com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router
 
 public interface FilesRouter {
     void goToOfflineError();
+    void openAuth();
 }

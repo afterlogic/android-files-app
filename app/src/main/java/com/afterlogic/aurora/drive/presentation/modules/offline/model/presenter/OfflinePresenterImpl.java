@@ -42,6 +42,19 @@ public class OfflinePresenterImpl implements OfflinePresenter {
     }
 
     @Override
+    public void checkAuth() {
+        mInteractor.getAuthStatus()
+                .subscribe(
+                        auth -> {
+                            if (!auth){
+                                mRouter.openAuth();
+                            }
+                        },
+                        mModel::onErrorObtained
+                );
+    }
+
+    @Override
     public void refresh() {
         mInteractor.getOfflineFiles()
                 .doOnSubscribe(disposable -> mModel.notifyRefreshing(true))
@@ -52,7 +65,7 @@ public class OfflinePresenterImpl implements OfflinePresenter {
                             mModel.setFiles(files);
                             updateThumbs(files);
                         },
-                        mModel::majorException
+                        mModel::onErrorObtained
                 );
     }
 
@@ -62,7 +75,7 @@ public class OfflinePresenterImpl implements OfflinePresenter {
                 .compose(loadTask(file))
                 .subscribe(
                         localFile -> mRouter.openFile(file, localFile),
-                        mModel::majorException
+                        mModel::onErrorObtained
                 );
     }
 
@@ -77,7 +90,7 @@ public class OfflinePresenterImpl implements OfflinePresenter {
                 .compose(loadTask(file))
                 .subscribe(
                         localFile -> mRouter.openFile(file, localFile),
-                        mModel::majorException
+                        mModel::onErrorObtained
                 );
     }
 
@@ -105,12 +118,12 @@ public class OfflinePresenterImpl implements OfflinePresenter {
                 .map(file -> mInteractor.getThumbnail(file)
                         .doOnSuccess(uri -> mModel.setThumb(file, uri))
                         .toCompletable()
-                        .doOnError(mModel::majorException)
+                        .doOnError(mModel::onErrorObtained)
                         .onErrorComplete()
                 )
                 .collect(Observables.Collectors.concatCompletable())
                 .compose(mScheduler::defaultSchedulers)
-                .subscribe(() -> {}, mModel::majorException);
+                .subscribe(() -> {}, mModel::onErrorObtained);
     }
 
     private <T>ObservableTransformer<Progressible<T>, T> loadTask(AuroraFile file){

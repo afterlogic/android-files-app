@@ -2,16 +2,17 @@ package com.afterlogic.aurora.drive.data.modules.auth.repository;
 
 import android.content.Context;
 
-import com.afterlogic.aurora.drive.data.model.ApiResponse;
-import com.afterlogic.aurora.drive.presentation.modulesBackground.session.SessionTrackUtil;
 import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
+import com.afterlogic.aurora.drive.data.model.ApiResponse;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.data.modules.auth.p8.service.AuthServiceP8;
+import com.afterlogic.aurora.drive.data.modules.cleaner.DataCleaner;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.AuthToken;
 import com.afterlogic.aurora.drive.model.SystemAppData;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.session.SessionTrackUtil;
 
 import javax.inject.Inject;
 
@@ -33,8 +34,9 @@ public class AuthRepositoryP8Impl extends BaseAuthRepository implements AuthRepo
     @Inject public AuthRepositoryP8Impl(@RepositoryCache SharedObservableStore cache,
                                         AuthServiceP8 authService,
                                         SessionManager sessionManager,
+                                        DataCleaner dataCleaner,
                                         Context context) {
-        super(cache, USER_P_8, context, sessionManager);
+        super(cache, USER_P_8, context, sessionManager, dataCleaner);
         mAuthService = authService;
         mSessionManager = sessionManager;
         mContext = context;
