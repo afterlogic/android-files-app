@@ -247,7 +247,7 @@ public class FilesViewDialogDelegate implements Stoppable{
 
             if (model != null){
                 if (mProgressDialog == null){
-                    mProgressDialog = new ProgressDialog(mContext, R.style.AppTheme_Dialog);
+                    mProgressDialog = new ProgressDialog(mContext, R.style.AppTheme_Dialog_CompatBackground);
                     mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                     mProgressDialog.setCancelable(false);
                     if (model.getCancelListener() != null) {

@@ -150,7 +150,7 @@ public class FileViewActivity extends BaseActivity implements FileViewPresentati
                 mProgressDialog.setProgressNumberFormat(null);
             }
         } else {
-            mProgressDialog = new ProgressDialog(this, R.style.AppTheme_Dialog);
+            mProgressDialog = new ProgressDialog(this, R.style.AppTheme_Dialog_CompatBackground);
             mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
             mProgressDialog.setCancelable(false);
             mProgressDialog.setIndeterminate(true);
@@ -167,7 +167,7 @@ public class FileViewActivity extends BaseActivity implements FileViewPresentati
 
     @Override
     public void showProgress(String title, String message) {
-        mProgressDialog = new ProgressDialog(this, R.style.AppTheme_Dialog);
+        mProgressDialog = new ProgressDialog(this, R.style.AppTheme_Dialog_CompatBackground);
         mProgressDialog.setCancelable(false);
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.setTitle(title);

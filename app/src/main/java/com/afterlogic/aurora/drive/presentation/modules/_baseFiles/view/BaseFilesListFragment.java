@@ -105,7 +105,7 @@ public abstract class BaseFilesListFragment<VM extends BaseFilesListViewModel, P
                 mProgressDialog.setProgressNumberFormat(null);
             }
         } else {
-            mProgressDialog = new ProgressDialog(getContext(), R.style.AppTheme_Dialog);
+            mProgressDialog = new ProgressDialog(getContext(), R.style.AppTheme_Dialog_CompatBackground);
             mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
             mProgressDialog.setCancelable(false);
             mProgressDialog.setIndeterminate(true);
@@ -122,7 +122,7 @@ public abstract class BaseFilesListFragment<VM extends BaseFilesListViewModel, P
 
     @Override
     public void showProgress(String title, String message) {
-        mProgressDialog = new ProgressDialog(getContext(), R.style.AppTheme_Dialog);
+        mProgressDialog = new ProgressDialog(getContext(), R.style.AppTheme_Dialog_CompatBackground);
         mProgressDialog.setCancelable(false);
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.setTitle(title);

@@ -41,6 +41,9 @@
     </style>
 
     <style name="AppTheme.Dialog" parent="AppTheme.Base.Dialog">
+    </style>
+
+    <style name="AppTheme.Dialog.CompatBackground">
         <item name="android:windowBackground">@color/transparent</item>
     </style>
 
