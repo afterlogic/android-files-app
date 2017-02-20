@@ -1,9 +1,13 @@
 package com.afterlogic.aurora.drive.presentation.modules.login.model.interactor;
 
+import android.accounts.Account;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.os.Bundle;
 
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
+import com.afterlogic.aurora.drive.core.common.util.AccountUtil;
 import com.afterlogic.aurora.drive.core.common.util.AppUtil;
 import com.afterlogic.aurora.drive.core.consts.Const;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
@@ -17,6 +21,7 @@ import com.annimon.stream.Stream;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -105,6 +110,19 @@ public class LoginInteractorImpl extends BaseInteractor implements LoginInteract
                 .andThen(Completable.fromAction(() -> {
                     AppUtil.setComponentEnabled(FileObserverService.class, true, mAppContext);
                     mAppContext.startService(FileObserverService.intent(mAppContext));
+
+                    Account account = AccountUtil.getCurrentAccount(mAppContext);
+                    ContentResolver.setSyncAutomatically(
+                            account,
+                            AccountUtil.FILE_SYNC_AUTHORITY,
+                            true
+                    );
+                    ContentResolver.addPeriodicSync(
+                            account,
+                            AccountUtil.FILE_SYNC_AUTHORITY,
+                            Bundle.EMPTY,
+                            TimeUnit.DAYS.toSeconds(1)
+                    );
                 }))
                 .compose(this::composeDefault);
     }
