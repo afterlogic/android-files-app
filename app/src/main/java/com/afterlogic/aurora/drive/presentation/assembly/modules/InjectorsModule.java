@@ -22,6 +22,8 @@ import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadFi
 import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadInjector;
 import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadActivity;
 import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadFilesFragment;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.accountAction.AccountActionInjector;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.accountAction.AccountActionReceiver;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.assembly.FileObserverInjector;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.view.FileObserverService;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.assembly.SyncInjector;
@@ -112,6 +114,11 @@ public class InjectorsModule {
 
     @Provides
     Injector<OfflineActivity> offline(OfflineInjector injector){
+        return injector;
+    }
+
+    @Provides
+    Injector<AccountActionReceiver> accountActionReceiver(AccountActionInjector injector){
         return injector;
     }
 }

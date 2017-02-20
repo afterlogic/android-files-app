@@ -7,6 +7,7 @@ import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.application.App;
 import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.core.common.util.IOUtil;
+import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
@@ -25,7 +26,6 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
-import static com.afterlogic.aurora.drive.data.modules.files.FilesDataModule.CACHE_DIR;
 import static com.afterlogic.aurora.drive.data.modules.files.FilesDataModule.DOWNLOADS_DIR;
 import static com.afterlogic.aurora.drive.data.modules.files.FilesDataModule.OFFLINE_DIR;
 
@@ -37,22 +37,21 @@ import static com.afterlogic.aurora.drive.data.modules.files.FilesDataModule.OFF
 public class OfflineInteractorImpl implements OfflineInteractor {
 
     private final FilesRepository mFilesRepository;
-    private final File mCacheDir;
     private final File mDownloadsDir;
     private final File mOfflineDir;
     private final App mApp;
+    private final SessionManager mSessionManager;
 
     @Inject
     OfflineInteractorImpl(FilesRepository filesRepository,
-                                 @Named(CACHE_DIR) File cacheDir,
-                                 @Named(DOWNLOADS_DIR) File downloadsDir,
-                                 @Named(OFFLINE_DIR) File offlineDir,
-                                 App app) {
+                          @Named(DOWNLOADS_DIR) File downloadsDir,
+                          @Named(OFFLINE_DIR) File offlineDir,
+                          App app, SessionManager sessionManager) {
         mFilesRepository = filesRepository;
-        mCacheDir = cacheDir;
         mDownloadsDir = downloadsDir;
         mOfflineDir = offlineDir;
         mApp = app;
+        mSessionManager = sessionManager;
     }
 
     @Override
@@ -66,8 +65,6 @@ public class OfflineInteractorImpl implements OfflineInteractor {
                         .collect(Collectors.toList())
                 );
     }
-
-
 
     @Override
     public Observable<Progressible<File>> downloadForOpen(AuroraFile file) {
@@ -122,5 +119,10 @@ public class OfflineInteractorImpl implements OfflineInteractor {
             File localFile = new File(mOfflineDir, file.getPathSpec());
             return Uri.fromFile(localFile);
         });
+    }
+
+    @Override
+    public Single<Boolean> getAuthStatus() {
+        return Single.fromCallable(() -> mSessionManager.getSession() != null && mSessionManager.getSession().isComplete());
     }
 }

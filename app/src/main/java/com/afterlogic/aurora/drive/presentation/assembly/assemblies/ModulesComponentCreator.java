@@ -21,6 +21,7 @@ import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadCo
 import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadFilesComponent;
 import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadFilesModule;
 import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadModule;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.accountAction.AccountActionComponent;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.assembly.FileObserverComponent;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.assembly.FileObserverModule;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.assembly.SyncComponent;
@@ -66,4 +67,6 @@ public interface ModulesComponentCreator {
     FileViewComponent plus(FileViewModule module);
 
     OfflineComponent offline();
+
+    AccountActionComponent accountActionReceiver();
 }

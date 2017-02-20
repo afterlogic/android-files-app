@@ -36,6 +36,19 @@ public class FileViewPresenterImpl extends BaseLoadPresenter<FileViewPresentatio
         mRouter = router;
     }
 
+    @Override
+    protected void onViewStart() {
+        super.onViewStart();
+        mInteractor.getAuthStatus()
+                .subscribe(
+                        auth -> {
+                            if (!auth){
+                                mRouter.openAuth();
+                            }
+                        },
+                        this::onErrorObtained
+                );
+    }
 
     @Override
     public void onDownload() {
@@ -47,7 +60,7 @@ public class FileViewPresenterImpl extends BaseLoadPresenter<FileViewPresentatio
         }
 
         mInteractor.downloadToDownloads(file)
-                .compose(this::progressibleLoadTask)
+                .compose(progressibleLoadTask(true))
                 .subscribe(
                         //TODO dialog: open file?
                         localFile -> mRouter.openFile(file, localFile),
@@ -65,7 +78,7 @@ public class FileViewPresenterImpl extends BaseLoadPresenter<FileViewPresentatio
         }
 
         mInteractor.downloadForOpen(file)
-                .compose(this::progressibleLoadTask)
+                .compose(progressibleLoadTask(true))
                 .subscribe(
                         localFile -> mRouter.openSendTo(file, localFile),
                         this::onErrorObtained

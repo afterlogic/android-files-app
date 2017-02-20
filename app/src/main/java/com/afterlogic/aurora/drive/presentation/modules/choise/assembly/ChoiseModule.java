@@ -3,10 +3,12 @@ package com.afterlogic.aurora.drive.presentation.modules.choise.assembly;
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationModule;
-import com.afterlogic.aurora.drive.presentation.modules.choise.interactor.ChoiseInteractor;
-import com.afterlogic.aurora.drive.presentation.modules.choise.interactor.ChoiseInteractorImpl;
-import com.afterlogic.aurora.drive.presentation.modules.choise.presenter.ChoisePresenter;
-import com.afterlogic.aurora.drive.presentation.modules.choise.presenter.ChoisePresenterImpl;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router.BaseFileRouter;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router.FilesRouter;
+import com.afterlogic.aurora.drive.presentation.modules.choise.model.interactor.ChoiseInteractor;
+import com.afterlogic.aurora.drive.presentation.modules.choise.model.interactor.ChoiseInteractorImpl;
+import com.afterlogic.aurora.drive.presentation.modules.choise.model.presenter.ChoisePresenter;
+import com.afterlogic.aurora.drive.presentation.modules.choise.model.presenter.ChoisePresenterImpl;
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseView;
 import com.afterlogic.aurora.drive.presentation.modules.choise.viewModel.ChoiseBiModel;
 import com.afterlogic.aurora.drive.presentation.modules.choise.viewModel.ChoiseModel;
@@ -46,5 +48,10 @@ public class ChoiseModule extends PresentationModule<ChoiseView>{
     @Provides
     ChoiseModel model(ChoiseBiModel model){
         return model;
+    }
+
+    @Provides
+    FilesRouter router(BaseFileRouter<ChoiseView> router){
+        return router;
     }
 }

@@ -1,6 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.model.router;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router.FilesRouter;
 
 import java.io.File;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
  * mail: sunnyday.development@gmail.com
  */
 
-public interface MainFileListRouter {
+public interface MainFileListRouter extends FilesRouter{
 
     int FILE_SELECT_CODE = 1;
 

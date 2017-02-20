@@ -3,7 +3,7 @@ package com.afterlogic.aurora.drive.presentation.modules.choise.viewModel;
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFileItemBiModel;
-import com.afterlogic.aurora.drive.presentation.modules.choise.presenter.ChoiseFilesPresenter;
+import com.afterlogic.aurora.drive.presentation.modules.choise.model.presenter.ChoiseFilesPresenter;
 
 import javax.inject.Inject;
 

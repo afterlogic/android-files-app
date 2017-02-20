@@ -2,6 +2,7 @@ package com.afterlogic.aurora.drive.data.modules.auth.repository;
 
 import android.content.Context;
 
+import com.afterlogic.aurora.drive.data.modules.cleaner.DataCleaner;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.session.SessionTrackUtil;
 import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
@@ -33,8 +34,9 @@ public class AuthRepositoryP7Impl extends BaseAuthRepository implements AuthRepo
     AuthRepositoryP7Impl(@RepositoryCache SharedObservableStore cache,
                          Context context,
                          AuthServiceP7 authService,
-                         SessionManager sessionManager) {
-        super(cache, USER_P_7, context, sessionManager);
+                         SessionManager sessionManager,
+                         DataCleaner dataCleaner) {
+        super(cache, USER_P_7, context, sessionManager, dataCleaner);
         mContext = context;
         mAuthService = authService;
         mSessionManager = sessionManager;

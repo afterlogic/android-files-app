@@ -20,7 +20,7 @@ public interface OfflineModel {
 
     void onCantOpenFile(AuroraFile file);
 
-    void majorException(Throwable error);
+    void onErrorObtained(Throwable error);
 
     void onFileLoadError(AuroraFile file);
 }

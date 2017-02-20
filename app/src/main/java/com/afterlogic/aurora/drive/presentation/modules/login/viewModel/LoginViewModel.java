@@ -12,7 +12,7 @@ import com.afterlogic.aurora.drive.core.consts.Const;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.presentation.common.binding.binder.StringBinder;
-import com.afterlogic.aurora.drive.presentation.modules.login.presenter.LoginPresenter;
+import com.afterlogic.aurora.drive.presentation.modules.login.model.presenter.LoginPresenter;
 import com.annimon.stream.Stream;
 
 import io.reactivex.Single;

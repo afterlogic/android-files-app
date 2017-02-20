@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.model;
 
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFilesModel;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.BaseFilesModel;
 
 /**
  * Created by sashka on 03.02.17.<p/>

@@ -5,8 +5,8 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
 
-import com.afterlogic.aurora.drive.core.common.util.AccountUtil;
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.DataScope;
+import com.afterlogic.aurora.drive.core.common.util.AccountUtil;
 import com.afterlogic.aurora.drive.core.consts.Const;
 import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
@@ -18,6 +18,7 @@ import com.afterlogic.aurora.drive.data.common.network.NetworkDataModule;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.modules.apiChecker.ApiCheckerDataModule;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthDataModule;
+import com.afterlogic.aurora.drive.data.modules.cleaner.DataCleanerModule;
 import com.afterlogic.aurora.drive.data.modules.files.FilesDataModule;
 import com.afterlogic.aurora.drive.data.modules.prefs.AppPrefs;
 import com.afterlogic.aurora.drive.data.modules.prefs.AppPrefsImpl;
@@ -37,7 +38,8 @@ import dagger.Provides;
         NetworkDataModule.class,
         ApiCheckerDataModule.class,
         AuthDataModule.class,
-        FilesDataModule.class
+        FilesDataModule.class,
+        DataCleanerModule.class
 })
 public class DataModule {
 

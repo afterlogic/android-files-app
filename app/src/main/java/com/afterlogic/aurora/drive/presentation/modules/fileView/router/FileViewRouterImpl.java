@@ -5,9 +5,8 @@ import android.net.Uri;
 import android.support.v4.content.FileProvider;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.common.modules.model.router.BaseRouter;
-import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router.BaseFileRouter;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewPresentationView;
 
 import java.io.File;
@@ -25,7 +24,7 @@ import static com.afterlogic.aurora.drive.R.string.prompt_send_by_email_chooser;
  * mail: sunnyday.development@gmail.com
  */
 
-public class FileViewRouterImpl extends BaseRouter<FileViewPresentationView, BaseActivity> implements FileViewRouter {
+public class FileViewRouterImpl extends BaseFileRouter<FileViewPresentationView> implements FileViewRouter {
 
     @Inject
     FileViewRouterImpl(ViewState<FileViewPresentationView> viewContext) {

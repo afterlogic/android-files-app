@@ -11,6 +11,7 @@ import java.util.List;
 import io.reactivex.Completable;
 import io.reactivex.CompletableTransformer;
 import io.reactivex.Observable;
+import io.reactivex.ObservableTransformer;
 
 /**
  * Created by sashka on 13.10.16.<p/>
@@ -24,6 +25,16 @@ public class Observables {
                 return Completable.complete();
             } else {
                 return Completable.error(error);
+            }
+        });
+    }
+
+    public static <T> ObservableTransformer<T, T> emptyOnError(Class<? extends Throwable> skipClass){
+        return upstream -> upstream.onErrorResumeNext(error -> {
+            if (skipClass == error.getClass()){
+                return Observable.empty();
+            } else {
+                return Observable.error(error);
             }
         });
     }

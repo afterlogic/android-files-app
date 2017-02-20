@@ -50,4 +50,9 @@ public class FilesLocalServiceImpl extends LocalService implements FilesLocalSer
     public Maybe<OfflineFileInfoEntity> get(String pathSpec){
         return resultOrEmpty(() -> mOfflineFileInfoDao.load(pathSpec));
     }
+
+    @Override
+    public Completable clear() {
+        return defer(mOfflineFileInfoDao::deleteAll);
+    }
 }

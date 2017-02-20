@@ -1,6 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.fileView.router;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router.FilesRouter;
 
 import java.io.File;
 
@@ -9,7 +10,7 @@ import java.io.File;
  * mail: sunnyday.development@gmail.com
  */
 
-public interface FileViewRouter {
+public interface FileViewRouter extends FilesRouter{
 
     void openFile(AuroraFile remote, File file);
 

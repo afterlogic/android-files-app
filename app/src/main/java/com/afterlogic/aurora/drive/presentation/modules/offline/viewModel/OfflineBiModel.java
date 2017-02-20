@@ -63,6 +63,7 @@ public class OfflineBiModel extends BaseViewModel implements OfflineViewModel {
     public void onViewCreated() {
         super.onViewCreated();
         mPresenter.init();
+        mPresenter.ifPresent(OfflinePresenter::checkAuth);
         if (mItems.size() == 0){
             mPresenter.ifPresent(OfflinePresenter::refresh);
         }
@@ -125,7 +126,11 @@ public class OfflineBiModel extends BaseViewModel implements OfflineViewModel {
 
     @Override
     public void onRefresh() {
-        mPresenter.ifPresent(OfflinePresenter::refresh);
+        if (mManualMode.get()) {
+            mPresenter.ifPresent(OfflinePresenter::refresh);
+        } else {
+            mPresenter.ifPresent(OfflinePresenter::onGoToOnline);
+        }
     }
 
     private class Model implements OfflineModel {
@@ -181,7 +186,7 @@ public class OfflineBiModel extends BaseViewModel implements OfflineViewModel {
         }
 
         @Override
-        public void majorException(Throwable error) {
+        public void onErrorObtained(Throwable error) {
             Toast.makeText(mAppContext, error.getMessage(), Toast.LENGTH_LONG).show();
             MyLog.majorException(error);
         }

@@ -12,6 +12,7 @@ import com.afterlogic.aurora.drive.presentation.modules.offline.view.OfflineActi
 import com.afterlogic.aurora.drive.presentation.modules.start.view.StartActivity;
 import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadActivity;
 import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadFilesFragment;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.accountAction.AccountActionReceiver;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.view.FileObserverService;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.session.SessionChangedReceiver;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncService;
@@ -50,4 +51,6 @@ public interface InjectorsComponent {
     Injector<FileViewActivity> fileView();
 
     Injector<OfflineActivity> offline();
+
+    Injector<AccountActionReceiver> accountActionReceiver();
 }

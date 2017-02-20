@@ -9,6 +9,7 @@ import android.databinding.ObservableList;
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileType;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.BaseFilesModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter.FilesPresenter;
 import com.annimon.stream.Stream;
 
@@ -28,6 +29,7 @@ public class BaseFilesBiModel implements BaseFilesModel, BaseFilesViewModel {
     private final ObservableBoolean mLocked = new ObservableBoolean(false);
     private final ObservableInt mCurrentPosition = new ObservableInt(-1);
     private final ObservableList<FileType> mFileTypes = new ObservableArrayList<>();
+    private final ObservableBoolean mErrorState = new ObservableBoolean();
 
     private String mCurrentFileType = null;
 
@@ -66,6 +68,11 @@ public class BaseFilesBiModel implements BaseFilesModel, BaseFilesViewModel {
     }
 
     @Override
+    public ObservableBoolean getErrorState() {
+        return mErrorState;
+    }
+
+    @Override
     public void setFileTypes(List<FileType> types) {
         mFileTypes.clear();
         mFileTypes.addAll(types);
@@ -90,6 +97,11 @@ public class BaseFilesBiModel implements BaseFilesModel, BaseFilesViewModel {
     @Override
     public void setRefreshing(boolean refreshing) {
         mRefreshing.set(refreshing);
+    }
+
+    @Override
+    public void setErrorState(boolean errorState) {
+        mErrorState.set(errorState);
     }
 
     private void updateCurrentPosition(){

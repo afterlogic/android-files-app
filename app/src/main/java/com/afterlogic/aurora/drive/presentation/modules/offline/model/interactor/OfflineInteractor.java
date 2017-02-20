@@ -21,4 +21,6 @@ public interface OfflineInteractor {
     Observable<Progressible<File>> downloadForOpen(AuroraFile file);
     Observable<Progressible<File>> downloadToDownloads(AuroraFile file);
     Single<Uri> getThumbnail(AuroraFile file);
+
+    Single<Boolean> getAuthStatus();
 }

@@ -5,8 +5,9 @@ import android.support.v7.widget.RecyclerView;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.presentation.common.binding.bindingAdapters.ViewProvider;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ItemsAdapter;
-import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.SimpleRecyclerViewModelAdapter;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFileListAdapter;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFileItemViewModel;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFilesListViewModel;
 import com.afterlogic.aurora.drive.presentation.modules.main.viewModel.FileActionItemViewModel;
 
 import java.util.WeakHashMap;
@@ -22,11 +23,11 @@ public class MainBindHelper {
     private static final WeakHashMap<RecyclerView, ItemsAdapter<FileActionItemViewModel>> FILE_ACTION_ADAPTERS = new WeakHashMap<>();
 
     @SuppressWarnings("unused")
-    public static ViewProvider<ItemsAdapter<BaseFileItemViewModel>, RecyclerView> filesListAdapter(){
+    public static ViewProvider<ItemsAdapter<BaseFileItemViewModel>, RecyclerView> filesListAdapter(BaseFilesListViewModel viewModel){
         return list -> {
             ItemsAdapter<BaseFileItemViewModel> adapter = FILES_ADAPTERS.get(list);
             if (adapter == null){
-                adapter = new SimpleRecyclerViewModelAdapter<>(R.layout.item_list_file_main);
+                adapter = new BaseFileListAdapter<>(R.layout.item_list_file_main, viewModel);
                 FILES_ADAPTERS.put(list, adapter);
             }
             return adapter;

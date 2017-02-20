@@ -6,6 +6,7 @@ import android.content.Context;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
 import com.afterlogic.aurora.drive.core.common.util.FileUtil;
+import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
@@ -36,18 +37,20 @@ public class FileViewInteractorImpl extends BaseFilesListInteractor implements F
     private final Context mAppContext;
     private final File mCacheDir;
     private final File mDownloadsDir;
+    private final SessionManager mSessionManager;
 
     @Inject
     FileViewInteractorImpl(ObservableScheduler scheduler,
                            FilesRepository filesRepository,
                            Context appContext,
                            @Named(CACHE_DIR) File cacheDir,
-                           @Named(DOWNLOADS_DIR) File downloadsDir) {
+                           @Named(DOWNLOADS_DIR) File downloadsDir, SessionManager sessionManager) {
         super(scheduler, filesRepository);
         mFilesRepository = filesRepository;
         mAppContext = appContext;
         mCacheDir = cacheDir;
         mDownloadsDir = downloadsDir;
+        mSessionManager = sessionManager;
     }
 
     @Override
@@ -105,5 +108,10 @@ public class FileViewInteractorImpl extends BaseFilesListInteractor implements F
     public Single<Boolean> getOfflineStatus(AuroraFile file) {
         return mFilesRepository.getOfflineStatus(file)
                 .compose(this::composeDefault);
+    }
+
+    @Override
+    public Single<Boolean> getAuthStatus() {
+        return Single.fromCallable(() -> mSessionManager.getSession() != null && mSessionManager.getSession().isComplete());
     }
 }
