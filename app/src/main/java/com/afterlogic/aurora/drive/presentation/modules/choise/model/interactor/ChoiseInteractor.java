@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.choise.interactor;
+package com.afterlogic.aurora.drive.presentation.modules.choise.model.interactor;
 
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.interactor.FilesInteractor;
 

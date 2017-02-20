@@ -25,7 +25,7 @@ public class MainFilesPresenterImpl extends BaseFilesPresenter<MainFilesView> im
                                    MainFilesInteractor interactor,
                                    MainFilesModel model,
                                    MainFilesRouter router) {
-        super(viewState, interactor, model);
+        super(viewState, interactor, model, router);
         mInteractor = interactor;
         mModel = model;
         mRouter = router;

@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.choise.presenter;
+package com.afterlogic.aurora.drive.presentation.modules.choise.model.presenter;
 
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter.FilesListPresenter;
 

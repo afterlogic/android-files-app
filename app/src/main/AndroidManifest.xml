@@ -91,8 +91,10 @@
                        android:resource="@xml/authentificator" />
         </service>
 
-        <service android:name=".presentation.modulesBackground.fileListener.view.FileObserverService"
-                 android:exported="false"/>
+        <service
+            android:name=".presentation.modulesBackground.fileListener.view.FileObserverService"
+            android:exported="false"
+            android:enabled="false"/>
 
         <receiver android:name=".presentation.modulesBackground.receivers.BootReceiver">
             <intent-filter>

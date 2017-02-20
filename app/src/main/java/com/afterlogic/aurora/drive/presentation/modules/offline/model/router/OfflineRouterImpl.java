@@ -80,6 +80,7 @@ public class OfflineRouterImpl extends BaseMVVMRouter<OfflineActivity> implement
         ifViewActive(activity -> {
             Intent intent = MainFilesActivity.intent(activity);
             activity.startActivity(IntentUtil.makeRestartTask(intent));
+            activity.overridePendingTransition(0, 0);
         });
     }
 

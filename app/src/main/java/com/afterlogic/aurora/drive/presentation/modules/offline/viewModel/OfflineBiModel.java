@@ -125,7 +125,11 @@ public class OfflineBiModel extends BaseViewModel implements OfflineViewModel {
 
     @Override
     public void onRefresh() {
-        mPresenter.ifPresent(OfflinePresenter::refresh);
+        if (mManualMode.get()) {
+            mPresenter.ifPresent(OfflinePresenter::refresh);
+        } else {
+            mPresenter.ifPresent(OfflinePresenter::onGoToOnline);
+        }
     }
 
     private class Model implements OfflineModel {

@@ -48,7 +48,7 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
                               MainFileListRouter router,
                               AppResources appResources,
                               Context appContext) {
-        super(viewState, interactor, model, appContext);
+        super(viewState, interactor, model, appContext, router);
         mInteractor = interactor;
         mModel = model;
         mRouter = router;

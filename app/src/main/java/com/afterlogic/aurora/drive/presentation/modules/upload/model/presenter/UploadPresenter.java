@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.choise.presenter;
+package com.afterlogic.aurora.drive.presentation.modules.upload.model.presenter;
 
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter.FilesPresenter;
 
@@ -7,5 +7,5 @@ import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.present
  * mail: sunnyday.development@gmail.com
  */
 
-public interface ChoisePresenter extends FilesPresenter {
+public interface UploadPresenter extends FilesPresenter {
 }

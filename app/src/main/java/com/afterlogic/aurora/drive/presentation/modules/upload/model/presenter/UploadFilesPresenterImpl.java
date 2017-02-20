@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.upload.presenter;
+package com.afterlogic.aurora.drive.presentation.modules.upload.model.presenter;
 
 import android.content.Context;
 import android.net.Uri;
@@ -10,8 +10,8 @@ import com.afterlogic.aurora.drive.model.error.FileAlreadyExistError;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.PresentationView;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter.BaseFilesListPresenter;
-import com.afterlogic.aurora.drive.presentation.modules.upload.interactor.UploadFilesInteractor;
-import com.afterlogic.aurora.drive.presentation.modules.upload.router.UploadFilesRouter;
+import com.afterlogic.aurora.drive.presentation.modules.upload.model.interactor.UploadFilesInteractor;
+import com.afterlogic.aurora.drive.presentation.modules.upload.model.router.UploadFilesRouter;
 import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadFilesView;
 import com.afterlogic.aurora.drive.presentation.modules.upload.viewModel.UploadFilesModel;
 import com.annimon.stream.Stream;
@@ -36,7 +36,7 @@ public class UploadFilesPresenterImpl extends BaseFilesListPresenter<UploadFiles
 
     @Inject
     UploadFilesPresenterImpl(ViewState<UploadFilesView> viewState, UploadFilesInteractor interactor, UploadFilesModel model, Context appContext, AppResources appResources, UploadFilesRouter router) {
-        super(viewState, interactor, model, appContext);
+        super(viewState, interactor, model, appContext, router);
         mInteractor = interactor;
         mModel = model;
         mAppResources = appResources;
@@ -77,6 +77,12 @@ public class UploadFilesPresenterImpl extends BaseFilesListPresenter<UploadFiles
                         this::onUploadError,
                         mRouter::closeCurrent
                 );
+    }
+
+    @Override
+    protected void handleFilesError(Throwable error) {
+        mModel.setErrorState(true);
+        onErrorObtained(error);
     }
 
     private void onUploadError(Throwable error){

@@ -21,7 +21,6 @@ public class IntentUtil {
         result.setAction(intent.getAction());
         result.setType(intent.getType());
         result.setData(intent.getData());
-        result.setFlags(intent.getFlags());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             result.setClipData(intent.getClipData());
         }

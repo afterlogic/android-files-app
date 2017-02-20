@@ -8,10 +8,9 @@ import android.support.v4.content.FileProvider;
 
 import com.afterlogic.aurora.drive.core.common.streams.ExtCollectors;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.common.modules.model.router.BaseRouter;
-import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.common.util.IntentUtil;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router.BaseFileRouter;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewActivity;
 import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFileListView;
 import com.annimon.stream.Stream;
@@ -33,7 +32,7 @@ import static com.afterlogic.aurora.drive.R.string.prompt_send_by_email_chooser;
  * mail: sunnyday.development@gmail.com
  */
 
-public class MainFileListRouterImpl extends BaseRouter<MainFileListView, BaseActivity> implements MainFileListRouter {
+public class MainFileListRouterImpl extends BaseFileRouter<MainFileListView> implements MainFileListRouter {
 
     private final Context mAppContext;
 

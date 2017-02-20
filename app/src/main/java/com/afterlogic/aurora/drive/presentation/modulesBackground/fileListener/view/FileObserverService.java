@@ -1,5 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.view;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -19,6 +20,10 @@ public class FileObserverService extends BaseService implements FileObserverView
 
     @Inject @ViewPresenter
     protected FileObserverPresenter mPresenter;
+
+    public static Intent intent(Context context){
+        return new Intent(context, FileObserverService.class);
+    }
 
     @Nullable
     @Override

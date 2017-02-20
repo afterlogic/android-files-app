@@ -4,14 +4,19 @@ import android.content.Context;
 
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.core.common.util.FileUtil;
+import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.modules.model.presenter.BaseLoadPresenter;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.interactor.FilesListInteractor;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.FilesListView;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.BaseFilesListModel;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.interactor.FilesListInteractor;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router.FilesRouter;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.FilesListView;
 import com.annimon.stream.Stream;
+import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
 
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +33,7 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
 
     private final FilesListInteractor mInteractor;
     private final BaseFilesListModel mModel;
+    private final FilesRouter mRouter;
 
     private String mType;
 
@@ -36,10 +42,11 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
 
     private Disposable mThumbnailRequest = null;
 
-    public BaseFilesListPresenter(ViewState<V> viewState, FilesListInteractor interactor, BaseFilesListModel model, Context appContext) {
+    public BaseFilesListPresenter(ViewState<V> viewState, FilesListInteractor interactor, BaseFilesListModel model, Context appContext, FilesRouter router) {
         super(viewState, appContext);
         mInteractor = interactor;
         mModel = model;
+        mRouter = router;
     }
 
     @Override
@@ -90,7 +97,7 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
                 })
                 .subscribe(
                         this::handleFilesResult,
-                        this::onErrorObtained
+                        this::handleFilesError
                 );
     }
 
@@ -144,5 +151,18 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
                 .collect(Observables.Collectors.concatCompletable())
                 .doFinally(() -> mThumbnailRequest = null)
                 .subscribe();
+    }
+
+
+    protected void handleFilesError(Throwable error){
+        mModel.setErrorState(true);
+        if (error instanceof RuntimeException && error.getCause() != null){
+            error = error.getCause();
+        }
+        if (ObjectsUtil.isExtendsAny(error, SocketTimeoutException.class, HttpException.class, UnknownHostException.class)){
+            mRouter.goToOfflineError();
+        } else {
+            onErrorObtained(error);
+        }
     }
 }

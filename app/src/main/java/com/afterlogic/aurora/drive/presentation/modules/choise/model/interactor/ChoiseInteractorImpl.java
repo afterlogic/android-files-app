@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.upload.interactor;
+package com.afterlogic.aurora.drive.presentation.modules.choise.model.interactor;
 
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
@@ -12,9 +12,10 @@ import javax.inject.Inject;
  * mail: sunnyday.development@gmail.com
  */
 
-public class UploadInteractorImpl extends BaseFilesInteractor implements UploadInteractor {
+public class ChoiseInteractorImpl extends BaseFilesInteractor implements ChoiseInteractor {
 
-    @Inject UploadInteractorImpl(ObservableScheduler scheduler, FilesRepository filesRepository, AppResources appResources) {
+    @Inject
+    ChoiseInteractorImpl(ObservableScheduler scheduler, FilesRepository filesRepository, AppResources appResources) {
         super(scheduler, filesRepository, appResources);
     }
 }

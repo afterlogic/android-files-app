@@ -1,12 +1,12 @@
-package com.afterlogic.aurora.drive.presentation.modules.choise.presenter;
+package com.afterlogic.aurora.drive.presentation.modules.choise.model.presenter;
 
 import android.content.Context;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter.BaseFilesListPresenter;
-import com.afterlogic.aurora.drive.presentation.modules.choise.interactor.ChoiseFilesInteractor;
-import com.afterlogic.aurora.drive.presentation.modules.choise.router.ChoiseFilesRouter;
+import com.afterlogic.aurora.drive.presentation.modules.choise.model.interactor.ChoiseFilesInteractor;
+import com.afterlogic.aurora.drive.presentation.modules.choise.model.router.ChoiseFilesRouter;
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseFilesView;
 import com.afterlogic.aurora.drive.presentation.modules.choise.viewModel.ChoiseFilesModel;
 
@@ -28,7 +28,7 @@ public class ChoiseFilesPresenterImpl extends BaseFilesListPresenter<ChoiseFiles
                              ChoiseFilesModel model,
                              Context appContext,
                              ChoiseFilesRouter router) {
-        super(viewState, interactor, model, appContext);
+        super(viewState, interactor, model, appContext, router);
         mInteractor = interactor;
         mRouter = router;
     }

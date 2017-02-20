@@ -18,7 +18,7 @@ import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsCompon
 import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesActivity;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesListFragment;
-import com.afterlogic.aurora.drive.presentation.modules.upload.presenter.UploadPresenter;
+import com.afterlogic.aurora.drive.presentation.modules.upload.model.presenter.UploadPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.upload.viewModel.UploadViewModel;
 import com.annimon.stream.Stream;
 

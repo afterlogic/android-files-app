@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.upload.interactor;
+package com.afterlogic.aurora.drive.presentation.modules.upload.model.interactor;
 
 import android.net.Uri;
 

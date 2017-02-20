@@ -69,7 +69,7 @@ public class BaseFilesBiModel implements BaseFilesModel, BaseFilesViewModel {
 
     @Override
     public ObservableBoolean getErrorState() {
-        return null;
+        return mErrorState;
     }
 
     @Override

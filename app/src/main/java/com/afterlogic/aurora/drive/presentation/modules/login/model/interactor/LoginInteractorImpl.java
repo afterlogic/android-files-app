@@ -1,7 +1,10 @@
 package com.afterlogic.aurora.drive.presentation.modules.login.model.interactor;
 
+import android.content.Context;
+
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
+import com.afterlogic.aurora.drive.core.common.util.AppUtil;
 import com.afterlogic.aurora.drive.core.consts.Const;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.modules.apiChecker.checker.ApiChecker;
@@ -9,6 +12,7 @@ import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.error.UnknownApiVersionError;
 import com.afterlogic.aurora.drive.presentation.common.modules.model.interactor.BaseInteractor;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.view.FileObserverService;
 import com.annimon.stream.Stream;
 
 import java.util.ArrayList;
@@ -32,15 +36,17 @@ public class LoginInteractorImpl extends BaseInteractor implements LoginInteract
     private final SessionManager mSessionManager;
     private final ApiChecker mApiChecker;
     private final Provider<AuthRepository> mAuthRepository;
+    private final Context mAppContext;
 
     @Inject LoginInteractorImpl(ObservableScheduler scheduler,
                                 SessionManager sessionManager,
                                 ApiChecker apiChecker,
-                                Provider<AuthRepository> authRepository) {
+                                Provider<AuthRepository> authRepository, Context appContext) {
         super(scheduler);
         mSessionManager = sessionManager;
         mApiChecker = apiChecker;
         mAuthRepository = authRepository;
+        mAppContext = appContext;
     }
 
     @Override
@@ -96,6 +102,10 @@ public class LoginInteractorImpl extends BaseInteractor implements LoginInteract
                                 .andThen(authRepository.login(session.getLogin(), session.getPassword()))
                 )
                 .doOnError(error -> mSessionManager.setSession(null))
+                .andThen(Completable.fromAction(() -> {
+                    AppUtil.setComponentEnabled(FileObserverService.class, true, mAppContext);
+                    mAppContext.startService(FileObserverService.intent(mAppContext));
+                }))
                 .compose(this::composeDefault);
     }
 

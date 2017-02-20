@@ -2,10 +2,9 @@ package com.afterlogic.aurora.drive.presentation.modules.main.model.router;
 
 import android.content.Intent;
 
-import com.afterlogic.aurora.drive.presentation.common.modules.model.router.BaseRouter;
-import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.common.util.IntentUtil;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router.BaseFileRouter;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginIntent;
 import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFilesView;
 import com.afterlogic.aurora.drive.presentation.modules.offline.view.OfflineActivity;
@@ -17,7 +16,7 @@ import javax.inject.Inject;
  * mail: sunnyday.development@gmail.com
  */
 
-public class MainFilesRouterImpl extends BaseRouter<MainFilesView, BaseActivity> implements MainFilesRouter {
+public class MainFilesRouterImpl extends BaseFileRouter<MainFilesView> implements MainFilesRouter {
 
     @Inject MainFilesRouterImpl(ViewState<MainFilesView> viewContext) {
         super(viewContext);

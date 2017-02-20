@@ -1,12 +1,16 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.model.interactor;
 
+import android.content.Context;
+
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
+import com.afterlogic.aurora.drive.core.common.util.AppUtil;
 import com.afterlogic.aurora.drive.data.common.db.DataBaseProvider;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.interactor.BaseFilesInteractor;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.view.FileObserverService;
 
 import javax.inject.Inject;
 
@@ -23,15 +27,17 @@ public class MainFilesInteractorImpl extends BaseFilesInteractor implements Main
     private final AuthRepository mAuthRepository;
     private final FilesRepository mFilesRepository;
     private final DataBaseProvider mDataBaseProvider;
+    private final Context mAppContext;
 
     @Inject MainFilesInteractorImpl(ObservableScheduler scheduler,
                                     FilesRepository filesRepository,
                                     AppResources appResources,
-                                    AuthRepository authRepository, DataBaseProvider dataBaseProvider) {
+                                    AuthRepository authRepository, DataBaseProvider dataBaseProvider, Context appContext) {
         super(scheduler, filesRepository, appResources);
         mFilesRepository = filesRepository;
         mAuthRepository = authRepository;
         mDataBaseProvider = dataBaseProvider;
+        mAppContext = appContext;
     }
 
     @Override
@@ -46,7 +52,11 @@ public class MainFilesInteractorImpl extends BaseFilesInteractor implements Main
     public Completable logout() {
         return mAuthRepository.logoutAndClearData()
                 .andThen(mFilesRepository.clearOfflineData())
-                .andThen(Completable.fromAction(mDataBaseProvider::reset))
+                .andThen(Completable.fromAction(() -> {
+                    mDataBaseProvider.reset();
+                    mAppContext.stopService(FileObserverService.intent(mAppContext));
+                    AppUtil.setComponentEnabled(FileObserverService.class, false, mAppContext);
+                }))
                 .compose(this::composeDefault);
     }
 }

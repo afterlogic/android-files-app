@@ -1,13 +1,12 @@
-package com.afterlogic.aurora.drive.presentation.modules.choise.router;
+package com.afterlogic.aurora.drive.presentation.modules.choise.model.router;
 
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.content.FileProvider;
 
-import com.afterlogic.aurora.drive.presentation.common.modules.model.router.BaseRouter;
-import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router.BaseFileRouter;
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseFilesView;
 
 import java.io.File;
@@ -23,7 +22,7 @@ import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
  * mail: sunnyday.development@gmail.com
  */
 
-public class ChoiseFilesRouterImpl extends BaseRouter<ChoiseFilesView, BaseActivity> implements ChoiseFilesRouter {
+public class ChoiseFilesRouterImpl extends BaseFileRouter<ChoiseFilesView> implements ChoiseFilesRouter {
 
     private final Context mAppContext;
 

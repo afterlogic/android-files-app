@@ -12,7 +12,7 @@ import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsCompon
 import com.afterlogic.aurora.drive.presentation.common.util.DialogUtil;
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesListFragment;
-import com.afterlogic.aurora.drive.presentation.modules.upload.presenter.UploadFilesPresenter;
+import com.afterlogic.aurora.drive.presentation.modules.upload.model.presenter.UploadFilesPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.upload.viewModel.UploadFilesViewModel;
 
 import java.util.List;

@@ -1,8 +1,7 @@
-package com.afterlogic.aurora.drive.presentation.modules.upload.router;
+package com.afterlogic.aurora.drive.presentation.modules.upload.model.router;
 
-import com.afterlogic.aurora.drive.presentation.common.modules.model.router.BaseRouter;
-import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router.BaseFileRouter;
 import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadFilesView;
 
 import javax.inject.Inject;
@@ -14,7 +13,7 @@ import static android.app.Activity.RESULT_OK;
  * mail: sunnyday.development@gmail.com
  */
 
-public class UploadFilesRouterImpl extends BaseRouter<UploadFilesView, BaseActivity> implements UploadFilesRouter {
+public class UploadFilesRouterImpl extends BaseFileRouter<UploadFilesView> implements UploadFilesRouter {
 
     @Inject
     UploadFilesRouterImpl(ViewState<UploadFilesView> viewContext) {

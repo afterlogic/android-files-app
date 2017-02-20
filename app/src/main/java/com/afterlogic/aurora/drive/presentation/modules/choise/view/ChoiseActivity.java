@@ -11,7 +11,7 @@ import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsCompon
 import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesActivity;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesListFragment;
-import com.afterlogic.aurora.drive.presentation.modules.choise.presenter.ChoisePresenter;
+import com.afterlogic.aurora.drive.presentation.modules.choise.model.presenter.ChoisePresenter;
 import com.afterlogic.aurora.drive.presentation.modules.choise.viewModel.ChoiseViewModel;
 
 /**

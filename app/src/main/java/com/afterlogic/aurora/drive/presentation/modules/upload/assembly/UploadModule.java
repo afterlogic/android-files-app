@@ -3,10 +3,12 @@ package com.afterlogic.aurora.drive.presentation.modules.upload.assembly;
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationModule;
-import com.afterlogic.aurora.drive.presentation.modules.upload.interactor.UploadInteractor;
-import com.afterlogic.aurora.drive.presentation.modules.upload.interactor.UploadInteractorImpl;
-import com.afterlogic.aurora.drive.presentation.modules.upload.presenter.UploadPresenter;
-import com.afterlogic.aurora.drive.presentation.modules.upload.presenter.UploadPresenterImpl;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router.BaseFileRouter;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router.FilesRouter;
+import com.afterlogic.aurora.drive.presentation.modules.upload.model.interactor.UploadInteractor;
+import com.afterlogic.aurora.drive.presentation.modules.upload.model.interactor.UploadInteractorImpl;
+import com.afterlogic.aurora.drive.presentation.modules.upload.model.presenter.UploadPresenter;
+import com.afterlogic.aurora.drive.presentation.modules.upload.model.presenter.UploadPresenterImpl;
 import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadView;
 import com.afterlogic.aurora.drive.presentation.modules.upload.viewModel.UploadBiModel;
 import com.afterlogic.aurora.drive.presentation.modules.upload.viewModel.UploadModel;
@@ -46,5 +48,10 @@ public class UploadModule extends PresentationModule<UploadView>{
     @Provides
     UploadModel model(UploadBiModel model){
         return model;
+    }
+
+    @Provides
+    FilesRouter router(BaseFileRouter<UploadView> router){
+        return router;
     }
 }
