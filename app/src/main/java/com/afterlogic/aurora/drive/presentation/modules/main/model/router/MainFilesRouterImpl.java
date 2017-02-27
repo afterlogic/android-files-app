@@ -33,7 +33,7 @@ public class MainFilesRouterImpl extends BaseFileRouter<MainFilesView> implement
     @Override
     public void openOfflineMode() {
         ifViewActive(activity -> {
-            Intent intent = IntentUtil.makeRestartTask(OfflineActivity.intent(true, activity));
+            Intent intent = OfflineActivity.intent(true, activity);
             activity.startActivity(intent);
             activity.overridePendingTransition(0, 0);
         });
