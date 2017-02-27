@@ -2,6 +2,7 @@ package com.afterlogic.aurora.drive.presentation.assembly.assemblies;
 
 import com.afterlogic.aurora.drive.presentation.assembly.MVVMComponentsStore;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationModulesStore;
+import com.afterlogic.aurora.drive.presentation.modules.accountInfo.assembly.AccountInfoComponent;
 import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseComponent;
 import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseFilesComponent;
 import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseFilesModule;
@@ -69,4 +70,6 @@ public interface ModulesComponentCreator {
     OfflineComponent offline();
 
     AccountActionComponent accountActionReceiver();
+
+    AccountInfoComponent accountInfo();
 }

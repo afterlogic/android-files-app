@@ -2,6 +2,8 @@ package com.afterlogic.aurora.drive.presentation.assembly.modules;
 
 import com.afterlogic.aurora.drive.presentation.assembly.assemblies.ModulesComponentCreator;
 import com.afterlogic.aurora.drive.presentation.assembly.Injector;
+import com.afterlogic.aurora.drive.presentation.modules.accountInfo.assembly.AccountInfoInjector;
+import com.afterlogic.aurora.drive.presentation.modules.accountInfo.view.AccountInfoActivity;
 import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseFilesInjector;
 import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseInjector;
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseActivity;
@@ -120,5 +122,10 @@ public class InjectorsModule {
     @Provides
     Injector<AccountActionReceiver> accountActionReceiver(AccountActionInjector injector){
         return injector;
+    }
+
+    @Provides
+    Injector<AccountInfoActivity> accountInfo(AccountInfoInjector infoInjector){
+        return infoInjector;
     }
 }

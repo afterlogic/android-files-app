@@ -102,6 +102,7 @@
     <string name="prompt_dialog_title_folder_cration">Folder creating:</string>
     <string name="promtp_dialog_error_message_doesnt_have_chooser">Doesn\'t have application for file choosing.</string>
     <string name="prompt_dialog_title_renaming">Renaming:</string>
+    <string name="prompt_title_account_info">Aurora account</string>
 
     <plurals name="dialog_files_success_downloaded">
         <item quantity="one">%d file success downloaded.</item>

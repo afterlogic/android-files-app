@@ -82,6 +82,7 @@
         </activity>
         <activity android:name=".presentation.modules.fileView.view.FileViewActivity"/>
         <activity android:name=".presentation.modules.offline.view.OfflineActivity"/>
+        <activity android:name=".presentation.modules.accountInfo.view.AccountInfoActivity"/>
 
         <service android:name=".presentation.modulesBackground.authenticator.AuthenticatorService">
             <intent-filter>
