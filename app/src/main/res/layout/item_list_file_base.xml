@@ -29,7 +29,7 @@
             android:layout_height="32dp"
             android:contentDescription="@string/content_descroption_file_icon"
             bind:imageUri="@{viewModel.fileIcon}"
-            bind:tintColor="@{viewModel.isFolder ? @color/colorPrimary : @color/colorAccent}"
+            bind:tintColor="@{viewModel.isFolder ? @color/colorPrimary : -1}"
             tools:tint="@color/colorPrimary"
             tools:src="@mipmap/ic_launcher"/>
 
