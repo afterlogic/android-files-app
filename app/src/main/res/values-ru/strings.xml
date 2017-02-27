@@ -97,6 +97,7 @@
     <string name="promtp_dialog_error_message_doesnt_have_chooser">Нет приложения для выбора файлов.</string>
     <string name="prompt_dialog_title_renaming">Переименовывание:</string>
 
+    <string name="prompt_title_account_info">Аккаунт Aurora</string>
 
     <plurals name="dialog_files_success_downloaded">
         <item quantity="zero">%d файлов успешно загружено.</item>

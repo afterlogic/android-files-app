@@ -2,6 +2,7 @@ package com.afterlogic.aurora.drive.presentation.assembly.modules;
 
 import com.afterlogic.aurora.drive.presentation.assembly.Injector;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationModulesStore;
+import com.afterlogic.aurora.drive.presentation.modules.accountInfo.view.AccountInfoActivity;
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseActivity;
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseFilesFragment;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewActivity;
@@ -53,4 +54,6 @@ public interface InjectorsComponent {
     Injector<OfflineActivity> offline();
 
     Injector<AccountActionReceiver> accountActionReceiver();
+
+    Injector<AccountInfoActivity> accountInfo();
 }
