@@ -80,9 +80,16 @@
                 <data android:mimeType="*/*"/>
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.modules.fileView.view.FileViewActivity"/>
-        <activity android:name=".presentation.modules.offline.view.OfflineActivity"/>
-        <activity android:name=".presentation.modules.accountInfo.view.AccountInfoActivity"/>
+
+        <activity
+            android:name=".presentation.modules.fileView.view.FileViewActivity"/>
+
+        <activity
+            android:name=".presentation.modules.offline.view.OfflineActivity"/>
+
+        <activity
+            android:name=".presentation.modules.accountInfo.view.AccountInfoActivity"
+            android:label="@string/prompt_title_account_info"/>
 
         <service android:name=".presentation.modulesBackground.authenticator.AuthenticatorService">
             <intent-filter>
