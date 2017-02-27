@@ -15,9 +15,11 @@ class OfflineAdapter extends SimpleRecyclerViewModelAdapter<BaseFileItemViewMode
 
     private static final int ITEM = 0;
     private static final int HEADER = 1;
+    private static final int EMPTY_ITEM = 2;
 
     private final OfflineViewModel mViewModel;
 
+    @SuppressWarnings("WeakerAccess")
     public OfflineAdapter(OfflineViewModel viewModel) {
         super(R.layout.item_list_file_base);
         mViewModel = viewModel;
@@ -25,25 +27,31 @@ class OfflineAdapter extends SimpleRecyclerViewModelAdapter<BaseFileItemViewMode
 
     @Override
     public void onBindViewHolder(BindViewHolder holder, int position) {
-        if (position == 0){
-            holder.getDataBinding().setVariable(BR.viewModel, mViewModel);
-        } else {
+        if (holder.getType() == ITEM){
             super.onBindViewHolder(holder, position - 1);
+        } else {
+            holder.getDataBinding().setVariable(BR.viewModel, mViewModel);
         }
     }
 
     @Override
     protected int getViewLayout(int viewType) {
-        return viewType == HEADER ? R.layout.item_list_offline_header : super.getViewLayout(viewType);
+        switch (viewType){
+            case HEADER: return R.layout.item_list_offline_header;
+            case EMPTY_ITEM: return R.layout.item_list_empty_folder;
+
+            default: return super.getViewLayout(viewType);
+        }
     }
 
     @Override
     public int getItemViewType(int position) {
-        return position == 0 ? HEADER : ITEM;
+        return position == 0 ? HEADER : super.getItemCount() == 0 ? EMPTY_ITEM : ITEM;
     }
 
     @Override
     public int getItemCount() {
-        return super.getItemCount() + 1;
+        int itemCount = super.getItemCount();
+        return itemCount + (itemCount == 0 ? 2 : 1);
     }
 }

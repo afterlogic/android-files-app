@@ -11,7 +11,7 @@ import java.util.List;
  * mail: sunnyday.development@gmail.com
  */
 
-public interface OfflineModel {
+public interface OfflineModel{
     void notifyRefreshing(boolean refreshing);
     void setFiles(List<AuroraFile> files);
     void notifyLoadProgress(AuroraFile file, int max, int progress);

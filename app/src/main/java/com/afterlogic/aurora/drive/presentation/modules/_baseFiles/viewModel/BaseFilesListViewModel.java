@@ -6,7 +6,6 @@ import android.databinding.ObservableList;
 import android.support.v4.widget.SwipeRefreshLayout;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.BaseFilesListModel;
 
 /**
  * Created by sashka on 10.02.17.<p/>
@@ -14,8 +13,6 @@ import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.BaseFil
  */
 
 public interface BaseFilesListViewModel<T extends BaseFileItemViewModel> extends SwipeRefreshLayout.OnRefreshListener{
-
-    BaseFilesListModel getModel();
 
     ObservableList<T> getItems();
 

@@ -19,6 +19,7 @@ import com.afterlogic.aurora.drive.presentation.common.modules.viewModel.dialog.
 import com.afterlogic.aurora.drive.presentation.common.modules.viewModel.dialog.ProgressDialogViewModel;
 import com.afterlogic.aurora.drive.presentation.common.util.LazyProvider;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFileItemViewModel;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFilesListViewModel;
 import com.afterlogic.aurora.drive.presentation.modules.offline.model.OfflineModel;
 import com.afterlogic.aurora.drive.presentation.modules.offline.model.presenter.OfflinePresenter;
 import com.annimon.stream.Collectors;
@@ -36,7 +37,7 @@ import javax.inject.Provider;
  * mail: sunnyday.development@gmail.com
  */
 @ModuleScope
-public class OfflineBiModel extends BaseViewModel implements OfflineViewModel {
+public class OfflineBiModel extends BaseViewModel implements OfflineViewModel, BaseFilesListViewModel<BaseFileItemViewModel> {
 
     private final Context mAppContext;
     private final AppResources mAppResources;
@@ -50,6 +51,7 @@ public class OfflineBiModel extends BaseViewModel implements OfflineViewModel {
     private final ObservableBoolean mManualMode = new ObservableBoolean();
     private final ObservableBoolean mRefreshing = new ObservableBoolean();
     private final ObservableField<MessageDialogViewModel> mMessage = new ObservableField<>();
+    private final ObservableBoolean mErrorState = new ObservableBoolean(false);
 
     @Inject
     OfflineBiModel(Context appContext, AppResources appResources, Provider<OfflineFileItemBiModel> itemProvider, LazyProvider<OfflinePresenter> presenter) {
@@ -102,6 +104,16 @@ public class OfflineBiModel extends BaseViewModel implements OfflineViewModel {
     @Override
     public ObservableBoolean getRefreshing() {
         return mRefreshing;
+    }
+
+    @Override
+    public ObservableField<AuroraFile> getCurrentFolder() {
+        return new ObservableField<>();
+    }
+
+    @Override
+    public ObservableBoolean getErrorState() {
+        return mErrorState;
     }
 
     @NonNull

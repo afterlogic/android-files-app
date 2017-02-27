@@ -39,7 +39,6 @@ public abstract class BaseFilesListBiModel<T extends BaseFileItemViewModel> impl
         mPresenter = presenter;
     }
 
-    @Override
     public BaseFilesListModel getModel() {
         return this;
     }
