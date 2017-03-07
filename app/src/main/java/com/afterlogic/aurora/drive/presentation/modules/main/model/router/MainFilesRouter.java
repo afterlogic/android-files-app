@@ -10,4 +10,5 @@ import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router.
 public interface MainFilesRouter extends FilesRouter {
     void openLogin();
     void openOfflineMode();
+    void openAbout();
 }

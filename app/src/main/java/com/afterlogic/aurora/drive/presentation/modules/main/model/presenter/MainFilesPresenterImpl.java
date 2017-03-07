@@ -57,6 +57,11 @@ public class MainFilesPresenterImpl extends BaseFilesPresenter<MainFilesView> im
     }
 
     @Override
+    public void onAbout() {
+        mRouter.openAbout();
+    }
+
+    @Override
     public boolean onBackPressed() {
         if (mModel.isInMultiChoise()){
             mModel.setMultiChoiseMode(false);

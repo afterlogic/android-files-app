@@ -98,7 +98,9 @@ public class MainFilesActivity extends BaseFilesActivity<MainFilesViewModel, Mai
             case R.id.action_offline_mode:
                 mViewModel.onOfflineModeSelected();
                 return true;
-
+            case R.id.action_about:
+                mViewModel.onAbout();
+                return true;
             default: return super.onOptionsItemSelected(item);
         }
     }

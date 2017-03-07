@@ -12,4 +12,5 @@ public interface MainFilesPresenter extends FilesPresenter, OnBackPressedListene
     void onLogout();
     void onMultiChoiseAction();
     void onOfflineModeSelected();
+    void onAbout();
 }

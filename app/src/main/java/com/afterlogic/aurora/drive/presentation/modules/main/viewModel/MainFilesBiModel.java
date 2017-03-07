@@ -23,7 +23,7 @@ public class MainFilesBiModel extends BaseFilesBiModel implements MainFilesViewM
     private final ObservableBoolean mMultichoiseMode = new ObservableBoolean(false);
     private final ObservableInt mSelectedCount = new ObservableInt(0);
     private final ObservableBoolean mSelectedHasFolder = new ObservableBoolean(false);
-    private OptWeakRef<MainFilesPresenter> mPresenter;
+    private final OptWeakRef<MainFilesPresenter> mPresenter;
 
     @Inject MainFilesBiModel(OptWeakRef<MainFilesPresenter> presenter) {
         super(presenter);
@@ -57,6 +57,11 @@ public class MainFilesBiModel extends BaseFilesBiModel implements MainFilesViewM
     @Override
     public void onOfflineModeSelected() {
         mPresenter.ifPresent(MainFilesPresenter::onOfflineModeSelected);
+    }
+
+    @Override
+    public void onAbout() {
+        mPresenter.ifPresent(MainFilesPresenter::onAbout);
     }
 
     @Override

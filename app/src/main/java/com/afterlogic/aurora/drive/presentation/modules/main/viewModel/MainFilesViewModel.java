@@ -29,4 +29,6 @@ public interface MainFilesViewModel extends BaseFilesViewModel{
     ObservableBoolean getSelectedHasFolder();
 
     void onOfflineModeSelected();
+
+    void onAbout();
 }

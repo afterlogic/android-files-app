@@ -30,7 +30,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
+        android:theme="@style/AppTheme.NoActionBar"
         android:largeHeap="true"
         android:name=".application.App">
 
@@ -90,6 +90,10 @@
         <activity
             android:name=".presentation.modules.accountInfo.view.AccountInfoActivity"
             android:label="@string/prompt_title_account_info"/>
+
+        <activity
+            android:name=".presentation.modules.about.view.ActivityAbout"
+            android:theme="@style/AppTheme"/>
 
         <service android:name=".presentation.modulesBackground.authenticator.AuthenticatorService">
             <intent-filter>

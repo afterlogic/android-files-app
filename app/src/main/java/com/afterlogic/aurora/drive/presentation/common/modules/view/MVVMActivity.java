@@ -3,6 +3,7 @@ package com.afterlogic.aurora.drive.presentation.common.modules.view;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 
 import com.afterlogic.aurora.drive.application.App;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
@@ -39,9 +40,20 @@ public abstract class MVVMActivity extends AppCompatActivity implements MVVMView
         super.onStop();
     }
 
-
     @Override
     public boolean isActive() {
         return mIsActive;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
