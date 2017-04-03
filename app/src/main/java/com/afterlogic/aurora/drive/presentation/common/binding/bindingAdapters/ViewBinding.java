@@ -22,31 +22,31 @@ public class ViewBinding {
 
     private static final String TAG = ViewBinding.class.getSimpleName();
 
-    @BindingAdapter("bind:backgroundColor")
+    @BindingAdapter("backgroundColor")
     public static void setBackgroundColor(View view, int color){
         if (color != -1){
             view.setBackgroundColor(color);
         }
     }
 
-    @BindingAdapter("bind:onClick")
+    @BindingAdapter("onClick")
     public static void setOnClick(View view, View.OnClickListener onClickListener){
         view.setClickable(true);
         view.setOnClickListener(onClickListener);
     }
 
-    @BindingAdapter("bind:onLongClick")
+    @BindingAdapter("onLongClick")
     public static void setOnLongClick(View view, View.OnLongClickListener onClickListener){
         view.setClickable(true);
         view.setOnLongClickListener(onClickListener);
     }
 
-    @BindingAdapter("bind:alpha")
+    @BindingAdapter("alpha")
     public static void setAlpha(View view, float alpha){
         ViewCompat.setAlpha(view, alpha);
     }
 
-    @BindingAdapter({"bind:layout_behavior"})
+    @BindingAdapter({"layout_behavior"})
     public static void setLayoutBehavior(View view, String behaviorClassName){
         if (view.getParent() instanceof CoordinatorLayout){
             CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) view.getLayoutParams();
@@ -70,12 +70,12 @@ public class ViewBinding {
     }
 
 
-    @BindingAdapter({"bind:childView"})
+    @BindingAdapter({"childView"})
     public static void setChildView(ViewGroup viewGroup, @Nullable View child){
         setChildView(viewGroup, child, 0);
     }
 
-    @BindingAdapter({"bind:childView", "bind:childViewIndex"})
+    @BindingAdapter({"childView", "childViewIndex"})
     public static void setChildView(ViewGroup viewGroup, @Nullable  View child, int index){
         for (int i = 0; i < viewGroup.getChildCount(); i++){
             View view = viewGroup.getChildAt(i);
@@ -91,7 +91,7 @@ public class ViewBinding {
         }
     }
 
-    @BindingAdapter({"bind:childViewAdapter", "bind:items"})
+    @BindingAdapter({"childViewAdapter", "items"})
     public static <VM> void setChildViewsAdapter(ViewGroup container, ViewsViewModelBindAdapter<VM> adapter, List<VM> list){
         adapter.setItems(list);
         adapter.onAttach(container);

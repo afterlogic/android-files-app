@@ -11,13 +11,13 @@ import android.widget.TextView;
 
 public class TextViewBinding {
 
-    @BindingAdapter("bind:font")
+    @BindingAdapter("font")
     public static void setTextViewFont(TextView view, String path){
         Typeface typeface = Typeface.createFromAsset(view.getContext().getAssets(), path);
         view.setTypeface(typeface);
     }
 
-    @BindingAdapter({"android:text", "bind:defaultText"})
+    @BindingAdapter({"android:text", "defaultText"})
     public static void setCaption(TextView view, String text, String defaultCaption){
         if (text != null){
             view.setText(text);
@@ -26,7 +26,7 @@ public class TextViewBinding {
         }
     }
 
-    @BindingAdapter({"android:hint", "bind:defaultHint"})
+    @BindingAdapter({"android:hint", "defaultHint"})
     public static void setCaptionHint(TextView view, String caption, String defaultCaption){
         if (caption != null){
             view.setHint(caption);

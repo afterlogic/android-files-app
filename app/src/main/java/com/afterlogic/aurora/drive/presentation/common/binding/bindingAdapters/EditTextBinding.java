@@ -11,7 +11,7 @@ import android.widget.EditText;
 
 public class EditTextBinding {
 
-    @BindingAdapter("bind:error")
+    @BindingAdapter("error")
     public static void bindError(EditText editText, @Nullable String error){
         editText.setError(error);
         if (error != null){

@@ -212,11 +212,10 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
                         if (!progress.isDone()){
                             return Observable.just(progress.map(null));
                         } else {
-                            //TODO get uploaded file name
                             return checkFile(AuroraFile.create(folder, fileInfo.getName(), false))
                                     .map(progress::map)
                                     .toObservable()
-                                    .startWith(new Progressible<>(null, -1, 0, progress.getName(), false));
+                                    .startWith(new Progressible<>(null, progress.getMax(), progress.getProgress(), progress.getName(), false));
                         }
                     });
         });

@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.util.Base64;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.data.common.repository.Repository;
 import com.afterlogic.aurora.drive.data.model.UploadResult;
 import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
 import com.afterlogic.aurora.drive.data.model.project8.AuroraFileP8;
@@ -227,20 +228,20 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
     public Observable<Progressible<UploadResult>> uploadFileToServer(AuroraFile folder, @NonNull FileInfo fileInfo) {
         SimpleObservableSource<Progressible<UploadResult>> progressSource = new SimpleObservableSource<>();
 
-        Observable<Progressible<UploadResult>> request = withNetMapper(
-                mFilesService.uploadFile(
+        long size = fileInfo.getSize();
+        Observable<Progressible<UploadResult>> request = mFilesService.uploadFile(
                         folder.getType(),
                         folder.getFullPath(),
                         fileInfo,
                         (max, value) -> progressSource.onNext(new Progressible<>(
                                 null, max, value, fileInfo.getName(), false
                         ))
-                ).map(response -> response),
-                result -> new UploadResult()
         )//-----|
+                .compose(Repository::withNetMapper)
+                .map(response -> new UploadResult())
                 .doOnEvent((uploadResult, throwable) -> progressSource.complete())
                 .doOnDispose(progressSource::clear)
-                .map(result -> new Progressible<>(result, 0, 0, fileInfo.getName(), true))
+                .map(result -> new Progressible<>(result, size, size, fileInfo.getName(), true))
                 .toObservable()
                 .doFinally(() -> MyLog.d("Request released."));
 

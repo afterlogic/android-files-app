@@ -10,7 +10,7 @@ import android.widget.CompoundButton;
 
 public class CompundBinding {
 
-    @BindingAdapter("bind:onCheck")
+    @BindingAdapter("onCheck")
     public static void setOnCheckedChaneListener(CompoundButton checkBox, CompoundButton.OnCheckedChangeListener listener){
         checkBox.setOnCheckedChangeListener(listener);
     }

@@ -16,24 +16,24 @@ import java.util.List;
 
 public class RecyclerViewBinding {
 
-    @BindingAdapter({"bind:adapter"})
+    @BindingAdapter({"adapter"})
     public static void setRecyclerViewAdapter(RecyclerView list, ViewProvider<? extends RecyclerView.Adapter, RecyclerView> adapter){
         setRecyclerViewAdapter(list, adapter.provide(list));
     }
 
-    @BindingAdapter({"bind:adapter"})
+    @BindingAdapter({"adapter"})
     public static <T extends RecyclerView.Adapter> void setRecyclerViewAdapter(RecyclerView list, T adapter){
         if (list.getAdapter() != adapter) {
             list.setAdapter(adapter);
         }
     }
 
-    @BindingAdapter({"bind:adapter", "bind:items"})
+    @BindingAdapter({"adapter", "items"})
     public static <VM> void setRecyclerAdapterWithItems(RecyclerView list, ViewProvider<? extends ItemsAdapter<VM>, RecyclerView> adapter, List<VM> items){
         setRecyclerAdapterWithItems(list, adapter.provide(list), items);
     }
 
-    @BindingAdapter({"bind:adapter", "bind:items"})
+    @BindingAdapter({"adapter", "items"})
     public static <VM, A extends ItemsAdapter<VM>> void setRecyclerAdapterWithItems(RecyclerView list, A adapter, List<VM> items){
         if (adapter != null) {
             adapter.setItems(items);
@@ -41,7 +41,7 @@ public class RecyclerViewBinding {
         setRecyclerViewAdapter(list, (RecyclerView.Adapter)adapter);
     }
 
-    @BindingAdapter("bind:decoration")
+    @BindingAdapter("decoration")
     public static void setRecyclerDecoration(RecyclerView list, ViewProvider<RecyclerView.ItemDecoration, RecyclerView> provider){
         RecyclerView.ItemDecoration prev = (RecyclerView.ItemDecoration) list.getTag(R.id.bind_recycler_decoration);
         RecyclerView.ItemDecoration decoration = provider.provide(list);
@@ -57,12 +57,12 @@ public class RecyclerViewBinding {
         }
     }
 
-    @BindingAdapter("bind:layoutManager")
+    @BindingAdapter("layoutManager")
     public static void setRecyclerLayoutManager(RecyclerView list, ViewProvider<RecyclerView.LayoutManager, RecyclerView> provider){
         setRecyclerLayoutManager(list, provider.provide(list));
     }
 
-    @BindingAdapter("bind:layoutManager")
+    @BindingAdapter("layoutManager")
     public static void setRecyclerLayoutManager(RecyclerView list, RecyclerView.LayoutManager manger){
         list.setLayoutManager(manger);
     }
