@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.error.FileAlreadyExistError;
@@ -19,8 +20,6 @@ import com.annimon.stream.Stream;
 import java.util.List;
 
 import javax.inject.Inject;
-
-import io.reactivex.Observable;
 
 /**
  * Created by sashka on 11.02.17.<p/>
@@ -64,8 +63,8 @@ public class UploadFilesPresenterImpl extends BaseFilesListPresenter<UploadFiles
     public void onUpload(List<Uri> sources) {
         Stream.of(sources)
                 .map(uri -> mInteractor.uploadFile(getCurrentFolder(), uri)
-                        .doOnError(this::onUploadError)
-                        .onErrorResumeNext(Observable.empty())
+                        //.doOnError(this::onUploadError)
+                        //.onErrorResumeNext(Observable.empty())
                 )
                 .collect(Observables.Collectors.concatObservables())
                 .compose(progressibleLoadTask(false))
@@ -96,7 +95,11 @@ public class UploadFilesPresenterImpl extends BaseFilesListPresenter<UploadFiles
                     PresentationView.TYPE_MESSAGE_MAJOR
             );
         } else {
-            onErrorObtained(error);
+            getView().showMessage(
+                    mAppResources.getString(R.string.prompt_error_occurred),
+                    PresentationView.TYPE_MESSAGE_MAJOR
+            );
+            MyLog.e(error.getMessage());
         }
     }
 }
