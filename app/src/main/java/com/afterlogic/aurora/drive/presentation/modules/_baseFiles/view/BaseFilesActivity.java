@@ -4,6 +4,7 @@ import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -62,7 +63,9 @@ public abstract class BaseFilesActivity<
             tabs.setupWithViewPager(viewPager, true);
         }
 
-        mAdapter = new FilesPagerAdapter(getSupportFragmentManager(), this::getFilesContent);
+        ViewCompat.setLayoutDirection(tabs, ViewCompat.LAYOUT_DIRECTION_LTR);
+
+        mAdapter = new FilesPagerAdapter(getSupportFragmentManager(), this::getFilesContent, this);
         binding.setVariable(BR.adapter, mAdapter);
         binding.setVariable(BR.viewModel, mViewModel);
 

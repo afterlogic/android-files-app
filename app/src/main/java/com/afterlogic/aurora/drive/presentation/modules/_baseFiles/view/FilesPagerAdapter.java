@@ -1,5 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules._baseFiles.view;
 
+import android.content.Context;
 import android.databinding.ObservableList;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -11,6 +12,7 @@ import com.afterlogic.aurora.drive.model.FileType;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ItemsAdapter;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.SimpleOnObservableListChagnedListener;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,9 +37,12 @@ public class FilesPagerAdapter extends FragmentStatePagerAdapter implements Item
             this::notifyDataSetChanged
     );
 
-    public FilesPagerAdapter(FragmentManager fm, FilesContentProvider filesContentProvider) {
+    private Context mContext;
+
+    public FilesPagerAdapter(FragmentManager fm, FilesContentProvider filesContentProvider, Context ctx) {
         super(fm);
         mFilesContentProvider = filesContentProvider;
+        mContext = ctx;
     }
 
     @Override
@@ -49,7 +54,20 @@ public class FilesPagerAdapter extends FragmentStatePagerAdapter implements Item
             observable.removeOnListChangedCallback(mOnListChangedCallback);
         }
 
-        mFileTypes = items;
+        if (items != null) {
+            /*
+            TODO reverse pages
+            if (RtlUtil.isRtl(mContext)) {
+                mFileTypes = new ArrayList<>();
+                Stream.of(items).forEach(it -> mFileTypes.add(0, it));
+            } else {
+                mFileTypes = new ArrayList<>(items);
+            }*/
+
+            mFileTypes = new ArrayList<>(items);
+        } else {
+            mFileTypes = null;
+        }
 
         if (mFileTypes != null && mFileTypes instanceof ObservableList){
             ObservableList<FileType> observable = (ObservableList<FileType>) mFileTypes;

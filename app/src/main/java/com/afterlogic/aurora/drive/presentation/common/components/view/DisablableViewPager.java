@@ -10,6 +10,7 @@ import android.view.MotionEvent;
  * mail: sunnyday.development@gmail.com
  */
 public class DisablableViewPager extends ViewPager{
+
     private boolean mIsEnabled = true;
 
     public DisablableViewPager(Context context) {
@@ -32,5 +33,15 @@ public class DisablableViewPager extends ViewPager{
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return mIsEnabled && super.onTouchEvent(event);
+    }
+
+    @Override
+    public void setCurrentItem(int item) {
+        super.setCurrentItem(item);
+    }
+
+    @Override
+    public void setCurrentItem(int item, boolean smoothScroll) {
+        super.setCurrentItem(item, smoothScroll);
     }
 }

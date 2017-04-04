@@ -78,7 +78,8 @@ public class ViewPagerBinding {
 
     @BindingAdapter({"currentItem"})
     public static void bindCurrentItem(ViewPager pager, int position){
-        if (position >= 0){
+        PagerAdapter adapter = pager.getAdapter();
+        if (adapter != null && position >= 0){
             if (pager.getCurrentItem() != position) {
                 pager.setCurrentItem(position, false);
             }

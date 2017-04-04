@@ -38,6 +38,7 @@
             android:padding="8dp"
             android:maxLines="2"
             android:text="@{viewModel.text}"
+            android:gravity="start"
             tools:text="asdfasfdasdf.sdf"/>
     </RelativeLayout>
 </layout>

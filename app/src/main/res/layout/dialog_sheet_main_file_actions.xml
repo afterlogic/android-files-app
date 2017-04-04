@@ -48,6 +48,7 @@
                 android:maxLines="2"
                 android:ellipsize="end"
                 android:text="@{viewModel.title}"
+                android:gravity="start"
                 tools:text="asdfasfdasdf.sdf-asdfasdfasdfasdf-sdfasdfasdf"/>
         </LinearLayout>
 

@@ -14,5 +14,6 @@
               android:layout_width="match_parent"
               android:layout_height="?attr/dropdownListPreferredItemHeight"
               android:text="@{viewModel.itemString}"
+              android:gravity="start"
               android:ellipsize="marquee"/>
 </layout>

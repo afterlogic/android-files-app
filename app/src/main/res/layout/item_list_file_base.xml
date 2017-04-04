@@ -43,6 +43,7 @@
             android:lines="1"
             android:ellipsize="end"
             android:text="@{viewModel.fileName}"
+            android:gravity="start"
             tools:text="asdfasfdasdf.sdf-asdfasdfasdfasdf-sdfasdfasdf"/>
 
         <android.support.v7.widget.AppCompatImageView
