@@ -10,6 +10,7 @@ import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.interac
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router.FilesRouter;
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
 
+import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.Collections;
@@ -88,7 +89,7 @@ public abstract class BaseFilesPresenter<V extends PresentationView> extends Bas
         if (error instanceof RuntimeException && error.getCause() != null){
             error = error.getCause();
         }
-        if (ObjectsUtil.isExtendsAny(error, SocketTimeoutException.class, HttpException.class, UnknownHostException.class)){
+        if (ObjectsUtil.isExtendsAny(error, SocketTimeoutException.class, HttpException.class, UnknownHostException.class, ConnectException.class)){
             mRouter.goToOfflineError();
         } else {
             onErrorObtained(error);

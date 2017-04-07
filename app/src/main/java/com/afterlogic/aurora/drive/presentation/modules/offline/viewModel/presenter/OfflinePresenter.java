@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.offline.model.presenter;
+package com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.presenter;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
 
@@ -19,4 +19,7 @@ public interface OfflinePresenter {
     void cancelCurrentLoad();
 
     void onGoToOnline();
+
+    void onViewStart();
+    void onViewStop();
 }

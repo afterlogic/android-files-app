@@ -35,6 +35,9 @@ public interface OfflineViewModel extends ViewModel, SwipeRefreshLayout.OnRefres
     @NonNull
     ObservableField<ProgressDialogViewModel> getProgress();
 
+    @NonNull
+    ObservableBoolean getNetworkState();
+
     void onItemClicked(BaseFileItemViewModel item);
 
     void onOnline();

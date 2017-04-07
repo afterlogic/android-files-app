@@ -1,10 +1,10 @@
-package com.afterlogic.aurora.drive.presentation.modules.offline.model.presenter;
+package com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.presenter;
 
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
-import com.afterlogic.aurora.drive.presentation.modules.offline.model.OfflineModel;
+import com.afterlogic.aurora.drive.presentation.common.util.DisposeBag;
 import com.afterlogic.aurora.drive.presentation.modules.offline.model.interactor.OfflineInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.offline.model.router.OfflineRouter;
 import com.annimon.stream.Stream;
@@ -26,15 +26,16 @@ import io.reactivex.disposables.Disposable;
 public class OfflinePresenterImpl implements OfflinePresenter {
 
     private final OfflineInteractor mInteractor;
-    private final OfflineModel mModel;
+    private final OfflineModelOutput mModel;
     private final OfflineRouter mRouter;
 
     private final ObservableScheduler mScheduler;
 
     private Disposable mCurrentLoad;
+    private DisposeBag mActiveDisposeBag = new DisposeBag();
 
     @Inject
-    OfflinePresenterImpl(OfflineInteractor interactor, OfflineModel model, OfflineRouter router, ObservableScheduler scheduler) {
+    OfflinePresenterImpl(OfflineInteractor interactor, OfflineModelOutput model, OfflineRouter router, ObservableScheduler scheduler) {
         mInteractor = interactor;
         mModel = model;
         mRouter = router;
@@ -110,6 +111,21 @@ public class OfflinePresenterImpl implements OfflinePresenter {
     @Override
     public void onGoToOnline() {
         mRouter.goToOnline();
+    }
+
+    @Override
+    public void onViewStart() {
+        mInteractor.listenNetworkState()
+                .compose(mActiveDisposeBag::add)
+                .subscribe(
+                        mModel::handleNetworkState,
+                        mModel::onErrorObtained
+                );
+    }
+
+    @Override
+    public void onViewStop() {
+        mActiveDisposeBag.dispose();
     }
 
     private void updateThumbs(List<AuroraFile> files){

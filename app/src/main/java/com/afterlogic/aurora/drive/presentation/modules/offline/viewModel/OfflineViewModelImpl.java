@@ -20,8 +20,8 @@ import com.afterlogic.aurora.drive.presentation.common.modules.viewModel.dialog.
 import com.afterlogic.aurora.drive.presentation.common.util.LazyProvider;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFileItemViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFilesListViewModel;
-import com.afterlogic.aurora.drive.presentation.modules.offline.model.OfflineModel;
-import com.afterlogic.aurora.drive.presentation.modules.offline.model.presenter.OfflinePresenter;
+import com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.presenter.OfflineModelOutput;
+import com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.presenter.OfflinePresenter;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 
@@ -37,7 +37,7 @@ import javax.inject.Provider;
  * mail: sunnyday.development@gmail.com
  */
 @ModuleScope
-public class OfflineBiModel extends BaseViewModel implements OfflineViewModel, BaseFilesListViewModel<BaseFileItemViewModel> {
+public class OfflineViewModelImpl extends BaseViewModel implements OfflineViewModel, BaseFilesListViewModel<BaseFileItemViewModel> {
 
     private final Context mAppContext;
     private final AppResources mAppResources;
@@ -53,8 +53,10 @@ public class OfflineBiModel extends BaseViewModel implements OfflineViewModel, B
     private final ObservableField<MessageDialogViewModel> mMessage = new ObservableField<>();
     private final ObservableBoolean mErrorState = new ObservableBoolean(false);
 
+    private final ObservableBoolean mNetworkEnabled = new ObservableBoolean(false);
+
     @Inject
-    OfflineBiModel(Context appContext, AppResources appResources, Provider<OfflineFileItemBiModel> itemProvider, LazyProvider<OfflinePresenter> presenter) {
+    OfflineViewModelImpl(Context appContext, AppResources appResources, Provider<OfflineFileItemBiModel> itemProvider, LazyProvider<OfflinePresenter> presenter) {
         mAppContext = appContext;
         mAppResources = appResources;
         mItemProvider = itemProvider;
@@ -69,6 +71,18 @@ public class OfflineBiModel extends BaseViewModel implements OfflineViewModel, B
         if (mItems.size() == 0){
             mPresenter.ifPresent(OfflinePresenter::refresh);
         }
+    }
+
+    @Override
+    public void onViewStart() {
+        super.onViewStart();
+        mPresenter.ifPresent(OfflinePresenter::onViewStart);
+    }
+
+    @Override
+    public void onViewStop() {
+        super.onViewStop();
+        mPresenter.ifPresent(OfflinePresenter::onViewStop);
     }
 
     @Override
@@ -132,8 +146,14 @@ public class OfflineBiModel extends BaseViewModel implements OfflineViewModel, B
         mPresenter.ifPresent(OfflinePresenter::onGoToOnline);
     }
 
-    public OfflineModel getModel(){
-        return new Model();
+    @NonNull
+    @Override
+    public ObservableBoolean getNetworkState() {
+        return mNetworkEnabled;
+    }
+
+    public OfflineModelOutput getModel(){
+        return new ModelOutput();
     }
 
     @Override
@@ -145,7 +165,7 @@ public class OfflineBiModel extends BaseViewModel implements OfflineViewModel, B
         }
     }
 
-    private class Model implements OfflineModel {
+    private class ModelOutput implements OfflineModelOutput {
 
         @Override
         public void notifyRefreshing(boolean refreshing) {
@@ -210,6 +230,11 @@ public class OfflineBiModel extends BaseViewModel implements OfflineViewModel, B
                     mAppResources.getString(R.string.prompt_offline_file_not_exist),
                     () -> mMessage.set(null)
             ));
+        }
+
+        @Override
+        public void handleNetworkState(boolean enabled) {
+            mNetworkEnabled.set(enabled);
         }
     }
 }

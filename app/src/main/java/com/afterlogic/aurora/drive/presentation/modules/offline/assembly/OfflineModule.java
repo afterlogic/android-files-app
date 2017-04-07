@@ -3,13 +3,13 @@ package com.afterlogic.aurora.drive.presentation.modules.offline.assembly;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.MVVMModule;
 import com.afterlogic.aurora.drive.presentation.modules.offline.model.interactor.OfflineInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.offline.model.interactor.OfflineInteractorImpl;
-import com.afterlogic.aurora.drive.presentation.modules.offline.model.OfflineModel;
-import com.afterlogic.aurora.drive.presentation.modules.offline.model.presenter.OfflinePresenter;
-import com.afterlogic.aurora.drive.presentation.modules.offline.model.presenter.OfflinePresenterImpl;
+import com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.OfflineViewModelImpl;
+import com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.presenter.OfflineModelOutput;
+import com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.presenter.OfflinePresenter;
+import com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.presenter.OfflinePresenterImpl;
 import com.afterlogic.aurora.drive.presentation.modules.offline.model.router.OfflineRouter;
 import com.afterlogic.aurora.drive.presentation.modules.offline.model.router.OfflineRouterImpl;
 import com.afterlogic.aurora.drive.presentation.modules.offline.view.OfflineActivity;
-import com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.OfflineBiModel;
 import com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.OfflineViewModel;
 
 import dagger.Module;
@@ -23,12 +23,12 @@ import dagger.Provides;
 public class OfflineModule extends MVVMModule<OfflineActivity> {
 
     @Provides
-    OfflineViewModel viewModel(OfflineBiModel model){
+    OfflineViewModel viewModel(OfflineViewModelImpl model){
         return model;
     }
 
     @Provides
-    OfflineModel model(OfflineBiModel model){
+    OfflineModelOutput model(OfflineViewModelImpl model){
         return model.getModel();
     }
 

@@ -23,4 +23,6 @@ public interface OfflineInteractor {
     Single<Uri> getThumbnail(AuroraFile file);
 
     Single<Boolean> getAuthStatus();
+
+    Observable<Boolean> listenNetworkState();
 }
