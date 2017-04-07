@@ -138,7 +138,11 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
 
             checkFilesType(type, files);
 
-            return mFileSubRepo.delete(type, files);
+            return mFileSubRepo.delete(type, files)
+                    .andThen(Completable.defer(() -> Stream.of(files)
+                            .map(it -> setOffline(it, false))
+                            .collect(Observables.Collectors.concatCompletable())
+                    ));
         });
     }
 
@@ -249,9 +253,9 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
     @Override
     public Completable setOffline(AuroraFile file, boolean offline) {
         return Completable.defer(() -> {
-            String pathSpec = file.getType() + file.getFullPath();
             if (offline){
-                return mLocalService.addOffline(new OfflineFileInfoEntity(pathSpec, OfflineType.OFFLINE.toString(), -1))
+                OfflineFileInfoEntity entity = new OfflineFileInfoEntity(file.getPathSpec(), OfflineType.OFFLINE.toString(), -1);
+                return mLocalService.addOffline(entity)
                         .doOnComplete(() -> {
                             File cached = new File(mCacheDir, file.getPathSpec());
                             if (cached.exists() && !cached.delete()){
@@ -259,7 +263,7 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
                             }
                         });
             } else {
-                return mLocalService.removeOffline(pathSpec)
+                return mLocalService.removeOffline(file.getPathSpec())
                         .doOnComplete(() -> {
                             File localFile = new File(mOfflineDir, file.getPathSpec());
                             if (localFile.exists() && !localFile.delete()){

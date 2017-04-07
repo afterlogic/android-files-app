@@ -71,10 +71,10 @@ public class OfflineInteractorImpl implements OfflineInteractor {
     public Single<List<AuroraFile>> getOfflineFiles() {
         return mFilesRepository.getOfflineFiles()
                 .map(list -> Stream.of(list)
-                        .filter(file -> {
-                            File localFile = new File(mOfflineDir, file.getPathSpec());
-                            return localFile.exists();
-                        })
+                        //.filter(file -> {
+                        //    File localFile = new File(mOfflineDir, file.getPathSpec());
+                        //    return localFile.exists();
+                        //})
                         .collect(Collectors.toList())
                 );
     }

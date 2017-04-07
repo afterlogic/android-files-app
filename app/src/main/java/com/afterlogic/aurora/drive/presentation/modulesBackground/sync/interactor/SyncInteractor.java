@@ -6,6 +6,7 @@ import com.afterlogic.aurora.drive.presentation.common.modules.model.interactor.
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
@@ -23,4 +24,6 @@ public interface SyncInteractor extends Interactor {
     Observable<Progressible<AuroraFile>> upload(AuroraFile file);
 
     Observable<Progressible<AuroraFile>> download(AuroraFile file);
+
+    Completable removeOffline(AuroraFile file);
 }
