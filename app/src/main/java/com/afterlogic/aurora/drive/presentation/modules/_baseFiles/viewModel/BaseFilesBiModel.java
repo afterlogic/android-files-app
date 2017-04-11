@@ -6,9 +6,11 @@ import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 import android.databinding.ObservableList;
 
+import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileType;
+import com.afterlogic.aurora.drive.presentation.common.modules.viewModel.BaseViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.BaseFilesModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter.FilesPresenter;
 import com.annimon.stream.Stream;
@@ -20,7 +22,7 @@ import java.util.List;
  * mail: sunnyday.development@gmail.com
  */
 
-public class BaseFilesBiModel implements BaseFilesModel, BaseFilesViewModel {
+public class BaseFilesBiModel extends BaseViewModel implements BaseFilesModel, BaseFilesViewModel {
 
     private final OptWeakRef<? extends FilesPresenter> mPresenter;
 
@@ -70,6 +72,12 @@ public class BaseFilesBiModel implements BaseFilesModel, BaseFilesViewModel {
     @Override
     public ObservableBoolean getErrorState() {
         return mErrorState;
+    }
+
+    @Override
+    public void onCurrentFolderChanged(AuroraFile folder) {
+        //no-op stub
+        MyLog.majorException(new Error("TODO Stub triggered."));
     }
 
     @Override

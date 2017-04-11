@@ -2,11 +2,11 @@ package com.afterlogic.aurora.drive.presentation.modules.main.assembly;
 
 import android.support.annotation.NonNull;
 
-import com.afterlogic.aurora.drive.presentation.assembly.assemblies.ModulesComponentCreator;
-import com.afterlogic.aurora.drive.presentation.common.modules.assembly.OldBaseInjector;
 import com.afterlogic.aurora.drive.presentation.assembly.Injector;
+import com.afterlogic.aurora.drive.presentation.assembly.assemblies.ModulesComponentCreator;
+import com.afterlogic.aurora.drive.presentation.common.modules.assembly.MVVMComponent;
+import com.afterlogic.aurora.drive.presentation.common.modules.assembly.StoredInjector;
 import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFilesActivity;
-import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFilesView;
 
 import javax.inject.Inject;
 
@@ -15,7 +15,7 @@ import javax.inject.Inject;
  * mail: sunnyday.development@gmail.com
  */
 
-public class MainFilesInjector extends OldBaseInjector<MainFilesActivity, MainFilesView, MainFilesModule> implements Injector<MainFilesActivity> {
+public class MainFilesInjector extends StoredInjector<MainFilesActivity> implements Injector<MainFilesActivity> {
 
     @Inject
     MainFilesInjector(ModulesComponentCreator component) {
@@ -24,7 +24,7 @@ public class MainFilesInjector extends OldBaseInjector<MainFilesActivity, MainFi
 
     @NonNull
     @Override
-    protected MainFilesModule createModule() {
-        return new MainFilesModule();
+    protected MVVMComponent<MainFilesActivity> createComponent(MainFilesActivity target, ModulesComponentCreator creator) {
+        return creator.mainFiles();
     }
 }

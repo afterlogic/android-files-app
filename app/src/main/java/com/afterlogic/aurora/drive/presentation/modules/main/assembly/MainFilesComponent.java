@@ -1,9 +1,8 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.assembly;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
-import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationComponent;
+import com.afterlogic.aurora.drive.presentation.common.modules.assembly.MVVMComponent;
 import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFilesActivity;
-import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFilesView;
 
 import dagger.Subcomponent;
 
@@ -13,5 +12,5 @@ import dagger.Subcomponent;
  */
 @ModuleScope
 @Subcomponent(modules = MainFilesModule.class)
-public interface MainFilesComponent extends PresentationComponent<MainFilesView, MainFilesActivity> {
+public interface MainFilesComponent extends MVVMComponent<MainFilesActivity> {
 }

@@ -14,7 +14,6 @@ import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginModu
 import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFileListComponent;
 import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFileListModule;
 import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFilesComponent;
-import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFilesModule;
 import com.afterlogic.aurora.drive.presentation.modules.offline.assembly.OfflineComponent;
 import com.afterlogic.aurora.drive.presentation.modules.start.assembly.StartComponent;
 import com.afterlogic.aurora.drive.presentation.modules.start.assembly.StartModule;
@@ -52,7 +51,7 @@ public interface ModulesComponentCreator {
 
     StartComponent plus(StartModule module);
 
-    MainFilesComponent plus(MainFilesModule module);
+    MainFilesComponent mainFiles();
     MainFileListComponent plus(MainFileListModule module);
 
     UploadComponent plus(UploadModule module);

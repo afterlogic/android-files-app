@@ -2,12 +2,12 @@ package com.afterlogic.aurora.drive.presentation.modules.main.model.router;
 
 import android.content.Intent;
 
-import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
+import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.presentation.common.util.IntentUtil;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router.BaseFileRouter;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router.BaseFileMVVMRouter;
 import com.afterlogic.aurora.drive.presentation.modules.about.view.ActivityAbout;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginIntent;
-import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFilesView;
+import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFilesActivity;
 import com.afterlogic.aurora.drive.presentation.modules.offline.view.OfflineActivity;
 
 import javax.inject.Inject;
@@ -17,9 +17,10 @@ import javax.inject.Inject;
  * mail: sunnyday.development@gmail.com
  */
 
-public class MainFilesRouterImpl extends BaseFileRouter<MainFilesView> implements MainFilesRouter {
+public class MainFilesRouterImpl extends BaseFileMVVMRouter<MainFilesActivity> implements MainFilesRouter {
 
-    @Inject MainFilesRouterImpl(ViewState<MainFilesView> viewContext) {
+    @Inject
+    MainFilesRouterImpl(OptWeakRef<MainFilesActivity> viewContext) {
         super(viewContext);
     }
 

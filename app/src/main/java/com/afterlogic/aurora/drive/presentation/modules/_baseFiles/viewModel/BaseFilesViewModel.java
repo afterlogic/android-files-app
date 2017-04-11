@@ -6,7 +6,9 @@ import android.databinding.ObservableInt;
 import android.databinding.ObservableList;
 import android.support.v4.widget.SwipeRefreshLayout;
 
+import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileType;
+import com.afterlogic.aurora.drive.presentation.common.modules.viewModel.ViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.BaseFilesModel;
 
 /**
@@ -14,7 +16,7 @@ import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.BaseFil
  * mail: sunnyday.development@gmail.com
  */
 
-public interface BaseFilesViewModel extends SwipeRefreshLayout.OnRefreshListener{
+public interface BaseFilesViewModel extends SwipeRefreshLayout.OnRefreshListener, ViewModel{
 
     ObservableList<FileType> getFileTypes();
 
@@ -29,4 +31,6 @@ public interface BaseFilesViewModel extends SwipeRefreshLayout.OnRefreshListener
     ObservableInt getCurrentPagePosition();
 
     ObservableBoolean getErrorState();
+
+    void onCurrentFolderChanged(AuroraFile folder);
 }

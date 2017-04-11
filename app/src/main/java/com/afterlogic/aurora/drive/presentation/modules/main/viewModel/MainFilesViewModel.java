@@ -5,9 +5,9 @@ import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 import android.databinding.ObservableList;
 
+import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileType;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFilesViewModel;
-import com.afterlogic.aurora.drive.presentation.modules.main.model.MainFilesModel;
 
 /**
  * Created by sashka on 03.02.17.<p/>
@@ -17,8 +17,6 @@ import com.afterlogic.aurora.drive.presentation.modules.main.model.MainFilesMode
 public interface MainFilesViewModel extends BaseFilesViewModel{
 
     ObservableList<FileType> getFileTypes();
-
-    MainFilesModel getModel();
 
     ObservableField<String> getLogin();
 
@@ -31,4 +29,18 @@ public interface MainFilesViewModel extends BaseFilesViewModel{
     void onOfflineModeSelected();
 
     void onAbout();
+
+    void onLogout();
+
+    void onMultiChoiseAction();
+
+    void setMultichoiseMode(boolean multichoiseMode);
+
+    void setSelectedCount(int count);
+
+    void setSetSelectedHasFolder(boolean hasFolder);
+
+    void onCurrentFolderChanged(AuroraFile folder);
+
+    boolean onBackPressed();
 }
