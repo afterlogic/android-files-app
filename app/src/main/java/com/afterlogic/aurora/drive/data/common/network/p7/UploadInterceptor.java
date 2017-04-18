@@ -49,7 +49,7 @@ public class UploadInterceptor implements Interceptor {
                         .removeAllQueryParameters(QUERY_PATH)
                         .removeAllQueryParameters(QUERY_FILENAME)
                         .removeAllQueryParameters(QUERY_INTERCEPT)
-                        .rawEncodedQuery(String.format(Locale.US, LINK, type, path, fileName))
+                        .query(String.format(Locale.US, LINK, type, path, fileName))
                         .build();
 
                 request = request.newBuilder()
