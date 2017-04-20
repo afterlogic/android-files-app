@@ -47,3 +47,7 @@ captures/
 .externalNativeBuild
 
 /signing/
+
+\.idea/
+
+gradle/
