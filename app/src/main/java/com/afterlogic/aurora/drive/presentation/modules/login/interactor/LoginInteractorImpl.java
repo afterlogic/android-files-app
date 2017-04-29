@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.login.model.interactor;
+package com.afterlogic.aurora.drive.presentation.modules.login.interactor;
 
 import android.accounts.Account;
 import android.content.ContentResolver;

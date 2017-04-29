@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.login.model.interactor;
+package com.afterlogic.aurora.drive.presentation.modules.login.interactor;
 
 import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.presentation.common.modules.model.interactor.Interactor;

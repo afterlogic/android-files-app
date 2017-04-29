@@ -47,7 +47,7 @@ public interface ModulesComponentCreator {
 
     MVVMComponentsStore mvvmStore();
 
-    LoginComponent plus(LoginModule module);
+    LoginComponent login();
 
     StartComponent plus(StartModule module);
 
