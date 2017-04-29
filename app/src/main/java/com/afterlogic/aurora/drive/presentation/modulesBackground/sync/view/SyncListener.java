@@ -18,6 +18,8 @@ import com.afterlogic.aurora.drive.core.common.rx.SimpleObservableSource;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.Stoppable;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import io.reactivex.Observable;
 
 import static com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncMessenger.PROGRESS;
@@ -45,9 +47,9 @@ public class SyncListener implements Stoppable{
     @Nullable
     private Messenger mOutgoingMessenger;
 
-    private boolean mConnected;
-    private boolean mBinding;
-    private boolean mActive;
+    private AtomicBoolean mConnected = new AtomicBoolean(false);
+    private AtomicBoolean mActive = new AtomicBoolean(false);
+    private AtomicBoolean mBinding = new AtomicBoolean(false);
 
     private final SimpleObservableSource<SyncProgress> mProgressSource = new SimpleObservableSource<>();
 
@@ -60,23 +62,27 @@ public class SyncListener implements Stoppable{
 
     @Override
     public void onStart() {
+        if (mActive.getAndSet(true)) return;
+
         bindService();
         mContext.registerReceiver(
                 mSyncReceiver,
                 new IntentFilter(SyncService.ACTION_SYNC_STARTED)
         );
-        mActive = true;
     }
 
     @Override
     public void onStop() {
-        if (!mActive) return;
+        if (!mActive.getAndSet(false)) return;
 
-        if (mConnected){
-            mContext.unbindService(mConnection);
+        if (mConnected.get()){
+            try {
+                mContext.unbindService(mConnection);
+            } catch (Exception e) {
+                MyLog.majorException(e);
+            }
         }
         mContext.unregisterReceiver(mSyncReceiver);
-        mActive = false;
     }
 
     public Observable<SyncProgress> getProgressSource() {
@@ -84,13 +90,12 @@ public class SyncListener implements Stoppable{
     }
 
     private void bindService(){
-        if (mBinding) return;
-        mBinding = true;
+        if (mBinding.getAndSet(true)) return;
 
         Intent intent = new Intent(mContext, SyncService.class);
         intent.setAction(SyncService.ACTION_BIND_SYNC_LISTENER);
-        boolean binding = mContext.bindService(intent, mConnection, 0);
-        mBinding = binding;
+        boolean successBinding = mContext.bindService(intent, mConnection, 0);
+        mBinding.set(successBinding);
     }
 
     private void onConnected(){
@@ -112,17 +117,17 @@ public class SyncListener implements Stoppable{
 
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            mBinding = false;
-            mConnected = true;
+            mBinding.set(false);
+            mConnected.set(true);
             mOutgoingMessenger = new Messenger(iBinder);
             onConnected();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-            mBinding = false;
+            mBinding.set(false);
             mOutgoingMessenger = null;
-            mConnected = false;
+            mConnected.set(false);
         }
     }
 

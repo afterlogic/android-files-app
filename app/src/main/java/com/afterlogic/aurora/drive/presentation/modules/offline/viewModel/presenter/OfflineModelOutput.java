@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.offline.model;
+package com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.presenter;
 
 import android.net.Uri;
 
@@ -11,11 +11,16 @@ import java.util.List;
  * mail: sunnyday.development@gmail.com
  */
 
-public interface OfflineModel{
+public interface OfflineModelOutput {
+
     void notifyRefreshing(boolean refreshing);
+
     void setFiles(List<AuroraFile> files);
+
     void notifyLoadProgress(AuroraFile file, int max, int progress);
+
     void notifyLoadFinished();
+
     void setThumb(AuroraFile file, Uri thumb);
 
     void onCantOpenFile(AuroraFile file);
@@ -23,4 +28,6 @@ public interface OfflineModel{
     void onErrorObtained(Throwable error);
 
     void onFileLoadError(AuroraFile file);
+
+    void handleNetworkState(boolean enabled);
 }

@@ -20,9 +20,10 @@
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
 
     <permission android:protectionLevel="signature" android:name="com.afterlogic.aurora.CATCH_LOGIN" />
-
     <uses-permission android:name="com.afterlogic.aurora.CATCH_LOGIN"/>
 
     <application

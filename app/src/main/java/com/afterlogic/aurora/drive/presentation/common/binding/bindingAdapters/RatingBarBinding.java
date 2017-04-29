@@ -15,7 +15,7 @@ import com.afterlogic.aurora.drive.presentation.common.binding.binder.Binder;
 
 public class RatingBarBinding {
 
-    @BindingAdapter("bind:rating")
+    @BindingAdapter("rating")
     public static void bindRatingBarRate(@NonNull RatingBar ratingBar, @Nullable Binder<Float> binder){
         if (ratingBar.getTag(R.id.bind_target) != binder) {
             if (binder == null){

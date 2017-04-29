@@ -17,24 +17,24 @@ import java.util.List;
 
 public class ViewPagerBinding {
 
-    @BindingAdapter({"bind:adapter", "bind:items"})
+    @BindingAdapter({"adapter", "items"})
     public static <T, A extends ItemsAdapter<T>>
     void bindAdapter(ViewPager pager, ViewProvider<A, ViewPager> adapterProvider, List<T> items){
         bindAdapter(pager, adapterProvider, items, -1);
     }
 
-    @BindingAdapter({"bind:adapter", "bind:items", "bind:currentItem"})
+    @BindingAdapter({"adapter", "items", "currentItem"})
     public static <T, A extends ItemsAdapter<T>>
     void bindAdapter(ViewPager pager, ViewProvider<A, ViewPager> adapterProvider, List<T> items, int currentItem){
         bindAdapter(pager, adapterProvider.provide(pager), items, currentItem);
     }
 
-    @BindingAdapter({"bind:adapter", "bind:items"})
+    @BindingAdapter({"adapter", "items"})
     public static <T> void bindAdapter(ViewPager pager, ItemsAdapter<T> adapter, List<T> items){
         bindAdapter(pager, adapter, items, -1);
     }
 
-    @BindingAdapter({"bind:adapter", "bind:items", "bind:currentItem"})
+    @BindingAdapter({"adapter", "items", "currentItem"})
     public static <T> void bindAdapter(ViewPager pager, ItemsAdapter<T> adapter, List<T> items, int currentItem){
         if (adapter instanceof PagerAdapter) {
             bindAdapter(pager, (PagerAdapter & ItemsAdapter<T>)adapter, items, currentItem);
@@ -43,13 +43,13 @@ public class ViewPagerBinding {
         }
     }
 
-    @BindingAdapter({"bind:adapter", "bind:items"})
+    @BindingAdapter({"adapter", "items"})
     public static <T, A extends PagerAdapter & ItemsAdapter<T>>
     void bindAdapter(ViewPager pager, A adapter, List<T> items){
         bindAdapter(pager, adapter, items, -1);
     }
 
-    @BindingAdapter({"bind:adapter", "bind:items", "bind:currentItem"})
+    @BindingAdapter({"adapter", "items", "currentItem"})
     public static <T, A extends PagerAdapter & ItemsAdapter<T>>
     void bindAdapter(ViewPager pager, A adapter, List<T> items, int currentItem){
         if (adapter != null){
@@ -61,12 +61,12 @@ public class ViewPagerBinding {
         bindCurrentItem(pager, currentItem);
     }
 
-    @BindingAdapter("bind:swipeEnabled")
+    @BindingAdapter("swipeEnabled")
     public static void bindSwipeEnabled(DisablableViewPager pager, boolean enabled){
         pager.setSwipeEnabled(enabled);
     }
 
-    @BindingAdapter("bind:onPageChanged")
+    @BindingAdapter("onPageChanged")
     public static void bindOnPageChanged(ViewPager pager, ViewPager.OnPageChangeListener listener){
         ViewPager.OnPageChangeListener previous = (ViewPager.OnPageChangeListener) pager.getTag(R.id.bind_pager_listener);
         if (previous != null){
@@ -76,9 +76,10 @@ public class ViewPagerBinding {
         pager.addOnPageChangeListener(listener);
     }
 
-    @BindingAdapter({"bind:currentItem"})
+    @BindingAdapter({"currentItem"})
     public static void bindCurrentItem(ViewPager pager, int position){
-        if (position >= 0){
+        PagerAdapter adapter = pager.getAdapter();
+        if (adapter != null && position >= 0){
             if (pager.getCurrentItem() != position) {
                 pager.setCurrentItem(position, false);
             }

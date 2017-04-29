@@ -94,14 +94,16 @@
                     bind:currentItem="@{viewModel.currentPagePosition}"
                     bind:swipeEnabled="@{!viewModel.locked}"/>
 
+                <!-- Hardcode rtl because main activity can't be resolved with same fab position-->
                 <com.getbase.floatingactionbutton.FloatingActionButton
                     android:id="@+id/create_folder"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
+                    android:layout_gravity="bottom|right"
                     app:fab_title="@string/prompt_create_folder"
                     app:fab_icon="@drawable/ic_create_new_folder"
-                    style="@style/FabButton"/>
+                    style="@style/FabButton"
+                    tools:ignore="RtlHardcoded"/>
 
             </FrameLayout>
 
@@ -111,11 +113,13 @@
                 android:background="@color/colorAccent"
                 android:visibility="@{viewModel.errorState ? View.GONE : View.VISIBLE}"/>
 
+            <!-- Hardcode rtl because main activity can't be resolved with same fab position-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:gravity="end"
-                android:visibility="@{viewModel.errorState ? View.GONE : View.VISIBLE}">
+                android:gravity="right"
+                android:visibility="@{viewModel.errorState ? View.GONE : View.VISIBLE}"
+                tools:ignore="RtlHardcoded">
 
                 <TextView
                     android:id="@+id/upload"

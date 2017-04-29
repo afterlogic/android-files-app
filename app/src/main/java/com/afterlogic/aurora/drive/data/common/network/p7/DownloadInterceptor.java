@@ -49,7 +49,7 @@ public class DownloadInterceptor implements Interceptor {
                         .removeAllQueryParameters(QUERY_AUTH_TOKEN)
                         .removeAllQueryParameters(QUERY_INTERCEPT)
                         .removeAllQueryParameters(QUERY_ACCOUNT_ID)
-                        .rawEncodedQuery(String.format(Locale.US, LINK, accountId, hash, token))
+                        .query(String.format(Locale.US, LINK, accountId, hash, token))
                         .build();
 
                 request = request.newBuilder()

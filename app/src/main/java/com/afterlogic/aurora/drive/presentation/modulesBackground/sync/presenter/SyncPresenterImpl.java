@@ -4,6 +4,7 @@ import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.core.common.util.Holder;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
+import com.afterlogic.aurora.drive.model.error.FileNotExistError;
 import com.afterlogic.aurora.drive.presentation.common.modules.model.presenter.BasePresenter;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.interactor.SyncInteractor;
@@ -81,7 +82,15 @@ public class SyncPresenterImpl extends BasePresenter<SyncView> implements SyncPr
                     );
                     return check;
                 })
-                .toObservable();
+                .toObservable()
+                .onErrorResumeNext(error -> {
+                    if (error instanceof FileNotExistError) {
+                        return mInteractor.removeOffline(local)
+                                .toObservable();
+                    } else {
+                        return Observable.error(error);
+                    }
+                });
     }
 
     private Observable<Progressible<CheckPair>> sync(CheckPair checkPair){

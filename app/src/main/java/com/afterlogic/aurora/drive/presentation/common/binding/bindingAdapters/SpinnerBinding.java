@@ -20,12 +20,12 @@ import java.util.List;
 
 public class SpinnerBinding {
 
-    @BindingAdapter({"bind:adapter", "bind:items"})
+    @BindingAdapter({"adapter", "items"})
     public static <T extends SpinnerViewModel> void setSpinnerItems(Spinner spinner, SpinnerViewModelAdapter<T> adapter, List<T> items){
         setSpinnerItems(spinner, adapter, items, -1);
     }
 
-    @BindingAdapter({"bind:adapter", "bind:items", "bind:selected"})
+    @BindingAdapter({"adapter", "items", "selected"})
     public static <T extends SpinnerViewModel> void setSpinnerItems(Spinner spinner, SpinnerViewModelAdapter<T> adapter, List<T> items , int selected){
         if (adapter == null){
             spinner.setAdapter(null);
@@ -60,12 +60,12 @@ public class SpinnerBinding {
         });
     }
 
-    @BindingAdapter({"bind:adapter", "bind:items"})
+    @BindingAdapter({"adapter", "items"})
     public static <T extends SpinnerViewModel> void setSpinnerItems(Spinner spinner, ViewProvider<SpinnerViewModelAdapter<T>, Spinner > adapter, SelectableArrayBinder<T> items) {
         setSpinnerItems(spinner, adapter.provide(spinner), items);
     }
 
-    @BindingAdapter({"bind:adapter", "bind:items"})
+    @BindingAdapter({"adapter", "items"})
     public static <T extends SpinnerViewModel> void setSpinnerItems(Spinner spinner, SpinnerViewModelAdapter<T> adapter, SelectableArrayBinder<T> items){
         if (adapter == null){
             spinner.setAdapter(null);

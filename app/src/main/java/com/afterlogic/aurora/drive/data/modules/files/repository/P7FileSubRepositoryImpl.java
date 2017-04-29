@@ -3,6 +3,7 @@ package com.afterlogic.aurora.drive.data.modules.files.repository;
 import android.net.Uri;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.data.common.repository.Repository;
 import com.afterlogic.aurora.drive.data.model.UploadResult;
 import com.afterlogic.aurora.drive.data.model.project7.ApiResponseP7;
 import com.afterlogic.aurora.drive.data.model.project7.AuroraFileP7;
@@ -142,20 +143,21 @@ public class P7FileSubRepositoryImpl extends AuthorizedRepository implements Fil
 
         SimpleObservableSource<Progressible<UploadResult>> progressSource = new SimpleObservableSource<>();
 
-        Observable<Progressible<UploadResult>> request = withNetMapper(
-                mCloudService.upload(
-                        mFileBlToNetMapper.map(folder),
-                        fileInfo,
-                        (max, value) -> progressSource.onNext(new Progressible<>(
-                                null, max, value, fileInfo.getName(), false
-                        ))
-                ).map(response -> response)
+        long size = fileInfo.getSize();
+        Observable<Progressible<UploadResult>> request = mCloudService.upload(
+                mFileBlToNetMapper.map(folder),
+                fileInfo,
+                (max, value) -> progressSource.onNext(new Progressible<>(
+                        null, max, value, fileInfo.getName(), false
+                ))
         )//-----|
+                .map(response -> response)
+                .compose(Repository::withNetMapper)
                 .doOnEvent((uploadResult, throwable) -> progressSource.complete())
                 .doOnDispose(progressSource::clear)
                 .map(result -> {
                     UploadResult mapped = mUploadResultToBlMapper.map(result);
-                    return new Progressible<>(mapped, 0, 0, fileInfo.getName(), true);
+                    return new Progressible<>(mapped, size, size, fileInfo.getName(), true);
                 })
                 .toObservable();
 

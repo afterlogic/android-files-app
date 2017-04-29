@@ -17,6 +17,7 @@ import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsCompon
 import com.afterlogic.aurora.drive.presentation.common.binding.bindingAdapters.ViewProvider;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ItemsAdapter;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseMVVMActivity;
+import com.afterlogic.aurora.drive.presentation.common.util.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.FilesViewDialogDelegate;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFileItemViewModel;
 import com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.OfflineViewModel;
@@ -34,15 +35,30 @@ public class OfflineActivity extends BaseMVVMActivity<OfflineViewModel> {
 
     private FilesViewDialogDelegate mFilesViewDelegate = new FilesViewDialogDelegate(this);
 
+    private final UnbindableObservable.Bag mActiveBindingBag = new UnbindableObservable.Bag();
+
     public static Intent intent(boolean manualMode, Context context){
         Intent intent = new Intent(context, OfflineActivity.class);
         intent.putExtra(MANUAL_MODE, manualMode);
         return intent;
     }
 
+    @Nullable
+    private MenuItem mOnlineMenuItem;
+
     @Override
     public void assembly(InjectorsComponent injectors) {
         injectors.offline().inject(this);
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        UnbindableObservable.create(getViewModel().getNetworkState())
+                .addListener(field -> updateOnlineMenuItemVisibility())
+                .addTo(mActiveBindingBag)
+                .notifyChanged();
     }
 
     @Override
@@ -77,16 +93,15 @@ public class OfflineActivity extends BaseMVVMActivity<OfflineViewModel> {
     protected void onStart() {
         super.onStart();
         mFilesViewDelegate.onStart();
+        mActiveBindingBag.bind();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_offline, menu);
-        MenuItem online = menu.findItem(R.id.action_online_mode);
-        if (online != null){
-            online.setVisible(!getViewModel().getManualMode().get());
-        }
+        mOnlineMenuItem = menu.findItem(R.id.action_online_mode);
+        updateOnlineMenuItemVisibility();
         return true;
     }
 
@@ -104,12 +119,21 @@ public class OfflineActivity extends BaseMVVMActivity<OfflineViewModel> {
     protected void onStop() {
         super.onStop();
         mFilesViewDelegate.onStop();
+        mActiveBindingBag.unbindAndClear();
     }
 
     @Override
     protected void onUnbindViewModel(OfflineViewModel viewModel) {
         super.onUnbindViewModel(viewModel);
         mFilesViewDelegate.unbind();
+    }
+
+    private void updateOnlineMenuItemVisibility() {
+        if (mOnlineMenuItem == null) return;
+
+        boolean networkEnabled = getViewModel().getNetworkState().get();
+        boolean manualMode = getViewModel().getManualMode().get();
+        mOnlineMenuItem.setVisible(!manualMode && networkEnabled);
     }
 
     public static class OfflineBinder {

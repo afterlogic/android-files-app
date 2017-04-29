@@ -18,6 +18,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
@@ -72,5 +73,10 @@ public class SyncInteractorImpl extends BaseInteractor implements SyncInteractor
             return mFilesRepository.downloadOrGetOffline(file, realFile)
                     .map(progress -> progress.map(file));
         });
+    }
+
+    @Override
+    public Completable removeOffline(AuroraFile file) {
+        return mFilesRepository.setOffline(file, false);
     }
 }

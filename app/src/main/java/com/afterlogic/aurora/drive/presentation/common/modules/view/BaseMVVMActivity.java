@@ -24,7 +24,7 @@ public abstract class BaseMVVMActivity<T extends ViewModel> extends StorableMVVM
     private boolean mAutoBindViewModel = true;
 
     @Override
-    protected final void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ViewDataBinding dataBinding = onCreateBinding(savedInstanceState);
 

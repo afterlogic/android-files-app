@@ -10,17 +10,17 @@ import android.support.v4.widget.SwipeRefreshLayout;
 
 public class SwipeRefreshLayoutBinding {
 
-    @BindingAdapter("bind:refreshing")
+    @BindingAdapter("refreshing")
     public static void setRefreshing(SwipeRefreshLayout view, boolean refreshing){
         view.setRefreshing(refreshing);
     }
 
-    @BindingAdapter("bind:onRefresh")
+    @BindingAdapter("onRefresh")
     public static void setOnRefreshListener(SwipeRefreshLayout view, SwipeRefreshLayout.OnRefreshListener listener){
         view.setOnRefreshListener(listener);
     }
 
-    @BindingAdapter("bind:colorSchemeResources")
+    @BindingAdapter("colorSchemeResources")
     public static void bindColorSchemeResources(SwipeRefreshLayout view, int[] colors){
         view.setColorSchemeColors(colors);
     }

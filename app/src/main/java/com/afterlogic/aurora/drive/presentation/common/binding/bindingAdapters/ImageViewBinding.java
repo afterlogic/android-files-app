@@ -20,12 +20,12 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class ImageViewBinding {
 
-    @BindingAdapter("bind:imageUri")
+    @BindingAdapter("imageUri")
     public static void setImageFromUri(ImageView imageView, Uri uri){
         setImageFromUri(imageView, uri, null);
     }
 
-    @BindingAdapter({"bind:imageUri", "bind:glideListener"})
+    @BindingAdapter({"imageUri", "glideListener"})
     public static void setImageFromUri(ImageView imageView, Uri uri, @Nullable RequestListener<Uri, GlideDrawable> listener){
         Glide.clear(imageView);
         if (uri != null) {
@@ -43,24 +43,24 @@ public class ImageViewBinding {
         }
     }
 
-    @BindingAdapter("bind:zoomable")
+    @BindingAdapter("zoomable")
     public static void bindPhotoViewZoomable(PhotoView view, boolean scallable){
         view.setZoomable(scallable);
     }
 
-    @BindingAdapter("bind:scale")
+    @BindingAdapter("scale")
     public static void bindPhotoViewScale(PhotoView view, float scale){
         if (scale > 0){
             view.setScale(scale);
         }
     }
 
-    @BindingAdapter("bind:onTap")
+    @BindingAdapter("onTap")
     public static void bindOnTap(PhotoView view, PhotoViewAttacher.OnViewTapListener listener){
         view.setOnViewTapListener(listener);
     }
 
-    @BindingAdapter("bind:tintColor")
+    @BindingAdapter("tintColor")
     public static void bindTintColor(ImageView view, int color){
         if (color != -1) {
             view.setColorFilter(color);

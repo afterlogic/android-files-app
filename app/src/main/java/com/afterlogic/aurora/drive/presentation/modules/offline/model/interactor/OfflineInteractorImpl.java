@@ -1,7 +1,14 @@
 package com.afterlogic.aurora.drive.presentation.modules.offline.model.interactor;
 
 import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.application.App;
@@ -17,7 +24,9 @@ import com.annimon.stream.Stream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -41,27 +50,31 @@ public class OfflineInteractorImpl implements OfflineInteractor {
     private final File mOfflineDir;
     private final App mApp;
     private final SessionManager mSessionManager;
+    private final Context mContext;
 
     @Inject
     OfflineInteractorImpl(FilesRepository filesRepository,
                           @Named(DOWNLOADS_DIR) File downloadsDir,
                           @Named(OFFLINE_DIR) File offlineDir,
-                          App app, SessionManager sessionManager) {
+                          App app,
+                          SessionManager sessionManager,
+                          Context context) {
         mFilesRepository = filesRepository;
         mDownloadsDir = downloadsDir;
         mOfflineDir = offlineDir;
         mApp = app;
         mSessionManager = sessionManager;
+        mContext = context;
     }
 
     @Override
     public Single<List<AuroraFile>> getOfflineFiles() {
         return mFilesRepository.getOfflineFiles()
                 .map(list -> Stream.of(list)
-                        .filter(file -> {
-                            File localFile = new File(mOfflineDir, file.getPathSpec());
-                            return localFile.exists();
-                        })
+                        //.filter(file -> {
+                        //    File localFile = new File(mOfflineDir, file.getPathSpec());
+                        //    return localFile.exists();
+                        //})
                         .collect(Collectors.toList())
                 );
     }
@@ -124,5 +137,31 @@ public class OfflineInteractorImpl implements OfflineInteractor {
     @Override
     public Single<Boolean> getAuthStatus() {
         return Single.fromCallable(() -> mSessionManager.getSession() != null && mSessionManager.getSession().isComplete());
+    }
+
+    @Override
+    public Observable<Boolean> listenNetworkState() {
+
+        Set<Runnable> finalizers = new HashSet<>();
+        return Observable.<Boolean>create( emitter -> {
+            BroadcastReceiver receiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, @Nullable Intent intent) {
+                    ConnectivityManager cm =
+                            (ConnectivityManager)mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                    NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                    boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+                    emitter.onNext(isConnected);
+                }
+            };
+            mContext.registerReceiver(receiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+
+            receiver.onReceive(mContext, null);
+
+            finalizers.add(() -> mContext.unregisterReceiver(receiver));
+
+        })//----|
+                .doFinally(() -> Stream.of(finalizers).forEach(Runnable::run));
     }
 }
