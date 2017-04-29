@@ -24,7 +24,6 @@
 
 
     <permission android:protectionLevel="signature" android:name="com.afterlogic.aurora.CATCH_LOGIN" />
-
     <uses-permission android:name="com.afterlogic.aurora.CATCH_LOGIN"/>
 
     <application
