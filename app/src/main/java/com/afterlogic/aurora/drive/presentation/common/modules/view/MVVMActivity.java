@@ -1,5 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.common.modules.view;
 
+import android.databinding.Observable;
+import android.databinding.ObservableField;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,6 +13,9 @@ import com.afterlogic.aurora.drive.BR;
 import com.afterlogic.aurora.drive.application.App;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.modules.viewModel.ViewModel;
+import com.afterlogic.aurora.drive.presentation.common.util.UnbindableObservable;
+
+import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -20,9 +25,14 @@ import javax.inject.Inject;
  * mail: sunnyday.development@gmail.com
  */
 
-public abstract class MVVMActivity<VM extends ViewModel> extends AppCompatActivity implements MVVMView {
+public abstract class MVVMActivity<VM extends ViewModel> extends AppCompatActivity implements StoreableMVVMView {
 
     private boolean mIsActive;
+
+    private ModuleStoreController mModuleStoreController;
+
+    private final UnbindableObservable.Bag mStartedUnbindable = new UnbindableObservable.Bag();
+    private final UnbindableObservable.Bag mCreatedUnbindable = new UnbindableObservable.Bag();
 
     @Inject
     VM mViewModel;
@@ -36,15 +46,22 @@ public abstract class MVVMActivity<VM extends ViewModel> extends AppCompatActivi
         super.onCreate(savedInstanceState);
 
         App app = (App) getApplication();
-        assembly(app.getInjectors());
+        InjectorsComponent injectors = app.getInjectors();
 
+        mModuleStoreController = injectors.getStoreController();
+        mModuleStoreController.onViewCreate(savedInstanceState);
+
+        assembly(app.getInjectors());
         mBinding = onCreateBinding(savedInstanceState);
-        mBinding.setVariable(BR.viewModel, mViewModel);
         onBindingCreated(savedInstanceState);
 
         if (mViewModel != null) {
+            onViewModelCreated(mViewModel, savedInstanceState);
             mViewModel.onViewCreated();
+            onBindCreatedBindings(mViewModel, mCreatedUnbindable);
         }
+
+        mBinding.setVariable(BR.viewModel, mViewModel);
     }
 
     @NonNull
@@ -52,6 +69,26 @@ public abstract class MVVMActivity<VM extends ViewModel> extends AppCompatActivi
 
     protected void onBindingCreated(@Nullable Bundle savedInstanceState) {
         //no-op
+    }
+
+    protected void onViewModelCreated(VM vm, @Nullable Bundle savedInstanceState) {
+        //no-op
+    }
+
+    protected void onBindCreatedBindings(VM vm, UnbindableObservable.Bag bag) {
+        //no-op
+    }
+
+    protected void onBindStartedBindings(VM vm, UnbindableObservable.Bag bag) {
+        //no-op
+    }
+
+    protected void onUnbindStartedBindings(VM vm, UnbindableObservable.Bag bag) {
+        bag.unbindAndClear();
+    }
+
+    protected void onUnbindCreatedBindings(VM vm, UnbindableObservable.Bag bag) {
+        bag.unbindAndClear();
     }
 
     public <T extends ViewDataBinding> T getBinding() {
@@ -63,10 +100,16 @@ public abstract class MVVMActivity<VM extends ViewModel> extends AppCompatActivi
     }
 
     @Override
+    public UUID getStoreUuid() {
+        return mModuleStoreController.getStoreUuid();
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         mIsActive = true;
         if (mViewModel != null) {
+            onBindStartedBindings(mViewModel, mStartedUnbindable);
             mViewModel.onViewStart();
         }
     }
@@ -75,17 +118,29 @@ public abstract class MVVMActivity<VM extends ViewModel> extends AppCompatActivi
     protected void onStop() {
         if (mViewModel != null) {
             mViewModel.onViewStop();
+            onUnbindStartedBindings(mViewModel, mStartedUnbindable);
         }
         mIsActive = false;
         super.onStop();
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mModuleStoreController.onViewCreate(outState);
+    }
+
+    @Override
     protected void onDestroy() {
         if (mViewModel != null) {
             mViewModel.onViewStop();
+            onUnbindCreatedBindings(mViewModel, mCreatedUnbindable);
         }
         mBinding.unbind();
+
+        if (isFinishing()) {
+            mModuleStoreController.onFinallyDestroy();
+        }
         super.onDestroy();
     }
 
@@ -104,5 +159,17 @@ public abstract class MVVMActivity<VM extends ViewModel> extends AppCompatActivi
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+
+    // Utils
+
+    protected static  <T extends Observable> void bind(T field,
+                                    UnbindableObservable.UnbindableObservableListener<T> listener,
+                                    UnbindableObservable.Bag bag) {
+        UnbindableObservable.bind(field)
+                .addListener(listener)
+                .addTo(bag)
+                .notifyChanged();
     }
 }

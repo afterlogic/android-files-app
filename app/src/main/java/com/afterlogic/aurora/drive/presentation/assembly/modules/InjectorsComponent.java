@@ -2,6 +2,7 @@ package com.afterlogic.aurora.drive.presentation.assembly.modules;
 
 import com.afterlogic.aurora.drive.presentation.assembly.Injector;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationModulesStore;
+import com.afterlogic.aurora.drive.presentation.common.modules.view.ModuleStoreController;
 import com.afterlogic.aurora.drive.presentation.modules.accountInfo.view.AccountInfoActivity;
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseActivity;
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseFilesFragment;
@@ -32,6 +33,8 @@ public interface InjectorsComponent {
     void inject(SessionChangedReceiver sessionChangedReceiver);
 
     PresentationModulesStore modulesStore();
+
+    ModuleStoreController getStoreController();
 
     Injector<LoginActivity> login();
 

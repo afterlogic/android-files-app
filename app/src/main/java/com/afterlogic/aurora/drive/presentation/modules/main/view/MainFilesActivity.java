@@ -3,9 +3,10 @@ package com.afterlogic.aurora.drive.presentation.modules.main.view;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.databinding.ObservableBoolean;
+import android.databinding.ObservableField;
+import android.databinding.ObservableInt;
 import android.databinding.ViewDataBinding;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,7 +17,7 @@ import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.databinding.ActivityMainBinding;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
-import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
+import com.afterlogic.aurora.drive.presentation.common.util.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesListFragment;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesMVVMActivity;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.FilesListCallback;
@@ -33,11 +34,6 @@ public class MainFilesActivity extends BaseFilesMVVMActivity<MainFilesViewModel>
     private ActivityMainBinding mBinding;
     private MenuItem mLogoutMenuItem;
     private ActionMode mMultiChoiseActionMode;
-
-    private final SimpleListener mLoginListener = new SimpleListener(this::updateLogoutMenuByViewModel);
-    private final SimpleListener mMultiChoseListener = new SimpleListener(this::updateMultiChoiseMode);
-    private final SimpleListener mSelectedCountListener = new SimpleListener(this::updateMultiChoiseCount);
-    private final SimpleListener mSelectedFolderListener = new SimpleListener(this::updateMultiChoiseAvailableActions);
 
     public static Intent intent(Context context){
         return new Intent(context, MainFilesActivity.class);
@@ -66,20 +62,19 @@ public class MainFilesActivity extends BaseFilesMVVMActivity<MainFilesViewModel>
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mViewModel.getLogin().addOnPropertyChangedCallback(mLoginListener);
-        mViewModel.getMultichoiseMode().addOnPropertyChangedCallback(mMultiChoseListener);
-        mViewModel.getSelectedCount().addOnPropertyChangedCallback(mSelectedCountListener);
-        mViewModel.getSelectedHasFolder().addOnPropertyChangedCallback(mSelectedFolderListener);
-        updateMultiChoiseMode();
+    protected void onBindCreatedBindings(MainFilesViewModel vm, UnbindableObservable.Bag bag) {
+        super.onBindCreatedBindings(vm, bag);
+        bind(vm.getLogin(), this::updateLogoutMenuByViewModel, bag);
+        bind(vm.getSelectedCount(), this::updateMultiChoiseCount, bag);
+        bind(vm.getSelectedHasFolder(), this::updateMultiChoiseAvailableActions, bag);
+        bind(vm.getMultichoiseMode(), this::updateMultiChoiseMode, bag);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         mLogoutMenuItem = menu.findItem(R.id.action_logout);
-        updateLogoutMenuByViewModel();
+        updateLogoutMenuByViewModel(getViewModel().getLogin());
         return true;
     }
 
@@ -87,40 +82,31 @@ public class MainFilesActivity extends BaseFilesMVVMActivity<MainFilesViewModel>
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_logout:
-                mViewModel.onLogout();
+                getViewModel().onLogout();
                 return true;
             case R.id.action_multichoise:
-                mViewModel.setMultichoiseMode(true);
+                getViewModel().setMultichoiseMode(true);
                 return true;
             case R.id.action_offline_mode:
-                mViewModel.onOfflineModeSelected();
+                getViewModel().onOfflineModeSelected();
                 return true;
             case R.id.action_about:
-                mViewModel.onAbout();
+                getViewModel().onAbout();
                 return true;
             default: return super.onOptionsItemSelected(item);
         }
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mViewModel.getLogin().removeOnPropertyChangedCallback(mLoginListener);
-        mViewModel.getMultichoiseMode().removeOnPropertyChangedCallback(mMultiChoseListener);
-        mViewModel.getSelectedCount().removeOnPropertyChangedCallback(mSelectedCountListener);
-        mViewModel.getSelectedHasFolder().removeOnPropertyChangedCallback(mSelectedFolderListener);
-    }
-
-    @Override
     public void onOpenFolder(AuroraFile folder) {
-        mViewModel.onCurrentFolderChanged(folder);
+        getViewModel().onCurrentFolderChanged(folder);
     }
 
     @Override
     public void onBackPressed() {
         if (collapseFabAction()) return;
         if (getCurrentFragment() != null && getCurrentFragment().onBackPressed()) return;
-        if (mViewModel.onBackPressed()) return;
+        if (getViewModel().onBackPressed()) return;
 
         super.onBackPressed();
     }
@@ -132,17 +118,17 @@ public class MainFilesActivity extends BaseFilesMVVMActivity<MainFilesViewModel>
 
     @Override
     public void onSelectedFilesChanged(int selected, boolean hasFolder) {
-        mViewModel.setSelectedCount(selected);
-        mViewModel.setSetSelectedHasFolder(hasFolder);
+        getViewModel().setSelectedCount(selected);
+        getViewModel().setSetSelectedHasFolder(hasFolder);
     }
 
-    private void updateLogoutMenuByViewModel(){
+    private void updateLogoutMenuByViewModel(ObservableField<String> login){
         if (mLogoutMenuItem == null) return;
-        mLogoutMenuItem.setTitle(getString(R.string.logout, mViewModel.getLogin().get()));
+        mLogoutMenuItem.setTitle(getString(R.string.logout, login.get()));
     }
 
-    private void updateMultiChoiseMode(){
-        boolean active = mViewModel.getMultichoiseMode().get();
+    private void updateMultiChoiseMode(ObservableBoolean field){
+        boolean active = field.get();
         if (active){
             if (mMultiChoiseActionMode == null){
                 startMultiChoseActionMode();
@@ -156,18 +142,18 @@ public class MainFilesActivity extends BaseFilesMVVMActivity<MainFilesViewModel>
         ifCurrentFragment(fragment -> fragment.setMultiChoiseMode(active));
     }
 
-    private void updateMultiChoiseCount(){
+    private void updateMultiChoiseCount(ObservableInt field){
         if (mMultiChoiseActionMode == null) return;
 
-        int count = mViewModel.getSelectedCount().get();
+        int count = field.get();
         String title = getString(R.string.title_action_selected, count);
         mMultiChoiseActionMode.setTitle(title);
     }
 
-    private void updateMultiChoiseAvailableActions(){
+    private void updateMultiChoiseAvailableActions(ObservableBoolean field){
         if (mMultiChoiseActionMode == null) return;
 
-        boolean hasFolder = mViewModel.getSelectedHasFolder().get();
+        boolean hasFolder = field.get();
         Menu menu = mMultiChoiseActionMode.getMenu();
         Stream.of(R.id.action_offline, R.id.action_download, R.id.action_send)
                 .map(menu::findItem)
@@ -198,7 +184,7 @@ public class MainFilesActivity extends BaseFilesMVVMActivity<MainFilesViewModel>
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 mode.getMenuInflater().inflate(R.menu.menu_multichoise, menu);
-                updateMultiChoiseAvailableActions();
+                updateMultiChoiseAvailableActions(getViewModel().getSelectedHasFolder());
                 return true;
             }
 
@@ -210,16 +196,16 @@ public class MainFilesActivity extends BaseFilesMVVMActivity<MainFilesViewModel>
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 ifCurrentFragment(fragment -> fragment.onOptionsItemSelected(item));
-                mViewModel.onMultiChoiseAction();
+                getViewModel().onMultiChoiseAction();
                 return false;
             }
 
             @Override
             public void onDestroyActionMode(ActionMode mode) {
                 mMultiChoiseActionMode = null;
-                mViewModel.setMultichoiseMode(false);
+                getViewModel().setMultichoiseMode(false);
             }
         });
-        updateMultiChoiseCount();
+        updateMultiChoiseCount(getViewModel().getSelectedCount());
     }
 }

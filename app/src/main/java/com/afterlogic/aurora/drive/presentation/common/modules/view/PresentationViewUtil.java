@@ -12,6 +12,7 @@ import java.util.Set;
  * mail: sunnyday.development@gmail.com
  */
 
+@Deprecated
 class PresentationViewUtil {
 
     static void reflectiveCollectPresenters(BaseActivity activity){

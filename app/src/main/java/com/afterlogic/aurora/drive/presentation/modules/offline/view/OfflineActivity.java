@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +17,7 @@ import com.afterlogic.aurora.drive.databinding.ActivityOfflineBinding;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.binding.bindingAdapters.ViewProvider;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ItemsAdapter;
-import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseMVVMActivity;
+import com.afterlogic.aurora.drive.presentation.common.modules.view.MVVMActivity;
 import com.afterlogic.aurora.drive.presentation.common.util.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.FilesViewDialogDelegate;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFileItemViewModel;
@@ -29,13 +30,11 @@ import java.util.WeakHashMap;
  * mail: sunnyday.development@gmail.com
  */
 
-public class OfflineActivity extends BaseMVVMActivity<OfflineViewModel> {
+public class OfflineActivity extends MVVMActivity<OfflineViewModel> {
 
     private static final String MANUAL_MODE = ".MANUAL_MODE";
 
     private FilesViewDialogDelegate mFilesViewDelegate = new FilesViewDialogDelegate(this);
-
-    private final UnbindableObservable.Bag mActiveBindingBag = new UnbindableObservable.Bag();
 
     public static Intent intent(boolean manualMode, Context context){
         Intent intent = new Intent(context, OfflineActivity.class);
@@ -52,20 +51,16 @@ public class OfflineActivity extends BaseMVVMActivity<OfflineViewModel> {
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        UnbindableObservable.create(getViewModel().getNetworkState())
-                .addListener(field -> updateOnlineMenuItemVisibility())
-                .addTo(mActiveBindingBag)
-                .notifyChanged();
+    @NonNull
+    protected ViewDataBinding onCreateBinding(@Nullable Bundle savedInstanceState) {
+        return DataBindingUtil.setContentView(this, R.layout.activity_offline);
     }
 
     @Override
-    protected ViewDataBinding onCreateBinding(@Nullable Bundle savedInstanceState) {
-        ActivityOfflineBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_offline);
+    protected void onBindingCreated(@Nullable Bundle savedInstanceState) {
+        super.onBindingCreated(savedInstanceState);
+        ActivityOfflineBinding binding = getBinding();
         setSupportActionBar(binding.toolbar);
-        return binding;
     }
 
     @Override
@@ -77,23 +72,31 @@ public class OfflineActivity extends BaseMVVMActivity<OfflineViewModel> {
     }
 
     @Override
-    protected void onBindToViewModel(OfflineViewModel viewModel) {
-        super.onBindToViewModel(viewModel);
-        mFilesViewDelegate.bindProgressField(viewModel.getProgress());
-        mFilesViewDelegate.bindMessageField(viewModel.getMessage());
-
+    protected void onBindCreatedBindings(OfflineViewModel offlineViewModel, UnbindableObservable.Bag bag) {
+        super.onBindCreatedBindings(offlineViewModel, bag);
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
-            ab.setDisplayHomeAsUpEnabled(viewModel.getManualMode().get());
+            ab.setDisplayHomeAsUpEnabled(offlineViewModel.getManualMode().get());
         }
+    }
 
+    @Override
+    protected void onBindStartedBindings(OfflineViewModel offlineViewModel, UnbindableObservable.Bag bag) {
+        super.onBindStartedBindings(offlineViewModel, bag);
+
+        UnbindableObservable.create(getViewModel().getNetworkState())
+                .addListener(field -> updateOnlineMenuItemVisibility())
+                .addTo(bag)
+                .notifyChanged();
+
+        mFilesViewDelegate.bindProgressField(offlineViewModel.getProgress());
+        mFilesViewDelegate.bindMessageField(offlineViewModel.getMessage());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         mFilesViewDelegate.onStart();
-        mActiveBindingBag.bind();
     }
 
     @Override
@@ -116,16 +119,15 @@ public class OfflineActivity extends BaseMVVMActivity<OfflineViewModel> {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        mFilesViewDelegate.onStop();
-        mActiveBindingBag.unbindAndClear();
+    protected void onUnbindStartedBindings(OfflineViewModel offlineViewModel, UnbindableObservable.Bag bag) {
+        super.onUnbindStartedBindings(offlineViewModel, bag);
+        mFilesViewDelegate.unbind();
     }
 
     @Override
-    protected void onUnbindViewModel(OfflineViewModel viewModel) {
-        super.onUnbindViewModel(viewModel);
-        mFilesViewDelegate.unbind();
+    protected void onStop() {
+        super.onStop();
+        mFilesViewDelegate.onStop();
     }
 
     private void updateOnlineMenuItemVisibility() {
