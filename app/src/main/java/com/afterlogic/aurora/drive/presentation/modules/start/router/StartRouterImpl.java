@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.start.router;
 
 import com.afterlogic.aurora.drive.presentation.common.modules.model.router.BaseRouter;
-import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity;
+import com.afterlogic.aurora.drive.presentation.common.modules.view.MVPActivity;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFilesIntent;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginIntent;
@@ -14,7 +14,7 @@ import javax.inject.Inject;
  * mail: sunnyday.development@gmail.com
  */
 
-public class StartRouterImpl extends BaseRouter<StartView, BaseActivity> implements StartRouter {
+public class StartRouterImpl extends BaseRouter<StartView, MVPActivity> implements StartRouter {
 
     @Inject
     StartRouterImpl(ViewState<StartView> viewContext) {

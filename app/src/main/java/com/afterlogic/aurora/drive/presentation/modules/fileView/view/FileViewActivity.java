@@ -29,7 +29,7 @@ import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
 import com.afterlogic.aurora.drive.presentation.common.binding.bindingAdapters.ViewProvider;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ItemsAdapter;
 import com.afterlogic.aurora.drive.presentation.common.components.view.SelectionEditText;
-import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity;
+import com.afterlogic.aurora.drive.presentation.common.modules.view.MVPActivity;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.ViewPresenter;
 import com.afterlogic.aurora.drive.presentation.common.util.DialogUtil;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.presenter.FileViewPresenter;
@@ -52,7 +52,7 @@ import static android.content.DialogInterface.BUTTON_NEGATIVE;
  * mail: sunnyday.development@gmail.com
  */
 
-public class FileViewActivity extends BaseActivity implements FileViewPresentationView{
+public class FileViewActivity extends MVPActivity implements FileViewPresentationView{
 
     @Inject @ViewPresenter
     protected FileViewPresenter mPresenter;
@@ -267,7 +267,7 @@ public class FileViewActivity extends BaseActivity implements FileViewPresentati
             return pager -> {
                 ItemsAdapter<FileViewImageItemViewModel> adapter = PAGER_ADAPTERS.get(pager);
                 if (adapter == null){
-                    FragmentManager fm = ((BaseActivity) pager.getContext()).getSupportFragmentManager();
+                    FragmentManager fm = ((MVPActivity) pager.getContext()).getSupportFragmentManager();
                     adapter = new FilesItemsAdapter(fm);
                     PAGER_ADAPTERS.put(pager, adapter);
                 }

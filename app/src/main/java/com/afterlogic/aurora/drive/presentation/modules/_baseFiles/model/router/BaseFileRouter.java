@@ -3,7 +3,7 @@ package com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router
 import android.content.Intent;
 
 import com.afterlogic.aurora.drive.presentation.common.modules.model.router.BaseRouter;
-import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity;
+import com.afterlogic.aurora.drive.presentation.common.modules.view.AuroraActivity;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.PresentationView;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.common.util.IntentUtil;
@@ -17,7 +17,7 @@ import javax.inject.Inject;
  * mail: sunnyday.development@gmail.com
  */
 
-public class BaseFileRouter<V extends PresentationView> extends BaseRouter<V, BaseActivity> implements FilesRouter {
+public class BaseFileRouter<V extends PresentationView> extends BaseRouter<V, AuroraActivity> implements FilesRouter {
 
     @Inject
     public BaseFileRouter(ViewState<V> viewContext) {

@@ -8,6 +8,7 @@ import com.afterlogic.aurora.drive.core.consts.Const;
  * mail: sunnyday.development@gmail.com
  */
 public class SessionManager {
+
     private AuroraSession mAuroraSession;
 
     private ApiConfigurator mApiConfigurator;

@@ -39,7 +39,7 @@ import java.util.UUID;
  * Base module fragment with base presenter interaction.
  */
 @Deprecated
-public abstract class BaseFragment extends Fragment implements PresentationView {
+public abstract class MVPFragment extends Fragment implements PresentationView {
 
     private static final String MODULE_UUID = ".MODULE_UUID";
 
@@ -307,6 +307,6 @@ public abstract class BaseFragment extends Fragment implements PresentationView 
     }
 
     public interface FirstCreateViewInterceptor{
-        void onPresentationViewCreated(BaseFragment view);
+        void onPresentationViewCreated(MVPFragment view);
     }
 }

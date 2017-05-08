@@ -19,7 +19,7 @@ import com.afterlogic.aurora.drive.core.consts.NotificationConst;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
-import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseService;
+import com.afterlogic.aurora.drive.presentation.common.modules.view.MVPService;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.ViewPresenter;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.presenter.SyncPresenter;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
@@ -31,7 +31,7 @@ import javax.inject.Inject;
  * Created by sashka on 15.04.16.
  * mail: sunnyday.development@gmail.com
  */
-public class SyncService extends BaseService implements SyncView {
+public class SyncService extends MVPService implements SyncView {
 
     public static final String ACTION_SYNC_STARTED =
             FileSyncAdapter.class.getName() + ".ACTION_SYNC_STARTED";

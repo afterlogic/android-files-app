@@ -14,7 +14,7 @@ import com.afterlogic.aurora.drive.BR;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
-import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseFragment;
+import com.afterlogic.aurora.drive.presentation.common.modules.view.MVPFragment;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.ViewPresenter;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter.FilesListPresenter;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFilesListViewModel;
@@ -31,7 +31,7 @@ import static android.content.DialogInterface.BUTTON_NEGATIVE;
  * mail: sunnyday.development@gmail.com
  */
 
-public abstract class BaseFilesListFragment<VM extends BaseFilesListViewModel, P extends FilesListPresenter> extends BaseFragment implements FilesListView{
+public abstract class BaseFilesListFragment<VM extends BaseFilesListViewModel, P extends FilesListPresenter> extends MVPFragment implements FilesListView{
 
     public static final String ARGS_TYPE = "ARGS_TYPE";
 

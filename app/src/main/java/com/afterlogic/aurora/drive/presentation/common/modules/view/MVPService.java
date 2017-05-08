@@ -27,7 +27,7 @@ import java.util.UUID;
  * mail: sunnyday.development@gmail.com
  */
 @Deprecated
-public abstract class BaseService extends Service implements PresentationView {
+public abstract class MVPService extends Service implements PresentationView {
 
     private boolean mIsActive;
 

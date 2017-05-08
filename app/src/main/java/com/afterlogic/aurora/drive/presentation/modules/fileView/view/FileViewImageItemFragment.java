@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.databinding.FragmentViewImageBinding;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
-import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseFragment;
+import com.afterlogic.aurora.drive.presentation.common.modules.view.MVPFragment;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.viewModel.FileViewImageItemViewModel;
 
 /**
@@ -18,7 +18,7 @@ import com.afterlogic.aurora.drive.presentation.modules.fileView.viewModel.FileV
  * mail: sunnyday.development@gmail.com
  */
 
-public class FileViewImageItemFragment extends BaseFragment implements FileViewImageItemView {
+public class FileViewImageItemFragment extends MVPFragment implements FileViewImageItemView {
 
     private FileViewImageItemViewModel mViewModel;
 

@@ -7,8 +7,8 @@ import android.text.TextUtils;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.contextWrappers.Toaster;
 import com.afterlogic.aurora.drive.core.common.util.ErrorUtil;
-import com.afterlogic.aurora.drive.core.common.util.HttpUrlUtil;
 import com.afterlogic.aurora.drive.core.common.util.Holder;
+import com.afterlogic.aurora.drive.core.common.util.HttpUrlUtil;
 import com.afterlogic.aurora.drive.core.consts.Const;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraSession;
@@ -20,6 +20,8 @@ import com.afterlogic.aurora.drive.presentation.common.modules.viewModel.BaseVie
 import com.afterlogic.aurora.drive.presentation.modules.login.interactor.LoginInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.login.router.LoginRouter;
 import com.annimon.stream.Stream;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 
@@ -45,8 +47,11 @@ public class LoginViewModelImpl extends BaseViewModel implements LoginViewModel 
     private final ObservableField<String> mHostError = new ObservableField<>();
     private final ObservableBoolean mProgressState = new ObservableBoolean();
 
+    private boolean mFirstStart = true;
+    private boolean mHasSessionAtStart = false;
+
     @Inject
-    public LoginViewModelImpl(AppResources appResources,
+    LoginViewModelImpl(AppResources appResources,
                               LoginInteractor mInteractor,
                               LoginRouter mRouter,
                               Toaster toaster) {
@@ -92,21 +97,6 @@ public class LoginViewModelImpl extends BaseViewModel implements LoginViewModel 
     }
 
     @Override
-    public void onViewStart() {
-        super.onViewStart();
-
-        mInteractor.getCurrentSession()
-                .subscribe(
-                        session -> {
-                            mHost.set(session.getDomain().toString());
-                            mLogin.set(session.getLogin());
-                            mPassword.set("");
-                        },
-                        this::onErrorObtained
-                );
-    }
-
-    @Override
     public void onLogin(){
         boolean error = false;
 
@@ -149,6 +139,42 @@ public class LoginViewModelImpl extends BaseViewModel implements LoginViewModel 
                 .subscribe(
                         mRouter::openNext,
                         this::handleLoginError
+                );
+    }
+
+    @Override
+    public void onViewStart() {
+        super.onViewStart();
+        AtomicBoolean hasSession = new AtomicBoolean(false);
+        mInteractor.getCurrentSession()
+                .subscribe(
+                        session -> {
+                            hasSession.set(true);
+                            mHost.set(session.getDomain().toString());
+                            mLogin.set(session.getLogin());
+                            mPassword.set("");
+                        },
+                        this::onErrorObtained,
+                        () -> {
+                            if (mFirstStart) {
+                                mFirstStart = false;
+                                mHasSessionAtStart = hasSession.get();
+                            }
+                        }
+                );
+    }
+
+    @Override
+    public void onViewResumed() {
+        //Check may be logged from another app
+        mInteractor.getCurrentSession()
+                .subscribe(
+                        session -> {
+                            if (!mHasSessionAtStart) {
+                                mRouter.openNext();
+                            }
+                        },
+                        this::onErrorObtained
                 );
     }
 

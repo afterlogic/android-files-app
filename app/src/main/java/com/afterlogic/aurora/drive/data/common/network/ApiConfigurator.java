@@ -23,10 +23,6 @@ public class ApiConfigurator implements DynamicDomainProvider{
         return mDomain;
     }
 
-    public void setCurrentApiVersion(int currentApiVersion) {
-        mCurrentApiVersion = currentApiVersion;
-    }
-
     public int getCurrentApiVersion() {
         return mCurrentApiVersion;
     }

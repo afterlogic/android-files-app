@@ -1,10 +1,14 @@
 package com.afterlogic.aurora.drive.presentation.modules.login.view;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.IntentCompat;
 import android.view.inputmethod.EditorInfo;
 
 import com.afterlogic.aurora.drive.R;
@@ -18,9 +22,23 @@ import com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginVie
  */
 public class LoginActivity extends MVVMActivity<LoginViewModel> {
 
+    public static Intent intent(boolean restartTask, Context context) {
+        if (restartTask) {
+            return IntentCompat.makeRestartActivityTask(new ComponentName(context, LoginActivity.class));
+        } else {
+            return new Intent(context, LoginActivity.class);
+        }
+    }
+
     @Override
     public void assembly(InjectorsComponent modulesFactory) {
         modulesFactory.login().inject(this);
+    }
+
+    @Override
+    protected void onPerformCreate(@Nullable Bundle savedInstanceState) {
+        super.onPerformCreate(savedInstanceState);
+        setCheckAuth(false);
     }
 
     @NonNull
@@ -43,6 +61,12 @@ public class LoginActivity extends MVVMActivity<LoginViewModel> {
             }
             return false;
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getViewModel().onViewResumed();
     }
 }
 

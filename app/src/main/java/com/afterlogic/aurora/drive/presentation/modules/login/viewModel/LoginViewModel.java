@@ -26,4 +26,6 @@ public interface LoginViewModel extends ViewModel {
     ObservableBoolean getIsInProgress();
 
     void onLogin();
+
+    void onViewResumed();
 }

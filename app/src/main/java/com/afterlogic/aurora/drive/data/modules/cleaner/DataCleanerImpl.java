@@ -48,14 +48,16 @@ public class DataCleanerImpl implements DataCleaner {
             AuroraSession current = mSessionManager.getSession();
             mSessionManager.setSession(null);
 
-            AccountManager am = (AccountManager) mContext.getSystemService(Context.ACCOUNT_SERVICE);
-            Account account = AccountUtil.getAccount(current.getLogin(), am);
-            if (account != null) {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
-                    //noinspection deprecation
-                    am.removeAccount(account, null, null);
-                } else {
-                    am.removeAccountExplicitly(account);
+            if (current != null) {
+                AccountManager am = (AccountManager) mContext.getSystemService(Context.ACCOUNT_SERVICE);
+                Account account = AccountUtil.getAccount(current.getLogin(), am);
+                if (account != null) {
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
+                        //noinspection deprecation
+                        am.removeAccount(account, null, null);
+                    } else {
+                        am.removeAccountExplicitly(account);
+                    }
                 }
             }
 

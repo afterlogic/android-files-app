@@ -9,7 +9,6 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -36,7 +35,7 @@ import java.util.UUID;
  * Base for all activities in project.
  */
 @Deprecated
-public abstract class BaseActivity extends AppCompatActivity implements PresentationView{
+public abstract class MVPActivity extends AuroraActivity implements PresentationView{
 
     private static final String MODULE_UUID = ".MODULE_UUID";
     private ViewDataBinding mBinding;

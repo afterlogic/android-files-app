@@ -46,7 +46,8 @@ public class LoginInteractorImpl extends BaseInteractor implements LoginInteract
     @Inject LoginInteractorImpl(ObservableScheduler scheduler,
                                 SessionManager sessionManager,
                                 ApiChecker apiChecker,
-                                Provider<AuthRepository> authRepository, Context appContext) {
+                                Provider<AuthRepository> authRepository,
+                                Context appContext) {
         super(scheduler);
         mSessionManager = sessionManager;
         mApiChecker = apiChecker;

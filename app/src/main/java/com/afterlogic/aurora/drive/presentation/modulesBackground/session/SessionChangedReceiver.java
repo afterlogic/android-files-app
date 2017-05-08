@@ -10,6 +10,9 @@ import com.afterlogic.aurora.drive.model.AuroraSession;
 
 import javax.inject.Inject;
 
+import static com.afterlogic.aurora.drive.presentation.modulesBackground.session.SessionTrackUtil.SESSION_DATA;
+import static com.afterlogic.aurora.drive.presentation.modulesBackground.session.SessionTrackUtil.SESSOIN_CHANGED;
+
 /**
  * Created by sashka on 24.01.17.<p/>
  * mail: sunnyday.development@gmail.com
@@ -22,10 +25,10 @@ public class SessionChangedReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getBooleanExtra(SessionTrackUtil.SESSOIN_CHANGED, false)) {
+        if (intent.hasExtra(SESSION_DATA) && intent.getBooleanExtra(SESSOIN_CHANGED, false)) {
             ((App) context.getApplicationContext()).getInjectors().inject(this);
 
-            AuroraSession session = intent.getParcelableExtra(SessionTrackUtil.SESSION_DATA);
+            AuroraSession session = intent.getParcelableExtra(SESSION_DATA);
             mSessionManager.setSession(session);
         }
     }

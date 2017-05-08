@@ -115,6 +115,19 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".presentation.modulesBackground.accountAction.AccountActionReceiver">
+            <intent-filter>
+                <action android:name="android.accounts.LOGIN_ACCOUNTS_CHANGED"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".presentation.modulesBackground.session.SessionChangedReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.afterlogic.aurora.ACTION_SESSION_CHANGED"/>
+            </intent-filter>
+        </receiver>
+
         <!--[END Main process]-->
 
         <!--[START File load process]-->
@@ -123,13 +136,7 @@
                   android:process=":load"
                   android:exported="false">
             <intent-filter>
-                <action android:name="com.afterlogic.aurora.sessiontracker.ACTION_SESSION_CHANGED"/>
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name=".presentation.modulesBackground.accountAction.AccountActionReceiver">
-            <intent-filter>
-                <action android:name="android.accounts.LOGIN_ACCOUNTS_CHANGED"/>
+                <action android:name="com.afterlogic.aurora.ACTION_SESSION_CHANGED"/>
             </intent-filter>
         </receiver>
         <!--[END File load process]-->
@@ -150,7 +157,7 @@
                   android:process=":sync"
                   android:exported="false">
             <intent-filter>
-                <action android:name="com.afterlogic.aurora.sessiontracker.ACTION_SESSION_CHANGED"/>
+                <action android:name="com.afterlogic.aurora.ACTION_SESSION_CHANGED"/>
             </intent-filter>
         </receiver>
         <!--[END Sync process]-->

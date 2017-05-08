@@ -12,13 +12,13 @@ import com.afterlogic.aurora.drive.model.AuroraSession;
 public class SessionTrackUtil{
 
     static final String ACTION_SESSION_CHANGED =
-            "com.afterlogic.aurora.sessiontracker.ACTION_SESSION_CHANGED";
+            "com.afterlogic.aurora.ACTION_SESSION_CHANGED";
 
     static final String SESSION_DATA =
-            SessionTrackUtil.class.getName() + ".SESSION_DATA";
+            "com.afterlogic.aurora.SESSION_DATA";
 
     static final String SESSOIN_CHANGED =
-            "com.afterlogic.aurora.sessiontracker.SESSOIN_CHANGED";
+            "com.afterlogic.aurora.SESSOIN_CHANGED";
 
     public static void fireSessionChanged(AuroraSession session, Context ctx){
         Intent intent = new Intent(ACTION_SESSION_CHANGED);

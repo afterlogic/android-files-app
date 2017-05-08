@@ -15,16 +15,16 @@ import java.util.Set;
 @Deprecated
 class PresentationViewUtil {
 
-    static void reflectiveCollectPresenters(BaseActivity activity){
-        reflectiveCollectPresenters(activity, activity.mPresenters, BaseActivity.class);
+    static void reflectiveCollectPresenters(MVPActivity activity){
+        reflectiveCollectPresenters(activity, activity.mPresenters, MVPActivity.class);
     }
 
-    static void reflectiveCollectPresenters(BaseFragment fragment){
-        reflectiveCollectPresenters(fragment, fragment.mPresenters, BaseFragment.class);
+    static void reflectiveCollectPresenters(MVPFragment fragment){
+        reflectiveCollectPresenters(fragment, fragment.mPresenters, MVPFragment.class);
     }
 
-    static void reflectiveCollectPresenters(BaseService service){
-        reflectiveCollectPresenters(service, service.mPresenters, BaseService.class);
+    static void reflectiveCollectPresenters(MVPService service){
+        reflectiveCollectPresenters(service, service.mPresenters, MVPService.class);
     }
 
     private static void reflectiveCollectPresenters(Object obj, Set<Presenter> presenterList, Class stopClass){
