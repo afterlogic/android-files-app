@@ -26,7 +26,7 @@ import javax.inject.Provider;
  * mail: sunnyday.development@gmail.com
  */
 @ModuleScope
-public class MainFileListBiModel extends BaseFilesListBiModel<MainFileItemViewModel> implements MainFileListViewModel, MainFilesListModel {
+public class MainFileListViewModelImpl extends BaseFilesListBiModel<MainFileItemViewModel> implements MainFileListViewModel, MainFilesListModel {
 
     private final Provider<MainFileItemBiModel> mItemProvider;
 
@@ -38,7 +38,7 @@ public class MainFileListBiModel extends BaseFilesListBiModel<MainFileItemViewMo
     private final ObservableField<MainFileItemViewModel> mFileForActionModel = new ObservableField<>();
 
     @Inject
-    MainFileListBiModel(OptWeakRef<MainFileListPresenter> presenter, Provider<MainFileItemBiModel> itemProvider) {
+    MainFileListViewModelImpl(OptWeakRef<MainFileListPresenter> presenter, Provider<MainFileItemBiModel> itemProvider) {
         super(presenter);
         mItemProvider = itemProvider;
         mMultiChoiseResult.addOnListChangedCallback(new SimpleOnObservableListChagnedListener<>(

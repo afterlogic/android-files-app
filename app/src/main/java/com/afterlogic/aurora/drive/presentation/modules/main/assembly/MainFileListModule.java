@@ -10,7 +10,7 @@ import com.afterlogic.aurora.drive.presentation.modules.main.model.presenter.Mai
 import com.afterlogic.aurora.drive.presentation.modules.main.model.router.MainFileListRouter;
 import com.afterlogic.aurora.drive.presentation.modules.main.model.router.MainFileListRouterImpl;
 import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFileListView;
-import com.afterlogic.aurora.drive.presentation.modules.main.viewModel.MainFileListBiModel;
+import com.afterlogic.aurora.drive.presentation.modules.main.viewModel.MainFileListViewModelImpl;
 import com.afterlogic.aurora.drive.presentation.modules.main.viewModel.MainFileListViewModel;
 import com.afterlogic.aurora.drive.presentation.modules.main.model.MainFilesListModel;
 
@@ -25,12 +25,12 @@ import dagger.Provides;
 public class MainFileListModule extends PresentationModule<MainFileListView> {
 
     @Provides @ModuleScope
-    MainFileListViewModel viewModel(MainFileListBiModel model){
+    MainFileListViewModel viewModel(MainFileListViewModelImpl model){
         return model;
     }
 
     @Provides @ModuleScope
-    MainFilesListModel model(MainFileListBiModel model){
+    MainFilesListModel model(MainFileListViewModelImpl model){
         return model;
     }
 
