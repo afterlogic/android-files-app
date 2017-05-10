@@ -110,9 +110,6 @@ public class LoginViewModelImpl extends BaseViewModel implements LoginViewModel 
         if (TextUtils.isEmpty(mLogin.get())) {
             mLoginError.set(mAppResources.getString(R.string.error_field_required));
             error = true;
-        } else if (!isEmailValid(mLogin.get())) {
-            mLoginError.set(mAppResources.getString(R.string.error_invalid_email));
-            error = true;
         }
 
         //Check for a valid domain
