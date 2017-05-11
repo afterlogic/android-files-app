@@ -37,6 +37,7 @@ public interface Api8 {
 
     interface Header {
         String AUTH_TOKEN = "Authorization";
+        String AUTH_TOKEN_PREFIX = "Bearer";
     }
 
     interface Module{

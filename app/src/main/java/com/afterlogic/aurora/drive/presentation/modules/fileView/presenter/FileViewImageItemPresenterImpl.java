@@ -1,15 +1,10 @@
 package com.afterlogic.aurora.drive.presentation.modules.fileView.presenter;
 
-import android.net.Uri;
-
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
-import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.interactor.FileViewImageItemInteractor;
-
-import javax.inject.Inject;
-
-import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
+import javax.inject.Inject;
 
 /**
  * Created by sashka on 16.02.17.<p/>
@@ -34,11 +29,8 @@ public class FileViewImageItemPresenterImpl implements FileViewImageItemPresente
 
     @Override
     public void onStart() {
-        Observable.fromCallable(() -> mModel.getFile())
-                .flatMap(mInteractor::donwloadToCache)
-                .filter(Progressible::isDone)
-                .map(Progressible::getData)
-                .map(Uri::fromFile)
+        Single.fromCallable(() -> mModel.getFile())
+                .flatMap(mInteractor::viewFile)
                 .doOnError(error -> mModel.setError())
                 .doOnSubscribe(disposable -> mCurrentTask = disposable)
                 .doFinally(() -> mCurrentTask = null)

@@ -41,7 +41,7 @@ public class P8NetworkDataModule {
         //Add token to headers
         if(sessionManager.getSession() != null && sessionManager.getSession().getAuthToken() != null) {
             clientBuilder.addInterceptor(chain -> {
-                Request request = chain.request().newBuilder().addHeader(Header.AUTH_TOKEN, "Bearer " + sessionManager.getSession().getAuthToken()).build();
+                Request request = chain.request().newBuilder().addHeader(Header.AUTH_TOKEN, Header.AUTH_TOKEN_PREFIX + " " + sessionManager.getSession().getAuthToken()).build();
                 return chain.proceed(request);
             });
         }
