@@ -32,8 +32,11 @@ public interface Api8 {
         String MODULE = "Module";
         String METHOD = "Method";
         String PARAMS = "Parameters";
-        String AUTH_TOKEN = "AuthToken";
         String JUA_UPLOADER = "jua-uploader";
+    }
+
+    interface Header {
+        String AUTH_TOKEN = "Authorization";
     }
 
     interface Module{

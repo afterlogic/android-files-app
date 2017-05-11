@@ -2,30 +2,25 @@ package com.afterlogic.aurora.drive.data.modules.files.service;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
-
-import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
-import com.afterlogic.aurora.drive.data.model.project8.FilesResponseP8;
-import com.afterlogic.aurora.drive.data.model.project8.UploadResultP8;
 import com.afterlogic.aurora.drive.core.common.interfaces.ProgressListener;
 import com.afterlogic.aurora.drive.data.common.annotations.P8;
 import com.afterlogic.aurora.drive.data.common.network.ExtRequestBody;
 import com.afterlogic.aurora.drive.data.common.network.ParamsBuilder;
-import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.common.network.p8.Api8;
-import com.afterlogic.aurora.drive.data.common.network.p8.AuthorizedServiceP8;
+import com.afterlogic.aurora.drive.data.common.network.p8.CloudServiceP8;
+import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
+import com.afterlogic.aurora.drive.data.model.project8.FilesResponseP8;
+import com.afterlogic.aurora.drive.data.model.project8.UploadResultP8;
 import com.afterlogic.aurora.drive.model.DeleteFileInfo;
 import com.afterlogic.aurora.drive.model.FileInfo;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 import com.google.gson.Gson;
-
+import io.reactivex.Single;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.inject.Inject;
-
-import io.reactivex.Single;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 
@@ -33,13 +28,13 @@ import okhttp3.ResponseBody;
  * Created by sashka on 10.10.16.<p/>
  * mail: sunnyday.development@gmail.com
  */
-public class FilesServiceP8Impl extends AuthorizedServiceP8 implements FilesServiceP8 {
+public class FilesServiceP8Impl extends CloudServiceP8 implements FilesServiceP8 {
 
     private final Api8 mApi;
     private final Context mContext;
 
-    @Inject FilesServiceP8Impl(Api8 api, @P8 Gson gson, Context context, SessionManager sessionManager) {
-        super(Api8.Module.FILES, sessionManager, gson);
+    @Inject FilesServiceP8Impl(Api8 api, @P8 Gson gson, Context context) {
+        super(Api8.Module.FILES, gson);
         mApi = api;
         mContext = context;
     }
