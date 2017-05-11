@@ -90,7 +90,7 @@ public interface Api8 {
 
     @POST(API)
     @FormUrlEncoded
-    Single<ApiResponseP8<String>> getFileThumbnail(@FieldMap Map<String, Object> fields);
+    Single<ResponseBody> getFileThumbnail(@FieldMap Map<String, Object> fields);
 
     @POST(API)
     @FormUrlEncoded

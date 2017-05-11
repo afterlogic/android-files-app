@@ -2,13 +2,8 @@ package com.afterlogic.aurora.drive.data.modules.files.repository;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.util.Base64;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.data.common.repository.Repository;
-import com.afterlogic.aurora.drive.data.model.UploadResult;
-import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
-import com.afterlogic.aurora.drive.data.model.project8.AuroraFileP8;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.rx.SimpleObservableSource;
 import com.afterlogic.aurora.drive.core.common.util.FileUtil;
@@ -18,6 +13,10 @@ import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
 import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
 import com.afterlogic.aurora.drive.data.common.mapper.MapperUtil;
 import com.afterlogic.aurora.drive.data.common.repository.AuthorizedRepository;
+import com.afterlogic.aurora.drive.data.common.repository.Repository;
+import com.afterlogic.aurora.drive.data.model.UploadResult;
+import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
+import com.afterlogic.aurora.drive.data.model.project8.AuroraFileP8;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.data.modules.files.FilesDataModule;
@@ -43,7 +42,6 @@ import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
-import okhttp3.MediaType;
 import okhttp3.ResponseBody;
 
 import static com.afterlogic.aurora.drive.data.modules.files.repository.FileRepositoryUtil.CHECKED_TYPES;
@@ -149,6 +147,14 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
             if (cache.exists() && cache.lastModified() == file.getLastModified()){
                 return Single.just(Uri.fromFile(cache));
             } else {
+
+                Single<ResponseBody> thumbRequest = mFilesService.getFileThumbnail(
+                        file.getType(),
+                        file.getPath(),
+                        file.getName(),
+                        file.getHash()
+                );
+                /*
                 Single<ResponseBody> thumbRequest = withNetMapper(
                         mFilesService.getFileThumbnail(
                                 file.getType(),
@@ -158,6 +164,7 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
                         ).map(response -> response),
                         result -> ResponseBody.create(MediaType.parse("image/*"), Base64.decode(result, 0))
                 );
+                */
                 return loadFileToCache(file, mThumbDir, thumbRequest);
             }
         });

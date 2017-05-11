@@ -2,6 +2,7 @@ package com.afterlogic.aurora.drive.data.modules.files.service;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+
 import com.afterlogic.aurora.drive.core.common.interfaces.ProgressListener;
 import com.afterlogic.aurora.drive.data.common.annotations.P8;
 import com.afterlogic.aurora.drive.data.common.network.ExtRequestBody;
@@ -16,11 +17,14 @@ import com.afterlogic.aurora.drive.model.FileInfo;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 import com.google.gson.Gson;
-import io.reactivex.Single;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
+
+import io.reactivex.Single;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 
@@ -52,7 +56,7 @@ public class FilesServiceP8Impl extends CloudServiceP8 implements FilesServiceP8
     }
 
     @Override
-    public Single<ApiResponseP8<String>> getFileThumbnail(String type, String path, String name, String publicHash) {
+    public Single<ResponseBody> getFileThumbnail(String type, String path, String name, String publicHash) {
         return mApi.getFileThumbnail(getDefaultFields(
                 Api8.Method.GET_FILE_THUMBNAIL,
                 new ParamsBuilder()
