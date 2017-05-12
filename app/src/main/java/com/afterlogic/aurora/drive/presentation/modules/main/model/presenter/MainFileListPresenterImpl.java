@@ -92,7 +92,7 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
             return;
         }
 
-        if (file.isFolder()){
+        if (file.isFolder() || file.getActions() != null && file.getActions().isList()){
             super.onFileClick(file);
         } else {
 

@@ -21,6 +21,7 @@ import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.data.modules.files.FilesDataModule;
 import com.afterlogic.aurora.drive.data.modules.files.service.FilesServiceP8;
+import com.afterlogic.aurora.drive.model.Actions;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.DeleteFileInfo;
 import com.afterlogic.aurora.drive.model.FileInfo;
@@ -60,22 +61,32 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
     private final File mThumbDir;
     private final File mCacheDir;
 
-    private final Mapper<AuroraFile, AuroraFileP8> mFileMapper = source -> new AuroraFile(
-            source.getName(),
-            source.getPath(),
-            source.getFullPath(),
-            source.isFolder(),
-            source.isLink(),
-            source.getLinkUrl(),
-            0, //TODO convert link Type
-            source.getThumbnailLink(),
-            source.isThumb(),
-            source.getContentType(),
-            source.getHash(),
-            source.getType(),
-            source.getSize(),
-            source.getLastModified() * 1000
-    );
+    private final Mapper<AuroraFile, AuroraFileP8> mFileMapper = source -> {
+        AuroraFile file = new AuroraFile(
+                source.getName(),
+                source.getPath(),
+                source.getFullPath(),
+                source.isFolder(),
+                source.isLink(),
+                source.getLinkUrl(),
+                0, //TODO convert link Type
+                source.getThumbnailLink(),
+                source.isThumb(),
+                source.getContentType(),
+                source.getHash(),
+                source.getType(),
+                source.getSize(),
+                source.getLastModified() * 1000
+        );
+        // Add actions
+        if (source.getActions() != null) {
+            Actions actions = new Actions(
+                    source.getActions().getList() != null
+            );
+            file.setActions(actions);
+        }
+        return file;
+    };
 
     private final Mapper<DeleteFileInfo, AuroraFile> mDeleteFileMapper = source -> new DeleteFileInfo(
             source.getPath(),

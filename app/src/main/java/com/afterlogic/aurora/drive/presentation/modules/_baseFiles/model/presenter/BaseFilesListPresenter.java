@@ -109,7 +109,7 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
 
     @Override
     public void onFileClick(AuroraFile file) {
-        if (file.isFolder()){
+        if (file.isFolder() || file.getActions() != null && file.getActions().isList()){
             mPath.add(0, file);
             onRefresh();
         }

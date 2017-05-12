@@ -3,6 +3,7 @@ package com.afterlogic.aurora.drive.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
  * Created by sashka on 18.03.16.
@@ -46,6 +47,9 @@ public class AuroraFile implements Parcelable, Cloneable{
     private long mSize;
 
     private long mLastModified;
+
+    @Nullable
+    private Actions mActions;
 
     public static AuroraFile create(@NonNull AuroraFile parent, @NonNull String name, boolean mIsFolder){
         AuroraFile file = new AuroraFile();
@@ -201,6 +205,15 @@ public class AuroraFile implements Parcelable, Cloneable{
 
     public void setContentType(String contentType) {
         mContentType = contentType;
+    }
+
+    @Nullable
+    public Actions getActions() {
+        return mActions;
+    }
+
+    public void setActions(@Nullable Actions mActions) {
+        this.mActions = mActions;
     }
 
     public String getPathSpec(){
