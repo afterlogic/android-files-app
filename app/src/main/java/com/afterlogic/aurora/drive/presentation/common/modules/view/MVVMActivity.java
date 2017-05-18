@@ -125,7 +125,7 @@ public abstract class MVVMActivity<VM extends ViewModel> extends AuroraActivity 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mModuleStoreController.onViewCreate(outState);
+        mModuleStoreController.onSaveInstance(outState);
     }
 
     @Override
