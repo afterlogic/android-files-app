@@ -49,6 +49,9 @@ public class AuroraFileP8 {
     @SerializedName("LastModified")
     private long mLastModified;
 
+    @SerializedName("Actions")
+    private ActionsDtoP8 mActions;
+
     public String getName() {
         return mName;
     }
@@ -103,5 +106,9 @@ public class AuroraFileP8 {
 
     public long getLastModified() {
         return mLastModified;
+    }
+
+    public ActionsDtoP8 getActions() {
+        return mActions;
     }
 }

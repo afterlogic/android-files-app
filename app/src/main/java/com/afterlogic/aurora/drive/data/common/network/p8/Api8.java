@@ -32,8 +32,12 @@ public interface Api8 {
         String MODULE = "Module";
         String METHOD = "Method";
         String PARAMS = "Parameters";
-        String AUTH_TOKEN = "AuthToken";
         String JUA_UPLOADER = "jua-uploader";
+    }
+
+    interface Header {
+        String AUTH_TOKEN = "Authorization";
+        String AUTH_TOKEN_PREFIX = "Bearer";
     }
 
     interface Module{
@@ -87,7 +91,7 @@ public interface Api8 {
 
     @POST(API)
     @FormUrlEncoded
-    Single<ApiResponseP8<String>> getFileThumbnail(@FieldMap Map<String, Object> fields);
+    Single<ResponseBody> getFileThumbnail(@FieldMap Map<String, Object> fields);
 
     @POST(API)
     @FormUrlEncoded

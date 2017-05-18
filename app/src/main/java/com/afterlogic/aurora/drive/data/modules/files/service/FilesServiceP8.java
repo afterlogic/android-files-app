@@ -21,7 +21,7 @@ public interface FilesServiceP8 {
 
     Single<ApiResponseP8<FilesResponseP8>> getFiles(String type, String path, String pattern);
 
-    Single<ApiResponseP8<String>> getFileThumbnail(String type, String path, String name, String publicHash);
+    Single<ResponseBody> getFileThumbnail(String type, String path, String name, String publicHash);
 
     Single<ResponseBody> viewFile(String type, String path, String name, String publicHash);
 

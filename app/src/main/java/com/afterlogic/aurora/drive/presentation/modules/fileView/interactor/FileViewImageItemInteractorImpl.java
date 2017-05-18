@@ -1,18 +1,15 @@
 package com.afterlogic.aurora.drive.presentation.modules.fileView.interactor;
 
+import android.net.Uri;
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
 import com.afterlogic.aurora.drive.data.modules.files.FilesDataModule;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.presentation.common.modules.model.interactor.BaseInteractor;
-
+import io.reactivex.Single;
 import java.io.File;
-
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import io.reactivex.Observable;
 
 /**
  * Created by sashka on 16.02.17.<p/>
@@ -33,9 +30,8 @@ public class FileViewImageItemInteractorImpl extends BaseInteractor implements F
     }
 
     @Override
-    public Observable<Progressible<File>> donwloadToCache(AuroraFile file) {
-        File cacheTarget = new File(mCacheDir, file.getPathSpec());
-        return mFilesRepository.downloadOrGetOffline(file, cacheTarget)
+    public Single<Uri> viewFile(AuroraFile file) {
+        return mFilesRepository.viewFile(file)
                 .compose(this::composeDefault);
     }
 }

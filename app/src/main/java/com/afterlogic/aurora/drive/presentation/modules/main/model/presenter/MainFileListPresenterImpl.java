@@ -92,7 +92,8 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
             return;
         }
 
-        if (file.isFolder()){
+        // TODO restore zip when ready
+        if (file.isFolder() /*|| file.getActions() != null && file.getActions().isList()*/){
             super.onFileClick(file);
         } else {
 

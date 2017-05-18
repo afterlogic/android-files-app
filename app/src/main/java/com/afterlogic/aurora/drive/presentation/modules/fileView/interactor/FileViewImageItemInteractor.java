@@ -1,12 +1,9 @@
 package com.afterlogic.aurora.drive.presentation.modules.fileView.interactor;
 
+import android.net.Uri;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.presentation.common.modules.model.interactor.Interactor;
-
-import java.io.File;
-
-import io.reactivex.Observable;
+import io.reactivex.Single;
 
 /**
  * Created by sashka on 16.02.17.<p/>
@@ -15,5 +12,5 @@ import io.reactivex.Observable;
 
 public interface FileViewImageItemInteractor extends Interactor {
 
-    Observable<Progressible<File>> donwloadToCache(AuroraFile file);
+    Single<Uri> viewFile(AuroraFile file);
 }
