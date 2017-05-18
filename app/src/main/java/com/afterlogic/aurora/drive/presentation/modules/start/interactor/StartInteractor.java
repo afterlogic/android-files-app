@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.start.interactor;
 
-import com.afterlogic.aurora.drive.presentation.common.modules.interactor.Interactor;
+import com.afterlogic.aurora.drive.presentation.common.modules.model.interactor.Interactor;
 
 import io.reactivex.Single;
 

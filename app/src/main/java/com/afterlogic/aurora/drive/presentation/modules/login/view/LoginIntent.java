@@ -3,7 +3,7 @@ package com.afterlogic.aurora.drive.presentation.modules.login.view;
 import android.content.Context;
 import android.content.Intent;
 
-import com.afterlogic.aurora.drive._unrefactored.presentation.ui.FilesListActivity;
+import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFilesActivity;
 
 /**
  * Created by sashka on 03.02.17.<p/>
@@ -19,7 +19,7 @@ public class LoginIntent {
 
     public static Intent intent(Context context){
         Intent intent = new Intent(context, LoginActivity.class);
-        return makeNextActivity(intent, FilesListActivity.class);
+        return makeNextActivity(intent, MainFilesActivity.class);
     }
 
     public static Intent makeNextActivity(Intent i, Class activityClass){

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.view.View"/>
+        <import type="com.afterlogic.aurora.drive.presentation.modules.fileView.viewModel.FileViewImageItemViewModel"/>
+
+        <variable
+            name="viewModel"
+            type="FileViewImageItemViewModel"/>
+    </data>
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@{viewModel.fullscreen ? @color/black : @color/white}">
+
+        <uk.co.senab.photoview.PhotoView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:visibility="@{viewModel.error ? View.GONE : View.VISIBLE}"
+            android:onClick="@{viewModel}"
+            bind:imageUri="@{viewModel.imageContent}"
+            bind:glideListener="@{viewModel}"
+            bind:zoomable="@{viewModel.fullscreen}"
+            bind:scale="@{viewModel.fullscreen ? -1f : 1f}"
+            bind:onTap="@{viewModel}"/>
+
+        <TextView
+            android:id="@+id/error"
+            android:visibility="@{viewModel.error ? View.VISIBLE : View.GONE}"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="16dp"
+            android:text="@string/prompt_error_occurred"
+            android:gravity="center"/>
+
+        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+            android:id="@+id/progress"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_centerInParent="true"
+            android:visibility="@{viewModel.progress ? View.VISIBLE : View.GONE}"/>
+    </RelativeLayout>
+</layout>

@@ -1,6 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.login.assembly;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
+import com.afterlogic.aurora.drive.presentation.common.modules.assembly.MVVMComponent;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationComponent;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginView;
@@ -14,5 +15,5 @@ import dagger.Subcomponent;
 
 @ModuleScope
 @Subcomponent(modules = LoginModule.class)
-public interface LoginComponent extends PresentationComponent<LoginView, LoginActivity> {
+public interface LoginComponent extends MVVMComponent<LoginActivity> {
 }

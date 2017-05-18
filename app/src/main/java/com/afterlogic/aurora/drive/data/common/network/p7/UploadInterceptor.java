@@ -2,7 +2,7 @@ package com.afterlogic.aurora.drive.data.common.network.p7;
 
 import android.text.TextUtils;
 
-import com.afterlogic.aurora.drive._unrefactored.core.util.NumberUtil;
+import com.afterlogic.aurora.drive.core.common.util.NumberUtil;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -49,7 +49,7 @@ public class UploadInterceptor implements Interceptor {
                         .removeAllQueryParameters(QUERY_PATH)
                         .removeAllQueryParameters(QUERY_FILENAME)
                         .removeAllQueryParameters(QUERY_INTERCEPT)
-                        .rawEncodedQuery(String.format(Locale.US, LINK, type, path, fileName))
+                        .query(String.format(Locale.US, LINK, type, path, fileName))
                         .build();
 
                 request = request.newBuilder()

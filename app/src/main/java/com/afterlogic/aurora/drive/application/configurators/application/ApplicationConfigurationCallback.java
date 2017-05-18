@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.application.configurators.application;
 
-import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 
 /**
  * Created by sashka on 31.08.16.<p/>
@@ -9,5 +9,5 @@ import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFacto
  * Callback for {@link ApplicationConfigurator} result.
  */
 public interface ApplicationConfigurationCallback {
-    void onWireframeFactoryConfigured(ModulesFactoryComponent component);
+    void onInjectorsConfigured(InjectorsComponent component);
 }

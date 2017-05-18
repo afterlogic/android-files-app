@@ -12,7 +12,7 @@
     </style>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="windowActionModeOverlay">true</item>
 
         <!-- Customize your theme here. -->
@@ -21,12 +21,18 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorButtonNormal">@color/colorPrimary</item>
 
+        <item name="actionBarPopupTheme">@style/AppTheme.PopupOverlay</item>
+
         <item name="bottomSheetDialogTheme">@style/AppTheme.BottomSheetDialog</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <style name="AppTheme.Toolbar">
         <item name="colorControlHighlight">@color/colorAccent</item>
-        <item name="android:textColorSecondary">@color/white</item>
     </style>
 
     <style name="AppToolbar">
@@ -34,13 +40,16 @@
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
     <style name="AppTheme.Base.Dialog" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <style name="AppTheme.Dialog" parent="AppTheme.Base.Dialog">
+    </style>
+
+    <style name="AppTheme.Dialog.CompatBackground">
         <item name="android:windowBackground">@color/transparent</item>
     </style>
 

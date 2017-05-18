@@ -28,7 +28,8 @@ import java.util.UUID;
  *
  * Single fragment activity. Create single fragment or restore it.
  */
-public abstract class SingleFragmentActivity extends BaseActivity implements FragmentManager.OnBackStackChangedListener{
+@Deprecated
+public abstract class SingleFragmentActivity extends MVPActivity implements FragmentManager.OnBackStackChangedListener{
 
     //Activity layout id
     @LayoutRes
@@ -238,8 +239,8 @@ public abstract class SingleFragmentActivity extends BaseActivity implements Fra
     }
 
     private void registerFragmentCreateListener(Fragment fragment){
-        if (fragment instanceof BaseFragment){
-            ((BaseFragment) fragment).setFirstCreateInterceptor(view -> {
+        if (fragment instanceof MVPFragment){
+            ((MVPFragment) fragment).setFirstCreateInterceptor(view -> {
                 UUID moduleUuid = view.getModuleUuid();
                 if (moduleUuid != null) {
                     mStackPresentationModulesUuids.add(view.getModuleUuid());

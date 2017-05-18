@@ -18,7 +18,7 @@ import com.afterlogic.aurora.drive.presentation.common.binding.binder.StringBind
 
 public class BinderBindingAdapter {
 
-    @BindingAdapter("bind:binder")
+    @BindingAdapter("binder")
     public static void bindCompound(CompoundButton checkBox, BooleanBinder binder){
         checkBox.setOnCheckedChangeListener(binder);
         binder.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
@@ -32,7 +32,7 @@ public class BinderBindingAdapter {
         checkBox.setChecked(binder.get());
     }
 
-    @BindingAdapter("bind:binder")
+    @BindingAdapter("binder")
     public static void bindTextView(View textView, BooleanBinder binder){
         textView.setOnClickListener(view -> binder.set(!binder.get()));
         binder.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
@@ -44,12 +44,12 @@ public class BinderBindingAdapter {
         textView.setSelected(binder.get());
     }
 
-    @BindingAdapter("bind:visibility")
+    @BindingAdapter("visibility")
     public static void bindViewVisibility(View view, BooleanBinder binder){
         bindViewVisibility(view, binder, false);
     }
 
-    @BindingAdapter({"bind:visibilityBoolean", "bind:inverseVisibility"})
+    @BindingAdapter({"visibilityBoolean", "inverseVisibility"})
     public static void bindViewVisibility(View view, BooleanBinder binder, boolean inverse){
         boolean value = binder.get();
 
@@ -58,7 +58,7 @@ public class BinderBindingAdapter {
         view.setVisibility(value ? View.VISIBLE : View.GONE);
     }
 
-    @BindingAdapter("bind:binder")
+    @BindingAdapter("binder")
     public static void setTextListener(TextView view, StringBinder binder){
         TextWatcher prev = (TextWatcher) view.getTag(R.id.bind_text_adapter);
         if (prev != null){

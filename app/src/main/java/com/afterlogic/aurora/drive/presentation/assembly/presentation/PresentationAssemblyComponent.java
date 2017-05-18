@@ -1,10 +1,10 @@
 package com.afterlogic.aurora.drive.presentation.assembly.presentation;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.PresentationScope;
-import com.afterlogic.aurora.drive.presentation.assembly.assemblies.AssembliesAssemblyComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.assemblies.ModulesComponentCreator;
 import com.afterlogic.aurora.drive.presentation.assembly.assemblies.AssembliesAssemblyModule;
-import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryComponent;
-import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryModule;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsModule;
 
 import dagger.Subcomponent;
 
@@ -18,6 +18,6 @@ import dagger.Subcomponent;
 @PresentationScope
 @Subcomponent(modules = PresentationAssemblyModule.class)
 public interface PresentationAssemblyComponent {
-    AssembliesAssemblyComponent plus(AssembliesAssemblyModule module);
-    ModulesFactoryComponent plus(ModulesFactoryModule module);
+    ModulesComponentCreator plus(AssembliesAssemblyModule module);
+    InjectorsComponent plus(InjectorsModule module);
 }

@@ -3,29 +3,6 @@ apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'io.fabric'
 apply plugin: 'org.greenrobot.greendao'
 
-ext{
-    greenDaoSchemeVersion = 1
-
-    //Dependencies
-    compatVersion = '25.1.1'
-    daggerVersion = '2.8'
-    rxJavaVersion = '2.0.5'
-    rxJavaAndroidVersion = '2.0.1'
-    retrofitVersion = '2.1.0'
-    retrofitRxJava2AdapterVersion = '1.0.0'
-    okHttpVersion = '3.2.2'
-    glideVersion = '3.7.0'
-    photoViewVersion = '1.3.1'
-    fabVersion = '1.10.1'
-    gsonVersion = '2.8.0'
-    streamVersion = '1.1.2'
-    constraintLayoutVersion = '1.0.0-beta4'
-    eventBusVersion = '3.0.0'
-    greenDaoVersion = '3.2.0'
-    trayPrefsVersion = '0.11.0'
-    crashlyticsVersion = '2.6.3@aar'
-}
-
 project.ext.set("autoIncrementTasks", "assembleReleaseBeta")
 apply from: '../artifacts.gradle'
 
@@ -109,6 +86,29 @@ greendao {
     schemaVersion 1
 }
 
+ext{
+    greenDaoSchemeVersion = 1
+
+    //Dependencies
+    compatVersion = '25.3.1'
+    daggerVersion = '2.10'
+    rxJavaVersion = '2.0.8'
+    rxJavaAndroidVersion = '2.0.1'
+    retrofitVersion = '2.1.0'
+    retrofitRxJava2AdapterVersion = '1.0.0'
+    okHttpVersion = '3.7.0'
+    glideVersion = '3.7.0'
+    photoViewVersion = '1.3.1'
+    fabVersion = '1.10.1'
+    gsonVersion = '2.8.0'
+    streamVersion = '1.1.2'
+    constraintLayoutVersion = '1.0.2'
+    eventBusVersion = '3.0.0'
+    greenDaoVersion = '3.2.0'
+    trayPrefsVersion = '0.11.0'
+    crashlyticsVersion = '2.6.3@aar'
+}
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
 
@@ -136,29 +136,18 @@ dependencies {
     compile "io.reactivex.rxjava2:rxandroid:${rxJavaAndroidVersion}"
 
     //[START Api helpers]
-    compile ("com.squareup.retrofit2:retrofit:${retrofitVersion}"){
-        //Cause okhttp replaced with my reviewed okhttp library
-        exclude group: 'com.squareup.okhttp3'
-    }
-    compile ("com.squareup.retrofit2:converter-gson:${retrofitVersion}"){
-        //Cause okhttp replaced with my reviewed okhttp library
-        exclude group: 'com.squareup.okhttp3'
-    }
-    compile ("com.jakewharton.retrofit:retrofit2-rxjava2-adapter:${retrofitRxJava2AdapterVersion}"){
-        //Cause okhttp replaced with my reviewed okhttp library
-        exclude group: 'com.squareup.okhttp3'
-    }
-    compile "com.github.SunnyDayDev.okhttp:okhttp:${okHttpVersion}"
-    compile "com.github.SunnyDayDev.okhttp:logging-interceptor:${okHttpVersion}"
+    compile ("com.squareup.retrofit2:retrofit:${retrofitVersion}")
+    compile ("com.squareup.retrofit2:converter-gson:${retrofitVersion}")
+    compile ("com.jakewharton.retrofit:retrofit2-rxjava2-adapter:${retrofitRxJava2AdapterVersion}")
+    compile "com.squareup.okhttp3:okhttp:${okHttpVersion}"
+    compile "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}"
     compile "com.google.code.gson:gson:${gsonVersion}"
     //[END Api helpers]
 
     //Floating action button
     compile "com.getbase:floatingactionbutton:${fabVersion}"
-
     //Material progress bar
     compile 'me.zhanghai.android.materialprogressbar:library:1.1.5'
-    compile 'com.j256.ormlite:ormlite-android:4.48'
 
     //DB
     compile "org.greenrobot:greendao:${greenDaoVersion}"

@@ -6,6 +6,6 @@ package com.afterlogic.aurora.drive.core.consts;
  */
 public class NotificationConst {
     public static int SERVICE_MAJOR_MESSAGE = 100000;
-    public static int DEVICE_STATE = 100001;
+    public static int SYNC_PROGRESS = 100001;
     public static int BLUETOOTH_STATE = 100002;
 }

@@ -1,26 +1,27 @@
 package com.afterlogic.aurora.drive.presentation.modules.login.interactor;
 
 import android.accounts.Account;
-import android.accounts.AccountManager;
+import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
+import android.os.Bundle;
 
-import com.afterlogic.aurora.drive._unrefactored.core.util.AccountUtil;
-import com.afterlogic.aurora.drive._unrefactored.presentation.receivers.AccountLoginStateReceiver;
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
+import com.afterlogic.aurora.drive.core.common.util.AccountUtil;
+import com.afterlogic.aurora.drive.core.common.util.AppUtil;
 import com.afterlogic.aurora.drive.core.consts.Const;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.modules.apiChecker.checker.ApiChecker;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.model.AuroraSession;
-import com.afterlogic.aurora.drive.model.error.AccountManagerError;
 import com.afterlogic.aurora.drive.model.error.UnknownApiVersionError;
-import com.afterlogic.aurora.drive.presentation.common.modules.interactor.BaseInteractor;
+import com.afterlogic.aurora.drive.presentation.common.modules.model.interactor.BaseInteractor;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.view.FileObserverService;
 import com.annimon.stream.Stream;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -40,18 +41,18 @@ public class LoginInteractorImpl extends BaseInteractor implements LoginInteract
     private final SessionManager mSessionManager;
     private final ApiChecker mApiChecker;
     private final Provider<AuthRepository> mAuthRepository;
-    private final Context mContext;
+    private final Context mAppContext;
 
     @Inject LoginInteractorImpl(ObservableScheduler scheduler,
                                 SessionManager sessionManager,
                                 ApiChecker apiChecker,
                                 Provider<AuthRepository> authRepository,
-                                Context context) {
+                                Context appContext) {
         super(scheduler);
         mSessionManager = sessionManager;
         mApiChecker = apiChecker;
         mAuthRepository = authRepository;
-        mContext = context;
+        mAppContext = appContext;
     }
 
     @Override
@@ -85,7 +86,7 @@ public class LoginInteractorImpl extends BaseInteractor implements LoginInteract
             return Stream.of(domains)
                     .map(mApiChecker::getApiVersion)
                     .map(Single::toObservable)
-                    .collect(Observables.ObservableCollectors.concatObservables())
+                    .collect(Observables.Collectors.concatObservables())
                     .filter(version -> version != Const.ApiVersion.API_NONE)
                     .firstElement()
                     .switchIfEmpty(Maybe.error(new UnknownApiVersionError()))
@@ -105,46 +106,26 @@ public class LoginInteractorImpl extends BaseInteractor implements LoginInteract
                                     return Completable.complete();
                                 })
                                 .andThen(authRepository.login(session.getLogin(), session.getPassword()))
-                                .flatMapCompletable(authToken -> {
-                                    mSessionManager.getSession().setAuthToken(authToken.token);
-                                    return Completable.complete();
-                                })
                 )
-                .andThen(storeAuthData())
                 .doOnError(error -> mSessionManager.setSession(null))
+                .andThen(Completable.fromAction(() -> {
+                    AppUtil.setComponentEnabled(FileObserverService.class, true, mAppContext);
+                    mAppContext.startService(FileObserverService.intent(mAppContext));
+
+                    Account account = AccountUtil.getCurrentAccount(mAppContext);
+                    ContentResolver.setSyncAutomatically(
+                            account,
+                            AccountUtil.FILE_SYNC_AUTHORITY,
+                            true
+                    );
+                    ContentResolver.addPeriodicSync(
+                            account,
+                            AccountUtil.FILE_SYNC_AUTHORITY,
+                            Bundle.EMPTY,
+                            TimeUnit.DAYS.toSeconds(1)
+                    );
+                }))
                 .compose(this::composeDefault);
-    }
-
-    private Completable storeAuthData(){
-        return Completable.fromAction(() -> {
-
-            AccountManager am = (AccountManager) mContext.getSystemService(Context.ACCOUNT_SERVICE);
-            AuroraSession session = mSessionManager.getSession();
-
-            Account account = null;
-            for (Account a:am.getAccountsByType(AccountUtil.ACCOUNT_TYPE)){
-                if (a.name.equals(session.getLogin())){
-                    account = a;
-                    break;
-                }
-            }
-
-            boolean isNew = account == null;
-            if (isNew) {
-                account = new Account(session.getLogin(), AccountUtil.ACCOUNT_TYPE);
-                if (!am.addAccountExplicitly(account, session.getPassword(), null)) {
-                    throw new AccountManagerError();
-                }
-            }
-
-            AccountUtil.updateAccountCredentials(account, session, am);
-
-            Intent loggedBroadcast = new Intent(AccountLoginStateReceiver.ACTION_AURORA_LOGIN);
-            loggedBroadcast.putExtra(AccountLoginStateReceiver.ACCOUNT, account);
-            loggedBroadcast.putExtra(AccountLoginStateReceiver.AURORA_SESSION, session);
-            loggedBroadcast.putExtra(AccountLoginStateReceiver.IS_NEW, isNew);
-            mContext.sendBroadcast(loggedBroadcast);
-        });
     }
 
 }

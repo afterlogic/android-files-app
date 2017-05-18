@@ -11,6 +11,7 @@ import javax.inject.Provider;
  */
 
 public class MultiApiUtil {
+
     public static <T> T chooseByApiVersion(ApiConfigurator configurator, Provider<T> p7, Provider<T> p8){
         switch (configurator.getCurrentApiVersion()){
             case Const.ApiVersion.API_P7:

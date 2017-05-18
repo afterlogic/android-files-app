@@ -15,6 +15,7 @@ import dagger.Provides;
  *
  * Base presentation module's module.
  */
+@Deprecated
 @Module
 public abstract class PresentationModule<View extends PresentationView> {
 
@@ -33,17 +34,22 @@ public abstract class PresentationModule<View extends PresentationView> {
     }
 
     @Provides
-    protected ViewState<View> provideViewState(){
+    public ViewState<View> provideViewState(){
         return mView;
     }
 
     @Provides
-    protected OptWeakRef<View> provideView(){
+    public OptWeakRef<View> provideView(){
         return mView.getView();
     }
 
     @Provides
-    protected PresentationModule<View> provideSelf(){
+    public View provideViewProxy(){
+        return mView.getViewProxy();
+    }
+
+    @Provides
+    public PresentationModule<View> provideSelf(){
         return this;
     }
 

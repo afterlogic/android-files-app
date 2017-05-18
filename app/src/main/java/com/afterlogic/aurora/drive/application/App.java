@@ -6,7 +6,7 @@ import com.afterlogic.aurora.drive.application.assembly.ApplicationAssemblyCompo
 import com.afterlogic.aurora.drive.application.assembly.ApplicationAssemblyModule;
 import com.afterlogic.aurora.drive.application.assembly.DaggerApplicationAssemblyComponent;
 import com.afterlogic.aurora.drive.application.configurators.application.ApplicationConfigurationCallback;
-import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFactoryComponent;
+import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 
 
 /**
@@ -16,7 +16,7 @@ import com.afterlogic.aurora.drive.presentation.assembly.wireframes.ModulesFacto
 public class App extends Application implements ApplicationConfigurationCallback {
 
     //Presentation modules's factory
-    private ModulesFactoryComponent mModulesFactory;
+    private InjectorsComponent mInjectors;
 
     @Override
     public void onCreate() {
@@ -25,17 +25,17 @@ public class App extends Application implements ApplicationConfigurationCallback
     }
 
     /**
-     * {@link ApplicationConfigurationCallback#onWireframeFactoryConfigured(ModulesFactoryComponent)}  implementation.
+     * {@link ApplicationConfigurationCallback#onInjectorsConfigured(InjectorsComponent)}  implementation.
      *
      * When app is success configured modulesStore presentation modules's factory.
      */
     @Override
-    public void onWireframeFactoryConfigured(ModulesFactoryComponent component) {
-        mModulesFactory = component;
+    public void onInjectorsConfigured(InjectorsComponent component) {
+        mInjectors = component;
     }
 
-    public ModulesFactoryComponent modulesFactory(){
-        return mModulesFactory;
+    public InjectorsComponent getInjectors(){
+        return mInjectors;
     }
 
     /**

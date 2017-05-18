@@ -14,12 +14,18 @@ public class AppPrefsImpl implements AppPrefs {
 
     private AppPreferences mAppPreferences;
 
-    @Inject public AppPrefsImpl(Context ctx) {
+    @Inject
+    public AppPrefsImpl(Context ctx) {
         mAppPreferences = new AppPreferences(ctx);
     }
 
     @Override
     public Pref<Integer> appConfigVersion() {
         return new IntPref(mAppPreferences, "appConfigVersion");
+    }
+
+    @Override
+    public Pref<Boolean> loggedIn() {
+        return new BooleanPref(mAppPreferences, "loggedIn", false);
     }
 }

@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import com.afterlogic.aurora.drive.data.common.annotations.P8;
 import com.afterlogic.aurora.drive.data.common.network.p8.Api8;
 import com.afterlogic.aurora.drive.data.common.network.p8.CloudServiceP8;
-import com.afterlogic.aurora.drive._unrefactored.model.project8.ApiResponseP8;
+import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
 import com.google.gson.Gson;
 
 import java.util.Collections;

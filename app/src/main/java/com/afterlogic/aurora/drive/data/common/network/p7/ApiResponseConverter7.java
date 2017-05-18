@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.data.common.network.p7;
 
-import com.afterlogic.aurora.drive._unrefactored.model.project7.ApiResponseP7;
+import com.afterlogic.aurora.drive.data.model.project7.ApiResponseP7;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;

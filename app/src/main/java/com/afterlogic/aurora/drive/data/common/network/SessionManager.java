@@ -8,6 +8,7 @@ import com.afterlogic.aurora.drive.core.consts.Const;
  * mail: sunnyday.development@gmail.com
  */
 public class SessionManager {
+
     private AuroraSession mAuroraSession;
 
     private ApiConfigurator mApiConfigurator;
@@ -21,6 +22,8 @@ public class SessionManager {
     }
 
     public void setSession(AuroraSession auroraSession) {
+        if (auroraSession == mAuroraSession) return;
+
         mAuroraSession = auroraSession;
         if (auroraSession != null) {
             mApiConfigurator.setDomain(auroraSession.getDomain(), auroraSession.getApiVersion());

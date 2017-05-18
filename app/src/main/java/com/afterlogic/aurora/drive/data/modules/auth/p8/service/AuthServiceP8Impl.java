@@ -5,7 +5,7 @@ import com.afterlogic.aurora.drive.data.common.network.ParamsBuilder;
 import com.afterlogic.aurora.drive.data.common.network.p8.Api8;
 import com.afterlogic.aurora.drive.data.common.network.p8.CloudServiceP8;
 import com.afterlogic.aurora.drive.model.AuthToken;
-import com.afterlogic.aurora.drive._unrefactored.model.project8.ApiResponseP8;
+import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
 import com.google.gson.Gson;
 
 import java.util.Map;

@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.start.presenter;
 
-import com.afterlogic.aurora.drive.presentation.common.modules.presenter.BasePresenter;
+import com.afterlogic.aurora.drive.presentation.common.modules.model.presenter.BasePresenter;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.modules.start.interactor.StartInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.start.router.StartRouter;

@@ -1,12 +1,9 @@
 package com.afterlogic.aurora.drive.presentation.modules.login.assembly;
 
-import android.support.annotation.NonNull;
 
-import com.afterlogic.aurora.drive.presentation.assembly.assemblies.AssembliesAssemblyComponent;
-import com.afterlogic.aurora.drive.presentation.common.modules.assembly.BaseInjector;
-import com.afterlogic.aurora.drive.presentation.common.modules.assembly.Injector;
+import com.afterlogic.aurora.drive.presentation.assembly.assemblies.ModulesComponentCreator;
+import com.afterlogic.aurora.drive.presentation.assembly.Injector;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
-import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginView;
 
 import javax.inject.Inject;
 
@@ -15,16 +12,19 @@ import javax.inject.Inject;
  * mail: sunnyday.development@gmail.com
  */
 
-public class LoginInjector extends BaseInjector<LoginActivity, LoginView, LoginModule> implements Injector<LoginActivity>{
+public class LoginInjector implements Injector<LoginActivity>{
+
+    private final ModulesComponentCreator mCreator;
 
     @Inject
-    LoginInjector(AssembliesAssemblyComponent component) {
-        super(component);
+    LoginInjector(ModulesComponentCreator component) {
+        mCreator = component;
     }
 
-    @NonNull
     @Override
-    protected LoginModule createModule() {
-        return new LoginModule();
+    public void inject(LoginActivity target) {
+        LoginComponent component = mCreator.login();
+        component.module().setView(target);
+        component.inject(target);
     }
 }

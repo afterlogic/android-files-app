@@ -1,8 +1,10 @@
 package com.afterlogic.aurora.drive.data.modules.auth;
 
-import com.afterlogic.aurora.drive.model.AuthToken;
+import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.SystemAppData;
 
+import io.reactivex.Completable;
+import io.reactivex.Maybe;
 import io.reactivex.Single;
 
 /**
@@ -10,9 +12,13 @@ import io.reactivex.Single;
  * mail: sunnyday.development@gmail.com
  */
 public interface AuthRepository {
-    Single<AuthToken> login(String login, String password);
+    Completable login(String login, String password);
 
-    Single<AuthToken> relogin();
+    Completable relogin();
 
     Single<SystemAppData> getSystemAppData();
+
+    Maybe<AuroraSession> getCurrentSession();
+
+    Completable logoutAndClearData();
 }

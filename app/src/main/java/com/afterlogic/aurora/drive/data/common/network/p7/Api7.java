@@ -1,11 +1,11 @@
 package com.afterlogic.aurora.drive.data.common.network.p7;
 
-import com.afterlogic.aurora.drive._unrefactored.model.AuroraFilesResponse;
+import com.afterlogic.aurora.drive.data.model.AuroraFilesResponse;
 import com.afterlogic.aurora.drive.model.AuthToken;
 import com.afterlogic.aurora.drive.model.SystemAppData;
-import com.afterlogic.aurora.drive._unrefactored.model.project7.ApiResponseP7;
-import com.afterlogic.aurora.drive._unrefactored.model.project7.AuroraFileP7;
-import com.afterlogic.aurora.drive._unrefactored.model.project7.UploadResultP7;
+import com.afterlogic.aurora.drive.data.model.project7.ApiResponseP7;
+import com.afterlogic.aurora.drive.data.model.project7.AuroraFileP7;
+import com.afterlogic.aurora.drive.data.model.project7.UploadResultP7;
 
 import java.util.Map;
 

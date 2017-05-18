@@ -3,10 +3,10 @@ package com.afterlogic.aurora.drive.presentation.modules.login.router;
 import android.app.Activity;
 import android.content.Intent;
 
-import com.afterlogic.aurora.drive.presentation.common.modules.router.BaseRouter;
-import com.afterlogic.aurora.drive.presentation.common.modules.view.BaseActivity;
-import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
-import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginView;
+import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
+import com.afterlogic.aurora.drive.presentation.common.modules.model.router.BaseMVVMRouter;
+import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
+import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFilesActivity;
 
 import javax.inject.Inject;
 
@@ -18,9 +18,10 @@ import static com.afterlogic.aurora.drive.presentation.modules.login.view.LoginI
  * mail: sunnyday.development@gmail.com
  */
 
-public class LoginRouterImpl extends BaseRouter<LoginView, BaseActivity> implements LoginRouter {
+public class LoginRouterImpl extends BaseMVVMRouter<LoginActivity> implements LoginRouter {
 
-    @Inject LoginRouterImpl(ViewState<LoginView> viewContext) {
+    @Inject
+    LoginRouterImpl(OptWeakRef<LoginActivity> viewContext) {
         super(viewContext);
     }
 
@@ -30,6 +31,9 @@ public class LoginRouterImpl extends BaseRouter<LoginView, BaseActivity> impleme
             Intent requestIntent = activity.getIntent();
             if (!requestIntent.getBooleanExtra(EXTRA_FINISH_ON_RESULT, false)) {
                 Class nextActivityClass = (Class) requestIntent.getSerializableExtra(EXTRA_NEXT_ACTIVITY);
+                if (nextActivityClass == null) {
+                    nextActivityClass = MainFilesActivity.class;
+                }
                 activity.startActivity(new Intent(activity, nextActivityClass));
             } else {
                 activity.setResult(Activity.RESULT_OK);

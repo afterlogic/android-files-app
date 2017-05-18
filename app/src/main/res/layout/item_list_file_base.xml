@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View"/>
+
+        <variable
+            name="viewModel"
+            type="com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFileItemViewModel"/>
+    </data>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:background="@drawable/bg_simple_highlight"
+        android:gravity="center"
+        bind:onClick="@{viewModel}"
+        bind:onLongClick="@{viewModel}"
+        style="@style/RootLayout.Item">
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:contentDescription="@string/content_descroption_file_icon"
+            bind:imageUri="@{viewModel.fileIcon}"
+            bind:tintColor="@{viewModel.isFolder ? @color/colorPrimary : -1}"
+            tools:tint="@color/colorPrimary"
+            tools:src="@mipmap/ic_launcher"/>
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingRight="8dp"
+            android:paddingLeft="8dp"
+            android:lines="1"
+            android:ellipsize="end"
+            android:text="@{viewModel.fileName}"
+            android:gravity="start"
+            tools:text="asdfasfdasdf.sdf-asdfasdfasdfasdf-sdfasdfasdf"/>
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/status_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:tint="@color/colorAccent"
+            android:visibility="@{viewModel.statusIcon.get() != null ? View.VISIBLE : View.GONE}"
+            bind:imageUri="@{viewModel.statusIcon}"
+            bind:tintColor="@{viewModel.isFolder ? @color/colorPrimary : @color/colorAccent}"
+            tools:tint="@color/colorPrimary"
+            tools:src="@drawable/ic_next"
+            tools:visibility="visible"
+            tools:ignore="ContentDescription"/>
+    </LinearLayout>
+</layout>

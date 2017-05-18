@@ -2,9 +2,9 @@ package com.afterlogic.aurora.drive.presentation.modules.start.assembly;
 
 import android.support.annotation.NonNull;
 
-import com.afterlogic.aurora.drive.presentation.assembly.assemblies.AssembliesAssemblyComponent;
-import com.afterlogic.aurora.drive.presentation.common.modules.assembly.BaseInjector;
-import com.afterlogic.aurora.drive.presentation.common.modules.assembly.Injector;
+import com.afterlogic.aurora.drive.presentation.assembly.assemblies.ModulesComponentCreator;
+import com.afterlogic.aurora.drive.presentation.common.modules.assembly.OldBaseInjector;
+import com.afterlogic.aurora.drive.presentation.assembly.Injector;
 import com.afterlogic.aurora.drive.presentation.modules.start.view.StartActivity;
 import com.afterlogic.aurora.drive.presentation.modules.start.view.StartView;
 
@@ -15,9 +15,9 @@ import javax.inject.Inject;
  * mail: sunnyday.development@gmail.com
  */
 
-public class StartInjector extends BaseInjector<StartActivity, StartView, StartModule> implements Injector<StartActivity> {
+public class StartInjector extends OldBaseInjector<StartActivity, StartView, StartModule> implements Injector<StartActivity> {
 
-    @Inject StartInjector(AssembliesAssemblyComponent component) {
+    @Inject StartInjector(ModulesComponentCreator component) {
         super(component);
     }
 

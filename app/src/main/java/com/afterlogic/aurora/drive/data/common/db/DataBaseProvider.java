@@ -9,4 +9,5 @@ import com.afterlogic.aurora.drive.data.modules.files.model.db.OfflineFileInfoEn
 
 public interface DataBaseProvider {
     OfflineFileInfoEntityDao offlineFileInfo();
+    void reset();
 }

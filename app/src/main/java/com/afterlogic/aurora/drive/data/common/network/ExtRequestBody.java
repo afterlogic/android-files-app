@@ -2,8 +2,8 @@ package com.afterlogic.aurora.drive.data.common.network;
 
 import android.content.Context;
 
+import com.afterlogic.aurora.drive.core.common.interfaces.ProgressListener;
 import com.afterlogic.aurora.drive.model.FileInfo;
-import com.afterlogic.aurora.drive._unrefactored.data.common.api.ApiTask;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,7 +27,7 @@ public class ExtRequestBody extends RequestBody {
     private InputStreamCreator mInputStreamCreator;
     private FileInfo mFileInfo;
 
-    private ApiTask.ProgressUpdater mProgressUpdater;
+    private ProgressListener mProgressUpdater;
 
     public ExtRequestBody(FileInfo fileInfo, Context ctx){
         mFileInfo = fileInfo;
@@ -76,7 +76,7 @@ public class ExtRequestBody extends RequestBody {
 
     private void notifyProgress(long progress){
         if (mProgressUpdater != null){
-            mProgressUpdater.notifyChanged(progress, mFileInfo.getSize());
+            mProgressUpdater.onProgress(mFileInfo.getSize(), progress);
         }
     }
 
@@ -89,7 +89,7 @@ public class ExtRequestBody extends RequestBody {
         return mFileInfo.getName();
     }
 
-    public void setProgressUpdater(ApiTask.ProgressUpdater progressUpdater) {
+    public void setProgressListener(ProgressListener progressUpdater) {
         mProgressUpdater = progressUpdater;
     }
 

@@ -6,8 +6,7 @@
         android:id="@+id/action_multichoise"
         android:title="@string/multichoise"
         android:icon="@drawable/ic_action_multichoise"
-        app:showAsAction="ifRoom"
-        android:visible="false"/>
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_offline_mode"
@@ -15,13 +14,11 @@
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/action_online_mode"
-        android:title="@string/prompt_online_mode"
-        android:visible="false"
-        app:showAsAction="never"/>
+        android:id="@+id/action_logout"
+        android:title="@string/logout"/>
 
     <item
-        android:id="@+id/action_logout"
+        android:id="@+id/action_about"
         app:showAsAction="never"
-        android:title="@string/logout"/>
+        android:title="@string/prompt_menu_about"/>
 </menu>

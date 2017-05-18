@@ -6,6 +6,6 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="com.afterlogic.aurora.files"
-            android:targetClass="com.afterlogic.aurora.drive.presentation.ui.AccountInfoPreferenceActivity"/>
+            android:targetClass="com.afterlogic.aurora.drive.presentation.modules.accountInfo.view.AccountInfoActivity"/>
     </PreferenceScreen>
 </PreferenceScreen>

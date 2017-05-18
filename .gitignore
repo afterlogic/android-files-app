@@ -47,3 +47,8 @@ captures/
 .externalNativeBuild
 
 /signing/
+
+\.idea/
+
+gradle/
+fabric.properties

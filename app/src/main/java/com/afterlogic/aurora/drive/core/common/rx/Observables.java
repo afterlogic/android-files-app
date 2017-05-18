@@ -1,6 +1,7 @@
 package com.afterlogic.aurora.drive.core.common.rx;
 
 import com.annimon.stream.Collector;
+import com.annimon.stream.Stream;
 import com.annimon.stream.function.BiConsumer;
 import com.annimon.stream.function.Supplier;
 
@@ -8,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Completable;
+import io.reactivex.CompletableTransformer;
 import io.reactivex.Observable;
+import io.reactivex.ObservableTransformer;
 
 /**
  * Created by sashka on 13.10.16.<p/>
@@ -16,7 +19,34 @@ import io.reactivex.Observable;
  */
 public class Observables {
 
-    public static class ObservableCollectors {
+    public static CompletableTransformer completeOnError(Class<? extends Throwable> skipClass){
+        return upstream -> upstream.onErrorResumeNext(error -> {
+            if (skipClass == error.getClass()){
+                return Completable.complete();
+            } else {
+                return Completable.error(error);
+            }
+        });
+    }
+
+    public static <T> ObservableTransformer<T, T> emptyOnError(Class<? extends Throwable> skipClass){
+        return upstream -> upstream.onErrorResumeNext(error -> {
+            if (skipClass == error.getClass()){
+                return Observable.empty();
+            } else {
+                return Observable.error(error);
+            }
+        });
+    }
+
+    public static  <T> Observable<T> forEach(Observable<List<T>> observable){
+        return observable.flatMap(items -> Stream.of(items)
+                .map(Observable::just)
+                .collect(Collectors.concatObservables())
+        );
+    }
+
+    public static class Collectors {
         public static Collector<Completable, List<Completable>, Completable> concatCompletable(){
             return new Collector<Completable, List<Completable>, Completable>() {
                 @Override

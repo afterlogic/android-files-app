@@ -5,5 +5,8 @@ package com.afterlogic.aurora.drive.data.modules.prefs;
  * mail: sunnyday.development@gmail.com
  */
 public interface AppPrefs {
+
     Pref<Integer> appConfigVersion();
+
+    Pref<Boolean> loggedIn();
 }

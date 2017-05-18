@@ -2,7 +2,7 @@ package com.afterlogic.aurora.drive.data.common.network.p7;
 
 import android.text.TextUtils;
 
-import com.afterlogic.aurora.drive._unrefactored.core.util.NumberUtil;
+import com.afterlogic.aurora.drive.core.common.util.NumberUtil;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -49,7 +49,7 @@ public class DownloadInterceptor implements Interceptor {
                         .removeAllQueryParameters(QUERY_AUTH_TOKEN)
                         .removeAllQueryParameters(QUERY_INTERCEPT)
                         .removeAllQueryParameters(QUERY_ACCOUNT_ID)
-                        .rawEncodedQuery(String.format(Locale.US, LINK, accountId, hash, token))
+                        .query(String.format(Locale.US, LINK, accountId, hash, token))
                         .build();
 
                 request = request.newBuilder()
