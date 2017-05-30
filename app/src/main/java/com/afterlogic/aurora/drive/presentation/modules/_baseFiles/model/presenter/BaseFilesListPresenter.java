@@ -109,8 +109,7 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
 
     @Override
     public void onFileClick(AuroraFile file) {
-        // TODO restore zip when ready
-        if (file.isFolder() /*|| file.getActions() != null && file.getActions().isList()*/){
+        if (file.isFolder() || file.getActions() != null && file.getActions().isList()){
             mPath.add(0, file);
             onRefresh();
         }
@@ -123,6 +122,11 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
 
     protected AuroraFile getCurrentFolder(){
         return mPath.get(0);
+    }
+
+    protected boolean isInListActionFolder() {
+        return Stream.of(mPath)
+                .anyMatch(it -> it.getActions() != null && it.getActions().isList());
     }
 
     @Override
