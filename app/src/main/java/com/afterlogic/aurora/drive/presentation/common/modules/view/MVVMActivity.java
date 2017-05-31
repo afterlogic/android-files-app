@@ -1,5 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.common.modules.view;
 
+import android.content.Intent;
 import android.databinding.Observable;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
@@ -9,10 +10,16 @@ import android.view.MenuItem;
 
 import com.afterlogic.aurora.drive.BR;
 import com.afterlogic.aurora.drive.application.App;
+import com.afterlogic.aurora.drive.model.events.ActivityResultEvent;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.modules.viewModel.ViewModel;
 import com.afterlogic.aurora.drive.presentation.common.util.UnbindableObservable;
+import com.annimon.stream.Stream;
 
+import org.greenrobot.eventbus.EventBus;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -36,6 +43,8 @@ public abstract class MVVMActivity<VM extends ViewModel> extends AuroraActivity 
     VM mViewModel;
 
     private ViewDataBinding mBinding;
+
+    private List<Runnable> mStartWaiters = new ArrayList<>();
 
     public abstract void assembly(InjectorsComponent injectors);
 
@@ -103,13 +112,29 @@ public abstract class MVVMActivity<VM extends ViewModel> extends AuroraActivity 
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        doOnActive(() -> {
+            if (EventBus.getDefault().hasSubscriberForEvent(ActivityResultEvent.class)) {
+                EventBus.getDefault().post(new ActivityResultEvent(requestCode, resultCode, data));
+            }
+        });
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
+
         mIsActive = true;
+
         if (mViewModel != null) {
             onBindStartedBindings(mViewModel, mStartedUnbindable);
             mViewModel.onViewStart();
         }
+
+        Stream.of(mStartWaiters).forEach(Runnable::run);
+        mStartWaiters.clear();
     }
 
     @Override
@@ -156,6 +181,14 @@ public abstract class MVVMActivity<VM extends ViewModel> extends AuroraActivity 
 
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void doOnActive(Runnable runnable) {
+        if (isActive()) {
+            runnable.run();
+        } else {
+            mStartWaiters.add(runnable);
         }
     }
 

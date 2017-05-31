@@ -4,6 +4,8 @@ import com.afterlogic.aurora.drive.BuildConfig;
 import com.afterlogic.aurora.drive.data.common.annotations.P7;
 import com.afterlogic.aurora.drive.data.common.network.DynamicDomainProvider;
 import com.afterlogic.aurora.drive.data.common.network.DynamicEndPointInterceptor;
+import com.afterlogic.aurora.drive.data.common.network.util.IgnoreDeserealizationExcludeStrategy;
+import com.afterlogic.aurora.drive.data.common.network.util.IgnoreSerealizationExcludeStrategy;
 import com.afterlogic.aurora.drive.data.model.project7.ApiResponseP7;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -48,7 +50,11 @@ public class P7NetworkDataModule {
 
     @Provides @P7
     Gson provideGson(){
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder()
+                .addDeserializationExclusionStrategy(new IgnoreDeserealizationExcludeStrategy())
+                .addSerializationExclusionStrategy(new IgnoreSerealizationExcludeStrategy())
+                .create();
+
         return new GsonBuilder()
                 .registerTypeAdapter(ApiResponseP7.class, new ApiResponseConverter7(gson))
                 .create();

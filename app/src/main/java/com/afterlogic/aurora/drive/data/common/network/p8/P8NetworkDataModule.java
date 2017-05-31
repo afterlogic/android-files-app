@@ -8,10 +8,13 @@ import com.afterlogic.aurora.drive.data.common.network.DynamicEndPointIntercepto
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.common.network.p8.Api8.Header;
 import com.afterlogic.aurora.drive.data.common.network.p8.converter.ApiResponseConverter8;
+import com.afterlogic.aurora.drive.data.common.network.util.IgnoreDeserealizationExcludeStrategy;
+import com.afterlogic.aurora.drive.data.common.network.util.IgnoreSerealizationExcludeStrategy;
 import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.OkHttpClient;
@@ -57,7 +60,11 @@ public class P8NetworkDataModule {
 
     @Provides @P8
     Gson provideGson(){
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder()
+                .addDeserializationExclusionStrategy(new IgnoreDeserealizationExcludeStrategy())
+                .addSerializationExclusionStrategy(new IgnoreSerealizationExcludeStrategy())
+                .create();
+
         return new GsonBuilder()
                 .registerTypeAdapter(ApiResponseP8.class, new ApiResponseConverter8(gson))
                 .create();

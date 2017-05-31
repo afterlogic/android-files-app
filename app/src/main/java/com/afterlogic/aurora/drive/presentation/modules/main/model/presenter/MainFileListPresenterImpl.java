@@ -307,7 +307,7 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
     @Override
     public void onFileUpload() {
         observeActivityResult(MainFileListRouter.FILE_SELECT_CODE, true)
-                .startWith(Completable.fromAction(mRouter::openUploadFileChooser).toObservable())
+                .doOnSubscribe(disposable -> mRouter.openUploadFileChooser())
                 .compose(Observables.emptyOnError(ActivityResultError.class))
                 .firstElement()
                 .flatMapObservable(activityResult -> mInteractor.uploadFile(

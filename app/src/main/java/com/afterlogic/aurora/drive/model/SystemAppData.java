@@ -1,5 +1,6 @@
 package com.afterlogic.aurora.drive.model;
 
+import com.afterlogic.aurora.drive.data.common.annotations.IgnoreField;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -202,7 +203,9 @@ public class SystemAppData {
      * ExternalServices : {"Connectors":[{"@Object":"Object/CTenantSocials","Id":"631514845250-lsi1lf1j7vqsb5rq18lh4t499glp7f8b.apps.googleusercontent.com","Name":"Google","LowerName":"google","Allow":true,"Scopes":["auth","filestorage"]},{"@Object":"Object/CTenantSocials","Id":"fl0eoztbakx121p","Name":"Dropbox","LowerName":"dropbox","Allow":true,"Scopes":["auth","filestorage"]},{"@Object":"Object/CTenantSocials","Id":"1582615142003625","Name":"Facebook","LowerName":"facebook","Allow":true,"Scopes":["auth"]},{"@Object":"Object/CTenantSocials","Id":"5dK6c7peT49vQXRi5JBR3HcRg","Name":"Twitter","LowerName":"twitter","Allow":true,"Scopes":["auth"]}]}
      */
 
+    // FIXME: Empty array ([] not object or null) received when its empty
     @SerializedName("Plugins")
+    @IgnoreField
     private Plugins mPlugins;
     @SerializedName("AllowChangePassword")
     private boolean mAllowChangePassword;
