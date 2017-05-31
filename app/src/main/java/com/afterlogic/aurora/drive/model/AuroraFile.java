@@ -175,7 +175,7 @@ public class AuroraFile implements Parcelable, Cloneable{
         return mLinkType;
     }
 
-    public String getThumbnailLink() {
+    public String getThumbnailUrl() {
         return mThumbnailLink;
     }
 

@@ -19,7 +19,7 @@ public class AuroraFileP7BlToNetMapper implements Mapper<AuroraFileP7, AuroraFil
                 source.isLink(),
                 source.getLinkUrl(),
                 source.getLinkType(),
-                source.getThumbnailLink(),
+                source.getThumbnailUrl(),
                 source.hasThumbnail(),
                 source.getContentType(),
                 source.getHash(),

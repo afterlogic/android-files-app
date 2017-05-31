@@ -7,6 +7,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 
@@ -29,6 +30,13 @@ public class ImageViewBinding {
     public static void setImageFromUri(ImageView imageView, Uri uri, @Nullable RequestListener<Uri, GlideDrawable> listener){
         Glide.clear(imageView);
         if (uri != null) {
+
+            if (uri.getScheme().startsWith("http")) {
+                GlideUrl url = new GlideUrl(uri.toString());
+                Glide.with(imageView.getContext())
+                        .load(url);
+            }
+
             DrawableRequestBuilder<Uri> request = Glide.with(imageView.getContext())
                     .fromUri()
                     .load(uri);

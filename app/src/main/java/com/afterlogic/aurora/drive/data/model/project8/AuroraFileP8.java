@@ -28,8 +28,8 @@ public class AuroraFileP8 {
     @SerializedName("LinkType")
     private String mLinkType;
 
-    @SerializedName("ThumbnailLink")
-    private String mThumbnailLink;
+    @SerializedName("ThumbnailUrl")
+    private String mThumbnailUrl;
 
     @SerializedName("Thumb")
     private boolean mThumb;
@@ -80,8 +80,8 @@ public class AuroraFileP8 {
         return mLinkType;
     }
 
-    public String getThumbnailLink() {
-        return mThumbnailLink;
+    public String getThumbnailUrl() {
+        return mThumbnailUrl;
     }
 
     public boolean isThumb() {
