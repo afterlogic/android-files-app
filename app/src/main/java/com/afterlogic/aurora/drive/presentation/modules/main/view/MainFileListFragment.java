@@ -42,6 +42,7 @@ public class MainFileListFragment extends BaseFilesListFragment<MainFileListView
 
     private SimpleListener mMultiChoiseListener = new SimpleListener(this::updateSelection);
     private SimpleListener mFileForActionsListener = new SimpleListener(this::updateFileActions);
+    private SimpleListener mActionsEnabledListener = new SimpleListener(this::updateActionsEnabled);
 
     @Override
     public void onAttach(Context context) {
@@ -63,7 +64,10 @@ public class MainFileListFragment extends BaseFilesListFragment<MainFileListView
 
         mViewModel.getSelection().addOnPropertyChangedCallback(mMultiChoiseListener);
         mViewModel.getFileRequeireActions().addOnPropertyChangedCallback(mFileForActionsListener);
+        mViewModel.getActionsEnabled().addOnPropertyChangedCallback(mActionsEnabledListener);
+
         updateFileActions();
+        updateActionsEnabled();
     }
 
     @Nullable
@@ -93,6 +97,7 @@ public class MainFileListFragment extends BaseFilesListFragment<MainFileListView
         super.onDestroy();
         mViewModel.getSelection().removeOnPropertyChangedCallback(mMultiChoiseListener);
         mViewModel.getFileRequeireActions().removeOnPropertyChangedCallback(mFileForActionsListener);
+        mViewModel.getActionsEnabled().removeOnPropertyChangedCallback(mActionsEnabledListener);
     }
 
     @Override
@@ -247,6 +252,12 @@ public class MainFileListFragment extends BaseFilesListFragment<MainFileListView
             mFileActions = FileActionsBottomSheet.newInstance();
             mFileActions.setTargetFragment(this, 0);
             mFileActions.show(getFragmentManager(), FILE_ACTIONS);
+        }
+    }
+
+    private void updateActionsEnabled() {
+        if (mCallback != null) {
+            mCallback.onActionsEnabledChanged(mViewModel.getActionsEnabled().get());
         }
     }
 

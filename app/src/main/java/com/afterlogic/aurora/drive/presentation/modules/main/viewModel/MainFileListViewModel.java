@@ -1,5 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.viewModel;
 
+import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 
 import com.afterlogic.aurora.drive.model.FilesSelection;
@@ -14,8 +15,12 @@ import com.afterlogic.aurora.drive.presentation.modules.main.model.MainFilesList
 public interface MainFileListViewModel extends BaseFilesListViewModel<MainFileItemViewModel>{
 
     MainFilesListModel getModel();
+
     ObservableField<FilesSelection> getSelection();
+
     ObservableField<MainFileItemViewModel> getFileRequeireActions();
+
+    ObservableBoolean getActionsEnabled();
 
     void onCancelFileActions();
 }

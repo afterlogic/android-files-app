@@ -96,6 +96,7 @@
     <string name="prompt_dialog_title_folder_cration">Создание папки:</string>
     <string name="promtp_dialog_error_message_doesnt_have_chooser">Нет приложения для выбора файлов.</string>
     <string name="prompt_dialog_title_renaming">Переименовывание:</string>
+    <string name="main__prompt__actions_not_allowed_in_zip">Действия над файлами не возможны в zip или GoogleDrive папке.</string>
 
     <string name="prompt_title_account_info">Аккаунт Aurora</string>
     <string name="prompt_about_version">Версия: %1$s (%2$d)</string>

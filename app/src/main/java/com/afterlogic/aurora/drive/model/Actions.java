@@ -16,7 +16,7 @@ public class Actions {
         this.isList = isList;
     }
 
-    public boolean isList() {
+    public boolean hasList() {
         return isList;
     }
 

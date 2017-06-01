@@ -7,4 +7,5 @@ package com.afterlogic.aurora.drive.presentation.modules.main.view;
 
 public interface FileListFragmentCallback {
     void onSelectedFilesChanged(int selected, boolean hasFolder);
+    void onActionsEnabledChanged(boolean enabled);
 }

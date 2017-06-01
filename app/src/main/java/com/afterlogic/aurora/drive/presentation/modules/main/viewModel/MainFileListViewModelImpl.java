@@ -1,6 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.viewModel;
 
 import android.databinding.ObservableArrayList;
+import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableList;
 
@@ -29,13 +30,13 @@ import javax.inject.Provider;
 public class MainFileListViewModelImpl extends BaseFilesListBiModel<MainFileItemViewModel> implements MainFileListViewModel, MainFilesListModel {
 
     private final Provider<MainFileItemBiModel> mItemProvider;
+    private boolean mMultiChoise = false;
+    private AuroraFile mFileForActions;
 
     private final ObservableList<AuroraFile> mMultiChoiseResult = new ObservableArrayList<>();
-    private boolean mMultiChoise = false;
     private final ObservableField<FilesSelection> mSelection = new ObservableField<>(new FilesSelection(0, false));
-
-    private AuroraFile mFileForActions;
     private final ObservableField<MainFileItemViewModel> mFileForActionModel = new ObservableField<>();
+    private final ObservableBoolean mActionsEnabled = new ObservableBoolean(true);
 
     @Inject
     MainFileListViewModelImpl(OptWeakRef<MainFileListPresenter> presenter, Provider<MainFileItemBiModel> itemProvider) {
@@ -64,6 +65,11 @@ public class MainFileListViewModelImpl extends BaseFilesListBiModel<MainFileItem
     @Override
     public ObservableField<MainFileItemViewModel> getFileRequeireActions() {
         return mFileForActionModel;
+    }
+
+    @Override
+    public ObservableBoolean getActionsEnabled() {
+        return mActionsEnabled;
     }
 
     @Override
@@ -147,6 +153,11 @@ public class MainFileListViewModelImpl extends BaseFilesListBiModel<MainFileItem
     @Override
     public void setOffline(AuroraFile file, boolean offline) {
         ifModel(file, viewModel -> viewModel.getModel().setOffline(offline));
+    }
+
+    @Override
+    public void setActionsEnabled(boolean enabled) {
+        mActionsEnabled.set(enabled);
     }
 
     private void updateSelected(){

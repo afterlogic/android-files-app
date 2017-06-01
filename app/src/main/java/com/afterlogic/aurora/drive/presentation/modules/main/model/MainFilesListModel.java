@@ -30,4 +30,6 @@ public interface MainFilesListModel extends BaseFilesListModel{
     void setSyncProgress(SyncProgress progress);
 
     void setOffline(AuroraFile file, boolean offline);
+
+    void setActionsEnabled(boolean enabled);
 }
