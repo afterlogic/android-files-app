@@ -13,16 +13,18 @@
             type="com.afterlogic.aurora.drive.presentation.modules.main.viewModel.MainFileItemViewModel"/>
     </data>
 
-    <RelativeLayout
-        android:orientation="horizontal"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="48dp"
         android:background="@drawable/bg_simple_highlight"
-        android:gravity="center"
         app:selected="@{viewModel.selected}"
         bind:onClick="@{viewModel}"
         bind:onLongClick="@{viewModel}"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:paddingTop="0dp"
+        android:paddingBottom="0dp"
         style="@style/RootLayout.Item">
 
         <ImageView
@@ -33,57 +35,87 @@
             bind:imageUri="@{viewModel.fileIcon}"
             bind:tintColor="@{viewModel.isFolder ? @color/colorPrimary : -1}"
             tools:tint="@color/colorPrimary"
-            tools:src="@mipmap/ic_launcher"/>
+            tools:src="@mipmap/ic_launcher"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintVertical_bias="0.5"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_toLeftOf="@+id/status_icon"
-            android:layout_toStartOf="@id/status_icon"
-            android:layout_toRightOf="@+id/icon"
-            android:layout_toEndOf="@+id/icon"
-            android:layout_centerInParent="true">
+            android:ellipsize="end"
+            android:gravity="start"
+            android:lines="1"
+            android:text="@{viewModel.fileName}"
+            tools:text="asdfasfdasdf.sdf-asdfasdfasdfasdf-sdfasdfasdf"
+            app:layout_constraintTop_toTopOf="@+id/icon"
+            android:layout_marginTop="8dp"
+            app:layout_constraintVertical_chainStyle="spread"
+            app:layout_constraintLeft_toRightOf="@+id/icon"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintRight_toLeftOf="@+id/shared_status"
+            android:layout_marginRight="8dp"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintVertical_bias="0.5"
+            app:layout_constraintBottom_toBottomOf="@+id/icon"
+            android:layout_marginBottom="8dp"/>
 
-            <TextView
-                android:id="@+id/text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingRight="8dp"
-                android:paddingLeft="8dp"
-                android:lines="1"
-                android:ellipsize="end"
-                android:text="@{viewModel.fileName}"
-                android:gravity="start"
-                tools:text="asdfasfdasdf.sdf-asdfasdfasdfasdf-sdfasdfasdf"/>
+        <ProgressBar
+            android:id="@+id/progress"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="0dp"
+            android:layout_height="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="4dp"
+            android:max="100"
+            android:progress="@{viewModel.progress != -1 ? viewModel.progress : 0}"
+            android:visibility="@{viewModel.progress != -1 ? View.VISIBLE : View.GONE}"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toRightOf="@+id/icon"
+            app:layout_constraintRight_toLeftOf="@+id/shared_status"
+            app:layout_constraintTop_toBottomOf="@+id/text"
+            tools:visibility="visible"/>
 
-            <ProgressBar
-                android:id="@+id/progress"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:max="100"
-                android:progress="@{viewModel.progress != -1 ? viewModel.progress : 0}"
-                android:visibility="@{viewModel.progress != -1 ? View.VISIBLE : View.GONE}"
-                tools:visibility="visible"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
-
-        </LinearLayout>
+        <ImageView
+            android:id="@+id/shared_status"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:visibility="@{viewModel.shared ? View.VISIBLE : View.GONE}"
+            android:src="@drawable/ic_file_status_shared"
+            tools:visibility="visible"
+            app:layout_constraintRight_toLeftOf="@+id/status_icon"
+            android:layout_marginRight="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/status_icon"
+            app:layout_constraintTop_toTopOf="@+id/status_icon"
+            app:layout_goneMarginRight="16dp"
+            android:layout_marginEnd="0dp"
+            tools:ignore="RtlHardcoded"
+            app:layout_constraintVertical_bias="0.5"/>
 
         <ImageView
             android:id="@+id/status_icon"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
             android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
             android:visibility="@{viewModel.statusIcon != null ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             bind:imageUri="@{viewModel.statusIcon}"
             bind:tintColor="@{viewModel.isFolder ? @color/colorPrimary : @color/colorAccent}"
-            tools:tint="@color/colorPrimary"
+            tools:ignore="ContentDescription"
             tools:src="@drawable/ic_next"
-            tools:visibility="visible"
-            tools:ignore="ContentDescription"/>
-    </RelativeLayout>
+            tools:tint="@color/colorPrimary"
+            tools:visibility="visible"/>
+    </android.support.constraint.ConstraintLayout>
 </layout>

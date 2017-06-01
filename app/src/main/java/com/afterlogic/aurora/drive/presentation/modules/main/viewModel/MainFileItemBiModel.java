@@ -10,6 +10,7 @@ import android.view.View;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
+import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFileItemBiModel;
 import com.afterlogic.aurora.drive.presentation.modules.main.model.MainFileItemModel;
@@ -28,6 +29,7 @@ public class MainFileItemBiModel extends BaseFileItemBiModel implements MainFile
     private final ObservableBoolean mSelected = new ObservableBoolean();
     private final ObservableInt mProgress = new ObservableInt(-1);
     private final ObservableBoolean mOffline = new ObservableBoolean(false);
+    private final ObservableBoolean mShared = new ObservableBoolean(false);
 
     @DrawableRes
     private int mStatusIcon = View.NO_ID;
@@ -41,6 +43,12 @@ public class MainFileItemBiModel extends BaseFileItemBiModel implements MainFile
         SimpleListener updateStatusIcon = new SimpleListener(this::updateStatusIcon);
         mProgress.addOnPropertyChangedCallback(updateStatusIcon);
         mOffline.addOnPropertyChangedCallback(updateStatusIcon);
+    }
+
+    @Override
+    public void setAuroraFile(AuroraFile file) {
+        super.setAuroraFile(file);
+        mShared.set(file != null && file.isShared());
     }
 
     @Override
@@ -61,6 +69,11 @@ public class MainFileItemBiModel extends BaseFileItemBiModel implements MainFile
     @Override
     public ObservableBoolean getOffline() {
         return mOffline;
+    }
+
+    @Override
+    public ObservableBoolean getShared() {
+        return mShared;
     }
 
     @Override

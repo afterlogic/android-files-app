@@ -81,7 +81,8 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
                 source.getHash(),
                 source.getType(),
                 source.getSize(),
-                source.getLastModified() * 1000
+                source.getLastModified() * 1000,
+                source.isShared()
         );
         // Add actions
         if (source.getActions() != null) {

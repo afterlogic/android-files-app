@@ -16,4 +16,5 @@ public interface MainFileItemViewModel extends BaseFileItemViewModel{
     ObservableBoolean getSelected();
     ObservableInt getProgress();
     ObservableBoolean getOffline();
+    ObservableBoolean getShared();
 }

@@ -49,6 +49,9 @@ public class AuroraFileP8 {
     @SerializedName("LastModified")
     private long mLastModified;
 
+    @SerializedName("Shared")
+    private boolean mShared;
+
     @SerializedName("Actions")
     private ActionsDtoP8 mActions;
 
@@ -110,5 +113,9 @@ public class AuroraFileP8 {
 
     public ActionsDtoP8 getActions() {
         return mActions;
+    }
+
+    public boolean isShared() {
+        return mShared;
     }
 }

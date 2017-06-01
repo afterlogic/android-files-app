@@ -23,6 +23,7 @@ allprojects {
         mavenCentral()
         maven { url 'https://maven.fabric.io/public' }
         maven { url "http://dl.bintray.com/populov/maven" }
+        maven { url 'https://maven.google.com' }
     }
 }
 
