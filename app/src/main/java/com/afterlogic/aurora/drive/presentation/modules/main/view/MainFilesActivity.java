@@ -33,7 +33,10 @@ public class MainFilesActivity extends BaseFilesMVVMActivity<MainFilesViewModel>
 
     private ActivityMainBinding mBinding;
     private MenuItem mLogoutMenuItem;
+    private MenuItem mMultiChoseMenuItem;
     private ActionMode mMultiChoiseActionMode;
+
+    private boolean mMultichoseVisible = true;
 
     public static Intent intent(Context context){
         return new Intent(context, MainFilesActivity.class);
@@ -74,6 +77,8 @@ public class MainFilesActivity extends BaseFilesMVVMActivity<MainFilesViewModel>
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         mLogoutMenuItem = menu.findItem(R.id.action_logout);
+        mMultiChoseMenuItem = menu.findItem(R.id.action_multichoise);
+        mMultiChoseMenuItem.setVisible(mMultichoseVisible);
         updateLogoutMenuByViewModel(getViewModel().getLogin());
         return true;
     }
@@ -120,6 +125,14 @@ public class MainFilesActivity extends BaseFilesMVVMActivity<MainFilesViewModel>
     public void onSelectedFilesChanged(int selected, boolean hasFolder) {
         getViewModel().setSelectedCount(selected);
         getViewModel().setSetSelectedHasFolder(hasFolder);
+    }
+
+    @Override
+    public void onActionsEnabledChanged(boolean enabled) {
+        if (mMultiChoseMenuItem != null) {
+            mMultiChoseMenuItem.setVisible(enabled);
+        }
+        mMultichoseVisible = enabled;
     }
 
     private void updateLogoutMenuByViewModel(ObservableField<String> login){

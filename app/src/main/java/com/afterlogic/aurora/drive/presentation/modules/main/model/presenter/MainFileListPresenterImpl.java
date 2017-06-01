@@ -72,6 +72,13 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
     }
 
     @Override
+    public void onRefresh() {
+        super.onRefresh();
+        boolean isInZip = isInNotFolder();
+        mModel.setActionsEnabled(!isInZip);
+    }
+
+    @Override
     protected void handleFilesResult(List<AuroraFile> files) {
         super.handleFilesResult(files);
         Stream.of(files)
@@ -92,7 +99,7 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
             return;
         }
 
-        if (file.isFolder() || file.getActions() != null && file.getActions().isList()){
+        if (file.isFolder() || isListAction(file)){
             super.onFileClick(file);
         } else {
 
@@ -128,7 +135,14 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
             return;
         }
 
-        mModel.setFileForActions(file);
+        if (!isInNotFolder()) {
+            mModel.setFileForActions(file);
+        } else {
+            getView().showMessage(
+                    R.string.main__prompt__actions_not_allowed_in_zip,
+                    PresentationView.TYPE_MESSAGE_MINOR
+            );
+        }
     }
 
     @Override
