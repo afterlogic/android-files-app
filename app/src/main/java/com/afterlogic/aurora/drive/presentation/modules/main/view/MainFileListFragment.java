@@ -230,6 +230,7 @@ public class MainFileListFragment extends BaseFilesListFragment<MainFileListView
             case R.id.action_send: mPresenter.onSendTo(); return true;
             case R.id.action_rename: mPresenter.onRename(); return true;
             case R.id.action_offline: mPresenter.onToggleOffline(); return true;
+            case R.id.action_public_link: mPresenter.onTogglePublicLink(); return true;
 
             default: return false;
         }

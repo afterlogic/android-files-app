@@ -53,7 +53,7 @@ public interface FilesRepository {
 
     Completable clearOfflineData();
 
-    Single<String> getCreatePublicLink(AuroraFile file);
+    Single<String> createPublicLink(AuroraFile file);
 
     Completable deletePublicLink(AuroraFile file);
 }

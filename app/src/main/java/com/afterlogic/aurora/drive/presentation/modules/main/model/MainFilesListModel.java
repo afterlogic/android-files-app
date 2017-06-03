@@ -32,4 +32,6 @@ public interface MainFilesListModel extends BaseFilesListModel{
     void setOffline(AuroraFile file, boolean offline);
 
     void setActionsEnabled(boolean enabled);
+
+    void updateSharedStatus(AuroraFile file);
 }

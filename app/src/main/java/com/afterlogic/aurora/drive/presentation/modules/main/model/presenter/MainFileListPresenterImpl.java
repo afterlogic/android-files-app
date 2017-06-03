@@ -342,6 +342,30 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
         mModel.setMultiChoiseMode(multiChoiseMode);
     }
 
+    @Override
+    public void onTogglePublicLink() {
+        AuroraFile file = mModel.getFileForActions();
+        if (file != null) {
+            if (file.isShared()) {
+                mInteractor.deletePublicLink(file)
+                        .subscribe(() -> {
+                            file.setShared(false);
+                            mModel.updateSharedStatus(file);
+                        });
+            } else {
+                mInteractor.createPublicLink(file)
+                        .subscribe(() -> {
+                            file.setShared(true);
+                            mModel.updateSharedStatus(file);
+                            getView().showMessage(
+                                    R.string.prompt_public_link_created,
+                                    PresentationView.TYPE_MESSAGE_MINOR
+                            );
+                        });
+            }
+        }
+    }
+
     private void handleRenameResult(AuroraFile previous, AuroraFile newFile){
         mModel.changeFile(previous, newFile);
         if (newFile.hasThumbnail()){

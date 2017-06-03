@@ -300,7 +300,7 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
     }
 
     @Override
-    public Single<String> getCreatePublicLink(AuroraFile file) {
+    public Single<String> createPublicLink(AuroraFile file) {
         return mFileSubRepo.createPublicLink(file);
     }
 
