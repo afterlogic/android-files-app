@@ -13,12 +13,11 @@ import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
 import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
 import com.afterlogic.aurora.drive.data.common.mapper.MapperUtil;
-import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.common.repository.AuthorizedRepository;
 import com.afterlogic.aurora.drive.data.common.repository.Repository;
 import com.afterlogic.aurora.drive.data.model.UploadResult;
-import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
 import com.afterlogic.aurora.drive.data.model.project8.AuroraFileP8;
+import com.afterlogic.aurora.drive.data.model.project8.FilesResponseP8;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.data.modules.files.FilesDataModule;
@@ -106,8 +105,7 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
                              AppResources appResources,
                              AuthRepository authRepository,
                              @Named(FilesDataModule.THUMB_DIR) File thumbDir,
-                             @Named(FilesDataModule.CACHE_DIR) File cacheDir,
-                             SessionManager sessionManager) {
+                             @Named(FilesDataModule.CACHE_DIR) File cacheDir) {
         super(cache, FILES_P_8, authRepository);
         mFilesService = filesService;
         mAppResources = appResources;
@@ -150,13 +148,16 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
                 List<AuroraFile> cached = CHECKED_TYPES.remove(folder.getType());
                 return Single.just(cached);
             } else {
-                return withReloginNetMapper(
-                        () -> mFilesService.getFiles(folder.getType(), folder.getFullPath(), "")
-                                .map(response -> response),
-                        result -> MapperUtil.list(mFileMapper).map(result.getFiles())
-                );
+                return mFilesService.getFiles(folder.getType(), folder.getFullPath(), "")
+                        .compose(Repository::withNetMapper)
+                        .compose(this::withRelogin)
+                        .map(this::mapFilesResponse);
             }
         });
+    }
+
+    private List<AuroraFile> mapFilesResponse(FilesResponseP8 response) {
+        return MapperUtil.list(mFileMapper).map(response.getFiles());
     }
 
     @Override
@@ -208,24 +209,26 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
 
     @Override
     public Completable rename(AuroraFile file, String newName) {
-        return withNetMapper(mFilesService.renameFile(
+        return mFilesService.renameFile(
                 file.getType(),
                 file.getPath(),
                 file.getName(),
                 newName,
                 file.isLink()
-        ))//-----|
+        ).compose(Repository::withNetMapper)
+                .compose(this::withRelogin)
                 .toCompletable();
     }
 
     @Override
     public Completable createFolder(AuroraFile file) {
-        Single<ApiResponseP8<Boolean>> netRequest = mFilesService.createFolder(
+        return mFilesService.createFolder(
                 file.getType(),
                 file.getPath(),
                 file.getName()
-        );
-        return withNetMapper(netRequest).toCompletable();
+        ).compose(Repository::withNetMapper)
+                .compose(this::withRelogin)
+                .toCompletable();
     }
 
     @Override
@@ -250,6 +253,21 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
     }
 
     @Override
+    public Single<String> createPublicLink(AuroraFile file) {
+        return mFilesService.createPublicLink(file.getType(), file.getPath(), file.getName())
+                .compose(Repository::withNetMapper)
+                .compose(this::withRelogin);
+    }
+
+    @Override
+    public Completable deletePublicLink(AuroraFile file) {
+        return mFilesService.deletePublicLink(file.getType(), file.getPath(), file.getName())
+                .compose(Repository::withNetMapper)
+                .compose(this::withRelogin)
+                .toCompletable();
+    }
+
+    @Override
     public Observable<Progressible<UploadResult>> uploadFileToServer(AuroraFile folder, @NonNull FileInfo fileInfo) {
         SimpleObservableSource<Progressible<UploadResult>> progressSource = new SimpleObservableSource<>();
 
@@ -263,6 +281,7 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
                         ))
         )//-----|
                 .compose(Repository::withNetMapper)
+                .compose(this::withRelogin)
                 .map(response -> new UploadResult())
                 .doOnEvent((uploadResult, throwable) -> progressSource.complete())
                 .doOnDispose(progressSource::clear)
@@ -283,8 +302,8 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
                     .map(mDeleteFileMapper::map)
                     .collect(Collectors.toList());
 
-            Single<ApiResponseP8<Boolean>> netRequest = mFilesService.delete(type, deleteInfo);
-            return withNetMapper(netRequest)
+            return mFilesService.delete(type, deleteInfo)
+                    .compose(Repository::withNetMapper)
                     .toCompletable();
         });
     }

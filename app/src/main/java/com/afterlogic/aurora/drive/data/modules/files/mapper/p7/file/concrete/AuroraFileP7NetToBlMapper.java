@@ -26,7 +26,7 @@ public class AuroraFileP7NetToBlMapper implements Mapper<AuroraFile, AuroraFileP
                 source.getType(),
                 source.getSize(),
                 source.getLastModified() * 1000,
-                false // TODO parse shared
+                source.isShared()
         );
     }
 }

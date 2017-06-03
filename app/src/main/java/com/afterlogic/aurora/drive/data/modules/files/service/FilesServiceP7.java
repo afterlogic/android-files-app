@@ -1,10 +1,10 @@
 package com.afterlogic.aurora.drive.data.modules.files.service;
 
+import com.afterlogic.aurora.drive.core.common.interfaces.ProgressListener;
 import com.afterlogic.aurora.drive.data.model.AuroraFilesResponse;
 import com.afterlogic.aurora.drive.data.model.project7.ApiResponseP7;
 import com.afterlogic.aurora.drive.data.model.project7.AuroraFileP7;
 import com.afterlogic.aurora.drive.data.model.project7.UploadResultP7;
-import com.afterlogic.aurora.drive.core.common.interfaces.ProgressListener;
 import com.afterlogic.aurora.drive.model.FileInfo;
 
 import java.util.List;
@@ -32,4 +32,8 @@ public interface FilesServiceP7 {
     Single<ResponseBody> download(AuroraFileP7 file);
 
     Single<ApiResponseP7<UploadResultP7>> upload(AuroraFileP7 file, FileInfo source, ProgressListener progress);
+
+    Single<ApiResponseP7<String>> createPublicLink(String type, String path, String name);
+
+    Single<ApiResponseP7<Boolean>> deletePublicLink(String type, String path, String name);
 }
