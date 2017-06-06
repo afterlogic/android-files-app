@@ -52,6 +52,8 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
     private final FileSubRepository mFileSubRepo;
     private final FilesLocalService mLocalService;
 
+    private final AuthRepository mAuthRepository;
+
     private final File mCacheDir;
     private final File mOfflineDir;
     private final File mDownloadsDir;
@@ -69,6 +71,7 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
                        @Named(FilesDataModule.DOWNLOADS_DIR) File downloadsDir,
                        FilesMapperFactory mapperFactory) {
         super(cache, FILES, authRepository);
+        mAuthRepository = authRepository;
         mAppContext = appContext;
         mFileSubRepo = fileSubRepo;
         mLocalService = localService;
@@ -301,7 +304,28 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
 
     @Override
     public Single<String> createPublicLink(AuroraFile file) {
-        return mFileSubRepo.createPublicLink(file);
+        return mFileSubRepo.createPublicLink(file)
+                .map(link -> {
+                    String domain = mAuthRepository.getCurrentSession()
+                            .blockingGet()
+                            .getDomain()
+                            .toString();
+                    if (domain.endsWith("/")) {
+                        domain = domain.substring(0, domain.length() - 1);
+                    }
+
+                    if (link.startsWith("?")) {
+                        return domain + link;
+                    } else {
+                        if (link.startsWith("http://localhost")){
+                            return link.replaceFirst("http://localhost", domain);
+                        } else if (link.startsWith("https://localhost")){
+                            return link.replaceFirst("https://localhost", domain);
+                        } else {
+                            return link;
+                        }
+                    }
+                });
     }
 
     @Override

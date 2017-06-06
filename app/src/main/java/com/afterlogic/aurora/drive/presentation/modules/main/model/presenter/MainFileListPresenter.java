@@ -27,4 +27,6 @@ public interface MainFileListPresenter extends FilesListPresenter, OnBackPressed
     void onMultiChoseMode(boolean multiChoiseMode);
 
     void onTogglePublicLink();
+
+    void onCopyPublicLink();
 }

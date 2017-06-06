@@ -3,6 +3,7 @@ package com.afterlogic.aurora.drive.presentation.common.binding.bindingAdapters;
 import android.databinding.BindingAdapter;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.DrawableRequestBuilder;
@@ -20,6 +21,15 @@ import uk.co.senab.photoview.PhotoViewAttacher;
  */
 
 public class ImageViewBinding {
+
+    @BindingAdapter("imageResource")
+    public static void bindImageResource(ImageView imageView, int resourceId) {
+        if (resourceId != View.NO_ID) {
+            imageView.setImageResource(resourceId);
+        } else {
+            imageView.setImageDrawable(null);
+        }
+    }
 
     @BindingAdapter("imageUri")
     public static void setImageFromUri(ImageView imageView, Uri uri){
