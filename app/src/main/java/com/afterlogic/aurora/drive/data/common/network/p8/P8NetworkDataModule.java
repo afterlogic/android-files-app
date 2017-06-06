@@ -5,8 +5,6 @@ import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.data.common.annotations.P8;
 import com.afterlogic.aurora.drive.data.common.network.DynamicDomainProvider;
 import com.afterlogic.aurora.drive.data.common.network.DynamicEndPointInterceptor;
-import com.afterlogic.aurora.drive.data.common.network.SessionManager;
-import com.afterlogic.aurora.drive.data.common.network.p8.Api8.Header;
 import com.afterlogic.aurora.drive.data.common.network.p8.converter.ApiResponseConverter8;
 import com.afterlogic.aurora.drive.data.common.network.util.IgnoreDeserealizationExcludeStrategy;
 import com.afterlogic.aurora.drive.data.common.network.util.IgnoreSerealizationExcludeStrategy;
@@ -18,7 +16,6 @@ import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -32,7 +29,7 @@ public class P8NetworkDataModule {
 
     @Provides
     @P8
-    OkHttpClient provideClient(DynamicDomainProvider domainProvider, SessionManager sessionManager){
+    OkHttpClient provideClient(DynamicDomainProvider domainProvider, AuthHeaderInterceptor authInterceptor){
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
 
         //Dynamic notifyEnd point interceptor
@@ -41,19 +38,13 @@ public class P8NetworkDataModule {
                 domainProvider
         ));
 
-        //Add token to headers
-        if(sessionManager.getSession() != null && sessionManager.getSession().getAuthToken() != null) {
-            clientBuilder.addInterceptor(chain -> {
-                Request request = chain.request().newBuilder().addHeader(Header.AUTH_TOKEN, Header.AUTH_TOKEN_PREFIX + " " + sessionManager.getSession().getAuthToken()).build();
-                return chain.proceed(request);
-            });
-        }
+        clientBuilder.addInterceptor(authInterceptor);
 
         //Add logging for debug
         if (BuildConfig.DEBUG) {
-            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-            clientBuilder.addInterceptor(interceptor);
+            HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor();
+            logInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            clientBuilder.addInterceptor(logInterceptor);
         }
         return clientBuilder.build();
     }
