@@ -45,113 +45,155 @@ public class FilesServiceP8Impl extends CloudServiceP8 implements FilesServiceP8
 
     @Override
     public Single<ApiResponseP8<FilesResponseP8>> getFiles(String type, String path, String pattern) {
-        return mApi.getFiles(getDefaultFields(
-                Api8.Method.GET_FILES,
-                new ParamsBuilder()
-                        .put(Api8.Param.TYPE, type)
-                        .put(Api8.Param.PATH, path)
-                        .put(Api8.Param.PATTERN, pattern)
-                        .create()
-        ));
+        return Single.defer(() -> {
+            return mApi.getFiles(getDefaultFields(
+                    Api8.Method.GET_FILES,
+                    new ParamsBuilder()
+                            .put(Api8.Param.TYPE, type)
+                            .put(Api8.Param.PATH, path)
+                            .put(Api8.Param.PATTERN, pattern)
+                            .create()
+            ));
+        });
     }
 
     @Override
     public Single<ResponseBody> getFileThumbnail(String type, String path, String name, String publicHash) {
-        return mApi.getFileThumbnail(getDefaultFields(
-                Api8.Method.GET_FILE_THUMBNAIL,
-                new ParamsBuilder()
-                        .put(Api8.Param.TYPE, type)
-                        .put(Api8.Param.PATH, path)
-                        .put(Api8.Param.NAME, name)
-                        .put(Api8.Param.SHARED_HASH, publicHash)
-                        .create()
-        ));
+        return Single.defer(() -> {
+            return mApi.getFileThumbnail(getDefaultFields(
+                    Api8.Method.GET_FILE_THUMBNAIL,
+                    new ParamsBuilder()
+                            .put(Api8.Param.TYPE, type)
+                            .put(Api8.Param.PATH, path)
+                            .put(Api8.Param.NAME, name)
+                            .put(Api8.Param.SHARED_HASH, publicHash)
+                            .create()
+            ));
+        });
     }
 
     @Override
     public Single<ResponseBody> viewFile(String type, String path, String name, String publicHash) {
-        return mApi.getFile(getDefaultFields(
-                Api8.Method.VIEW_FILE,
-                new ParamsBuilder()
-                        .put(Api8.Param.TYPE, type)
-                        .put(Api8.Param.PATH, path)
-                        .put(Api8.Param.NAME, name)
-                        .put(Api8.Param.SHARED_HASH, publicHash)
-                        .create()
-        ));
+        return Single.defer(() -> {
+            return mApi.getFile(getDefaultFields(
+                    Api8.Method.VIEW_FILE,
+                    new ParamsBuilder()
+                            .put(Api8.Param.TYPE, type)
+                            .put(Api8.Param.PATH, path)
+                            .put(Api8.Param.NAME, name)
+                            .put(Api8.Param.SHARED_HASH, publicHash)
+                            .create()
+            ));
+        });
     }
 
     @Override
     public Single<ApiResponseP8<Boolean>> createFolder(String type, String path, String name) {
-        HashMap<String, Object> params = new ParamsBuilder()
-                .put(Api8.Param.TYPE, type)
-                .put(Api8.Param.PATH, path)
-                .put(Api8.Param.FOLDER_NAME, name)
-                .create();
+        return Single.defer(() -> {
+            HashMap<String, Object> params = new ParamsBuilder()
+                    .put(Api8.Param.TYPE, type)
+                    .put(Api8.Param.PATH, path)
+                    .put(Api8.Param.FOLDER_NAME, name)
+                    .create();
 
-        Map<String, Object> fields = getDefaultFields(
-                Api8.Method.CREATE_FOLDER,
-                params
-        );
+            Map<String, Object> fields = getDefaultFields(
+                    Api8.Method.CREATE_FOLDER,
+                    params
+            );
         return mApi.createFolder(fields);
+        });
     }
 
     @Override
     public Single<ApiResponseP8<Boolean>> renameFile(String type, String path, String name, String newName, boolean isLink) {
-        HashMap<String, Object> params = new ParamsBuilder()
-                .put(Api8.Param.TYPE, type)
-                .put(Api8.Param.PATH, path)
-                .put(Api8.Param.NAME, name)
-                .put(Api8.Param.NEW_NAME, newName)
-                .put(Api8.Param.IS_LINK, isLink)
-                .create();
-        Map<String, Object> fields = getDefaultFields(Api8.Method.RENAME, params);
-        return mApi.rename(fields);
+        return Single.defer(() -> {
+            HashMap<String, Object> params = new ParamsBuilder()
+                    .put(Api8.Param.TYPE, type)
+                    .put(Api8.Param.PATH, path)
+                    .put(Api8.Param.NAME, name)
+                    .put(Api8.Param.NEW_NAME, newName)
+                    .put(Api8.Param.IS_LINK, isLink)
+                    .create();
+            Map<String, Object> fields = getDefaultFields(Api8.Method.RENAME, params);
+            return mApi.rename(fields);
+        });
     }
 
     @Override
     public Single<ApiResponseP8<Boolean>> delete(String type, List<DeleteFileInfo> files) {
-        HashMap<String, Object> params = new ParamsBuilder()
-                .put(Api8.Param.TYPE, type)
-                .put(Api8.Param.ITEMS, files)
-                .create();
-        Map<String, Object> fields = getDefaultFields(Api8.Method.DELETE, params);
-        return mApi.delete(fields);
+        return Single.defer(() -> {
+            HashMap<String, Object> params = new ParamsBuilder()
+                    .put(Api8.Param.TYPE, type)
+                    .put(Api8.Param.ITEMS, files)
+                    .create();
+            Map<String, Object> fields = getDefaultFields(Api8.Method.DELETE, params);
+            return mApi.delete(fields);
+        });
     }
 
     @Override
     public Single<ResponseBody> downloadFile(String type, String path, String name, String publicHash) {
-        HashMap<String, Object> params = new ParamsBuilder()
-                .put(Api8.Param.TYPE, type)
-                .put(Api8.Param.PATH, path)
-                .put(Api8.Param.NAME, name)
-                .put(Api8.Param.SHARED_HASH, publicHash)
-                .create();
-        Map<String, Object> fields = getDefaultFields(Api8.Method.DOWNLOAD_FILE, params);
-        return mApi.getFile(fields);
+        return Single.defer(() -> {
+            HashMap<String, Object> params = new ParamsBuilder()
+                    .put(Api8.Param.TYPE, type)
+                    .put(Api8.Param.PATH, path)
+                    .put(Api8.Param.NAME, name)
+                    .put(Api8.Param.SHARED_HASH, publicHash)
+                    .create();
+            Map<String, Object> fields = getDefaultFields(Api8.Method.DOWNLOAD_FILE, params);
+            return mApi.getFile(fields);
+        });
     }
 
     @Override
     public Single<ApiResponseP8<UploadResultP8>> uploadFile(String type, String path, FileInfo fileInfo, @Nullable ProgressListener progressUpdater) {
-        Map<String, Object> params = new ParamsBuilder()
-                .put(Api8.Param.TYPE, type)
-                .put(Api8.Param.PATH, path)
-                .put(Api8.Param.NAME, fileInfo.getName())
-                .create();
+        return Single.defer(() -> {
+            Map<String, Object> params = new ParamsBuilder()
+                    .put(Api8.Param.TYPE, type)
+                    .put(Api8.Param.PATH, path)
+                    .put(Api8.Param.NAME, fileInfo.getName())
+                    .create();
 
-        List<MultipartBody.Part> fields = Stream.of(getDefaultFields(Api8.Method.UPLOAD_FILE, params))
-                .map(this::stringBody)
-                .collect(Collectors.toList());
+            List<MultipartBody.Part> fields = Stream.of(getDefaultFields(Api8.Method.UPLOAD_FILE, params))
+                    .map(this::stringBody)
+                    .collect(Collectors.toList());
 
-        ExtRequestBody uploadBody = new ExtRequestBody(fileInfo, mContext);
-        if (progressUpdater != null){
-            uploadBody.setProgressListener(progressUpdater);
-        }
-        MultipartBody.Part filePart = MultipartBody.Part.createFormData(
-                Api8.Field.JUA_UPLOADER, fileInfo.getName(), uploadBody
-        );
+            ExtRequestBody uploadBody = new ExtRequestBody(fileInfo, mContext);
+            if (progressUpdater != null){
+                uploadBody.setProgressListener(progressUpdater);
+            }
+            MultipartBody.Part filePart = MultipartBody.Part.createFormData(
+                    Api8.Field.JUA_UPLOADER, fileInfo.getName(), uploadBody
+            );
 
-        return mApi.upload(fields, filePart);
+            return mApi.upload(fields, filePart);
+        });
+    }
+
+    @Override
+    public Single<ApiResponseP8<String>> createPublicLink(String type, String path, String name) {
+        return Single.defer(() -> {
+            Map<String, Object> params = new ParamsBuilder()
+                    .put(Api8.Param.TYPE, type)
+                    .put(Api8.Param.PATH, path)
+                    .put(Api8.Param.NAME, name)
+                    .create();
+            Map<String, Object> fields = getDefaultFields(Api8.Method.CREATE_PUBLIC_LINK, params);
+            return mApi.createPublicLink(fields);
+        });
+    }
+
+    @Override
+    public Single<ApiResponseP8<Boolean>> deletePublicLink(String type, String path, String name) {
+        return Single.defer(() -> {
+            Map<String, Object> params = new ParamsBuilder()
+                    .put(Api8.Param.TYPE, type)
+                    .put(Api8.Param.PATH, path)
+                    .put(Api8.Param.NAME, name)
+                    .create();
+            Map<String, Object> fields = getDefaultFields(Api8.Method.DELETE_PUBLIC_LINK, params);
+            return mApi.deletePublicLink(fields);
+        });
     }
 
     private MultipartBody.Part stringBody(Map.Entry<String, Object> value){

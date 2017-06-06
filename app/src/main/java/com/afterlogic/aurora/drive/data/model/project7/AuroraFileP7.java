@@ -52,6 +52,9 @@ public class AuroraFileP7{
     @SerializedName("LastModified")
     private long mLastModified;
 
+    @SerializedName("Shared")
+    private boolean mShared = false;
+
     public AuroraFileP7() {
     }
 
@@ -131,6 +134,14 @@ public class AuroraFileP7{
 
     public long getLastModified() {
         return mLastModified;
+    }
+
+    public boolean isShared() {
+        return mShared;
+    }
+
+    public void setShared(boolean shared) {
+        mShared = shared;
     }
 
     public static AuroraFileP7 parse(@NonNull String fullPath, @NonNull String type, boolean mIsFolder){

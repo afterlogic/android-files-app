@@ -61,6 +61,10 @@
     <string name="prompt_notify_file_was_renamed">Файл был переименован или удален.</string>
     <string name="prompt_notify_upload_changes_for">Загрузка изменений: %s</string>
     <string name="prompt_action_make_offline">Досупен оффлайн</string>
+    <string name="prompt_action_public_link">Публичная ссылка</string>
+    <string name="prompt_action_public_link_copy">Скопировать публичную ссылку</string>
+    <string name="prompt_public_link_created">Публичная ссылка создана и скопирована в буффер обмена.</string>
+    <string name="prompt_public_link_copied">Публичная ссылка скопирована в буффер обмена.</string>
     <string name="notify_remote_not_exist">Облачный %s не сущевсвует.</string>
     <string name="notify_remote_not_exise_save">Сохранить локальную версию в Загрузки?</string>
     <string name="notify_sync_conflict">Не удалось синхронизировать файлы.</string>

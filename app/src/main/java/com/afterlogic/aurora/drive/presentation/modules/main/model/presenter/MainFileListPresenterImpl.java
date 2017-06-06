@@ -3,6 +3,7 @@ package com.afterlogic.aurora.drive.presentation.modules.main.model.presenter;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.StringRes;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
@@ -177,6 +178,7 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
                             this::onErrorObtained
                     );
         }
+        mModel.setFileForActions(null);
     }
 
     @Override
@@ -209,6 +211,7 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
                             this::onErrorObtained
                     );
         }
+        mModel.setFileForActions(null);
     }
 
     @Override
@@ -226,6 +229,7 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
                         this::onRenameError
                 )
         );
+        mModel.setFileForActions(null);
     }
 
     @Override
@@ -262,6 +266,7 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
                     )
                     .subscribe(() -> {}, this::onErrorObtained);
         }
+        mModel.setFileForActions(null);
     }
 
     @Override
@@ -300,6 +305,7 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
                         () -> {},
                         this::onErrorObtained
                 );
+        mModel.setFileForActions(null);
     }
 
     @Override
@@ -340,6 +346,44 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
     @Override
     public void onMultiChoseMode(boolean multiChoiseMode) {
         mModel.setMultiChoiseMode(multiChoiseMode);
+    }
+
+    @Override
+    public void onTogglePublicLink() {
+        AuroraFile file = mModel.getFileForActions();
+        if (file != null) {
+            if (file.isShared()) {
+                mInteractor.deletePublicLink(file)
+                        .subscribe(() -> {
+                            file.setShared(false);
+                            mModel.updateSharedStatus(file);
+                        });
+            } else {
+                createPublicLink(file, R.string.prompt_public_link_created);
+            }
+        }
+        mModel.setFileForActions(null);
+    }
+
+    @Override
+    public void onCopyPublicLink() {
+        AuroraFile file = mModel.getFileForActions();
+        if (file != null) {
+            createPublicLink(file, R.string.prompt_public_link_copied);
+        }
+        mModel.setFileForActions(null);
+    }
+
+    private void createPublicLink(AuroraFile file, @StringRes int successMessage) {
+        mInteractor.createPublicLink(file)
+                .subscribe(() -> {
+                    file.setShared(true);
+                    mModel.updateSharedStatus(file);
+                    getView().showMessage(
+                            successMessage,
+                            PresentationView.TYPE_MESSAGE_MINOR
+                    );
+                });
     }
 
     private void handleRenameResult(AuroraFile previous, AuroraFile newFile){

@@ -160,6 +160,11 @@ public class MainFileListViewModelImpl extends BaseFilesListBiModel<MainFileItem
         mActionsEnabled.set(enabled);
     }
 
+    @Override
+    public void updateSharedStatus(AuroraFile file) {
+        ifModel(file, viewModel -> viewModel.getShared().set(file.isShared()));
+    }
+
     private void updateSelected(){
         Stream.of(mFiles).forEach(file -> {
             AuroraFile auroraFile = file.getModel().getFile();

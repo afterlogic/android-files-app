@@ -41,4 +41,8 @@ public interface FileSubRepository {
     Single<AuroraFile> checkFile(AuroraFile file);
 
     Single<ResponseBody> downloadFileBody(AuroraFile file);
+
+    Single<String> createPublicLink(AuroraFile file);
+
+    Completable deletePublicLink(AuroraFile file);
 }

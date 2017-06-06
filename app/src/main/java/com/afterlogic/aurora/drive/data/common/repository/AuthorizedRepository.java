@@ -8,6 +8,7 @@ import com.afterlogic.aurora.drive.data.model.ApiResponse;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.model.error.ApiResponseError;
 
+import io.reactivex.Flowable;
 import io.reactivex.Single;
 
 /**
@@ -36,5 +37,17 @@ public class AuthorizedRepository extends Repository {
                         return Single.error(error);
                     }
                 });
+    }
+
+    public <R> Single<R> withRelogin(Single<R> request) {
+        return request.retryWhen(errors -> errors.flatMap(error -> {
+            int code = ErrorUtil.getErrorCode(error);
+            if (code == ApiResponseError.AUTH_FAILED || code == 108){
+                return mAuthRepository.relogin()
+                        .andThen(Flowable.just(new Object()));
+            } else {
+                return Flowable.error(error);
+            }
+        }));
     }
 }

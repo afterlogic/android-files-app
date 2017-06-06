@@ -58,6 +58,8 @@ public interface Api8 {
         String DELETE = "Delete";
         String DOWNLOAD_FILE = "DownloadFile";
         String UPLOAD_FILE = "UploadFile";
+        String CREATE_PUBLIC_LINK = "CreatePublicLink";
+        String DELETE_PUBLIC_LINK = "DeletePublicLink";
     }
 
     interface Param{
@@ -109,6 +111,14 @@ public interface Api8 {
     @POST(API)
     @FormUrlEncoded
     Single<ApiResponseP8<Boolean>> delete(@FieldMap Map<String, Object> fields);
+
+    @POST(API)
+    @FormUrlEncoded
+    Single<ApiResponseP8<String>> createPublicLink(@FieldMap Map<String, Object> fields);
+
+    @POST(API)
+    @FormUrlEncoded
+    Single<ApiResponseP8<Boolean>> deletePublicLink(@FieldMap Map<String, Object> fields);
 
 
     @POST(API)

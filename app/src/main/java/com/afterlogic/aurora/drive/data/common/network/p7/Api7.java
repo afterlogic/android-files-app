@@ -39,6 +39,8 @@ public interface Api7 {
         String FILES_FOLDER_CREATE = "FilesFolderCreate";
         String FILES_DELETE = "FilesDelete";
         String FILE_INFO = "FileInfo";
+        String FILES_CREATE_PUBLIC_LINK = "FilesCreatePublicLink";
+        String FILES_PUBLIC_LINK_DELETE = "FilesPublicLinkDelete";
     }
 
     interface Fields{
@@ -95,6 +97,14 @@ public interface Api7 {
     @FormUrlEncoded
     @POST(AJAX)
     Single<ApiResponseP7<Boolean>> deleteFiles(@FieldMap Map<String, Object> fields);
+
+    @FormUrlEncoded
+    @POST(AJAX)
+    Single<ApiResponseP7<String>> createPublicLink(@FieldMap Map<String, Object> fields);
+
+    @FormUrlEncoded
+    @POST(AJAX)
+    Single<ApiResponseP7<Boolean>> deletePublicLink(@FieldMap Map<String, Object> fields);
 
     @GET(DownloadInterceptor.INTERCEPT_DOWNLOAD)
     Single<ResponseBody> downloadFile(@Query(DownloadInterceptor.QUERY_ACCOUNT_ID) long accountId,

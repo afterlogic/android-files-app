@@ -52,4 +52,8 @@ public interface FilesRepository {
     Single<Boolean> getOfflineStatus(AuroraFile file);
 
     Completable clearOfflineData();
+
+    Single<String> createPublicLink(AuroraFile file);
+
+    Completable deletePublicLink(AuroraFile file);
 }
