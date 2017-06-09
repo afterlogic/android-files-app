@@ -8,5 +8,5 @@
     <dimen name="content_margin_small">8dp</dimen>
 
     <dimen name="compat_appbar_shadow_height">5dp</dimen>
-    <dimen name="bottom_sheet_peek_height">350dp</dimen>
+    <dimen name="bottom_sheet_peek_height">500dp</dimen>
 </resources>

@@ -132,12 +132,13 @@ public class FilesServiceP7Impl extends AuthorizedServiceP7 implements FilesServ
     }
 
     @Override
-    public Single<ApiResponseP7<String>> createPublicLink(String type, String path, String name) {
+    public Single<ApiResponseP7<String>> createPublicLink(String type, String path, String name, boolean isFolder) {
         return Single.defer(() -> {
             Map<String, Object> fields = getDefaultParams(Api7.Actions.FILES_CREATE_PUBLIC_LINK)
                     .put(Api7.Fields.TYPE, type)
                     .put(Api7.Fields.PATH, path)
                     .put(Api7.Fields.NAME, name)
+                    .put(Api7.Fields.IS_FOLDER, isFolder ? 1 : 0)
                     .create();
             return mApi.createPublicLink(fields);
         });

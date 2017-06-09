@@ -35,7 +35,7 @@ public interface FilesServiceP8 {
 
     Single<ApiResponseP8<UploadResultP8>> uploadFile(String type, String path, FileInfo fileInfo, ProgressListener progressUpdater);
 
-    Single<ApiResponseP8<String>> createPublicLink(String type, String path, String name);
+    Single<ApiResponseP8<String>> createPublicLink(String type, String path, String name, boolean isFodler);
 
     Single<ApiResponseP8<Boolean>> deletePublicLink(String type, String path, String name);
 }
