@@ -171,12 +171,13 @@ public class FilesServiceP8Impl extends CloudServiceP8 implements FilesServiceP8
     }
 
     @Override
-    public Single<ApiResponseP8<String>> createPublicLink(String type, String path, String name) {
+    public Single<ApiResponseP8<String>> createPublicLink(String type, String path, String name, boolean isFodler) {
         return Single.defer(() -> {
             Map<String, Object> params = new ParamsBuilder()
                     .put(Api8.Param.TYPE, type)
                     .put(Api8.Param.PATH, path)
                     .put(Api8.Param.NAME, name)
+                    .put(Api8.Param.IS_FOLDER, isFodler ? 1 : 0)
                     .create();
             Map<String, Object> fields = getDefaultFields(Api8.Method.CREATE_PUBLIC_LINK, params);
             return mApi.createPublicLink(fields);

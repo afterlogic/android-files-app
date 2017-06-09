@@ -79,6 +79,7 @@ public interface Api8 {
         String NEW_NAME = "NewName";
         String IS_LINK = "IsLink";
         String ITEMS = "Items";
+        String IS_FOLDER = "IsFolder";
     }
 
     @POST()

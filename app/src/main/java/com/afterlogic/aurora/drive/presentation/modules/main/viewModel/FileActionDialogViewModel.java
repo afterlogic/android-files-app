@@ -37,6 +37,9 @@ public class FileActionDialogViewModel {
             actions.add(new FileAction(R.id.action_download, R.string.prompt_action_download, R.drawable.ic_download_black));
             actions.add(new FileAction(R.id.action_send, R.string.prompt_send, R.drawable.ic_email));
             actions.add(new FileAction(R.id.action_offline, R.string.prompt_action_make_offline, R.drawable.ic_offline, true));
+        }
+
+        if (!file.isLink()) {
             actions.add(new FileAction(R.id.action_public_link, R.string.prompt_action_public_link, R.drawable.ic_action_public_link, true));
             if(file.isShared()) {
                 actions.add(new FileAction(R.id.action_copy_public_link, R.string.prompt_action_public_link_copy, View.NO_ID));

@@ -58,6 +58,7 @@ public interface Api7 {
         String ACCOUNT_ID = "AccountID";
         String TOKEN = "Token";
         String AUTH_TOKEN = "AuthToken";
+        String IS_FOLDER = "IsFolder";
     }
 
     interface Links{
