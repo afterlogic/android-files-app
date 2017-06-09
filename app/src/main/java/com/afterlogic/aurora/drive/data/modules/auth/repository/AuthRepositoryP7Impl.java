@@ -2,6 +2,7 @@ package com.afterlogic.aurora.drive.data.modules.auth.repository;
 
 import android.content.Context;
 
+import com.afterlogic.aurora.drive.data.common.repository.Repository;
 import com.afterlogic.aurora.drive.data.modules.cleaner.DataCleaner;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.session.SessionTrackUtil;
 import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
@@ -44,14 +45,12 @@ public class AuthRepositoryP7Impl extends BaseAuthRepository implements AuthRepo
 
     @Override
     public Completable login(String login, String password) {
-        return withNetRawMapper(
-                mAuthService.login(login, password)
-                        .map(response -> response),
-                response -> {
+        return mAuthService.login(login, password)
+                .compose(Repository::withRawNetMapper)
+                .map(response -> {
                     mSessionManager.getSession().setAccountId(response.getAccountId());
                     return response.getResult();
-                }
-        )//-----|
+                })
                 .flatMapCompletable(authToken -> Completable.fromAction(() -> {
                     AuroraSession session = mSessionManager.getSession();
                     session.setAuthToken(authToken.token);

@@ -29,15 +29,27 @@ class AuthHeaderInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         AuroraSession session = mSessionManager.getSession();
 
-        Request request;
-        if (session != null) {
-            String auth = Api8.Header.AUTH_TOKEN_PREFIX + " " + session.getAuthToken();
-            request = chain.request().newBuilder()
-                    .addHeader(Api8.Header.AUTH_TOKEN, auth)
-                    .build();
+        Request originalRequest = chain.request();
+
+        if (originalRequest.headers().get(Api8.Header.NAME_AUTHORISATION) != null) {
+
+            Request.Builder request = chain.request().newBuilder();
+
+            request.removeHeader(Api8.Header.NAME_AUTHORISATION);
+
+            if (session != null) {
+                String token = session.getAuthToken();
+                if (token != null) {
+                    request.addHeader(
+                            Api8.Header.NAME_AUTHORISATION,
+                            Api8.Header.VALUE_AUTHORISATION.replace(Api8.Header.AUTH_TOKEN, token)
+                    );
+                }
+            }
+            return chain.proceed(request.build());
+
         } else {
-            request = chain.request();
+            return chain.proceed(originalRequest);
         }
-        return chain.proceed(request);
     }
 }

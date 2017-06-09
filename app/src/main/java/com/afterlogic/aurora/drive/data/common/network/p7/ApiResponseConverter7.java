@@ -59,7 +59,7 @@ public class ApiResponseConverter7 implements JsonDeserializer<ApiResponseP7<?>>
     private void checkAndHandleFalseResult(JsonObject response) {
         if (response.has("Result")) {
             JsonElement result = response.get("Result");
-            if (isBoolean(result) && !result.getAsBoolean()) {
+            if (isBoolean(result) && !result.getAsBoolean() && !response.has(ApiResponseP7.TAG_ERROR_CODE)) {
                 response.addProperty(ApiResponseP7.TAG_ERROR_CODE, 999);
             }
         }
