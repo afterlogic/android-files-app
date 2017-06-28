@@ -8,7 +8,6 @@ import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.Vi
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.BaseFilesModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.interactor.FilesInteractor;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router.FilesRouter;
-import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
 
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
@@ -16,6 +15,7 @@ import java.net.UnknownHostException;
 import java.util.Collections;
 
 import io.reactivex.disposables.Disposable;
+import retrofit2.HttpException;
 
 /**
  * Created by sashka on 10.02.17.<p/>

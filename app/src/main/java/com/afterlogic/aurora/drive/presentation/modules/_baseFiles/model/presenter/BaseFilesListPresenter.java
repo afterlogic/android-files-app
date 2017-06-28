@@ -14,7 +14,6 @@ import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.interac
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router.FilesRouter;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.FilesListView;
 import com.annimon.stream.Stream;
-import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
 
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -24,6 +23,7 @@ import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.disposables.Disposable;
+import retrofit2.HttpException;
 
 /**
  * Created by sashka on 10.02.17.<p/>
