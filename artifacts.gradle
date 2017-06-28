@@ -8,10 +8,10 @@ ext{
 }
 
 //import groovy.swing.SwingBuilder
-/**
+/*
  * Result apk naming.
  */
-android.applicationVariants.all { variant ->;
+/* android.applicationVariants.all { variant ->;
     def appName
     //Check if an applicationName property is supplied; if not use the name of the parent project.
     if (project.hasProperty("applicationName")) {
@@ -30,11 +30,11 @@ android.applicationVariants.all { variant ->;
         }
         output.outputFile = new File(output.outputFile.parent, newApkName)
     }
-}
+}*/
 
-def void prepareVersions(){
+void prepareVersions(){
     Properties versionProperties = new Properties()
-    File propsFile = getVersionFile();
+    File propsFile = getVersionFile()
     if(propsFile.exists()) {
         versionProperties.load(new FileInputStream(propsFile))
     } else {
@@ -67,9 +67,9 @@ def void prepareVersions(){
 /**
  * Get version code from version.properties file and increment it if increment flag setted.
  */
-def int getIncrementalVersionCode(){
+int getIncrementalVersionCode(){
     Properties versionProperties = new Properties()
-    File propsFile = getVersionFile();
+    File propsFile = getVersionFile()
     if(propsFile.exists()) {
         versionProperties.load(new FileInputStream(propsFile))
     } else {
@@ -79,9 +79,9 @@ def int getIncrementalVersionCode(){
     return versionProperties["VERSION_CODE"].toString().toInteger()
 }
 
-def String getIncrementalVersionName(){
+String getIncrementalVersionName(){
     Properties versionProperties = new Properties()
-    File propsFile = getVersionFile();
+    File propsFile = getVersionFile()
     if(propsFile.exists()) {
         versionProperties.load(new FileInputStream(propsFile))
     } else {
@@ -91,10 +91,10 @@ def String getIncrementalVersionName(){
     return versionProperties["VERSION_NAME"]
 }
 
-def boolean isNeedIncrement(){
+boolean isNeedIncrement(){
     def autoIncrementTasks = project.ext.get("autoIncrementTasks")
     if (autoIncrementTasks != null) {
-        List<String> runTasks = gradle.startParameter.getTaskNames();
+        List<String> runTasks = gradle.startParameter.getTaskNames()
         for (String item : runTasks) {
             for (String task: ((String)autoIncrementTasks).split(",")){
                 if (task.trim() == item) {
@@ -103,7 +103,7 @@ def boolean isNeedIncrement(){
             }
         }
     }
-    return false;
+    return false
 }
 
 def getVersionFile(){
@@ -126,8 +126,8 @@ def getLastBuildReleaseNoteFile(){
     return projectDir.absolutePath + "/lastBetaBuildNotes.txt"
 }
 
-def checkVersionName(Properties properties){
-    def String[] versions = properties["VERSION_NAME"].toString().split("\\.")
+static def checkVersionName(Properties properties){
+    String[] versions = properties["VERSION_NAME"].toString().split("\\.")
 
     def cancelled = false
     new SwingBuilder().edt {
@@ -142,26 +142,26 @@ def checkVersionName(Properties properties){
             vbox { // Put everything below each other
                 label(text: "Choose build type:")
                 button(text: 'Global', actionPerformed: {
-                    versions[0] = String.valueOf(versions[0].toInteger() + 1);
+                    versions[0] = String.valueOf(versions[0].toInteger() + 1)
                     versions[1] = "0"
                     versions[2] = "0"
-                    dispose(); // Close dialog
+                    dispose() // Close dialog
                 })
                 button(text: 'Major', actionPerformed: {
-                    versions[1] = String.valueOf(versions[1].toInteger() + 1);
+                    versions[1] = String.valueOf(versions[1].toInteger() + 1)
                     versions[2] = "0"
-                    dispose(); // Close dialog
+                    dispose() // Close dialog
                 })
                 button(text: 'Minor', actionPerformed: {
-                    versions[2] = String.valueOf(versions[2].toInteger() + 1);
-                    dispose(); // Close dialog
+                    versions[2] = String.valueOf(versions[2].toInteger() + 1)
+                    dispose() // Close dialog
                 })
                 button(defaultButton: true, text: 'Internal', actionPerformed: {
-                    dispose(); // Close dialog
+                    dispose() // Close dialog
                 })
                 button(text: 'Cancel', actionPerformed: {
-                    cancelled = true;
-                    dispose(); // Close dialog
+                    cancelled = true
+                    dispose() // Close dialog
                 })
             } // vbox end
         } // dialog end
