@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'io.fabric'
 apply plugin: 'org.greenrobot.greendao'
 
@@ -9,7 +8,7 @@ apply from: '../artifacts.gradle'
 android {
 
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion "25.0.3"
 
     defaultConfig {
 
@@ -39,7 +38,7 @@ android {
     signingConfigs {
 
         Properties signingProperties = new Properties()
-        File propsFile = new File("signing/signing.properties");
+        File propsFile = new File("signing/signing.properties")
         if(propsFile.exists()) {
             signingProperties.load(new FileInputStream(propsFile))
         } else {
@@ -77,6 +76,10 @@ android {
             ext.betaDistributionReleaseNotesFilePath = projectDir.absolutePath + "/lastBetaBuildNotes.txt"
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/rxjava.properties'
+    }
 }
 
 greendao {
@@ -87,83 +90,81 @@ ext{
     greenDaoSchemeVersion = 1
 
     //Dependencies
-    compatVersion = '25.3.1'
-    daggerVersion = '2.10'
-    rxJavaVersion = '2.0.8'
+    compatVersion = '25.4.0'
+    daggerVersion = '2.11'
+    rxJavaVersion = '2.1.1'
     rxJavaAndroidVersion = '2.0.1'
-    retrofitVersion = '2.1.0'
-    retrofitRxJava2AdapterVersion = '1.0.0'
-    okHttpVersion = '3.7.0'
+    retrofitVersion = '2.3.0'
+    okHttpVersion = '3.8.1'
     glideVersion = '3.8.0'
     photoViewVersion = '1.3.1'
     fabVersion = '1.10.1'
-    gsonVersion = '2.8.0'
-    streamVersion = '1.1.2'
-    constraintLayoutVersion = '1.0.2'
-    eventBusVersion = '3.0.0'
-    greenDaoVersion = '3.2.0'
-    trayPrefsVersion = '0.12.0'
-    crashlyticsVersion = '2.6.3@aar'
+    gsonVersion = '2.8.1'
+    streamVersion = '1.1.8'
     constraintLayoutVersion = '1.1.0-beta1'
+    eventBusVersion = '3.0.0'
+    greenDaoVersion = '3.2.2'
+    trayPrefsVersion = '0.12.0'
+    crashlyticsVersion = '2.6.8@aar'
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     //For test
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
     // Optional -- Mockito framework
-    testCompile 'org.mockito:mockito-core:1.10.19'
+    testImplementation 'org.mockito:mockito-core:1.10.19'
 
     //Dagger - Dependency Injection
-    compile "com.google.dagger:dagger:${daggerVersion}"
+    implementation "com.google.dagger:dagger:${daggerVersion}"
     annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
 
     //Compat
-    compile "com.android.support:appcompat-v7:${compatVersion}"
-    compile "com.android.support:design:${compatVersion}"
-    compile "com.android.support:recyclerview-v7:${compatVersion}"
-    compile "com.android.support.constraint:constraint-layout:${constraintLayoutVersion}"
+    implementation "com.android.support:appcompat-v7:${compatVersion}"
+    implementation "com.android.support:design:${compatVersion}"
+    implementation "com.android.support:recyclerview-v7:${compatVersion}"
+    implementation "com.android.support.constraint:constraint-layout:${constraintLayoutVersion}"
 
     //Observable and Stream
-    compile "com.annimon:stream:${streamVersion}"
-    compile "io.reactivex.rxjava2:rxjava:${rxJavaVersion}"
-    compile "io.reactivex.rxjava2:rxandroid:${rxJavaAndroidVersion}"
+    implementation "com.annimon:stream:${streamVersion}"
+    implementation "io.reactivex.rxjava2:rxjava:${rxJavaVersion}"
+    implementation "io.reactivex.rxjava2:rxandroid:${rxJavaAndroidVersion}"
 
     //[START Api helpers]
-    compile ("com.squareup.retrofit2:retrofit:${retrofitVersion}")
-    compile ("com.squareup.retrofit2:converter-gson:${retrofitVersion}")
-    compile ("com.jakewharton.retrofit:retrofit2-rxjava2-adapter:${retrofitRxJava2AdapterVersion}")
-    compile "com.squareup.okhttp3:okhttp:${okHttpVersion}"
-    compile "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}"
-    compile "com.google.code.gson:gson:${gsonVersion}"
+    implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+    implementation "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:${retrofitVersion}"
+    implementation "com.squareup.okhttp3:okhttp:${okHttpVersion}"
+    implementation "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}"
+    implementation "com.google.code.gson:gson:${gsonVersion}"
     //[END Api helpers]
 
     //Floating action button
-    compile "com.getbase:floatingactionbutton:${fabVersion}"
+    implementation "com.getbase:floatingactionbutton:${fabVersion}"
     //Material progress bar
-    compile 'me.zhanghai.android.materialprogressbar:library:1.1.5'
+    implementation 'me.zhanghai.android.materialprogressbar:library:1.1.5'
 
     //DB
-    compile "org.greenrobot:greendao:${greenDaoVersion}"
+    implementation "org.greenrobot:greendao:${greenDaoVersion}"
 
     //EventBus
-    compile "org.greenrobot:eventbus:${eventBusVersion}"
+    implementation "org.greenrobot:eventbus:${eventBusVersion}"
 
     //Pictures load
-    compile "com.github.bumptech.glide:glide:${glideVersion}"
-    compile "com.github.chrisbanes:PhotoView:${photoViewVersion}"
+    implementation "com.github.bumptech.glide:glide:${glideVersion}"
+    implementation "com.github.chrisbanes:PhotoView:${photoViewVersion}"
 
     //Preferences
-    compile "net.grandcentrix.tray:tray:${trayPrefsVersion}"
+    implementation "net.grandcentrix.tray:tray:${trayPrefsVersion}"
 
     //Crash and use analytics
-    compile("com.crashlytics.sdk.android:crashlytics:${crashlyticsVersion}") {
+    implementation("com.crashlytics.sdk.android:crashlytics:${crashlyticsVersion}") {
         transitive = true;
     }
 
-    compile "com.android.support.constraint:constraint-layout:$constraintLayoutVersion"
+    implementation "com.android.support.constraint:constraint-layout:$constraintLayoutVersion"
 }
