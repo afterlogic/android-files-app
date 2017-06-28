@@ -310,21 +310,25 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
                             .blockingGet()
                             .getDomain()
                             .toString();
-                    if (domain.endsWith("/")) {
-                        domain = domain.substring(0, domain.length() - 1);
+
+                    String checkedLink;
+
+                    if (link.startsWith("http://localhost")){
+                        checkedLink = link.substring(16);
+                    } else if (link.startsWith("https://localhost")){
+                        checkedLink = link.substring(17);
+                    } else {
+                        checkedLink = link;
                     }
 
-                    if (link.startsWith("?")) {
-                        return domain + link;
+                    String resultLink;
+
+                    if (checkedLink.startsWith("?")) {
+                        resultLink = domain + checkedLink;
                     } else {
-                        if (link.startsWith("http://localhost")){
-                            return link.replaceFirst("http://localhost", domain);
-                        } else if (link.startsWith("https://localhost")){
-                            return link.replaceFirst("https://localhost", domain);
-                        } else {
-                            return link;
-                        }
+                        resultLink = checkedLink;
                     }
+                    return resultLink;
                 });
     }
 
