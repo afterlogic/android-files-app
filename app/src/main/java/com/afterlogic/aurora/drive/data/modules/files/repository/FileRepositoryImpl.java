@@ -306,29 +306,24 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
     public Single<String> createPublicLink(AuroraFile file) {
         return mFileSubRepo.createPublicLink(file)
                 .map(link -> {
-                    String domain = mAuthRepository.getCurrentSession()
-                            .blockingGet()
-                            .getDomain()
-                            .toString();
-
-                    String checkedLink;
 
                     if (link.startsWith("http://localhost")){
-                        checkedLink = link.substring(16);
+                        link = link.substring(16);
                     } else if (link.startsWith("https://localhost")){
-                        checkedLink = link.substring(17);
-                    } else {
-                        checkedLink = link;
+                        link = link.substring(17);
                     }
 
-                    String resultLink;
+                    if (!link.startsWith("http")) {
 
-                    if (checkedLink.startsWith("?")) {
-                        resultLink = domain + checkedLink;
-                    } else {
-                        resultLink = checkedLink;
+                        String domain = mAuthRepository.getCurrentSession()
+                                .blockingGet()
+                                .getDomain()
+                                .toString();
+
+                        link = domain + link;
                     }
-                    return resultLink;
+
+                    return link;
                 });
     }
 
