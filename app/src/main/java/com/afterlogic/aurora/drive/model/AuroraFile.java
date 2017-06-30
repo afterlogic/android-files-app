@@ -48,6 +48,8 @@ public class AuroraFile implements Parcelable, Cloneable{
 
     private long mLastModified;
 
+    private boolean mShared;
+
     @Nullable
     private Actions mActions;
 
@@ -83,7 +85,21 @@ public class AuroraFile implements Parcelable, Cloneable{
     private AuroraFile() {
     }
 
-    public AuroraFile(String name, String path, String fullPath, boolean isFolder, boolean isLink, String linkUrl, int linkType, String thumbnailLink, boolean thumb, String contentType, String hash, String type, long size, long lastModified) {
+    public AuroraFile(String name,
+                      String path,
+                      String fullPath,
+                      boolean isFolder,
+                      boolean isLink,
+                      String linkUrl,
+                      int linkType,
+                      String thumbnailLink,
+                      boolean thumb,
+                      String contentType,
+                      String hash,
+                      String type,
+                      long size,
+                      long lastModified,
+                      boolean shared) {
         mName = name;
         mPath = path;
         mFullPath = fullPath;
@@ -98,6 +114,7 @@ public class AuroraFile implements Parcelable, Cloneable{
         mType = type;
         mSize = size;
         mLastModified = lastModified;
+        mShared = shared;
     }
 
     protected AuroraFile(Parcel in) {
@@ -175,7 +192,7 @@ public class AuroraFile implements Parcelable, Cloneable{
         return mLinkType;
     }
 
-    public String getThumbnailLink() {
+    public String getThumbnailUrl() {
         return mThumbnailLink;
     }
 
@@ -205,6 +222,14 @@ public class AuroraFile implements Parcelable, Cloneable{
 
     public void setContentType(String contentType) {
         mContentType = contentType;
+    }
+
+    public boolean isShared() {
+        return mShared;
+    }
+
+    public void setShared(boolean shared) {
+        mShared = shared;
     }
 
     @Nullable

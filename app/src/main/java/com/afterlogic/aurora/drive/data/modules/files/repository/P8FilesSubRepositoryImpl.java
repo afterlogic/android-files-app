@@ -2,6 +2,7 @@ package com.afterlogic.aurora.drive.data.modules.files.repository;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
@@ -15,14 +16,15 @@ import com.afterlogic.aurora.drive.data.common.mapper.MapperUtil;
 import com.afterlogic.aurora.drive.data.common.repository.AuthorizedRepository;
 import com.afterlogic.aurora.drive.data.common.repository.Repository;
 import com.afterlogic.aurora.drive.data.model.UploadResult;
-import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
 import com.afterlogic.aurora.drive.data.model.project8.AuroraFileP8;
+import com.afterlogic.aurora.drive.data.model.project8.FilesResponseP8;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.data.modules.files.FilesDataModule;
 import com.afterlogic.aurora.drive.data.modules.files.service.FilesServiceP8;
 import com.afterlogic.aurora.drive.model.Actions;
 import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.DeleteFileInfo;
 import com.afterlogic.aurora.drive.model.FileInfo;
 import com.afterlogic.aurora.drive.model.Progressible;
@@ -61,6 +63,8 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
     private final File mThumbDir;
     private final File mCacheDir;
 
+    private final AuthRepository mAuthRepository;
+
     private final Mapper<AuroraFile, AuroraFileP8> mFileMapper = source -> {
         AuroraFile file = new AuroraFile(
                 source.getName(),
@@ -70,13 +74,14 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
                 source.isLink(),
                 source.getLinkUrl(),
                 0, //TODO convert link Type
-                source.getThumbnailLink(),
-                source.isThumb(),
+                source.getThumbnailUrl(),
+                source.isThumb() || !TextUtils.isEmpty(source.getThumbnailUrl()),
                 source.getContentType(),
                 source.getHash(),
                 source.getType(),
                 source.getSize(),
-                source.getLastModified() * 1000
+                source.getLastModified() * 1000,
+                source.isShared()
         );
         // Add actions
         if (source.getActions() != null) {
@@ -106,6 +111,7 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
         mAppResources = appResources;
         mThumbDir = thumbDir;
         mCacheDir = cacheDir;
+        mAuthRepository = authRepository;
     }
 
     @Override
@@ -142,41 +148,43 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
                 List<AuroraFile> cached = CHECKED_TYPES.remove(folder.getType());
                 return Single.just(cached);
             } else {
-                return withReloginNetMapper(
-                        () -> mFilesService.getFiles(folder.getType(), folder.getFullPath(), "")
-                                .map(response -> response),
-                        result -> MapperUtil.list(mFileMapper).map(result.getFiles())
-                );
+                return mFilesService.getFiles(folder.getType(), folder.getFullPath(), "")
+                        .compose(Repository::withNetMapper)
+                        .compose(this::withRelogin)
+                        .map(this::mapFilesResponse);
             }
         });
+    }
+
+    private List<AuroraFile> mapFilesResponse(FilesResponseP8 response) {
+        return MapperUtil.list(mFileMapper).map(response.getFiles());
     }
 
     @Override
     public final Single<Uri> getFileThumbnail(AuroraFile file) {
         return Single.defer(() -> {
-            File cache = FileUtil.getFile(mThumbDir, file);
-            if (cache.exists() && cache.lastModified() == file.getLastModified()){
-                return Single.just(Uri.fromFile(cache));
+            // TODO load by uri in glide
+            if (!TextUtils.isEmpty(file.getThumbnailUrl()) && false) {
+                String thumbUrl = file.getThumbnailUrl();
+                if (thumbUrl.startsWith("?")) {
+                    AuroraSession session = mAuthRepository.getCurrentSession().blockingGet();
+                    thumbUrl = session.getDomain().toString() + "/" + thumbUrl;
+                }
+                return Single.just(Uri.parse(thumbUrl.replace("\\\\/", "/")));
             } else {
+                File cache = FileUtil.getFile(mThumbDir, file);
+                if (cache.exists() && cache.lastModified() == file.getLastModified()){
+                    return Single.just(Uri.fromFile(cache));
+                } else {
 
-                Single<ResponseBody> thumbRequest = mFilesService.getFileThumbnail(
-                        file.getType(),
-                        file.getPath(),
-                        file.getName(),
-                        file.getHash()
-                );
-                /*
-                Single<ResponseBody> thumbRequest = withNetMapper(
-                        mFilesService.getFileThumbnail(
-                                file.getType(),
-                                file.getPath(),
-                                file.getName(),
-                                file.getHash()
-                        ).map(response -> response),
-                        result -> ResponseBody.create(MediaType.parse("image/*"), Base64.decode(result, 0))
-                );
-                */
-                return loadFileToCache(file, mThumbDir, thumbRequest);
+                    Single<ResponseBody> thumbRequest = mFilesService.getFileThumbnail(
+                            file.getType(),
+                            file.getPath(),
+                            file.getName(),
+                            file.getHash()
+                    );
+                    return loadFileToCache(file, mThumbDir, thumbRequest);
+                }
             }
         });
     }
@@ -201,24 +209,26 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
 
     @Override
     public Completable rename(AuroraFile file, String newName) {
-        return withNetMapper(mFilesService.renameFile(
+        return mFilesService.renameFile(
                 file.getType(),
                 file.getPath(),
                 file.getName(),
                 newName,
                 file.isLink()
-        ))//-----|
+        ).compose(Repository::withNetMapper)
+                .compose(this::withRelogin)
                 .toCompletable();
     }
 
     @Override
     public Completable createFolder(AuroraFile file) {
-        Single<ApiResponseP8<Boolean>> netRequest = mFilesService.createFolder(
+        return mFilesService.createFolder(
                 file.getType(),
                 file.getPath(),
                 file.getName()
-        );
-        return withNetMapper(netRequest).toCompletable();
+        ).compose(Repository::withNetMapper)
+                .compose(this::withRelogin)
+                .toCompletable();
     }
 
     @Override
@@ -243,6 +253,21 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
     }
 
     @Override
+    public Single<String> createPublicLink(AuroraFile file) {
+        return mFilesService.createPublicLink(file.getType(), file.getPath(), file.getName(), file.isFolder())
+                .compose(Repository::withNetMapper)
+                .compose(this::withRelogin);
+    }
+
+    @Override
+    public Completable deletePublicLink(AuroraFile file) {
+        return mFilesService.deletePublicLink(file.getType(), file.getPath(), file.getName())
+                .compose(Repository::withNetMapper)
+                .compose(this::withRelogin)
+                .toCompletable();
+    }
+
+    @Override
     public Observable<Progressible<UploadResult>> uploadFileToServer(AuroraFile folder, @NonNull FileInfo fileInfo) {
         SimpleObservableSource<Progressible<UploadResult>> progressSource = new SimpleObservableSource<>();
 
@@ -256,6 +281,7 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
                         ))
         )//-----|
                 .compose(Repository::withNetMapper)
+                .compose(this::withRelogin)
                 .map(response -> new UploadResult())
                 .doOnEvent((uploadResult, throwable) -> progressSource.complete())
                 .doOnDispose(progressSource::clear)
@@ -276,8 +302,8 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
                     .map(mDeleteFileMapper::map)
                     .collect(Collectors.toList());
 
-            Single<ApiResponseP8<Boolean>> netRequest = mFilesService.delete(type, deleteInfo);
-            return withNetMapper(netRequest)
+            return mFilesService.delete(type, deleteInfo)
+                    .compose(Repository::withNetMapper)
                     .toCompletable();
         });
     }

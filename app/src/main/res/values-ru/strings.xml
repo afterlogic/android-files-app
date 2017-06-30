@@ -61,6 +61,10 @@
     <string name="prompt_notify_file_was_renamed">Файл был переименован или удален.</string>
     <string name="prompt_notify_upload_changes_for">Загрузка изменений: %s</string>
     <string name="prompt_action_make_offline">Досупен оффлайн</string>
+    <string name="prompt_action_public_link">Публичная ссылка</string>
+    <string name="prompt_action_public_link_copy">Скопировать публичную ссылку</string>
+    <string name="prompt_public_link_created">Публичная ссылка создана и скопирована в буффер обмена.</string>
+    <string name="prompt_public_link_copied">Публичная ссылка скопирована в буффер обмена.</string>
     <string name="notify_remote_not_exist">Облачный %s не сущевсвует.</string>
     <string name="notify_remote_not_exise_save">Сохранить локальную версию в Загрузки?</string>
     <string name="notify_sync_conflict">Не удалось синхронизировать файлы.</string>
@@ -96,6 +100,7 @@
     <string name="prompt_dialog_title_folder_cration">Создание папки:</string>
     <string name="promtp_dialog_error_message_doesnt_have_chooser">Нет приложения для выбора файлов.</string>
     <string name="prompt_dialog_title_renaming">Переименовывание:</string>
+    <string name="main__prompt__actions_not_allowed_in_zip">Действия над файлами не возможны в zip или GoogleDrive папке.</string>
 
     <string name="prompt_title_account_info">Аккаунт Aurora</string>
     <string name="prompt_about_version">Версия: %1$s (%2$d)</string>

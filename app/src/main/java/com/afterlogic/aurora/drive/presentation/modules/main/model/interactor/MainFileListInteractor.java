@@ -37,4 +37,8 @@ public interface MainFileListInteractor extends FilesListInteractor {
     Observable<SyncProgress> getSyncProgress();
 
     Single<Boolean> getOfflineStatus(AuroraFile file);
+
+    Completable createPublicLink(AuroraFile file);
+
+    Completable deletePublicLink(AuroraFile file);
 }

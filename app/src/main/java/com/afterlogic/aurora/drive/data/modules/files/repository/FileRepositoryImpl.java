@@ -52,6 +52,8 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
     private final FileSubRepository mFileSubRepo;
     private final FilesLocalService mLocalService;
 
+    private final AuthRepository mAuthRepository;
+
     private final File mCacheDir;
     private final File mOfflineDir;
     private final File mDownloadsDir;
@@ -69,6 +71,7 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
                        @Named(FilesDataModule.DOWNLOADS_DIR) File downloadsDir,
                        FilesMapperFactory mapperFactory) {
         super(cache, FILES, authRepository);
+        mAuthRepository = authRepository;
         mAppContext = appContext;
         mFileSubRepo = fileSubRepo;
         mLocalService = localService;
@@ -297,6 +300,36 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
     @Override
     public Completable clearOfflineData() {
         return mLocalService.clear();
+    }
+
+    @Override
+    public Single<String> createPublicLink(AuroraFile file) {
+        return mFileSubRepo.createPublicLink(file)
+                .map(link -> {
+
+                    if (link.startsWith("http://localhost")){
+                        link = link.substring(16);
+                    } else if (link.startsWith("https://localhost")){
+                        link = link.substring(17);
+                    }
+
+                    if (!link.startsWith("http")) {
+
+                        String domain = mAuthRepository.getCurrentSession()
+                                .blockingGet()
+                                .getDomain()
+                                .toString();
+
+                        link = domain + link;
+                    }
+
+                    return link;
+                });
+    }
+
+    @Override
+    public Completable deletePublicLink(AuroraFile file) {
+        return mFileSubRepo.deletePublicLink(file);
     }
 
     private void checkFilesType(String type, List<AuroraFile> files) throws IllegalArgumentException{

@@ -5,6 +5,7 @@ import android.content.Context;
 import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
+import com.afterlogic.aurora.drive.data.common.repository.Repository;
 import com.afterlogic.aurora.drive.data.model.ApiResponse;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.data.modules.auth.p8.service.AuthServiceP8;
@@ -44,11 +45,9 @@ public class AuthRepositoryP8Impl extends BaseAuthRepository implements AuthRepo
 
     @Override
     public Completable login(String login, String password) {
-        return withNetRawMapper(
-                mAuthService.login(login, password)
-                        .map(response -> response),
-                this::handleSuccessAuth
-        )//-----|
+        return mAuthService.login(login, password)
+                .compose(Repository::withRawNetMapper)
+                .map(this::handleSuccessAuth)
                 .toCompletable()
                 .andThen(storeAuthData());
     }

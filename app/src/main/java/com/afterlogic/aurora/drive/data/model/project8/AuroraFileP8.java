@@ -28,8 +28,8 @@ public class AuroraFileP8 {
     @SerializedName("LinkType")
     private String mLinkType;
 
-    @SerializedName("ThumbnailLink")
-    private String mThumbnailLink;
+    @SerializedName("ThumbnailUrl")
+    private String mThumbnailUrl;
 
     @SerializedName("Thumb")
     private boolean mThumb;
@@ -48,6 +48,9 @@ public class AuroraFileP8 {
 
     @SerializedName("LastModified")
     private long mLastModified;
+
+    @SerializedName("Shared")
+    private boolean mShared;
 
     @SerializedName("Actions")
     private ActionsDtoP8 mActions;
@@ -80,8 +83,8 @@ public class AuroraFileP8 {
         return mLinkType;
     }
 
-    public String getThumbnailLink() {
-        return mThumbnailLink;
+    public String getThumbnailUrl() {
+        return mThumbnailUrl;
     }
 
     public boolean isThumb() {
@@ -110,5 +113,9 @@ public class AuroraFileP8 {
 
     public ActionsDtoP8 getActions() {
         return mActions;
+    }
+
+    public boolean isShared() {
+        return mShared;
     }
 }

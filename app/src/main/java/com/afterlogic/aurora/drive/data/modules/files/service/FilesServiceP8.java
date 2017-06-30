@@ -1,9 +1,9 @@
 package com.afterlogic.aurora.drive.data.modules.files.service;
 
+import com.afterlogic.aurora.drive.core.common.interfaces.ProgressListener;
 import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
 import com.afterlogic.aurora.drive.data.model.project8.FilesResponseP8;
 import com.afterlogic.aurora.drive.data.model.project8.UploadResultP8;
-import com.afterlogic.aurora.drive.core.common.interfaces.ProgressListener;
 import com.afterlogic.aurora.drive.model.DeleteFileInfo;
 import com.afterlogic.aurora.drive.model.FileInfo;
 
@@ -34,4 +34,8 @@ public interface FilesServiceP8 {
     Single<ResponseBody> downloadFile(String type, String path, String name, String publicHash);
 
     Single<ApiResponseP8<UploadResultP8>> uploadFile(String type, String path, FileInfo fileInfo, ProgressListener progressUpdater);
+
+    Single<ApiResponseP8<String>> createPublicLink(String type, String path, String name, boolean isFodler);
+
+    Single<ApiResponseP8<Boolean>> deletePublicLink(String type, String path, String name);
 }

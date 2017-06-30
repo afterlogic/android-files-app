@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.core.common.contextWrappers.ClipboardHelper;
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
 import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
@@ -40,19 +41,21 @@ public class MainFileListInteractorImpl extends BaseFilesListInteractor implemen
     private final File mCacheDir;
     private final File mDownloadsDir;
     private final SyncListener mSyncListener;
+    private final ClipboardHelper mClipboardHelper;
 
     @Inject
     MainFileListInteractorImpl(ObservableScheduler scheduler,
                                FilesRepository filesRepository,
                                Context appContext,
                                @Named(CACHE_DIR) File cacheDir,
-                               @Named(DOWNLOADS_DIR) File downloadsDir) {
+                               @Named(DOWNLOADS_DIR) File downloadsDir, ClipboardHelper clipboardHelper) {
         super(scheduler, filesRepository);
         mFilesRepository = filesRepository;
         mAppContext = appContext;
         mCacheDir = cacheDir;
         mDownloadsDir = downloadsDir;
         mSyncListener = new SyncListener(appContext);
+        mClipboardHelper = clipboardHelper;
     }
 
     @Override
@@ -140,6 +143,20 @@ public class MainFileListInteractorImpl extends BaseFilesListInteractor implemen
     @Override
     public Single<Boolean> getOfflineStatus(AuroraFile file) {
         return mFilesRepository.getOfflineStatus(file)
+                .compose(this::composeDefault);
+    }
+
+    @Override
+    public Completable createPublicLink(AuroraFile file) {
+        return mFilesRepository.createPublicLink(file)
+                .doOnSuccess(mClipboardHelper::put)
+                .toCompletable()
+                .compose(this::composeDefault);
+    }
+
+    @Override
+    public Completable deletePublicLink(AuroraFile file) {
+        return mFilesRepository.deletePublicLink(file)
                 .compose(this::composeDefault);
     }
 }

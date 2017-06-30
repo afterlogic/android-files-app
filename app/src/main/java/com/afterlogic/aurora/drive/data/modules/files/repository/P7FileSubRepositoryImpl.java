@@ -3,11 +3,6 @@ package com.afterlogic.aurora.drive.data.modules.files.repository;
 import android.net.Uri;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.data.common.repository.Repository;
-import com.afterlogic.aurora.drive.data.model.UploadResult;
-import com.afterlogic.aurora.drive.data.model.project7.ApiResponseP7;
-import com.afterlogic.aurora.drive.data.model.project7.AuroraFileP7;
-import com.afterlogic.aurora.drive.data.model.project7.UploadResultP7;
 import com.afterlogic.aurora.drive.core.common.rx.SimpleObservableSource;
 import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
@@ -17,6 +12,11 @@ import com.afterlogic.aurora.drive.data.common.network.DynamicDomainProvider;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.common.network.p7.Api7;
 import com.afterlogic.aurora.drive.data.common.repository.AuthorizedRepository;
+import com.afterlogic.aurora.drive.data.common.repository.Repository;
+import com.afterlogic.aurora.drive.data.model.AuroraFilesResponse;
+import com.afterlogic.aurora.drive.data.model.UploadResult;
+import com.afterlogic.aurora.drive.data.model.project7.AuroraFileP7;
+import com.afterlogic.aurora.drive.data.model.project7.UploadResultP7;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.data.modules.files.mapper.p7.file.factory.AuroraFileP7MapperFactory;
@@ -117,25 +117,26 @@ public class P7FileSubRepositoryImpl extends AuthorizedRepository implements Fil
                 List<AuroraFile> cached = CHECKED_TYPES.remove(folder.getType());
                 return Single.just(cached);
             } else {
-                return withReloginNetMapper(
-                        () -> mCloudService.getFiles(folder.getFullPath(), folder.getType(), null)
-                                .map(response -> response),
-                        files -> MapperUtil.list(mFileNetToBlMapper)
-                                .map(files.getFiles())
-                );
+                return mCloudService.getFiles(folder.getFullPath(), folder.getType(), null)
+                        .compose(Repository::withNetMapper)
+                        .compose(this::withRelogin)
+                        .map(this::mapFilesResponse);
             }
         });
     }
 
+    private List<AuroraFile> mapFilesResponse(AuroraFilesResponse files) {
+        return MapperUtil.list(mFileNetToBlMapper).map(files.getFiles());
+    }
+
     @Override
     public Completable rename(AuroraFile file, String newName) {
-        return withNetMapper(mCloudService.renameFile(
-                file.getType(),
-                file.getPath(),
-                file.getName(),
-                newName,
-                file.isLink()
-        )).toCompletable();
+        return mCloudService.renameFile(
+                file.getType(), file.getPath(), file.getName(), newName, file.isLink()
+        )//-----|
+                .compose(Repository::withNetMapper)
+                .compose(this::withRelogin)
+                .toCompletable();
     }
 
     @Override
@@ -151,8 +152,8 @@ public class P7FileSubRepositoryImpl extends AuthorizedRepository implements Fil
                         null, max, value, fileInfo.getName(), false
                 ))
         )//-----|
-                .map(response -> response)
                 .compose(Repository::withNetMapper)
+                .compose(this::withRelogin)
                 .doOnEvent((uploadResult, throwable) -> progressSource.complete())
                 .doOnDispose(progressSource::clear)
                 .map(result -> {
@@ -171,7 +172,9 @@ public class P7FileSubRepositoryImpl extends AuthorizedRepository implements Fil
     public Completable delete(String type, List<AuroraFile> files) {
         return Completable.defer(() -> {
             List<AuroraFileP7> mapped = MapperUtil.listOrEmpty(files, mFileBlToNetMapper);
-            return withNetMapper(mCloudService.deleteFiles(type, mapped))
+            return mCloudService.deleteFiles(type, mapped)
+                    .compose(Repository::withNetMapper)
+                    .compose(this::withRelogin)
                     .toCompletable();
         });
     }
@@ -200,19 +203,19 @@ public class P7FileSubRepositoryImpl extends AuthorizedRepository implements Fil
 
     @Override
     public Completable createFolder(AuroraFile file) {
-        Single<ApiResponseP7<Boolean>> request = mCloudService.createFolder(
-                file.getType(), file.getPath(), file.getName()
-        );
-        return withNetMapper(request).toCompletable();
+        return mCloudService.createFolder(file.getType(), file.getPath(), file.getName())
+                .compose(Repository::withNetMapper)
+                .compose(this::withRelogin)
+                .toCompletable();
     }
 
 
     @Override
     public Completable checkFileExisting(AuroraFile file) {
-        return withNetMapper(
-                mCloudService.checkFile(file.getType(), file.getPath(), file.getName()).map(response -> response),
-                mFileNetToBlMapper
-        )//-----|
+        return mCloudService.checkFile(file.getType(), file.getPath(), file.getName()).map(response -> response)
+                .compose(Repository::withNetMapper)
+                .compose(this::withRelogin)
+                .map(mFileNetToBlMapper::map)
                 .toCompletable()
                 .onErrorResumeNext(error -> {
                     if (error instanceof ApiResponseError && ((ApiResponseError) error).getErrorCode() == ApiResponseError.FILE_NOT_EXIST){
@@ -237,6 +240,21 @@ public class P7FileSubRepositoryImpl extends AuthorizedRepository implements Fil
     @Override
     public Single<ResponseBody> downloadFileBody(AuroraFile file) {
         return mCloudService.download(mFileBlToNetMapper.map(file));
+    }
+
+    @Override
+    public Single<String> createPublicLink(AuroraFile file) {
+        return mCloudService.createPublicLink(file.getType(), file.getPath(), file.getName(), file.isFolder())
+                .compose(Repository::withNetMapper)
+                .compose(this::withRelogin);
+    }
+
+    @Override
+    public Completable deletePublicLink(AuroraFile file) {
+        return mCloudService.deletePublicLink(file.getType(), file.getPath(), file.getName())
+                .compose(Repository::withNetMapper)
+                .compose(this::withRelogin)
+                .toCompletable();
     }
 
     private String getCompleteUrl(String url){

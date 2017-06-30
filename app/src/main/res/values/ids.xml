@@ -4,6 +4,8 @@
     <item name="action_delete" type="id"/>
     <item name="action_download" type="id"/>
     <item name="action_send" type="id"/>
+    <item name="action_public_link" type="id"/>
+    <item name="action_copy_public_link" type="id"/>
     <item name="action_offline_on" type="id"/>
     <item name="action_offline_off" type="id"/>
 

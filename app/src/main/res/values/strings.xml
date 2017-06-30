@@ -67,6 +67,10 @@
     <string name="prompt_notify_file_was_renamed">Remote file was deleted or renamed.</string>
     <string name="prompt_notify_upload_changes_for">"Upload changes for: %s"</string>
     <string name="prompt_action_make_offline">Available offline</string>
+    <string name="prompt_action_public_link">Public link</string>
+    <string name="prompt_action_public_link_copy">Copy public link</string>
+    <string name="prompt_public_link_created">Public link created and copied to clipboard.</string>
+    <string name="prompt_public_link_copied">Public link copied to clipboard.</string>
     <string name="notify_remote_not_exist">Remote %s was deleted.</string>
     <string name="notify_remote_not_exise_save">Save local version to Downloads?</string>
     <string name="notify_sync_conflict">Can\'t synchronize files.</string>
@@ -107,6 +111,7 @@
     <string name="prompt_about_privacy_policy_title">Privacy policy:</string>
     <string name="url_privacy_policy" translatable="false">http://afterlogic.com/privacy-policy</string>
     <string name="prompt_menu_about">About</string>
+    <string name="main__prompt__actions_not_allowed_in_zip">Actions not allowed in zip or GoogleDrive folders.</string>
 
     <plurals name="dialog_files_success_downloaded">
         <item quantity="one">%d file success downloaded.</item>

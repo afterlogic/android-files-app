@@ -1,9 +1,9 @@
 package com.afterlogic.aurora.drive.data.common.network.p8;
 
-import com.afterlogic.aurora.drive.model.AuthToken;
 import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
 import com.afterlogic.aurora.drive.data.model.project8.FilesResponseP8;
 import com.afterlogic.aurora.drive.data.model.project8.UploadResultP8;
+import com.afterlogic.aurora.drive.model.AuthToken;
 
 import java.util.List;
 import java.util.Map;
@@ -13,6 +13,7 @@ import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -36,8 +37,10 @@ public interface Api8 {
     }
 
     interface Header {
-        String AUTH_TOKEN = "Authorization";
-        String AUTH_TOKEN_PREFIX = "Bearer";
+        String AUTH_TOKEN = "{AuthToken}";
+        String NAME_AUTHORISATION = "Authorization";
+        String VALUE_AUTHORISATION = "Bearer " + AUTH_TOKEN;
+        String AUTHORISATION = NAME_AUTHORISATION + ": " + VALUE_AUTHORISATION;
     }
 
     interface Module{
@@ -58,6 +61,8 @@ public interface Api8 {
         String DELETE = "Delete";
         String DOWNLOAD_FILE = "DownloadFile";
         String UPLOAD_FILE = "UploadFile";
+        String CREATE_PUBLIC_LINK = "CreatePublicLink";
+        String DELETE_PUBLIC_LINK = "DeletePublicLink";
     }
 
     interface Param{
@@ -74,10 +79,12 @@ public interface Api8 {
         String NEW_NAME = "NewName";
         String IS_LINK = "IsLink";
         String ITEMS = "Items";
+        String IS_FOLDER = "IsFolder";
     }
 
     @POST()
     @FormUrlEncoded
+    @Headers(Header.AUTHORISATION)
     Single<ApiResponseP8<String>> ping(@Url String url, @FieldMap Map<String, Object> fields);
 
     @POST(API)
@@ -86,33 +93,50 @@ public interface Api8 {
 
     @POST(API)
     @FormUrlEncoded
+    @Headers(Header.AUTHORISATION)
     Single<ApiResponseP8<FilesResponseP8>> getFiles(@FieldMap Map<String, Object> fields);
 
 
     @POST(API)
     @FormUrlEncoded
+    @Headers(Header.AUTHORISATION)
     Single<ResponseBody> getFileThumbnail(@FieldMap Map<String, Object> fields);
 
     @POST(API)
     @FormUrlEncoded
+    @Headers(Header.AUTHORISATION)
     Single<ResponseBody> getFile(@FieldMap Map<String, Object> fields);
 
 
     @POST(API)
     @FormUrlEncoded
+    @Headers(Header.AUTHORISATION)
     Single<ApiResponseP8<Boolean>> createFolder(@FieldMap Map<String, Object> fields);
 
     @POST(API)
     @FormUrlEncoded
+    @Headers(Header.AUTHORISATION)
     Single<ApiResponseP8<Boolean>> rename(@FieldMap Map<String, Object> fields);
 
     @POST(API)
     @FormUrlEncoded
+    @Headers(Header.AUTHORISATION)
     Single<ApiResponseP8<Boolean>> delete(@FieldMap Map<String, Object> fields);
+
+    @POST(API)
+    @FormUrlEncoded
+    @Headers(Header.AUTHORISATION)
+    Single<ApiResponseP8<String>> createPublicLink(@FieldMap Map<String, Object> fields);
+
+    @POST(API)
+    @FormUrlEncoded
+    @Headers(Header.AUTHORISATION)
+    Single<ApiResponseP8<Boolean>> deletePublicLink(@FieldMap Map<String, Object> fields);
 
 
     @POST(API)
     @Multipart
+    @Headers(Header.AUTHORISATION)
     Single<ApiResponseP8<UploadResultP8>> upload(
             @Part List<MultipartBody.Part> fields,
             @Part MultipartBody.Part file

@@ -25,28 +25,47 @@ public class ApiResponseConverter7 implements JsonDeserializer<ApiResponseP7<?>>
 
     @Override
     public ApiResponseP7<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        JsonObject result = json.getAsJsonObject();
+        JsonObject response = json.getAsJsonObject();
 
-        if (result.has("Error")){
-            JsonElement error = result.get("Error");
+        checkAndHandleError(response);
+
+        checkAndHandleFalseResult(response);
+
+        if (response.has(ApiResponseP7.TAG_ERROR_CODE)) {
+            response.remove(ApiResponseP7.TAG_RESULT);
+        }
+
+        MyLog.d(this, "Final response: " + response.toString());
+
+        return mGson.fromJson(response, typeOfT);
+    }
+
+    private void checkAndHandleError(JsonObject response) {
+        if (response.has("Error")){
+            JsonElement error = response.get("Error");
             if (error.isJsonPrimitive() && error.getAsJsonPrimitive().isString()){
-                result.addProperty(ApiResponseP7.TAG_ERROR_CODE, 999);
-                result.addProperty(ApiResponseP7.TAG_ERROR_MESSAGE, "Error: " + error.getAsString());
+                response.addProperty(ApiResponseP7.TAG_ERROR_CODE, 999);
+                response.addProperty(ApiResponseP7.TAG_ERROR_MESSAGE, "Error: " + error.getAsString());
             } else if (error.isJsonPrimitive() && error.getAsJsonPrimitive().isNumber()){
-                result.addProperty(ApiResponseP7.TAG_ERROR_CODE, error.getAsInt());
+                response.addProperty(ApiResponseP7.TAG_ERROR_CODE, error.getAsInt());
             } else {
-                result.addProperty(ApiResponseP7.TAG_ERROR_CODE, 999);
+                response.addProperty(ApiResponseP7.TAG_ERROR_CODE, 999);
             }
 
-            result.remove("Error");
+            response.remove("Error");
         }
+    }
 
-        if (result.has(ApiResponseP7.TAG_ERROR_CODE)) {
-            result.remove(ApiResponseP7.TAG_RESULT);
+    private void checkAndHandleFalseResult(JsonObject response) {
+        if (response.has("Result")) {
+            JsonElement result = response.get("Result");
+            if (isBoolean(result) && !result.getAsBoolean() && !response.has(ApiResponseP7.TAG_ERROR_CODE)) {
+                response.addProperty(ApiResponseP7.TAG_ERROR_CODE, 999);
+            }
         }
+    }
 
-        MyLog.d(this, "Final response: " + result.toString());
-
-        return mGson.fromJson(result, typeOfT);
+    private boolean isBoolean(JsonElement element) {
+        return element.isJsonPrimitive() && element.getAsJsonPrimitive().isBoolean();
     }
 }
