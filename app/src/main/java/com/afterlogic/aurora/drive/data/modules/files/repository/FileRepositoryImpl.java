@@ -321,6 +321,10 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
                         checkedLink = link;
                     }
 
+                    if(checkedLink.startsWith("/")) {
+                        checkedLink = "?" + checkedLink;
+                    }
+
                     String resultLink;
 
                     if (checkedLink.startsWith("?")) {
