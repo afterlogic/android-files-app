@@ -24,6 +24,7 @@ import com.annimon.stream.Stream;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -372,6 +373,11 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
             createPublicLink(file, R.string.prompt_public_link_copied);
         }
         mModel.setFileForActions(null);
+    }
+
+    @Override
+    public void onReplaceAction() {
+        mRouter.openReplace(Collections.emptyList());
     }
 
     private void createPublicLink(AuroraFile file, @StringRes int successMessage) {

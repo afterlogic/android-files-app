@@ -13,6 +13,7 @@ import com.afterlogic.aurora.drive.presentation.common.util.IntentUtil;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router.BaseFileRouter;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewActivity;
 import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFileListView;
+import com.afterlogic.aurora.drive.presentation.modules.replace.view.ReplaceActivity;
 import com.annimon.stream.Stream;
 
 import java.io.File;
@@ -146,6 +147,13 @@ public class MainFileListRouterImpl extends BaseFileRouter<MainFileListView> imp
             intent.addCategory(Intent.CATEGORY_OPENABLE);
 
             activity.startActivityForResult(intent, FILE_SELECT_CODE);
+        });
+    }
+
+    @Override
+    public void openReplace(List<AuroraFile> files) {
+        ifViewActive(activity -> {
+            activity.startActivity(ReplaceActivity.intent(activity));
         });
     }
 }

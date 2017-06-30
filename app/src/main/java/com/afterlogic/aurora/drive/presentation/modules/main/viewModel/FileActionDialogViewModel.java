@@ -46,6 +46,8 @@ public class FileActionDialogViewModel {
             }
         }
 
+        actions.add(new FileAction(R.id.action_replace, R.string.prompt_action__replace, View.NO_ID));
+
         mActions = Stream.of(actions)
                 .map(this::toViewModel)
                 .collect(Collectors.toList());

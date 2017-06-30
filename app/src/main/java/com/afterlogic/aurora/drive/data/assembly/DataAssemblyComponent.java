@@ -5,7 +5,6 @@ import com.afterlogic.aurora.drive.data.common.db.DataBaseModule;
 import com.afterlogic.aurora.drive.data.common.db.DataBaseProvider;
 import com.afterlogic.aurora.drive.data.modules.prefs.AppPrefs;
 import com.afterlogic.aurora.drive.presentation.assembly.presentation.PresentationAssemblyComponent;
-import com.afterlogic.aurora.drive.presentation.assembly.presentation.PresentationAssemblyModule;
 
 import dagger.Subcomponent;
 
@@ -21,7 +20,8 @@ import dagger.Subcomponent;
         DataModule.class
 })
 public interface DataAssemblyComponent {
-    PresentationAssemblyComponent plus(PresentationAssemblyModule module);
+
+    PresentationAssemblyComponent presentationAssembly();
 
     AppPrefs prefs();
     DataBaseProvider dataBase();

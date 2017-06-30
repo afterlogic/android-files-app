@@ -107,6 +107,8 @@
     <string name="prompt_about_privacy_policy_title">Политика конфиденциальности:</string>
     <string name="prompt_menu_about">О приложении</string>
 
+    <string name="prompt_action__replace">Переместить</string>
+
     <plurals name="dialog_files_success_downloaded">
         <item quantity="zero">%d файлов успешно загружено.</item>
         <item quantity="one">%d файл успешно загружен.</item>
