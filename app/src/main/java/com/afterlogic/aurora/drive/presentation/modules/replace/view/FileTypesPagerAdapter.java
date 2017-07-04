@@ -4,8 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.afterlogic.aurora.drive.model.FileType;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ItemsAdapter;
-import com.afterlogic.aurora.drive.presentation.modules.replace.viewModel.ReplaceFileTypeViewModel;
 
 import java.util.List;
 
@@ -14,9 +14,9 @@ import java.util.List;
  * mail: mail@sunnydaydev.me
  */
 
-class FileTypesPagerAdapter extends FragmentPagerAdapter implements ItemsAdapter<ReplaceFileTypeViewModel> {
+class FileTypesPagerAdapter extends FragmentPagerAdapter implements ItemsAdapter<FileType> {
 
-    private List<ReplaceFileTypeViewModel> fileTypes;
+    private List<FileType> fileTypes;
 
     public FileTypesPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -27,19 +27,19 @@ class FileTypesPagerAdapter extends FragmentPagerAdapter implements ItemsAdapter
         return fileTypes == null ? 0 : fileTypes.size();
     }
     @Override
-    public void setItems(List<ReplaceFileTypeViewModel> items) {
+    public void setItems(List<FileType> items) {
         fileTypes = items;
         notifyDataSetChanged();
     }
 
     @Override
     public Fragment getItem(int position) {
-        return ReplaceFileTypeFragment.newInstance(position);
+        return ReplaceFileTypeFragment.newInstance(fileTypes.get(position).getFilesType());
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return fileTypes.get(position).fileType.getCaption();
+        return fileTypes.get(position).getCaption();
     }
 
     @Override
