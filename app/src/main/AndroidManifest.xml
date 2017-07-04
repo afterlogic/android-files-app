@@ -97,8 +97,7 @@
             android:theme="@style/AppTheme"/>
 
         <activity
-            android:name=".presentation.modules.replace.view.ReplaceActivity"
-            android:theme="@style/AppTheme"/>
+            android:name=".presentation.modules.replace.view.ReplaceActivity"/>
 
         <service android:name=".presentation.modulesBackground.authenticator.AuthenticatorService">
             <intent-filter>

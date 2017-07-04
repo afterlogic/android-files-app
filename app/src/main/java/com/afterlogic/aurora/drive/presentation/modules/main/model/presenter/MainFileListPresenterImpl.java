@@ -382,6 +382,7 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
     @Override
     public void onReplaceAction() {
         router.navigateTo(AppNavigator.REPLACE);
+        mModel.setFileForActions(null);
     }
 
     private void createPublicLink(AuroraFile file, @StringRes int successMessage) {

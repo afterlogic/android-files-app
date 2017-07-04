@@ -7,39 +7,32 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.afterlogic.aurora.drive.BR;
-import com.afterlogic.aurora.drive.application.AppNavigator;
 import com.afterlogic.aurora.drive.application.assembly.Injectable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.BaseViewModel;
 import com.afterlogic.aurora.drive.presentation.common.util.UnbindableObservable;
 
 import javax.inject.Inject;
 
-import ru.terrakok.cicerone.NavigatorHolder;
-
 /**
  * Created by aleksandrcikin on 29.06.17.
  * mail: mail@sunnydaydev.me
  */
 
-public abstract class InjectableMVVMActivity<VM extends BaseViewModel> extends AppCompatActivity implements LifecycleRegistryOwner, Injectable {
+public abstract class InjectableMVVMFragment<VM extends BaseViewModel> extends Fragment implements LifecycleRegistryOwner, Injectable {
 
     private LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
 
     private UnbindableObservable.Bag startedBindingsBag = new UnbindableObservable.Bag();
     private UnbindableObservable.Bag createdBindingsBag = new UnbindableObservable.Bag();
 
-    private int fragmentContainerId = View.NO_ID;
-
     @Inject
     ViewModelProvider.Factory viewModelFactory;
-
-    @Inject
-    NavigatorHolder navigatorHolder;
 
     private VM viewModel;
 
@@ -48,8 +41,13 @@ public abstract class InjectableMVVMActivity<VM extends BaseViewModel> extends A
     private ViewDataBinding binding;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         ViewModelProvider viewModelProvider = ViewModelProviders.of(this, viewModelFactory);
 
@@ -57,59 +55,32 @@ public abstract class InjectableMVVMActivity<VM extends BaseViewModel> extends A
 
         getLifecycle().addObserver(viewModel);
 
-        binding = createBinding();
-        binding.setVariable(viewModelVariable, viewModel);
-
         bindCreated(viewModel, createdBindingsBag);
+
+        binding = createBinding(inflater, container, savedInstanceState);
+        binding.setVariable(viewModelVariable, viewModel);
+        return binding.getRoot();
     }
 
-    public abstract ViewDataBinding createBinding();
+    public abstract ViewDataBinding createBinding(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState);
 
     @Override
-    protected void onResumeFragments() {
-        super.onResumeFragments();
-        if (navigatorHolder != null) {
-            navigatorHolder.setNavigator(new AppNavigator(this, fragmentContainerId));
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        if (navigatorHolder != null) {
-            navigatorHolder.removeNavigator();
-        }
-        super.onPause();
-    }
-
-
-    @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
         bindStarted(viewModel, createdBindingsBag);
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         startedBindingsBag.unbindAndClear();
         super.onStop();
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroyView() {
         createdBindingsBag.unbindAndClear();
         binding.unbind();
-        super.onDestroy();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home: {
-                onBackPressed();
-                break;
-            }
-        }
-        return super.onOptionsItemSelected(item);
+        super.onDestroyView();
     }
 
     @Override
@@ -125,10 +96,6 @@ public abstract class InjectableMVVMActivity<VM extends BaseViewModel> extends A
 
     protected void bindStarted(VM vm, UnbindableObservable.Bag bag) {
         // no-op
-    }
-
-    public void setFragmentContainerId(int fragmentContainerId) {
-        this.fragmentContainerId = fragmentContainerId;
     }
 
     public void setViewModelVariable(int viewModelVariable) {

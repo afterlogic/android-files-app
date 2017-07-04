@@ -107,6 +107,7 @@ public class AppInjector {
         if (activity instanceof FragmentActivity) {
             ((FragmentActivity) activity).getSupportFragmentManager()
                     .registerFragmentLifecycleCallbacks(new FragmentManager.FragmentLifecycleCallbacks() {
+
                         @Override
                         public void onFragmentCreated(FragmentManager fm, Fragment f, Bundle savedInstanceState) {
                             handleFragment(f);
