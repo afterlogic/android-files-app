@@ -20,6 +20,7 @@ public class ReplaceActivity extends InjectableMVVMActivity<ReplaceViewModel> {
 
     @Override
     public ReplaceViewModel createViewModel(ViewModelProvider provider) {
-        return provider.get(ReplaceViewModel.class);
+        ReplaceViewModel vm = provider.get(ReplaceViewModel.class);
+        return vm;
     }
 }

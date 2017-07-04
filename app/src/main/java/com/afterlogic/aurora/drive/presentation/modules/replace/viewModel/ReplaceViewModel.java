@@ -23,4 +23,9 @@ public class ReplaceViewModel extends BaseViewModel {
     public void onStart() {
         MyLog.d("On start: " + this);
     }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+    }
 }
