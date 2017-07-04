@@ -1,0 +1,26 @@
+package com.afterlogic.aurora.drive.presentation.modules.replace.view;
+
+import android.databinding.BindingAdapter;
+import android.support.v7.widget.RecyclerView;
+
+import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.presentation.modules.replace.viewModel.ReplaceFileViewModel;
+import com.android.databinding.library.baseAdapters.BR;
+import com.github.nitrico.lastadapter.LastAdapter;
+
+import java.util.List;
+
+/**
+ * Created by aleksandrcikin on 04.07.17.
+ * mail: mail@sunnydaydev.me
+ */
+
+public class ReplaceBindings {
+
+    @BindingAdapter("replace_filesAdapter")
+    public static void bindFilesAdapter(RecyclerView list, List<ReplaceFileViewModel> items) {
+        new LastAdapter(items, BR.vm)
+                .map(ReplaceFileViewModel.class, R.layout.replace_item_list_file)
+                .into(list);
+    }
+}

@@ -59,6 +59,10 @@ public class ReplaceViewModel extends BaseViewModel {
         title.set(appResources.getString(titleId));
     }
 
+    public void onFolderStackChanged(String type, int stackSize) {
+        fileTypesLocked.set(stackSize > 1);
+    }
+
     public void onBackPressed() {
         router.exit();
     }

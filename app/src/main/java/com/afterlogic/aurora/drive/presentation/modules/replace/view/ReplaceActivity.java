@@ -12,8 +12,8 @@ import android.support.v7.app.ActionBar;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.databinding.ActivityReplaceBinding;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMActivity;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMActivity;
 import com.afterlogic.aurora.drive.presentation.modules.replace.viewModel.ReplaceViewModel;
 
 import javax.inject.Inject;

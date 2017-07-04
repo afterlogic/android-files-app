@@ -32,10 +32,12 @@ public class UnbindableObservable<T extends Observable> {
     }
 
     public static <T extends Observable> UnbindableObservable<T> bind(T field, UnbindableObservable.Bag bag, UnbindableObservableListener<T> listener) {
-        return create(field)
+        UnbindableObservable<T> unbindableObservable = create(field)
                 .addListener(listener)
                 .addTo(bag)
                 .bind();
+        unbindableObservable.notifyChanged();
+        return unbindableObservable;
     }
 
     public static <T extends Observable> UnbindableObservable<T> create(T field) {

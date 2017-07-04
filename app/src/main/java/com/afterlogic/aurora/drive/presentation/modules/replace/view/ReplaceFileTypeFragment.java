@@ -1,6 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.replace.view;
 
 import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
@@ -10,8 +11,10 @@ import android.view.ViewGroup;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.databinding.FragmentReplaceFilesBinding;
+import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMFragment;
 import com.afterlogic.aurora.drive.presentation.modules.replace.viewModel.ReplaceFileTypeViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.replace.viewModel.ReplaceViewModel;
 
 /**
  * Created by aleksandrcikin on 04.07.17.
@@ -44,5 +47,15 @@ public class ReplaceFileTypeFragment extends InjectableMVVMFragment<ReplaceFileT
     @Override
     public ReplaceFileTypeViewModel createViewModel(ViewModelProvider provider) {
         return provider.get(ReplaceFileTypeViewModel.class);
+    }
+
+    @Override
+    protected void bindCreated(ReplaceFileTypeViewModel vm, UnbindableObservable.Bag bag) {
+        super.bindCreated(vm, bag);
+
+        UnbindableObservable.bind(vm.stackSize, bag, field -> {
+            ReplaceViewModel rootVm = ViewModelProviders.of(getActivity()).get(ReplaceViewModel.class);
+            rootVm.onFolderStackChanged(getViewModel().fileType, field.get());
+        });
     }
 }

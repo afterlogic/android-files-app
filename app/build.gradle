@@ -109,6 +109,8 @@ ext{
 
     architectureComponentsVersion = '1.0.0-alpha3'
     ciceroneVersion = '1.2.1'
+
+    lastAdapterVersion = '2.2.2'
 }
 
 dependencies {
@@ -180,4 +182,7 @@ dependencies {
 
     // Navigation
     implementation "ru.terrakok.cicerone:cicerone:$ciceroneVersion"
+
+
+    compile "com.github.nitrico.lastadapter:lastadapter:$lastAdapterVersion"
 }
