@@ -17,7 +17,7 @@ import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.databinding.ActivityMainBinding;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
-import com.afterlogic.aurora.drive.presentation.common.util.UnbindableObservable;
+import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesListFragment;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesMVVMActivity;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.FilesListCallback;

@@ -153,7 +153,7 @@ public class MainFileListRouterImpl extends BaseFileRouter<MainFileListView> imp
     @Override
     public void openReplace(List<AuroraFile> files) {
         ifViewActive(activity -> {
-            activity.startActivity(ReplaceActivity.intent(activity));
+            activity.startActivity(ReplaceActivity.newReplaceIntent(activity));
         });
     }
 }

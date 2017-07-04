@@ -15,7 +15,7 @@ import com.afterlogic.aurora.drive.BR;
 import com.afterlogic.aurora.drive.application.AppNavigator;
 import com.afterlogic.aurora.drive.application.assembly.Injectable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.BaseViewModel;
-import com.afterlogic.aurora.drive.presentation.common.util.UnbindableObservable;
+import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 
 import javax.inject.Inject;
 

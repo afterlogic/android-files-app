@@ -381,7 +381,7 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
 
     @Override
     public void onReplaceAction() {
-        router.navigateTo(AppNavigator.REPLACE);
+        router.navigateTo(AppNavigator.COPY);
         mModel.setFileForActions(null);
     }
 

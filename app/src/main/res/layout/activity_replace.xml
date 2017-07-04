@@ -2,7 +2,6 @@
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -44,6 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_gravity="bottom"
+                app:pager="@{viewpager}"
                 android:visibility="@{vm.fileTypesLocked || vm.fileTypes.size() == 0 ? View.GONE : View.VISIBLE}"
                 app:layout_scrollFlags="scroll|enterAlways"/>
 
@@ -64,9 +64,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            bind:onRefresh="@{() -> vm.onRefresh()}"
-            bind:refreshing="@{vm.viewModelState.isLoading()}"
-            bind:colorSchemeResources="@{@intArray/swipe_refresh_color_scheme}">
+            app:onRefresh="@{() -> vm.onRefresh()}"
+            app:refreshing="@{vm.viewModelState.isLoading()}"
+            app:colorSchemeResources="@{@intArray/swipe_refresh_color_scheme}">
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -81,10 +81,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            bind:adapter="@{adapter}"
-            bind:items="@{vm.fileTypes}"
-            bind:currentItem="@{vm.currentFileTypePosition}"
-            bind:swipeEnabled="@{!vm.fileTypesLocked}"/>
+            app:adapter="@{adapter}"
+            app:items="@{vm.fileTypes}"
+            app:currentItem="@{vm.currentFileTypePosition}"
+            app:swipeEnabled="@{!vm.fileTypesLocked}"/>
 
     </android.support.design.widget.CoordinatorLayout>
 </layout>

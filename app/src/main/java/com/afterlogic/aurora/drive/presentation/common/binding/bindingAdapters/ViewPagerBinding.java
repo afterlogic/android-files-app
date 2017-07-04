@@ -1,6 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.common.binding.bindingAdapters;
 
 import android.databinding.BindingAdapter;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 
@@ -84,5 +85,10 @@ public class ViewPagerBinding {
                 pager.setCurrentItem(position, false);
             }
         }
+    }
+
+    @BindingAdapter("pager")
+    public static void bindPager(TabLayout tabLayout, ViewPager pager) {
+        tabLayout.setupWithViewPager(pager);
     }
 }

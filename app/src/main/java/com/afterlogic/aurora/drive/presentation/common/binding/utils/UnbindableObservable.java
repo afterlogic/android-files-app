@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.common.util;
+package com.afterlogic.aurora.drive.presentation.common.binding.utils;
 
 import android.databinding.Observable;
 import android.support.annotation.NonNull;
@@ -28,6 +28,13 @@ public class UnbindableObservable<T extends Observable> {
 
     public static <T extends Observable> UnbindableObservable<T> bind(T field) {
         return create(field)
+                .bind();
+    }
+
+    public static <T extends Observable> UnbindableObservable<T> bind(T field, UnbindableObservable.Bag bag, UnbindableObservableListener<T> listener) {
+        return create(field)
+                .addListener(listener)
+                .addTo(bag)
                 .bind();
     }
 

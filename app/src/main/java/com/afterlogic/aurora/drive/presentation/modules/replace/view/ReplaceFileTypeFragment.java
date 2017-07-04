@@ -20,19 +20,25 @@ import com.afterlogic.aurora.drive.presentation.modules.replace.viewModel.Replac
 
 public class ReplaceFileTypeFragment extends InjectableMVVMFragment<ReplaceFileTypeViewModel> {
 
-    public static ReplaceFileTypeFragment newInstance() {
+    public static ReplaceFileTypeFragment newInstance(String type) {
 
-        Bundle args = new Bundle();
+        ReplaceFileTypeArgs args = new ReplaceFileTypeArgs();
+        args.setType(type);
 
         ReplaceFileTypeFragment fragment = new ReplaceFileTypeFragment();
-        fragment.setArguments(args);
+        fragment.setArguments(args.getBundle());
         return fragment;
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getViewModel().setArgs(new ReplaceFileTypeArgs(getArguments()));
+    }
+
+    @Override
     public ViewDataBinding createBinding(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        FragmentReplaceFilesBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_replace_files, container, false);
-        return binding;
+        return DataBindingUtil.<FragmentReplaceFilesBinding>inflate(inflater, R.layout.fragment_replace_files, container, false);
     }
 
     @Override

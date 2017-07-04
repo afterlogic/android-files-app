@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import com.afterlogic.aurora.drive.BR;
 import com.afterlogic.aurora.drive.application.assembly.Injectable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.BaseViewModel;
-import com.afterlogic.aurora.drive.presentation.common.util.UnbindableObservable;
+import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 
 import javax.inject.Inject;
 
@@ -43,17 +43,16 @@ public abstract class InjectableMVVMFragment<VM extends BaseViewModel> extends F
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ViewModelProvider viewModelProvider = ViewModelProviders.of(this, viewModelFactory);
+        viewModel = createViewModel(viewModelProvider);
+
+        getLifecycle().addObserver(viewModel);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        ViewModelProvider viewModelProvider = ViewModelProviders.of(this, viewModelFactory);
-
-        viewModel = createViewModel(viewModelProvider);
-
-        getLifecycle().addObserver(viewModel);
 
         bindCreated(viewModel, createdBindingsBag);
 

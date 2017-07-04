@@ -17,6 +17,7 @@ import ru.terrakok.cicerone.android.SupportAppNavigator;
 public class AppNavigator extends SupportAppNavigator {
 
     public static final String REPLACE = "replace";
+    public static final String COPY = "copy";
 
     private FragmentActivity activity;
 
@@ -33,9 +34,13 @@ public class AppNavigator extends SupportAppNavigator {
     @Override
     protected Intent createActivityIntent(String screenKey, Object data) {
         switch (screenKey) {
-            case REPLACE: {
-                return ReplaceActivity.intent(activity);
-            }
+
+            case REPLACE:
+                return ReplaceActivity.newReplaceIntent(activity);
+
+            case COPY:
+                return ReplaceActivity.newCopyIntent(activity);
+
         }
         return null;
     }

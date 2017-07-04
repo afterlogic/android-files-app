@@ -2,6 +2,7 @@ package com.afterlogic.aurora.drive.application.assembly;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -109,7 +110,7 @@ public class AppInjector {
                     .registerFragmentLifecycleCallbacks(new FragmentManager.FragmentLifecycleCallbacks() {
 
                         @Override
-                        public void onFragmentCreated(FragmentManager fm, Fragment f, Bundle savedInstanceState) {
+                        public void onFragmentAttached(FragmentManager fm, Fragment f, Context context) {
                             handleFragment(f);
                         }
                     }, true);

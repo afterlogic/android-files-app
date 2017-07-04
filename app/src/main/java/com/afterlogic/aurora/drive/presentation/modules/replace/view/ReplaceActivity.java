@@ -5,12 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.databinding.ActivityReplaceBinding;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMActivity;
+import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.modules.replace.viewModel.ReplaceViewModel;
 
 import javax.inject.Inject;
@@ -26,16 +29,35 @@ import dagger.android.support.HasSupportFragmentInjector;
 
 public class ReplaceActivity extends InjectableMVVMActivity<ReplaceViewModel> implements HasSupportFragmentInjector {
 
+    private static final String KEY_ARGS = "args";
+
     @Inject
     DispatchingAndroidInjector<Fragment> fragmentInjector;
 
-    public static Intent intent(Context context) {
-        return new Intent(context, ReplaceActivity.class);
+    public static Intent newReplaceIntent(Context context) {
+        ReplaceArgs args = new ReplaceArgs();
+        args.setCopyMode(false);
+        return new Intent(context, ReplaceActivity.class)
+                .putExtra(KEY_ARGS, args.getBundle());
+    }
+
+    public static Intent newCopyIntent(Context context) {
+        ReplaceArgs args = new ReplaceArgs();
+        args.setCopyMode(true);
+        return new Intent(context, ReplaceActivity.class)
+                .putExtra(KEY_ARGS, args.getBundle());
     }
 
     @Override
     public ReplaceViewModel createViewModel(ViewModelProvider provider) {
         return provider.get(ReplaceViewModel.class);
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ReplaceArgs args = new ReplaceArgs(getIntent().getBundleExtra(KEY_ARGS));
+        getViewModel().setArgs(args);
     }
 
     @Override
@@ -60,5 +82,11 @@ public class ReplaceActivity extends InjectableMVVMActivity<ReplaceViewModel> im
     @Override
     public void onBackPressed() {
         getViewModel().onBackPressed();
+    }
+
+    @Override
+    protected void bindCreated(ReplaceViewModel replaceViewModel, UnbindableObservable.Bag bag) {
+        super.bindCreated(replaceViewModel, bag);
+        UnbindableObservable.bind(replaceViewModel.title, bag, field -> setTitle(field.get()));
     }
 }

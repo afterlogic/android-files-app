@@ -34,7 +34,7 @@ class FileTypesPagerAdapter extends FragmentPagerAdapter implements ItemsAdapter
 
     @Override
     public Fragment getItem(int position) {
-        return ReplaceFileTypeFragment.newInstance();
+        return ReplaceFileTypeFragment.newInstance(fileTypes.get(position).getFilesType());
     }
 
     @Override
