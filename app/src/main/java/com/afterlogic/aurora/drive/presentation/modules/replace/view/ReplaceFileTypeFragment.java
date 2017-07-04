@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.databinding.FragmentReplaceFilesBinding;
-import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMFragment;
 import com.afterlogic.aurora.drive.presentation.modules.replace.viewModel.ReplaceFileTypeViewModel;
 import com.afterlogic.aurora.drive.presentation.modules.replace.viewModel.ReplaceViewModel;
@@ -23,20 +22,19 @@ import com.afterlogic.aurora.drive.presentation.modules.replace.viewModel.Replac
 
 public class ReplaceFileTypeFragment extends InjectableMVVMFragment<ReplaceFileTypeViewModel> {
 
-    public static ReplaceFileTypeFragment newInstance(String type) {
+    public static ReplaceFileTypeFragment newInstance(int positon) {
 
-        ReplaceFileTypeArgs args = new ReplaceFileTypeArgs();
-        args.setType(type);
+        Bundle args = new Bundle();
 
         ReplaceFileTypeFragment fragment = new ReplaceFileTypeFragment();
-        fragment.setArguments(args.getBundle());
+        args.putInt("position", positon);
+        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getViewModel().setArgs(new ReplaceFileTypeArgs(getArguments()));
     }
 
     @Override
@@ -46,16 +44,9 @@ public class ReplaceFileTypeFragment extends InjectableMVVMFragment<ReplaceFileT
 
     @Override
     public ReplaceFileTypeViewModel createViewModel(ViewModelProvider provider) {
-        return provider.get(ReplaceFileTypeViewModel.class);
+        ReplaceViewModel root = ViewModelProviders.of(getActivity()).get(ReplaceViewModel.class);
+        int position = getArguments().getInt("position");
+        return root.fileTypes.get(position);
     }
 
-    @Override
-    protected void bindCreated(ReplaceFileTypeViewModel vm, UnbindableObservable.Bag bag) {
-        super.bindCreated(vm, bag);
-
-        UnbindableObservable.bind(vm.stackSize, bag, field -> {
-            ReplaceViewModel rootVm = ViewModelProviders.of(getActivity()).get(ReplaceViewModel.class);
-            rootVm.onFolderStackChanged(getViewModel().fileType, field.get());
-        });
-    }
 }

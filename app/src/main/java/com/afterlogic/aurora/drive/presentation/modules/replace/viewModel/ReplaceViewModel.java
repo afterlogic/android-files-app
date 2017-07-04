@@ -9,17 +9,23 @@ import android.databinding.ObservableList;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.rx.OptionalDisposable;
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
+import com.afterlogic.aurora.drive.core.common.streams.StreamCollectors;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.FileType;
+import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnPropertyChangedCallback;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.BaseViewModel;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.UiObservableField;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ViewModelState;
 import com.afterlogic.aurora.drive.presentation.modules.replace.interactor.ReplaceInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.replace.view.ReplaceArgs;
+import com.annimon.stream.Stream;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import ru.terrakok.cicerone.Router;
 
@@ -32,7 +38,7 @@ public class ReplaceViewModel extends BaseViewModel {
 
     public ObservableField<String> title = new ObservableField<>();
     public ObservableBoolean fileTypesLocked = new ObservableBoolean(false);
-    public ObservableList<FileType> fileTypes = new ObservableArrayList<>();
+    public ObservableList<ReplaceFileTypeViewModel> fileTypes = new ObservableArrayList<>();
     public ObservableInt currentFileTypePosition = new ObservableInt(-1);
 
     public ObservableField<ViewModelState> viewModelState = new UiObservableField<>(ViewModelState.LOADING);
@@ -42,14 +48,19 @@ public class ReplaceViewModel extends BaseViewModel {
     private final Router router;
     private final AppResources appResources;
 
+    private final Provider<ReplaceFileTypeViewModel> viewModelProvider;
     private final OptionalDisposable loadingDisposable = new OptionalDisposable();
 
+    private ReplaceFileTypeViewModel lockedViewModel = null;
+    private final Map<String, ReplaceFileTypeViewModel> typesMap = new HashMap<>();
+
     @Inject
-    ReplaceViewModel(ReplaceInteractor interactor, Subscriber subscriber, Router router, AppResources appResources) {
+    ReplaceViewModel(ReplaceInteractor interactor, Subscriber subscriber, Router router, AppResources appResources, Provider<ReplaceFileTypeViewModel> viewModelProvider) {
         this.interactor = interactor;
         this.subscriber = subscriber;
         this.router = router;
         this.appResources = appResources;
+        this.viewModelProvider = viewModelProvider;
 
         startLoad();
     }
@@ -59,12 +70,12 @@ public class ReplaceViewModel extends BaseViewModel {
         title.set(appResources.getString(titleId));
     }
 
-    public void onFolderStackChanged(String type, int stackSize) {
-        fileTypesLocked.set(stackSize > 1);
-    }
-
     public void onBackPressed() {
-        router.exit();
+        if (fileTypesLocked.get() && lockedViewModel != null) {
+            lockedViewModel.popStack();
+        } else {
+            router.exit();
+        }
     }
 
     public void onRefresh() {
@@ -74,6 +85,8 @@ public class ReplaceViewModel extends BaseViewModel {
 
     private void startLoad() {
         loadingDisposable.disposeAndClear();
+        fileTypes.clear();
+        typesMap.clear();
 
         interactor.getAvailableFileTypes()
                 .doOnSubscribe(disposable -> viewModelState.set(ViewModelState.LOADING))
@@ -85,6 +98,29 @@ public class ReplaceViewModel extends BaseViewModel {
 
     private void handleFileTypes(List<FileType> fileTypes) {
         viewModelState.set(fileTypes.size() > 0 ? ViewModelState.CONTENT : ViewModelState.EMPTY);
-        this.fileTypes.addAll(fileTypes);
+
+        Stream.of(fileTypes)
+                .map(type -> {
+                    ReplaceFileTypeViewModel typeVM = viewModelProvider.get();
+                    typeVM.setFileType(type);
+                    SimpleOnPropertyChangedCallback.addTo(
+                            typeVM.stackSize,
+                            () -> onStackChanged(type.getFilesType(), typeVM.stackSize.get())
+                    );
+
+                    typesMap.put(type.getFilesType(), typeVM);
+                    return typeVM;
+                })
+                .collect(StreamCollectors.setListByClearAdd(this.fileTypes));
+    }
+
+    private void onStackChanged(String type, int size) {
+        if (size > 1) {
+            fileTypesLocked.set(true);
+            lockedViewModel = typesMap.get(type);
+        } else {
+            lockedViewModel = null;
+            fileTypesLocked.set(false);
+        }
     }
 }

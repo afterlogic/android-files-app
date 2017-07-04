@@ -12,12 +12,12 @@ import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.core.common.streams.StreamCollectors;
 import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
 import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.model.FileType;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnListChangedCallback;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.BaseViewModel;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.UiObservableField;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ViewModelState;
 import com.afterlogic.aurora.drive.presentation.modules.replace.interactor.ReplaceFileTypeInteractor;
-import com.afterlogic.aurora.drive.presentation.modules.replace.view.ReplaceFileTypeArgs;
 import com.annimon.stream.Stream;
 
 import java.util.List;
@@ -38,7 +38,7 @@ public class ReplaceFileTypeViewModel extends BaseViewModel {
     private final ReplaceFileTypeInteractor interactor;
     private final Subscriber subscriber;
 
-    public String fileType;
+    public FileType fileType;
 
     private final ObservableList<AuroraFile> foldersStack = new ObservableArrayList<>();
     private final Mapper<ReplaceFileViewModel, AuroraFile> mapper = new FileMapper(((position, item) -> onFileClicked(item)));
@@ -53,8 +53,15 @@ public class ReplaceFileTypeViewModel extends BaseViewModel {
         SimpleOnListChangedCallback.addTo(foldersStack, list -> stackSize.set(list.size()));
     }
 
-    public void setArgs(ReplaceFileTypeArgs args) {
-        fileType = args.getType();
+    public void setFileType(FileType fileType) {
+        this.fileType = fileType;
+    }
+
+    public void popStack() {
+        if (foldersStack.size() > 1) {
+            foldersStack.remove(0);
+            reloadCurrentFolder();
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -63,7 +70,7 @@ public class ReplaceFileTypeViewModel extends BaseViewModel {
             return;
         }
 
-        foldersStack.add(AuroraFile.parse("", fileType, true));
+        foldersStack.add(AuroraFile.parse("", fileType.getFilesType(), true));
 
         reloadCurrentFolder();
     }

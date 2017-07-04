@@ -14,8 +14,8 @@ import android.view.View;
 import com.afterlogic.aurora.drive.BR;
 import com.afterlogic.aurora.drive.application.AppNavigator;
 import com.afterlogic.aurora.drive.application.assembly.Injectable;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.BaseViewModel;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.BaseViewModel;
 
 import javax.inject.Inject;
 
@@ -52,7 +52,6 @@ public abstract class InjectableMVVMActivity<VM extends BaseViewModel> extends A
         super.onCreate(savedInstanceState);
 
         ViewModelProvider viewModelProvider = ViewModelProviders.of(this, viewModelFactory);
-
         viewModel = createViewModel(viewModelProvider);
 
         getLifecycle().addObserver(viewModel);

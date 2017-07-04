@@ -11,7 +11,7 @@ import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickLis
  * mail: mail@sunnydaydev.me
  */
 
-public class ReplaceFileViewModel extends BaseObservable{
+public class ReplaceFileViewModel extends BaseObservable {
 
     private final AuroraFile file;
     private final OnItemClickListener<AuroraFile> onItemClickListener;
