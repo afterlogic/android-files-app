@@ -49,6 +49,10 @@ public class ReplaceFileTypeInteractor {
         viewModelsConnection.folderStackSize.onNext(new FolderStackSize(type, depth));
     }
 
+    public void notifyCurrentFolderChanged(String type, AuroraFile currentFolder) {
+        viewModelsConnection.currentFolders.put(type, currentFolder);
+    }
+
     public Maybe<String> getCreateFolderName() {
         return viewInteractor.getFolderName();
     }

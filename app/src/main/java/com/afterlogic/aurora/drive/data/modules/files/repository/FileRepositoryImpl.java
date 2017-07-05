@@ -336,6 +336,16 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
         return mFileSubRepo.deletePublicLink(file);
     }
 
+    @Override
+    public Completable replaceFiles(AuroraFile targetFolder, List<AuroraFile> files) {
+        return mFileSubRepo.replaceFiles(targetFolder, files);
+    }
+
+    @Override
+    public Completable copyFiles(AuroraFile targetFolder, List<AuroraFile> files) {
+        return mFileSubRepo.copyFiles(targetFolder, files);
+    }
+
     private void checkFilesType(String type, List<AuroraFile> files) throws IllegalArgumentException{
         boolean allInType = Stream.of(files)
                 .allMatch(file -> type.equals(file.getType()));

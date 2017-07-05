@@ -257,6 +257,16 @@ public class P7FileSubRepositoryImpl extends AuthorizedRepository implements Fil
                 .toCompletable();
     }
 
+    @Override
+    public Completable replaceFiles(AuroraFile targetFolder, List<AuroraFile> files) {
+        return Completable.error(new Error("Not implemented"));
+    }
+
+    @Override
+    public Completable copyFiles(AuroraFile targetFolder, List<AuroraFile> files) {
+        return Completable.error(new Error("Not implemented"));
+    }
+
     private String getCompleteUrl(String url){
         return mDynamicDomainProvider.getDomain().toString() + url;
     }

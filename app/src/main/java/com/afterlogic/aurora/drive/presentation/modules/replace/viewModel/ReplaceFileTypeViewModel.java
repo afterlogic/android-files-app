@@ -58,9 +58,10 @@ public class ReplaceFileTypeViewModel extends BaseViewModel {
         this.subscriber = subscriber;
         this.appResources = appResources;
 
-        SimpleOnListChangedCallback.addTo(foldersStack, list -> interactor.notifyStackChanged(fileType, list.size()));
-
-
+        SimpleOnListChangedCallback.addTo(foldersStack, list -> {
+            interactor.notifyStackChanged(fileType, list.size());
+            interactor.notifyCurrentFolderChanged(fileType, list.size() > 0 ? list.get(0) : null);
+        });
     }
 
     public void setArgs(ReplaceFileTypeArgs args) {

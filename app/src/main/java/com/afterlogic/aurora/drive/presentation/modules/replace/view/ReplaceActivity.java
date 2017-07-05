@@ -16,6 +16,7 @@ import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.databinding.ActivityReplaceBinding;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.BindingUtil;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMActivity;
 import com.afterlogic.aurora.drive.presentation.modules.replace.viewModel.ReplaceViewModel;
 
@@ -50,7 +51,7 @@ public class ReplaceActivity extends InjectableMVVMActivity<ReplaceViewModel> im
 
     public static Intent newCopyIntent(Context context, List<AuroraFile> files) {
         ReplaceArgs args = new ReplaceArgs.Builder()
-                .setCopyMode(false)
+                .setCopyMode(true)
                 .setFiles(files)
                 .build();
         return new Intent(context, ReplaceActivity.class)
@@ -90,9 +91,15 @@ public class ReplaceActivity extends InjectableMVVMActivity<ReplaceViewModel> im
     }
 
     @Override
-    protected void bindCreated(ReplaceViewModel replaceViewModel, UnbindableObservable.Bag bag) {
-        super.bindCreated(replaceViewModel, bag);
-        UnbindableObservable.bind(replaceViewModel.title, bag, field -> setTitle(field.get()));
+    protected void bindCreated(ReplaceViewModel vm, UnbindableObservable.Bag bag) {
+        super.bindCreated(vm, bag);
+        UnbindableObservable.bind(vm.title, bag, field -> setTitle(field.get()));
+    }
+
+    @Override
+    protected void bindStarted(ReplaceViewModel vm, UnbindableObservable.Bag bag) {
+        super.bindStarted(vm, bag);
+        BindingUtil.bindProgressDialog(vm.progress, bag, this);
     }
 
     @Override

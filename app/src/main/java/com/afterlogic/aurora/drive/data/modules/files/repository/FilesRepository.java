@@ -56,4 +56,8 @@ public interface FilesRepository {
     Single<String> createPublicLink(AuroraFile file);
 
     Completable deletePublicLink(AuroraFile file);
+
+    Completable replaceFiles(AuroraFile targetFolder, List<AuroraFile> files);
+
+    Completable copyFiles(AuroraFile targetFolder, List<AuroraFile> files);
 }

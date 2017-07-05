@@ -13,6 +13,7 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileType;
 import com.afterlogic.aurora.drive.presentation.common.binding.binder.Bindable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.BaseViewModel;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ProgressViewModel;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.UiObservableField;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ViewModelState;
 import com.afterlogic.aurora.drive.presentation.modules.replace.interactor.ReplaceInteractor;
@@ -38,6 +39,7 @@ public class ReplaceViewModel extends BaseViewModel {
     public Bindable<Integer> currentFileTypePosition = Bindable.create(0);
 
     public ObservableField<ViewModelState> viewModelState = new UiObservableField<>(ViewModelState.LOADING);
+    public ObservableField<ProgressViewModel> progress = new UiObservableField<>(null);
 
     private final ReplaceInteractor interactor;
     private final Subscriber subscriber;
@@ -48,6 +50,7 @@ public class ReplaceViewModel extends BaseViewModel {
 
     private String lockedViewModelType = null;
 
+    private boolean isCopyMode = false;
     private List<AuroraFile> filesForAction = null;
 
     @Inject
@@ -67,7 +70,8 @@ public class ReplaceViewModel extends BaseViewModel {
     public void setArgs(ReplaceArgs args) {
         filesForAction = args.getFiles();
 
-        int titleId = args.isCopyMode() ? R.string.prompt_title__copy : R.string.prompt_title__replace;
+        isCopyMode = args.isCopyMode();
+        int titleId = isCopyMode ? R.string.prompt_title__copy : R.string.prompt_title__replace;
         title.set(appResources.getString(titleId));
     }
 
@@ -85,11 +89,22 @@ public class ReplaceViewModel extends BaseViewModel {
     }
 
     public void onCreateFolder() {
-        interactor.notifyCreateFolder(fileTypes.get(currentFileTypePosition.get()).getFilesType());
+        interactor.notifyCreateFolder(getCurrentFileType());
     }
 
     public void onPasteAction() {
-
+        interactor.getCurrentFolder(getCurrentFileType())
+                .doOnSubscribe(disposable -> progress.set(createProgressViewModel()))
+                .doFinally(() -> progress.set(null))
+                .flatMapCompletable(folder -> {
+                    if (isCopyMode) {
+                        return interactor.copyFiles(folder, filesForAction);
+                    } else {
+                        return interactor.replaceFiles(folder, filesForAction);
+                    }
+                })
+                .compose(subscriber::defaultSchedulers)
+                .subscribe(subscriber.subscribe(router::exit));
     }
 
     private void startLoad() {
@@ -118,5 +133,17 @@ public class ReplaceViewModel extends BaseViewModel {
             lockedViewModelType = null;
             fileTypesLocked.set(false);
         }
+    }
+
+    private String getCurrentFileType() {
+        return fileTypes.get(currentFileTypePosition.get()).getFilesType();
+    }
+
+    private ProgressViewModel createProgressViewModel() {
+        int size = filesForAction.size();
+        return ProgressViewModel.indeterminate(
+                isCopyMode ? appResources.getString(R.string.prompt_coping) : appResources.getString(R.string.prompt_replacing),
+                size == 1 ? filesForAction.get(0).getName() : appResources.getPlurals(R.plurals.prompt_files_count, size, size)
+        );
     }
 }

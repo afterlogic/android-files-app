@@ -118,6 +118,8 @@
     <string name="prompt_title__replace">Replace to …</string>
     <string name="prompt_title__copy">Copy to …</string>
     <string name="action_paste">Paste</string>
+    <string name="prompt_coping">Coping</string>
+    <string name="prompt_replacing">Replacing</string>
 
     <plurals name="dialog_files_success_downloaded">
         <item quantity="one">%d file success downloaded.</item>
@@ -129,7 +131,7 @@
         <item quantity="many">%d files.</item>
     </plurals>
 
-    <plurals name="prompt_upload_files_count">
+    <plurals name="prompt_files_count">
         <item quantity="one">%d file</item>
         <item quantity="other">%d files</item>
     </plurals>
