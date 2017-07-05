@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -57,8 +56,9 @@ public class ReplaceFileTypeInteractor {
         return viewInteractor.getFolderName();
     }
 
-    public Completable createFolder(String name, AuroraFile currentFolder) {
+    public Single<AuroraFile> createFolder(String name, AuroraFile currentFolder) {
         AuroraFile newFolder = AuroraFile.create(currentFolder, name, true);
-        return filesRepository.createFolder(newFolder);
+        return filesRepository.createFolder(newFolder)
+                .andThen(Single.just(newFolder));
     }
 }

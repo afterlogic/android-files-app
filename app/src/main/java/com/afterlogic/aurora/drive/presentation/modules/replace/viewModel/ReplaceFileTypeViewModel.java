@@ -61,6 +61,7 @@ public class ReplaceFileTypeViewModel extends BaseViewModel {
         SimpleOnListChangedCallback.addTo(foldersStack, list -> {
             interactor.notifyStackChanged(fileType, list.size());
             interactor.notifyCurrentFolderChanged(fileType, list.size() > 0 ? list.get(0) : null);
+            reloadCurrentFolder();
         });
     }
 
@@ -87,8 +88,6 @@ public class ReplaceFileTypeViewModel extends BaseViewModel {
         }
 
         foldersStack.add(AuroraFile.parse("", fileType, true));
-
-        reloadCurrentFolder();
     }
 
     public void onRefresh() {
@@ -98,6 +97,8 @@ public class ReplaceFileTypeViewModel extends BaseViewModel {
     private void reloadCurrentFolder() {
         reloadDisposable.disposeAndClear();
         items.clear();
+
+        if (foldersStack.size() == 0) return;
 
         interactor.getFiles(foldersStack.get(0))
                 .doOnSubscribe(disposable -> viewModelState.set(ViewModelState.LOADING))
@@ -119,15 +120,12 @@ public class ReplaceFileTypeViewModel extends BaseViewModel {
     private void onFileClicked(AuroraFile file) {
         if (file.isFolder()) {
             foldersStack.add(0, file);
-
-            reloadCurrentFolder();
         }
     }
 
     private void popStack() {
         if (foldersStack.size() > 1) {
             foldersStack.remove(0);
-            reloadCurrentFolder();
         }
     }
 
@@ -148,7 +146,11 @@ public class ReplaceFileTypeViewModel extends BaseViewModel {
                 )))
                 .doFinally(() -> progress.set(null))
                 .compose(subscriber::defaultSchedulers)
-                .subscribe(this::reloadCurrentFolder);
+                .subscribe(this::onFolderCreated);
+    }
+
+    private void onFolderCreated(AuroraFile folder) {
+        foldersStack.add(0, folder);
     }
 
     @Override
