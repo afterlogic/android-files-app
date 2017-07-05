@@ -25,7 +25,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Maybe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by aleksandrcikin on 05.07.17.
@@ -46,23 +45,6 @@ public class ReplaceFileTypeViewInteractor {
     }
 
     Maybe<String> getFolderName() {
-
-        return Maybe.create(emitter -> {
-
-            String result = getStringFromDialog()
-                    .subscribeOn(AndroidSchedulers.mainThread())
-                    .blockingGet();
-
-            if (result != null) {
-                emitter.onSuccess(result);
-            } else {
-                emitter.onComplete();
-            }
-        });
-    }
-
-    private Maybe<String> getStringFromDialog() {
-
         List<Runnable> finalizers = new ArrayList<>();
 
         return Maybe.<String>create(emitter -> {
