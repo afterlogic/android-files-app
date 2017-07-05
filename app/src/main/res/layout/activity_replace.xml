@@ -81,8 +81,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            app:adapter="@{adapter}"
-            app:items="@{vm.fileTypes}"
+            app:replace_fileTypesAdapter="@{vm.fileTypes}"
             app:currentItem="@{vm.currentFileTypePosition}"
             app:swipeEnabled="@{!vm.fileTypesLocked}"/>
 

@@ -6,6 +6,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.presentation.common.binding.binder.Bindable;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ItemsAdapter;
 import com.afterlogic.aurora.drive.presentation.common.components.view.DisablableViewPager;
 
@@ -84,6 +85,38 @@ public class ViewPagerBinding {
             if (pager.getCurrentItem() != position) {
                 pager.setCurrentItem(position, false);
             }
+        }
+    }
+
+    @BindingAdapter("currentItem")
+    public static void bindCurrentItem(ViewPager pager, Bindable<Integer> currentItem) {
+        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (pager.getAdapter() != null && pager.getAdapter().getCount() > 0) {
+                    currentItem.set(position);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+        pager.addOnAdapterChangeListener((viewPager, oldAdapter, newAdapter) -> updatePagerCurrentItem(viewPager, currentItem));
+        updatePagerCurrentItem(pager, currentItem);
+    }
+
+    private static void updatePagerCurrentItem(ViewPager pager, Bindable<Integer> currentItem) {
+        int count = pager.getAdapter() == null ? 0 : pager.getAdapter().getCount();
+        if (count > 0) {
+            pager.setCurrentItem(Math.min(count - 1, currentItem.get()));
         }
     }
 

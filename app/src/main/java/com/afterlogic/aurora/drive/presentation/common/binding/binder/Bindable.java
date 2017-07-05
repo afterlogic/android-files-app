@@ -8,12 +8,14 @@ import com.afterlogic.aurora.drive.core.common.interfaces.Provider;
 import com.afterlogic.aurora.drive.core.common.util.Holder;
 import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
  * Created by sashka on 23.12.16.<p/>
  * mail: sunnyday.development@gmail.com
  */
 
-public class Binder<T> extends BaseObservable {
+public class Bindable<T> extends BaseObservable {
 
     @NonNull
     private final Provider<T> mGet;
@@ -21,13 +23,23 @@ public class Binder<T> extends BaseObservable {
     @NonNull
     private final Consumer<T> mSet;
 
-    public Binder(){
+    public static <T> Bindable<T> create(T initialValue) {
+        AtomicReference<T> holder = new AtomicReference<>();
+        holder.set(initialValue);
+        return new Bindable<>(holder::get, holder::set);
+    }
+
+    public static <T> Bindable<T> create() {
+        return create(null);
+    }
+
+    public Bindable(){
         Holder<T> value = new Holder<>();
         mGet = value::get;
         mSet = value::set;
     }
 
-    public Binder(@NonNull Provider<T> get, @NonNull Consumer<T> set) {
+    public Bindable(@NonNull Provider<T> get, @NonNull Consumer<T> set) {
         mGet = get;
         mSet = set;
     }

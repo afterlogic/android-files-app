@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import android.widget.RatingBar;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.presentation.common.binding.binder.Binder;
+import com.afterlogic.aurora.drive.presentation.common.binding.binder.Bindable;
 
 /**
  * Created by sashka on 07.02.17.<p/>
@@ -16,18 +16,18 @@ import com.afterlogic.aurora.drive.presentation.common.binding.binder.Binder;
 public class RatingBarBinding {
 
     @BindingAdapter("rating")
-    public static void bindRatingBarRate(@NonNull RatingBar ratingBar, @Nullable Binder<Float> binder){
-        if (ratingBar.getTag(R.id.bind_target) != binder) {
-            if (binder == null){
+    public static void bindRatingBarRate(@NonNull RatingBar ratingBar, @Nullable Bindable<Float> bindable){
+        if (ratingBar.getTag(R.id.bind_target) != bindable) {
+            if (bindable == null){
                 ratingBar.setOnRatingBarChangeListener(null);
                 ratingBar.setRating(0);
             } else {
-                ratingBar.setTag(R.id.bind_target, binder);
-                ratingBar.setOnRatingBarChangeListener((ratingBar1, v, b) -> binder.set(v));
+                ratingBar.setTag(R.id.bind_target, bindable);
+                ratingBar.setOnRatingBarChangeListener((ratingBar1, v, b) -> bindable.set(v));
             }
         }
-        if (binder != null) {
-            ratingBar.setRating(binder.get());
+        if (bindable != null) {
+            ratingBar.setRating(bindable.get());
         }
     }
 }

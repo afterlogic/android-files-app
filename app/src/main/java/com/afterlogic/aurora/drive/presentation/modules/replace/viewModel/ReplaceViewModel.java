@@ -3,7 +3,6 @@ package com.afterlogic.aurora.drive.presentation.modules.replace.viewModel;
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
-import android.databinding.ObservableInt;
 import android.databinding.ObservableList;
 
 import com.afterlogic.aurora.drive.R;
@@ -11,6 +10,7 @@ import com.afterlogic.aurora.drive.core.common.rx.OptionalDisposable;
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.FileType;
+import com.afterlogic.aurora.drive.presentation.common.binding.binder.Bindable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.BaseViewModel;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.UiObservableField;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ViewModelState;
@@ -34,7 +34,7 @@ public class ReplaceViewModel extends BaseViewModel {
     public ObservableField<String> title = new ObservableField<>();
     public ObservableBoolean fileTypesLocked = new ObservableBoolean(false);
     public ObservableList<FileType> fileTypes = new ObservableArrayList<>();
-    public ObservableInt currentFileTypePosition = new ObservableInt(0);
+    public Bindable<Integer> currentFileTypePosition = Bindable.create(0);
 
     public ObservableField<ViewModelState> viewModelState = new UiObservableField<>(ViewModelState.LOADING);
 
