@@ -21,6 +21,7 @@ import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.data.modules.files.mapper.p7.file.factory.AuroraFileP7MapperFactory;
 import com.afterlogic.aurora.drive.data.modules.files.mapper.p7.uploadResult.factory.UploadResultP7MapperFactory;
+import com.afterlogic.aurora.drive.data.modules.files.model.dto.ReplaceFileDto;
 import com.afterlogic.aurora.drive.data.modules.files.service.FilesServiceP7;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.AuroraSession;
@@ -31,6 +32,7 @@ import com.afterlogic.aurora.drive.model.error.FileNotExistError;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -254,6 +256,34 @@ public class P7FileSubRepositoryImpl extends AuthorizedRepository implements Fil
         return mCloudService.deletePublicLink(file.getType(), file.getPath(), file.getName())
                 .compose(Repository::withNetMapper)
                 .compose(this::withRelogin)
+                .toCompletable();
+    }
+
+    @Override
+    public Completable replaceFiles(AuroraFile targetFolder, List<AuroraFile> files) {
+        Mapper<List<ReplaceFileDto>, Collection<AuroraFile>> mapper = MapperUtil.listOrEmpty(new FileToReplaceFileMapper());
+
+        return mCloudService.replaceFiles(
+                files.get(0).getType(),
+                targetFolder.getType(),
+                files.get(0).getPath(),
+                targetFolder.getFullPath(),
+                mapper.map(files)
+        )//-----|
+                .toCompletable();
+    }
+
+    @Override
+    public Completable copyFiles(AuroraFile targetFolder, List<AuroraFile> files) {
+        Mapper<List<ReplaceFileDto>, Collection<AuroraFile>> mapper = MapperUtil.listOrEmpty(new FileToReplaceFileMapper());
+
+        return mCloudService.copyFiles(
+                files.get(0).getType(),
+                targetFolder.getType(),
+                files.get(0).getPath(),
+                targetFolder.getFullPath(),
+                mapper.map(files)
+        )//-----|
                 .toCompletable();
     }
 

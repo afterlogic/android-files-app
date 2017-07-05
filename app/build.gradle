@@ -106,6 +106,11 @@ ext{
     greenDaoVersion = '3.2.2'
     trayPrefsVersion = '0.12.0'
     crashlyticsVersion = '2.6.8@aar'
+
+    architectureComponentsVersion = '1.0.0-alpha3'
+    ciceroneVersion = '1.2.1'
+
+    lastAdapterVersion = '2.2.2'
 }
 
 dependencies {
@@ -122,6 +127,9 @@ dependencies {
     //Dagger - Dependency Injection
     implementation "com.google.dagger:dagger:${daggerVersion}"
     annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
+    implementation "com.google.dagger:dagger-android:${daggerVersion}"
+    implementation "com.google.dagger:dagger-android-support:${daggerVersion}"
+    annotationProcessor "com.google.dagger:dagger-android-processor:${daggerVersion}"
 
     //Compat
     implementation "com.android.support:appcompat-v7:${compatVersion}"
@@ -167,4 +175,14 @@ dependencies {
     }
 
     implementation "com.android.support.constraint:constraint-layout:$constraintLayoutVersion"
+
+    implementation "android.arch.lifecycle:runtime:$architectureComponentsVersion"
+    implementation "android.arch.lifecycle:extensions:$architectureComponentsVersion"
+    annotationProcessor "android.arch.lifecycle:compiler:$architectureComponentsVersion"
+
+    // Navigation
+    implementation "ru.terrakok.cicerone:cicerone:$ciceroneVersion"
+
+
+    compile "com.github.nitrico.lastadapter:lastadapter:$lastAdapterVersion"
 }

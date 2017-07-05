@@ -9,12 +9,14 @@ import com.afterlogic.aurora.drive.data.common.network.ExtRequestBody;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.common.network.p7.Api7;
 import com.afterlogic.aurora.drive.data.common.network.p7.AuthorizedServiceP7;
+import com.afterlogic.aurora.drive.data.common.network.p8.Api8;
 import com.afterlogic.aurora.drive.data.model.AuroraFilesResponse;
-import com.afterlogic.aurora.drive.model.AuroraSession;
-import com.afterlogic.aurora.drive.model.FileInfo;
 import com.afterlogic.aurora.drive.data.model.project7.ApiResponseP7;
 import com.afterlogic.aurora.drive.data.model.project7.AuroraFileP7;
 import com.afterlogic.aurora.drive.data.model.project7.UploadResultP7;
+import com.afterlogic.aurora.drive.data.modules.files.model.dto.ReplaceFileDto;
+import com.afterlogic.aurora.drive.model.AuroraSession;
+import com.afterlogic.aurora.drive.model.FileInfo;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -153,6 +155,34 @@ public class FilesServiceP7Impl extends AuthorizedServiceP7 implements FilesServ
                     .put(Api7.Fields.NAME, name)
                     .create();
             return mApi.deletePublicLink(fields);
+        });
+    }
+
+    @Override
+    public Single<ApiResponseP7<Boolean>> replaceFiles(String fromType, String toType, String fromPath, String toPath, List<ReplaceFileDto> files) {
+        return Single.defer(() -> {
+            Map<String, Object> fields = getDefaultParams(Api7.Actions.FILES_MOVE)
+                    .put(Api8.Param.FROM_PATH, fromPath)
+                    .put(Api8.Param.TO_PATH, toPath)
+                    .put(Api8.Param.FROM_TYPE, fromType)
+                    .put(Api8.Param.TO_TYPE, toType)
+                    .put(Api8.Param.FILES, mGson.toJson(files))
+                    .create();
+            return mApi.copyFiles(fields);
+        });
+    }
+
+    @Override
+    public Single<ApiResponseP7<Boolean>> copyFiles(String fromType, String toType, String fromPath, String toPath, List<ReplaceFileDto> files) {
+        return Single.defer(() -> {
+            Map<String, Object> fields = getDefaultParams(Api7.Actions.FILES_COPY)
+                    .put(Api8.Param.FROM_PATH, fromPath)
+                    .put(Api8.Param.TO_PATH, toPath)
+                    .put(Api8.Param.FROM_TYPE, fromType)
+                    .put(Api8.Param.TO_TYPE, toType)
+                    .put(Api8.Param.FILES, mGson.toJson(files))
+                    .create();
+            return mApi.copyFiles(fields);
         });
     }
 }

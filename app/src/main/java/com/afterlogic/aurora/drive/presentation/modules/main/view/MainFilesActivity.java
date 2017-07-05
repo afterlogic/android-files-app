@@ -17,7 +17,7 @@ import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.databinding.ActivityMainBinding;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
-import com.afterlogic.aurora.drive.presentation.common.util.UnbindableObservable;
+import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesListFragment;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesMVVMActivity;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.FilesListCallback;
@@ -209,7 +209,8 @@ public class MainFilesActivity extends BaseFilesMVVMActivity<MainFilesViewModel>
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 ifCurrentFragment(fragment -> fragment.onOptionsItemSelected(item));
-                getViewModel().onMultiChoiseAction();
+                getViewModel().setMultichoiseMode(false);
+                mode.finish();
                 return false;
             }
 

@@ -232,6 +232,8 @@ public class MainFileListFragment extends BaseFilesListFragment<MainFileListView
             case R.id.action_offline: mPresenter.onToggleOffline(); return true;
             case R.id.action_public_link: mPresenter.onTogglePublicLink(); return true;
             case R.id.action_copy_public_link: mPresenter.onCopyPublicLink(); return true;
+            case R.id.action_replace: mPresenter.onReplaceAction(); return true;
+            case R.id.action_copy: mPresenter.onCopyAction(); return true;
 
             default: return false;
         }

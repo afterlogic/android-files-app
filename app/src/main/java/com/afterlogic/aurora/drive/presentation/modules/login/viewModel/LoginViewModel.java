@@ -3,7 +3,7 @@ package com.afterlogic.aurora.drive.presentation.modules.login.viewModel;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 
-import com.afterlogic.aurora.drive.presentation.common.binding.binder.StringBinder;
+import com.afterlogic.aurora.drive.presentation.common.binding.binder.StringBindable;
 import com.afterlogic.aurora.drive.presentation.common.modules.viewModel.ViewModel;
 
 /**
@@ -11,11 +11,11 @@ import com.afterlogic.aurora.drive.presentation.common.modules.viewModel.ViewMod
  */
 
 public interface LoginViewModel extends ViewModel {
-    StringBinder getLogin();
+    StringBindable getLogin();
 
-    StringBinder getPassword();
+    StringBindable getPassword();
 
-    StringBinder getHost();
+    StringBindable getHost();
 
     ObservableField<String> getPasswordError();
 

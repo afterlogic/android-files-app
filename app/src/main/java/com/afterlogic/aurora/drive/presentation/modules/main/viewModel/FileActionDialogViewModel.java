@@ -46,6 +46,9 @@ public class FileActionDialogViewModel {
             }
         }
 
+        actions.add(new FileAction(R.id.action_replace, R.string.prompt_action__replace, R.drawable.ic_content_cut));
+        actions.add(new FileAction(R.id.action_copy, R.string.prompt_action__copy, R.drawable.ic_action_copy));
+
         mActions = Stream.of(actions)
                 .map(this::toViewModel)
                 .collect(Collectors.toList());

@@ -90,7 +90,11 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
 
     @Override
     public Single<List<AuroraFile>> getFiles(AuroraFile folder) {
-        return mFileSubRepo.getFiles(folder);
+        return mFileSubRepo.getFiles(folder)
+                .map(files -> {
+                    Collections.sort(files, FileUtil.AURORA_FILE_COMPARATOR);
+                    return files;
+                });
     }
 
     @Override
@@ -330,6 +334,18 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
     @Override
     public Completable deletePublicLink(AuroraFile file) {
         return mFileSubRepo.deletePublicLink(file);
+    }
+
+    @Override
+    public Completable replaceFiles(AuroraFile targetFolder, List<AuroraFile> files) {
+        // TODO: check source files size, path and type
+        return mFileSubRepo.replaceFiles(targetFolder, files);
+    }
+
+    @Override
+    public Completable copyFiles(AuroraFile targetFolder, List<AuroraFile> files) {
+        // TODO: check source files size, path and type
+        return mFileSubRepo.copyFiles(targetFolder, files);
     }
 
     private void checkFilesType(String type, List<AuroraFile> files) throws IllegalArgumentException{

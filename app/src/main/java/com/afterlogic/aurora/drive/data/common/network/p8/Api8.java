@@ -63,6 +63,8 @@ public interface Api8 {
         String UPLOAD_FILE = "UploadFile";
         String CREATE_PUBLIC_LINK = "CreatePublicLink";
         String DELETE_PUBLIC_LINK = "DeletePublicLink";
+        String COPY = "Copy";
+        String MOVE = "Move";
     }
 
     interface Param{
@@ -80,6 +82,11 @@ public interface Api8 {
         String IS_LINK = "IsLink";
         String ITEMS = "Items";
         String IS_FOLDER = "IsFolder";
+        String FROM_TYPE = "FromType";
+        String TO_TYPE = "ToType";
+        String FROM_PATH = "FromPath";
+        String TO_PATH = "ToPath";
+        String FILES = "Files";
     }
 
     @POST()
@@ -142,4 +149,14 @@ public interface Api8 {
             @Part MultipartBody.Part file
     );
 
+    @POST(API)
+    @FormUrlEncoded
+    @Headers(Header.AUTHORISATION)
+    Single<ApiResponseP8<Boolean>> replaceFiles(@FieldMap Map<String, Object> fields);
+
+
+    @POST(API)
+    @FormUrlEncoded
+    @Headers(Header.AUTHORISATION)
+    Single<ApiResponseP8<Boolean>> copyFiles(@FieldMap Map<String, Object> fields);
 }

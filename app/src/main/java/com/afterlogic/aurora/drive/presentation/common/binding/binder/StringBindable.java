@@ -12,15 +12,15 @@ import com.afterlogic.aurora.drive.core.common.interfaces.Provider;
  * mail: sunnyday.development@gmail.com
  */
 
-public class StringBinder extends Binder<String> implements TextWatcher{
+public class StringBindable extends Bindable<String> implements TextWatcher{
 
     private boolean mTextInputMode = false;
 
-    public StringBinder() {
+    public StringBindable() {
         super();
     }
 
-    public StringBinder(@NonNull Provider<String> get, @NonNull Consumer<String> set) {
+    public StringBindable(@NonNull Provider<String> get, @NonNull Consumer<String> set) {
         super(get, set);
     }
 

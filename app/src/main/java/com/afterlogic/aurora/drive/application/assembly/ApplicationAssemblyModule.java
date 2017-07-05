@@ -3,14 +3,13 @@ package com.afterlogic.aurora.drive.application.assembly;
 import android.content.Context;
 
 import com.afterlogic.aurora.drive.application.App;
-import com.afterlogic.aurora.drive.application.configurators.application.ApplicationConfigurator;
-import com.afterlogic.aurora.drive.application.configurators.thirdParties.ThirdPartiesConfigurator;
-import com.afterlogic.aurora.drive.core.common.annotation.qualifer.Application;
-import com.afterlogic.aurora.drive.core.common.annotation.qualifer.ThirdParties;
-import com.afterlogic.aurora.drive.core.common.interfaces.Configurable;
+import com.afterlogic.aurora.drive.core.common.annotation.scopes.AppScope;
 
 import dagger.Module;
 import dagger.Provides;
+import ru.terrakok.cicerone.Cicerone;
+import ru.terrakok.cicerone.NavigatorHolder;
+import ru.terrakok.cicerone.Router;
 
 /**
  * Created by sashka on 31.08.16.<p/>
@@ -38,13 +37,18 @@ public class ApplicationAssemblyModule {
         return mAppContext;
     }
 
-    @Provides @ThirdParties
-    Configurable provideThirdPartiesConfigurator(ThirdPartiesConfigurator configurator){
-        return configurator;
+    @Provides @AppScope
+    Cicerone<Router> cicerone() {
+        return Cicerone.create();
     }
 
-    @Provides @Application
-    Configurable provideApplicationConfigurator(ApplicationConfigurator configurator){
-        return configurator;
+    @Provides @AppScope
+    NavigatorHolder navigatorHolder(Cicerone<Router> cicerone) {
+        return cicerone.getNavigatorHolder();
+    }
+
+    @Provides @AppScope
+    Router router(Cicerone<Router> cicerone) {
+        return cicerone.getRouter();
     }
 }

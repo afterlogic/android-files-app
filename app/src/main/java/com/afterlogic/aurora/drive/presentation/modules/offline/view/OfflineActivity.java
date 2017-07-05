@@ -18,7 +18,7 @@ import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsCompon
 import com.afterlogic.aurora.drive.presentation.common.binding.bindingAdapters.ViewProvider;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ItemsAdapter;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.MVVMActivity;
-import com.afterlogic.aurora.drive.presentation.common.util.UnbindableObservable;
+import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.FilesViewDialogDelegate;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFileItemViewModel;
 import com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.OfflineViewModel;

@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.common.util;
+package com.afterlogic.aurora.drive.presentation.common.binding.utils;
 
 import android.databinding.Observable;
 import android.support.annotation.NonNull;
@@ -6,9 +6,7 @@ import android.support.annotation.NonNull;
 import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
 import com.annimon.stream.Stream;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -24,11 +22,21 @@ public class UnbindableObservable<T extends Observable> {
 
     private Observable.OnPropertyChangedCallback mCallback = new SimpleListener(this::onChanged);
 
-    private List<UnbindableObservableListener<T>> mListeners = new ArrayList<>();
+    private Set<UnbindableObservableListener<T>> mListeners = new HashSet<>();
+    private Set<OnUnbindListener<T>> mUnbindListeners = new HashSet<>();
 
     public static <T extends Observable> UnbindableObservable<T> bind(T field) {
         return create(field)
                 .bind();
+    }
+
+    public static <T extends Observable> UnbindableObservable<T> bind(T field, UnbindableObservable.Bag bag, UnbindableObservableListener<T> listener) {
+        UnbindableObservable<T> unbindableObservable = create(field)
+                .addListener(listener)
+                .addTo(bag)
+                .bind();
+        unbindableObservable.notifyChanged();
+        return unbindableObservable;
     }
 
     public static <T extends Observable> UnbindableObservable<T> create(T field) {
@@ -47,12 +55,18 @@ public class UnbindableObservable<T extends Observable> {
 
     public UnbindableObservable<T> unbind() {
         if (!mBinded.getAndSet(false)) return this;
-        mField.addOnPropertyChangedCallback(mCallback);
+        mField.removeOnPropertyChangedCallback(mCallback);
+        Stream.of(mUnbindListeners).forEach(listener -> listener.onUnbind(mField));
         return this;
     }
 
     public UnbindableObservable<T> addListener(@NonNull UnbindableObservableListener<T> listener){
         mListeners.add(listener);
+        return this;
+    }
+
+    public UnbindableObservable<T> addOnUnbindListener(@NonNull OnUnbindListener<T> listener) {
+        mUnbindListeners.add(listener);
         return this;
     }
 
@@ -72,6 +86,10 @@ public class UnbindableObservable<T extends Observable> {
 
     public interface UnbindableObservableListener<T>{
         void onChange(T field);
+    }
+
+    public interface OnUnbindListener<T>{
+        void onUnbind(T field);
     }
 
     public static class Bag {

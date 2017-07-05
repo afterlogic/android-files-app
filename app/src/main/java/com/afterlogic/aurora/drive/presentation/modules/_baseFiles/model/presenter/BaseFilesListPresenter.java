@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.SystemClock;
 
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
-import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.modules.model.presenter.BaseLoadPresenter;
@@ -148,8 +147,6 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
     }
 
     protected void handleFilesResult(List<AuroraFile> files){
-        Collections.sort(files, FileUtil.AURORA_FILE_COMPARATOR);
-
         mModel.setFileList(files);
         mThumbnailRequest = Stream.of(files)
                 .filter(AuroraFile::hasThumbnail)

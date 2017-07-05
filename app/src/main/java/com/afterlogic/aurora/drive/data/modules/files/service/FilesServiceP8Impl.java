@@ -12,6 +12,7 @@ import com.afterlogic.aurora.drive.data.common.network.p8.CloudServiceP8;
 import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
 import com.afterlogic.aurora.drive.data.model.project8.FilesResponseP8;
 import com.afterlogic.aurora.drive.data.model.project8.UploadResultP8;
+import com.afterlogic.aurora.drive.data.modules.files.model.dto.ReplaceFileDto;
 import com.afterlogic.aurora.drive.model.DeleteFileInfo;
 import com.afterlogic.aurora.drive.model.FileInfo;
 import com.annimon.stream.Collectors;
@@ -196,6 +197,37 @@ public class FilesServiceP8Impl extends CloudServiceP8 implements FilesServiceP8
             return mApi.deletePublicLink(fields);
         });
     }
+
+    @Override
+    public Single<ApiResponseP8<Boolean>> replaceFiles(String fromType, String toType, String fromPath, String toPath, List<ReplaceFileDto> files) {
+        return Single.defer(() -> {
+            Map<String, Object> params = new ParamsBuilder()
+                    .put(Api8.Param.FROM_PATH, fromPath)
+                    .put(Api8.Param.TO_PATH, toPath)
+                    .put(Api8.Param.FROM_TYPE, fromType)
+                    .put(Api8.Param.TO_TYPE, toType)
+                    .put(Api8.Param.FILES, files)
+                    .create();
+            Map<String, Object> fields = getDefaultFields(Api8.Method.MOVE, params);
+            return mApi.replaceFiles(fields);
+        });
+    }
+
+    @Override
+    public Single<ApiResponseP8<Boolean>> copyFiles(String fromType, String toType, String fromPath, String toPath, List<ReplaceFileDto> files) {
+        return Single.defer(() -> {
+            Map<String, Object> params = new ParamsBuilder()
+                    .put(Api8.Param.FROM_PATH, fromPath)
+                    .put(Api8.Param.TO_PATH, toPath)
+                    .put(Api8.Param.FROM_TYPE, fromType)
+                    .put(Api8.Param.TO_TYPE, toType)
+                    .put(Api8.Param.FILES, files)
+                    .create();
+            Map<String, Object> fields = getDefaultFields(Api8.Method.COPY, params);
+            return mApi.copyFiles(fields);
+        });
+    }
+
 
     private MultipartBody.Part stringBody(Map.Entry<String, Object> value){
         return MultipartBody.Part.createFormData(value.getKey(), String.valueOf(value.getValue()));

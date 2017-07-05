@@ -1,5 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.assembly.modules;
 
+import com.afterlogic.aurora.drive.application.App;
 import com.afterlogic.aurora.drive.presentation.assembly.Injector;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.PresentationModulesStore;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.AuroraActivity;
@@ -34,6 +35,8 @@ public interface InjectorsComponent {
     void inject(SessionChangedReceiver sessionChangedReceiver);
 
     void inject(AuroraActivity.AuroraActivityHelper hepler);
+
+    void inject(App app);
 
     PresentationModulesStore modulesStore();
 

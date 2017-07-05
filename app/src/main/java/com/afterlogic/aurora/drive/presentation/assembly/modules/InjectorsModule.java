@@ -40,7 +40,7 @@ import dagger.Provides;
  *
  * Presentation module's wireframes factory module.
  */
-@Module
+@Module(includes = AutoInjectPresentationModule.class)
 public class InjectorsModule {
 
     private ModulesComponentCreator mPresentationAssemblyComponent;

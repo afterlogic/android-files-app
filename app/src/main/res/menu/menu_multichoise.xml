@@ -21,9 +21,22 @@
         app:showAsAction="always"/>
 
     <item
-        android:id="@+id/action_offline"
+        android:id="@id/action_replace"
+        android:title="@string/prompt_action__replace"
+        android:icon="@drawable/ic_content_cut"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@id/action_copy"
+        android:title="@string/prompt_action__copy"
+        android:icon="@drawable/ic_action_copy"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@id/action_offline"
         android:title="@string/prompt_action_make_offline"
         android:icon="@drawable/ic_offline_white_18dp"
         android:checkable="true"
-        app:showAsAction="always"/>
+        app:showAsAction="never"/>
+
 </menu>

@@ -15,7 +15,7 @@ import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.error.AccountManagerError;
 import com.afterlogic.aurora.drive.model.error.AuthError;
 import com.afterlogic.aurora.drive.model.error.UnknownApiVersionError;
-import com.afterlogic.aurora.drive.presentation.common.binding.binder.StringBinder;
+import com.afterlogic.aurora.drive.presentation.common.binding.binder.StringBindable;
 import com.afterlogic.aurora.drive.presentation.common.modules.viewModel.BaseViewModel;
 import com.afterlogic.aurora.drive.presentation.modules.login.interactor.LoginInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.login.router.LoginRouter;
@@ -37,9 +37,9 @@ public class LoginViewModelImpl extends BaseViewModel implements LoginViewModel 
     private final LoginRouter mRouter;
     private final Toaster toaster;
 
-    private final StringBinder mLogin = createInputStringBinder();
-    private final StringBinder mPassword = createInputStringBinder();
-    private final StringBinder mHost = createInputStringBinder();
+    private final StringBindable mLogin = createInputStringBinder();
+    private final StringBindable mPassword = createInputStringBinder();
+    private final StringBindable mHost = createInputStringBinder();
 
     private boolean mErrorState = false;
     private final ObservableField<String> mPasswordError = new ObservableField<>();
@@ -62,17 +62,17 @@ public class LoginViewModelImpl extends BaseViewModel implements LoginViewModel 
     }
 
     @Override
-    public StringBinder getLogin(){
+    public StringBindable getLogin(){
         return mLogin;
     }
 
     @Override
-    public StringBinder getPassword() {
+    public StringBindable getPassword() {
         return mPassword;
     }
 
     @Override
-    public StringBinder getHost() {
+    public StringBindable getHost() {
         return mHost;
     }
 
@@ -202,9 +202,9 @@ public class LoginViewModelImpl extends BaseViewModel implements LoginViewModel 
         }
     }
 
-    private StringBinder createInputStringBinder(){
+    private StringBindable createInputStringBinder(){
         Holder<String> value = new Holder<>();
-        return new StringBinder(
+        return new StringBindable(
                 value::get,
                 inputValue -> {
                     value.set(inputValue.trim());

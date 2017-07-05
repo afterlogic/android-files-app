@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.annotation.StringRes;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.application.AppNavigator;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
@@ -16,10 +17,10 @@ import com.afterlogic.aurora.drive.model.error.FileNotExistError;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.PresentationView;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter.BaseFilesListPresenter;
+import com.afterlogic.aurora.drive.presentation.modules.main.model.MainFilesListModel;
 import com.afterlogic.aurora.drive.presentation.modules.main.model.interactor.MainFileListInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.main.model.router.MainFileListRouter;
 import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFileListView;
-import com.afterlogic.aurora.drive.presentation.modules.main.model.MainFilesListModel;
 import com.annimon.stream.Stream;
 
 import java.io.File;
@@ -29,6 +30,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Completable;
+import ru.terrakok.cicerone.Router;
 
 /**
  * Created by sashka on 07.02.17.<p/>
@@ -41,6 +43,7 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
     private final MainFilesListModel mModel;
     private final MainFileListRouter mRouter;
     private final AppResources mAppResources;
+    private final Router router;
 
     @Inject
     MainFileListPresenterImpl(ViewState<MainFileListView> viewState,
@@ -48,12 +51,14 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
                               MainFilesListModel model,
                               MainFileListRouter router,
                               AppResources appResources,
-                              Context appContext) {
+                              Context appContext,
+                              Router ciceroneRouter) {
         super(viewState, interactor, model, appContext, router);
         mInteractor = interactor;
         mModel = model;
         mRouter = router;
         mAppResources = appResources;
+        this.router = ciceroneRouter;
     }
 
     @Override
@@ -372,6 +377,35 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
             createPublicLink(file, R.string.prompt_public_link_copied);
         }
         mModel.setFileForActions(null);
+    }
+
+    @Override
+    public void onReplaceAction() {
+        openReplace(false);
+    }
+
+    @Override
+    public void onCopyAction() {
+        openReplace(true);
+    }
+
+    private void openReplace(boolean isCopyMode) {
+        List<AuroraFile> items = getFilesForAction();
+        if (items.size() != 0) {
+            mModel.setMultiChoiseMode(false);
+            mModel.setFileForActions(null);
+            router.navigateTo(isCopyMode ? AppNavigator.COPY : AppNavigator.REPLACE, items);
+        }
+    }
+
+    private List<AuroraFile> getFilesForAction() {
+        List<AuroraFile> files = new ArrayList<>();
+        if (mModel.isMultiChoise()) {
+            files.addAll(mModel.getMultiChoise());
+        } else {
+            files.add(mModel.getFileForActions());
+        }
+        return Stream.of(files).withoutNulls().toList();
     }
 
     private void createPublicLink(AuroraFile file, @StringRes int successMessage) {

@@ -13,7 +13,7 @@ import com.afterlogic.aurora.drive.application.App;
 import com.afterlogic.aurora.drive.model.events.ActivityResultEvent;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.modules.viewModel.ViewModel;
-import com.afterlogic.aurora.drive.presentation.common.util.UnbindableObservable;
+import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 import com.annimon.stream.Stream;
 
 import org.greenrobot.eventbus.EventBus;

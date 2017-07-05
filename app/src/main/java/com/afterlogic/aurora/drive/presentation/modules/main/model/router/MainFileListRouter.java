@@ -28,4 +28,6 @@ public interface MainFileListRouter extends FilesRouter{
     void openSendTo(List<File> files);
 
     void openUploadFileChooser();
+
+    void openReplace(List<AuroraFile> files);
 }

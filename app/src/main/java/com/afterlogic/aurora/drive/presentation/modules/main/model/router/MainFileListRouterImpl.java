@@ -148,4 +148,9 @@ public class MainFileListRouterImpl extends BaseFileRouter<MainFileListView> imp
             activity.startActivityForResult(intent, FILE_SELECT_CODE);
         });
     }
+
+    //TODO remove
+    @Override
+    public void openReplace(List<AuroraFile> files) {
+    }
 }
