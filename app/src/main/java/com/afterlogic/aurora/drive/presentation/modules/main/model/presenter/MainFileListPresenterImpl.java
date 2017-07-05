@@ -381,14 +381,31 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
 
     @Override
     public void onReplaceAction() {
-        router.navigateTo(AppNavigator.REPLACE);
-        mModel.setFileForActions(null);
+        openReplace(false);
     }
 
     @Override
     public void onCopyAction() {
-        router.navigateTo(AppNavigator.COPY);
-        mModel.setFileForActions(null);
+        openReplace(true);
+    }
+
+    private void openReplace(boolean isCopyMode) {
+        List<AuroraFile> items = getFilesForAction();
+        if (items.size() != 0) {
+            mModel.setMultiChoiseMode(false);
+            mModel.setFileForActions(null);
+            router.navigateTo(isCopyMode ? AppNavigator.COPY : AppNavigator.REPLACE, items);
+        }
+    }
+
+    private List<AuroraFile> getFilesForAction() {
+        List<AuroraFile> files = new ArrayList<>();
+        if (mModel.isMultiChoise()) {
+            files.addAll(mModel.getMultiChoise());
+        } else {
+            files.add(mModel.getFileForActions());
+        }
+        return Stream.of(files).withoutNulls().toList();
     }
 
     private void createPublicLink(AuroraFile file, @StringRes int successMessage) {

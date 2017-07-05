@@ -9,6 +9,7 @@ import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.rx.OptionalDisposable;
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
+import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileType;
 import com.afterlogic.aurora.drive.presentation.common.binding.binder.Bindable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.BaseViewModel;
@@ -47,6 +48,8 @@ public class ReplaceViewModel extends BaseViewModel {
 
     private String lockedViewModelType = null;
 
+    private List<AuroraFile> filesForAction = null;
+
     @Inject
     ReplaceViewModel(ReplaceInteractor interactor, Subscriber subscriber, Router router, AppResources appResources) {
         this.interactor = interactor;
@@ -62,6 +65,8 @@ public class ReplaceViewModel extends BaseViewModel {
     }
 
     public void setArgs(ReplaceArgs args) {
+        filesForAction = args.getFiles();
+
         int titleId = args.isCopyMode() ? R.string.prompt_title__copy : R.string.prompt_title__replace;
         title.set(appResources.getString(titleId));
     }

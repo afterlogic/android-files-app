@@ -209,7 +209,8 @@ public class MainFilesActivity extends BaseFilesMVVMActivity<MainFilesViewModel>
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 ifCurrentFragment(fragment -> fragment.onOptionsItemSelected(item));
-                getViewModel().onMultiChoiseAction();
+                getViewModel().setMultichoiseMode(false);
+                mode.finish();
                 return false;
             }
 

@@ -5,7 +5,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
+import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.modules.replace.view.ReplaceActivity;
+
+import java.util.List;
 
 import ru.terrakok.cicerone.android.SupportAppNavigator;
 
@@ -36,10 +39,10 @@ public class AppNavigator extends SupportAppNavigator {
         switch (screenKey) {
 
             case REPLACE:
-                return ReplaceActivity.newReplaceIntent(activity);
+                return ReplaceActivity.newReplaceIntent(activity, (List<AuroraFile>) data);
 
             case COPY:
-                return ReplaceActivity.newCopyIntent(activity);
+                return ReplaceActivity.newCopyIntent(activity, (List<AuroraFile>) data);
 
         }
         return null;
