@@ -90,7 +90,11 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
 
     @Override
     public Single<List<AuroraFile>> getFiles(AuroraFile folder) {
-        return mFileSubRepo.getFiles(folder);
+        return mFileSubRepo.getFiles(folder)
+                .map(files -> {
+                    Collections.sort(files, FileUtil.AURORA_FILE_COMPARATOR);
+                    return files;
+                });
     }
 
     @Override
