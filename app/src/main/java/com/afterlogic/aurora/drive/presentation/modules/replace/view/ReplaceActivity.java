@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.databinding.ActivityReplaceBinding;
@@ -75,8 +77,25 @@ public class ReplaceActivity extends InjectableMVVMActivity<ReplaceViewModel> im
     }
 
     @Override
-    public AndroidInjector<Fragment> supportFragmentInjector() {
-        return fragmentInjector;
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_replace, menu);
+        return true;
+    }
+
+    @Override
+    protected void bindCreated(ReplaceViewModel replaceViewModel, UnbindableObservable.Bag bag) {
+        super.bindCreated(replaceViewModel, bag);
+        UnbindableObservable.bind(replaceViewModel.title, bag, field -> setTitle(field.get()));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.actoin_paste:
+                getViewModel().onPasteAction();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -85,8 +104,8 @@ public class ReplaceActivity extends InjectableMVVMActivity<ReplaceViewModel> im
     }
 
     @Override
-    protected void bindCreated(ReplaceViewModel replaceViewModel, UnbindableObservable.Bag bag) {
-        super.bindCreated(replaceViewModel, bag);
-        UnbindableObservable.bind(replaceViewModel.title, bag, field -> setTitle(field.get()));
+    public AndroidInjector<Fragment> supportFragmentInjector() {
+        return fragmentInjector;
     }
+
 }

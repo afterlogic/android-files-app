@@ -9,6 +9,7 @@
     <item name="action_offline_on" type="id"/>
     <item name="action_offline_off" type="id"/>
     <item name="action_replace" type="id"/>
+    <item name="action_copy" type="id"/>
 
     <item name="load_thumb_disposable" type="id"/>
 </resources>

@@ -31,4 +31,6 @@ public interface MainFileListPresenter extends FilesListPresenter, OnBackPressed
     void onCopyPublicLink();
 
     void onReplaceAction();
+
+    void onCopyAction();
 }

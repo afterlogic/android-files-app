@@ -62,7 +62,7 @@ public class ReplaceViewModel extends BaseViewModel {
     }
 
     public void setArgs(ReplaceArgs args) {
-        int titleId = args.isCopyMode() ? R.string.prompt_action__copy : R.string.prompt_action__replace;
+        int titleId = args.isCopyMode() ? R.string.prompt_title__copy : R.string.prompt_title__replace;
         title.set(appResources.getString(titleId));
     }
 
@@ -77,6 +77,10 @@ public class ReplaceViewModel extends BaseViewModel {
     public void onRefresh() {
         fileTypes.clear();
         startLoad();
+    }
+
+    public void onPasteAction() {
+
     }
 
     private void startLoad() {
