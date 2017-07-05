@@ -94,6 +94,12 @@ public class ReplaceActivity extends InjectableMVVMActivity<ReplaceViewModel> im
     protected void bindCreated(ReplaceViewModel vm, UnbindableObservable.Bag bag) {
         super.bindCreated(vm, bag);
         UnbindableObservable.bind(vm.title, bag, field -> setTitle(field.get()));
+        UnbindableObservable.bind(vm.subtitle, bag, field -> {
+            ActionBar ab = getSupportActionBar();
+            if (ab != null) {
+                ab.setSubtitle(field.get());
+            }
+        });
     }
 
     @Override

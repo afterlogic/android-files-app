@@ -33,13 +33,14 @@ import ru.terrakok.cicerone.Router;
 
 public class ReplaceViewModel extends BaseViewModel {
 
-    public ObservableField<String> title = new ObservableField<>();
-    public ObservableBoolean fileTypesLocked = new ObservableBoolean(false);
-    public ObservableList<FileType> fileTypes = new ObservableArrayList<>();
-    public Bindable<Integer> currentFileTypePosition = Bindable.create(0);
+    public final ObservableField<String> title = new ObservableField<>();
+    public final ObservableField<String> subtitle = new UiObservableField<>();
+    public final ObservableBoolean fileTypesLocked = new ObservableBoolean(false);
+    public final ObservableList<FileType> fileTypes = new ObservableArrayList<>();
+    public final Bindable<Integer> currentFileTypePosition = Bindable.create(0);
 
-    public ObservableField<ViewModelState> viewModelState = new UiObservableField<>(ViewModelState.LOADING);
-    public ObservableField<ProgressViewModel> progress = new UiObservableField<>(null);
+    public final ObservableField<ViewModelState> viewModelState = new UiObservableField<>(ViewModelState.LOADING);
+    public final ObservableField<ProgressViewModel> progress = new UiObservableField<>(null);
 
     private final ReplaceInteractor interactor;
     private final Subscriber subscriber;
@@ -129,10 +130,19 @@ public class ReplaceViewModel extends BaseViewModel {
         if (stackSize.getDepth() > 1) {
             fileTypesLocked.set(true);
             lockedViewModelType = stackSize.getType();
+            updateSubtitle();
         } else {
             lockedViewModelType = null;
             fileTypesLocked.set(false);
+            subtitle.set(null);
         }
+    }
+
+    private void updateSubtitle() {
+        interactor.getCurrentFolder(lockedViewModelType)
+                .map(AuroraFile::getFullPath)
+                .compose(subscriber::defaultSchedulers)
+                .subscribe(subscriber.subscribe(subtitle::set));
     }
 
     private String getCurrentFileType() {
