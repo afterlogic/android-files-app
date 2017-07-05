@@ -34,7 +34,7 @@ public class ReplaceViewModel extends BaseViewModel {
     public ObservableField<String> title = new ObservableField<>();
     public ObservableBoolean fileTypesLocked = new ObservableBoolean(false);
     public ObservableList<FileType> fileTypes = new ObservableArrayList<>();
-    public ObservableInt currentFileTypePosition = new ObservableInt(-1);
+    public ObservableInt currentFileTypePosition = new ObservableInt(0);
 
     public ObservableField<ViewModelState> viewModelState = new UiObservableField<>(ViewModelState.LOADING);
 
@@ -77,6 +77,10 @@ public class ReplaceViewModel extends BaseViewModel {
     public void onRefresh() {
         fileTypes.clear();
         startLoad();
+    }
+
+    public void onCreateFolder() {
+        interactor.notifyCreateFolder(fileTypes.get(currentFileTypePosition.get()).getFilesType());
     }
 
     public void onPasteAction() {

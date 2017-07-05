@@ -86,5 +86,15 @@
             app:currentItem="@{vm.currentFileTypePosition}"
             app:swipeEnabled="@{!vm.fileTypesLocked}"/>
 
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            style="@style/FabButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            app:fab_icon="@drawable/ic_create_new_folder"
+            android:onClick="@{() -> vm.onCreateFolder()}"
+            android:visibility="@{vm.viewModelState.isContent() ? View.VISIBLE : View.GONE}"
+            tools:ignore="RtlHardcoded" />
+
     </android.support.design.widget.CoordinatorLayout>
 </layout>

@@ -17,6 +17,7 @@ class ViewModelsConnection {
 
     public PublishSubject<FolderStackSize> folderStackSize = PublishSubject.create();
     public PublishSubject<String> popRequest = PublishSubject.create();
+    public PublishSubject<String> createFolderRequest = PublishSubject.create();
 
     @Inject
     ViewModelsConnection() {

@@ -11,7 +11,10 @@ import android.view.ViewGroup;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.databinding.FragmentReplaceFilesBinding;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMFragment;
+import com.afterlogic.aurora.drive.presentation.modules.replace.interactor.ReplaceFileTypeViewInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.replace.viewModel.ReplaceFileTypeViewModel;
+
+import javax.inject.Inject;
 
 /**
  * Created by aleksandrcikin on 04.07.17.
@@ -19,6 +22,9 @@ import com.afterlogic.aurora.drive.presentation.modules.replace.viewModel.Replac
  */
 
 public class ReplaceFileTypeFragment extends InjectableMVVMFragment<ReplaceFileTypeViewModel> {
+
+    @Inject
+    ReplaceFileTypeViewInteractor viewInteractor;
 
     public static ReplaceFileTypeFragment newInstance(String type) {
 
@@ -36,6 +42,7 @@ public class ReplaceFileTypeFragment extends InjectableMVVMFragment<ReplaceFileT
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        viewInteractor.bind(this);
         getViewModel().setArgs(new ReplaceFileTypeArgs(getArguments()));
     }
 

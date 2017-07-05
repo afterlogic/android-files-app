@@ -45,4 +45,8 @@ public class ReplaceInteractor {
     public void popFolder(String type) {
         viewModelsConnection.popRequest.onNext(type);
     }
+
+    public void notifyCreateFolder(String type) {
+        viewModelsConnection.createFolderRequest.onNext(type);
+    }
 }
