@@ -142,7 +142,7 @@ public class ReplaceFileTypeViewModel extends BaseViewModel {
     private void createFolder(String name) {
         interactor.createFolder(name, foldersStack.get(0))
                 .doOnSubscribe(disposable -> progress.set(ProgressViewModel.indeterminate(
-                        appResources.getString(R.string.prompt_create_folder),
+                        appResources.getString(R.string.prompt_dialog_title_folder_cration),
                         name
                 )))
                 .doFinally(() -> progress.set(null))
