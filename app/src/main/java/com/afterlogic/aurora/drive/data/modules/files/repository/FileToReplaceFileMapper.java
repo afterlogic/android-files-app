@@ -9,7 +9,7 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
  * mail: mail@sunnydaydev.me
  */
 
-class P8FileToReplaceFileMapper implements Mapper<ReplaceFileDto, AuroraFile> {
+class FileToReplaceFileMapper implements Mapper<ReplaceFileDto, AuroraFile> {
     @Override
     public ReplaceFileDto map(AuroraFile source) {
         return new ReplaceFileDto(source.getName(), source.isFolder());

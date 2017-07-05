@@ -338,11 +338,13 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
 
     @Override
     public Completable replaceFiles(AuroraFile targetFolder, List<AuroraFile> files) {
+        // TODO: check source files size, path and type
         return mFileSubRepo.replaceFiles(targetFolder, files);
     }
 
     @Override
     public Completable copyFiles(AuroraFile targetFolder, List<AuroraFile> files) {
+        // TODO: check source files size, path and type
         return mFileSubRepo.copyFiles(targetFolder, files);
     }
 

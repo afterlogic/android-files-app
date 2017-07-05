@@ -271,8 +271,7 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
 
     @Override
     public Completable replaceFiles(AuroraFile targetFolder, List<AuroraFile> files) {
-        //TODO check source size, path and type
-        Mapper<List<ReplaceFileDto>, Collection<AuroraFile>> mapper = MapperUtil.listOrEmpty(new P8FileToReplaceFileMapper());
+        Mapper<List<ReplaceFileDto>, Collection<AuroraFile>> mapper = MapperUtil.listOrEmpty(new FileToReplaceFileMapper());
 
         return mFilesService.replaceFiles(
                 files.get(0).getType(),
@@ -286,8 +285,7 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
 
     @Override
     public Completable copyFiles(AuroraFile targetFolder, List<AuroraFile> files) {
-        //TODO check source size, path and type
-        Mapper<List<ReplaceFileDto>, Collection<AuroraFile>> mapper = MapperUtil.listOrEmpty(new P8FileToReplaceFileMapper());
+        Mapper<List<ReplaceFileDto>, Collection<AuroraFile>> mapper = MapperUtil.listOrEmpty(new FileToReplaceFileMapper());
 
         return mFilesService.copyFiles(
                 files.get(0).getType(),
