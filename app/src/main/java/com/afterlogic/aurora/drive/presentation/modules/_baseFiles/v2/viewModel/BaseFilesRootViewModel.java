@@ -66,6 +66,8 @@ public class BaseFilesRootViewModel<
         viewModelsConnection.setListener(this);
 
         startLoad();
+
+        title.set(getRootTitle());
     }
 
     @Override

@@ -24,7 +24,7 @@ public class ViewModelsConnection<FilesListVM extends BaseFileListViewModel> {
     private OnChangedListener<FilesListVM> listener;
 
     @Inject
-    ViewModelsConnection() {
+    protected ViewModelsConnection() {
     }
 
     public void setListener(OnChangedListener<FilesListVM> listener) {

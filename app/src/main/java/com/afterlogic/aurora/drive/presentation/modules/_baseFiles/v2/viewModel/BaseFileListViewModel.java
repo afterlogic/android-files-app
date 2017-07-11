@@ -23,6 +23,8 @@ import com.annimon.stream.Stream;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import io.reactivex.Single;
+
 /**
  * Created by aleksandrcikin on 04.07.17.
  * mail: mail@sunnydaydev.me
@@ -95,18 +97,23 @@ public abstract class BaseFileListViewModel<
         return getFileType();
     }
 
-    private void reloadCurrentFolder() {
+    protected void reloadCurrentFolder() {
         reloadDisposable.disposeAndClear();
         items.clear();
 
         if (foldersStack.size() == 0) return;
 
-        interactor.getFiles(foldersStack.get(0))
+
+        getFilesSource(foldersStack.get(0))
                 .doOnSubscribe(disposable -> viewModelState.set(ViewModelState.LOADING))
                 .doOnError(error -> viewModelState.set(ViewModelState.ERROR))
                 .compose(reloadDisposable::track)
                 .compose(subscriber::defaultSchedulers)
                 .subscribe(subscriber.subscribe(this::handleFiles));
+    }
+
+    protected Single<List<AuroraFile>> getFilesSource(AuroraFile folder) {
+        return interactor.getFiles(folder);
     }
 
     protected void handleFiles(List<AuroraFile> files) {

@@ -11,7 +11,7 @@ import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.
 
 public class MainFileViewModel extends BaseAuroraFileViewModel {
 
-    public MainFileViewModel(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener) {
+    MainFileViewModel(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener) {
         super(file, onItemClickListener);
     }
 }

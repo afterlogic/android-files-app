@@ -51,8 +51,7 @@ public class MainActivity extends InjectableMVVMActivity<MainViewModel> implemen
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
         MenuItem searchMenuItem = menu.findItem(R.id.action_search);
-        searchView = (SearchView) searchMenuItem.getActionView();
-        searchView.setMaxWidth(Integer.MAX_VALUE);
+        initSearchView((SearchView) searchMenuItem.getActionView());
         return true;
     }
 
@@ -67,11 +66,20 @@ public class MainActivity extends InjectableMVVMActivity<MainViewModel> implemen
         super.bindStarted(vm, bag);
         BindingUtil.bindProgressDialog(vm.progress, bag, this);
 
-        UnbindableObservable.bind(vm.fileTypesLocked, bag, fileTypesLocked -> {
+        UnbindableObservable.bind(vm.showBackButton, bag, showBack -> {
             ActionBar ab = getSupportActionBar();
             if (ab != null) {
-                getSupportActionBar().setDisplayHomeAsUpEnabled(fileTypesLocked.get());
+                getSupportActionBar().setDisplayHomeAsUpEnabled(showBack.get());
             }
+        });
+
+        UnbindableObservable.bind(vm.showSearch, bag, showSearch -> {
+            if (searchView == null) return;
+            searchView.setIconified(!showSearch.get());
+        });
+        UnbindableObservable.bind(vm.searchQuery, bag, query -> {
+            if (searchView == null) return;
+            searchView.setQuery(query.get(), false);
         });
     }
 
@@ -84,5 +92,36 @@ public class MainActivity extends InjectableMVVMActivity<MainViewModel> implemen
     @Override
     public AndroidInjector<Fragment> supportFragmentInjector() {
         return fragmentInjector;
+    }
+
+    private void initSearchView(SearchView searchView) {
+        this.searchView = searchView;
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+
+        searchView.setOnSearchClickListener(view -> {
+            getViewModel().showSearch.set(true);
+            searchView.setQuery(getViewModel().searchQuery.get(), false);
+        });
+
+        searchView.setOnCloseListener(() -> {
+            getViewModel().showSearch.set(false);
+            return false;
+        });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                getViewModel().searchQuery.set(newText);
+                return false;
+            }
+        });
+
+        searchView.setIconified(!getViewModel().showSearch.get());
+        searchView.setQuery(getViewModel().searchQuery.get(), false);
     }
 }
