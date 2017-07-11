@@ -1,5 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -8,6 +9,7 @@ import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 import android.databinding.ViewDataBinding;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -35,6 +37,7 @@ public class MainFilesActivity extends BaseFilesMVVMActivity<MainFilesViewModel>
     private MenuItem mLogoutMenuItem;
     private MenuItem mMultiChoseMenuItem;
     private ActionMode mMultiChoiseActionMode;
+    private SearchView mSearchView;
 
     private boolean mMultichoseVisible = true;
 
@@ -52,6 +55,7 @@ public class MainFilesActivity extends BaseFilesMVVMActivity<MainFilesViewModel>
         return new MainFileListFragment();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public ViewDataBinding onCreateBind() {
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
@@ -80,6 +84,10 @@ public class MainFilesActivity extends BaseFilesMVVMActivity<MainFilesViewModel>
         mMultiChoseMenuItem = menu.findItem(R.id.action_multichoise);
         mMultiChoseMenuItem.setVisible(mMultichoseVisible);
         updateLogoutMenuByViewModel(getViewModel().getLogin());
+
+        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+        mSearchView = (SearchView) searchMenuItem.getActionView();
+        mSearchView.setMaxWidth(Integer.MAX_VALUE);
         return true;
     }
 
@@ -109,6 +117,10 @@ public class MainFilesActivity extends BaseFilesMVVMActivity<MainFilesViewModel>
 
     @Override
     public void onBackPressed() {
+        if (mSearchView != null && !mSearchView.isIconified()) {
+            mSearchView.setIconified(true);
+            return;
+        }
         if (collapseFabAction()) return;
         if (getCurrentFragment() != null && getCurrentFragment().onBackPressed()) return;
         if (getViewModel().onBackPressed()) return;
