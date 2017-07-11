@@ -1,5 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.v2.interactor;
 
+import android.net.Uri;
+
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.BaseFilesListInteractor;
@@ -27,5 +29,9 @@ public class MainFilesListInteractor extends BaseFilesListInteractor {
 
     public Single<List<AuroraFile>> getFiles(AuroraFile folder, String pattern) {
         return filesRepository.getFiles(folder, pattern);
+    }
+
+    public Single<Uri> getThumbnail(AuroraFile file) {
+        return filesRepository.getFileThumbnail(file);
     }
 }

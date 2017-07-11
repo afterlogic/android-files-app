@@ -3,6 +3,7 @@ package com.afterlogic.aurora.drive.presentation.modules.main.v2.viewModel;
 import android.databinding.ObservableField;
 import android.text.TextUtils;
 
+import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.core.common.rx.OptionalDisposable;
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
@@ -12,12 +13,14 @@ import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickLis
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.BaseFileListArgs;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.BaseFileListViewModel;
 import com.afterlogic.aurora.drive.presentation.modules.main.v2.interactor.MainFilesListInteractor;
+import com.annimon.stream.Stream;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import io.reactivex.Completable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
@@ -30,12 +33,14 @@ public class MainFilesListViewModel extends BaseFileListViewModel
         <MainFilesListViewModel, MainFileViewModel, BaseFileListArgs> {
 
     private final MainFilesListInteractor interactor;
+    private final Subscriber subscriber;
     private final MainViewModelsConnection viewModelsConnection;
     private final FilesMapper mapper;
 
     private ObservableField<String> searchPattern = new ObservableField<>("");
 
     private OptionalDisposable setSearchQueryDisposable = new OptionalDisposable();
+    private OptionalDisposable thumbsDisposable = new OptionalDisposable();
 
     @Inject
     MainFilesListViewModel(MainFilesListInteractor interactor,
@@ -44,6 +49,7 @@ public class MainFilesListViewModel extends BaseFileListViewModel
                            FilesMapper mapper) {
         super(interactor, subscriber, viewModelsConnection);
         this.interactor = interactor;
+        this.subscriber = subscriber;
         this.viewModelsConnection = viewModelsConnection;
         this.mapper = mapper;
 
@@ -59,6 +65,22 @@ public class MainFilesListViewModel extends BaseFileListViewModel
     protected void onFileClicked(AuroraFile file) {
         super.onFileClicked(file);
         viewModelsConnection.fileClickedPublisher.onNext(file);
+    }
+
+    @Override
+    protected void handleFiles(List<AuroraFile> files) {
+        mapper.clear();
+
+        super.handleFiles(files);
+
+        thumbsDisposable.disposeAndClear();
+        Stream.of(files)
+                .filter(AuroraFile::hasThumbnail)
+                .map(this::updateFileThumb)
+                .collect(Observables.Collectors.concatCompletable())
+                .compose(thumbsDisposable::track)
+                .compose(subscriber::defaultSchedulers)
+                .subscribe(subscriber.justSubscribe());
     }
 
     void onSearchQuery(String query) {
@@ -86,5 +108,18 @@ public class MainFilesListViewModel extends BaseFileListViewModel
     @Override
     protected Single<List<AuroraFile>> getFilesSource(AuroraFile folder) {
         return interactor.getFiles(folder, searchPattern.get());
+    }
+
+
+    private Completable updateFileThumb(AuroraFile file){
+        if (!file.hasThumbnail()) return Completable.complete();
+
+        return interactor.getThumbnail(file)
+                .doOnSuccess(thumb -> {
+                    MainFileViewModel vm = mapper.get(file);
+                    if (vm != null) vm.setThumbnail(thumb);
+                })
+                .toCompletable()
+                .onErrorComplete();
     }
 }
