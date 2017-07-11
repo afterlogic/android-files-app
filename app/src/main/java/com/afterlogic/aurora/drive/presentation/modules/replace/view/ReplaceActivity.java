@@ -41,19 +41,17 @@ public class ReplaceActivity extends InjectableMVVMActivity<ReplaceViewModel> im
     DispatchingAndroidInjector<Fragment> fragmentInjector;
 
     public static Intent newReplaceIntent(Context context, List<AuroraFile> files) {
-        ReplaceArgs args = new ReplaceArgs.Builder()
-                .setCopyMode(false)
-                .setFiles(files)
-                .build();
+        ReplaceArgs args = new ReplaceArgs();
+        args.setCopyMode(false);
+        args.setFiles(files);
         return new Intent(context, ReplaceActivity.class)
                 .putExtra(KEY_ARGS, args.getBundle());
     }
 
     public static Intent newCopyIntent(Context context, List<AuroraFile> files) {
-        ReplaceArgs args = new ReplaceArgs.Builder()
-                .setCopyMode(true)
-                .setFiles(files)
-                .build();
+        ReplaceArgs args = new ReplaceArgs();
+        args.setCopyMode(true);
+        args.setFiles(files);
         return new Intent(context, ReplaceActivity.class)
                 .putExtra(KEY_ARGS, args.getBundle());
     }
@@ -73,7 +71,6 @@ public class ReplaceActivity extends InjectableMVVMActivity<ReplaceViewModel> im
     @Override
     public ViewDataBinding createBinding() {
         ActivityReplaceBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_replace);
-        binding.setAdapter(new FileTypesPagerAdapter(getSupportFragmentManager()));
 
         setSupportActionBar(binding.toolbar);
         ActionBar ab = getSupportActionBar();

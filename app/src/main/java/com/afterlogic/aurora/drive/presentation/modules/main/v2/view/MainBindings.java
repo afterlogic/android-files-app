@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.replace.view;
+package com.afterlogic.aurora.drive.presentation.modules.main.v2.view;
 
 import android.databinding.BindingAdapter;
 import android.support.v4.app.FragmentActivity;
@@ -8,7 +8,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.model.FileType;
-import com.afterlogic.aurora.drive.presentation.modules.replace.viewModel.ReplaceFileViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.main.v2.viewModel.MainFileViewModel;
 import com.android.databinding.library.baseAdapters.BR;
 import com.github.nitrico.lastadapter.LastAdapter;
 
@@ -19,21 +19,21 @@ import java.util.List;
  * mail: mail@sunnydaydev.me
  */
 
-public class ReplaceBindings {
+public class MainBindings {
 
-    @BindingAdapter("replace_filesAdapter")
-    public static void bindFilesAdapter(RecyclerView list, List<ReplaceFileViewModel> items) {
+    @BindingAdapter("main_filesAdapter")
+    public static void bindFilesAdapter(RecyclerView list, List<MainFileViewModel> items) {
         new LastAdapter(items, BR.vm)
-                .map(ReplaceFileViewModel.class, R.layout.replace_item_list_file)
+                .map(MainFileViewModel.class, R.layout.main_item_list_file)
                 .into(list);
     }
 
-    @BindingAdapter("replace_fileTypesAdapter")
+    @BindingAdapter("main_fileTypesAdapter")
     public static void bindFileTypesAdapter(ViewPager pager, List<FileType> fileTypes) {
         FragmentManager fm = ((FragmentActivity) pager.getContext()).getSupportFragmentManager();
-        ReplaceFileTypesPagerAdapter adapter = (ReplaceFileTypesPagerAdapter) pager.getAdapter();
+        MainFileTypesPagerAdapter adapter = (MainFileTypesPagerAdapter) pager.getAdapter();
         if (adapter == null) {
-            adapter = new ReplaceFileTypesPagerAdapter(fm);
+            adapter = new MainFileTypesPagerAdapter(fm);
             pager.setAdapter(adapter);
         }
         adapter.setItems(fileTypes);

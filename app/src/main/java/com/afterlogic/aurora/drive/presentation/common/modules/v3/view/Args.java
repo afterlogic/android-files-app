@@ -9,7 +9,7 @@ import android.os.Bundle;
 
 public class Args {
 
-    private final Bundle args;
+    protected final Bundle args;
 
     public Args(Bundle args) {
         this.args = args;

@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.replace.interactor;
+package com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor;
 
 import android.util.Pair;
 

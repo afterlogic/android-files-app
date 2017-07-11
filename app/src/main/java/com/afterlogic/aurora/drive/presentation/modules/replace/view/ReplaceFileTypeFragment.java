@@ -13,6 +13,7 @@ import com.afterlogic.aurora.drive.databinding.FragmentReplaceFilesBinding;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.BindingUtil;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMFragment;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.BaseFileListArgs;
 import com.afterlogic.aurora.drive.presentation.modules.replace.interactor.ReplaceFileTypeViewInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.replace.viewModel.ReplaceFileTypeViewModel;
 
@@ -32,9 +33,8 @@ public class ReplaceFileTypeFragment extends InjectableMVVMFragment<ReplaceFileT
 
         ReplaceFileTypeFragment fragment = new ReplaceFileTypeFragment();
 
-        ReplaceFileTypeArgs args = new ReplaceFileTypeArgs.Builder()
-                .setType(type)
-                .build();
+        BaseFileListArgs args = new BaseFileListArgs();
+        args.setType(type);
 
         fragment.setArguments(args.getBundle());
 
@@ -45,7 +45,7 @@ public class ReplaceFileTypeFragment extends InjectableMVVMFragment<ReplaceFileT
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewInteractor.bind(this);
-        getViewModel().setArgs(new ReplaceFileTypeArgs(getArguments()));
+        getViewModel().setArgs(new BaseFileListArgs(getArguments()));
     }
 
     @Override

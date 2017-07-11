@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.replace.viewModel;
+package com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,22 +17,22 @@ import javax.inject.Inject;
  */
 
 @ModuleScope
-class ViewModelsConnection {
+public class ViewModelsConnection<FilesListVM extends BaseFileListViewModel> {
 
-    private Map<String, ReplaceFileTypeViewModel> filesListViewModels = new HashMap<>();
+    private Map<String, FilesListVM> filesListViewModels = new HashMap<>();
 
-    private OnChangedListener listener;
+    private OnChangedListener<FilesListVM> listener;
 
     @Inject
     ViewModelsConnection() {
     }
 
-    public void setListener(OnChangedListener listener) {
+    public void setListener(OnChangedListener<FilesListVM> listener) {
         this.listener = listener;
     }
 
-    synchronized public void register(String type, @NonNull ReplaceFileTypeViewModel vm) {
-        ReplaceFileTypeViewModel previous = filesListViewModels.remove(type);
+    synchronized public void register(String type, @NonNull FilesListVM vm) {
+        FilesListVM previous = filesListViewModels.remove(type);
         if (previous != null) {
             listener.onUnregistered(previous);
         }
@@ -42,10 +42,10 @@ class ViewModelsConnection {
         }
     }
 
-    synchronized public void unregister(@NonNull ReplaceFileTypeViewModel vm) {
-        Iterator<Map.Entry<String, ReplaceFileTypeViewModel>> iterator  = filesListViewModels.entrySet().iterator();
+    synchronized public void unregister(@NonNull FilesListVM vm) {
+        Iterator<Map.Entry<String, FilesListVM>> iterator  = filesListViewModels.entrySet().iterator();
         while (iterator.hasNext()) {
-            Map.Entry<String, ReplaceFileTypeViewModel> entry = iterator.next();
+            Map.Entry<String, FilesListVM> entry = iterator.next();
             if (entry.getValue() == vm) {
                 iterator.remove();
                 if (listener != null) {
@@ -56,12 +56,12 @@ class ViewModelsConnection {
     }
 
     @Nullable
-    synchronized ReplaceFileTypeViewModel get(String type) {
+    synchronized public FilesListVM get(String type) {
         return filesListViewModels.get(type);
     }
 
-    public interface OnChangedListener {
-        void onRegistered(String type, ReplaceFileTypeViewModel vm);
-        void onUnregistered(ReplaceFileTypeViewModel vm);
+    public interface OnChangedListener<FilesListVM extends BaseFileListViewModel> {
+        void onRegistered(String type, FilesListVM vm);
+        void onUnregistered(FilesListVM vm);
     }
 }

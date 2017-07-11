@@ -34,21 +34,11 @@ public class ReplaceArgs extends Args {
         return getBundle().getParcelableArrayList(KEY_FILES);
     }
 
-    public static class Builder {
-        private final Bundle args = new Bundle();
+    public void setFiles(List<AuroraFile> files) {
+        args.putParcelableArrayList(KEY_FILES, new ArrayList<>(files));
+    }
 
-        public Builder setCopyMode(boolean copyMode) {
-            args.putBoolean(KEY_COPY_MODE, copyMode);
-            return this;
-        }
-
-        public Builder setFiles(List<AuroraFile> files) {
-            args.putParcelableArrayList(KEY_FILES, new ArrayList<>(files));
-            return this;
-        }
-
-        public ReplaceArgs build() {
-            return new ReplaceArgs(args);
-        }
+    public void setCopyMode(boolean copyMode) {
+        args.putBoolean(KEY_COPY_MODE, copyMode);
     }
 }

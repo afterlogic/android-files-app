@@ -6,12 +6,12 @@
 
     <data>
         <import type="android.view.View"/>
+        <import type="com.afterlogic.aurora.drive.presentation.modules.main.v2.viewModel.MainViewModel"/>
 
-        <import type="com.afterlogic.aurora.drive.presentation.modules.replace.viewModel.ReplaceViewModel"/>
 
         <variable
             name="vm"
-            type="ReplaceViewModel"/>
+            type="MainViewModel"/>
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -75,19 +75,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            app:replace_fileTypesAdapter="@{vm.fileTypes}"
+            app:main_fileTypesAdapter="@{vm.fileTypes}"
             app:currentItem="@{vm.currentFileTypePosition}"
             app:swipeEnabled="@{!vm.fileTypesLocked}"/>
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            style="@style/FabButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            app:fab_icon="@drawable/ic_create_new_folder"
-            android:onClick="@{() -> vm.onCreateFolder()}"
-            android:visibility="@{vm.viewModelState.isContent() ? View.VISIBLE : View.GONE}"
-            tools:ignore="RtlHardcoded" />
+
 
     </android.support.design.widget.CoordinatorLayout>
 </layout>
