@@ -22,7 +22,7 @@ public class MainFilesListInteractor extends BaseFilesListInteractor {
     private final FilesRepository filesRepository;
 
     @Inject
-    protected MainFilesListInteractor(FilesRepository filesRepository) {
+    MainFilesListInteractor(FilesRepository filesRepository) {
         super(filesRepository);
         this.filesRepository = filesRepository;
     }
@@ -33,5 +33,9 @@ public class MainFilesListInteractor extends BaseFilesListInteractor {
 
     public Single<Uri> getThumbnail(AuroraFile file) {
         return filesRepository.getFileThumbnail(file);
+    }
+
+    public Single<Boolean> getOfflineStatus(AuroraFile file) {
+        return filesRepository.getOfflineStatus(file);
     }
 }

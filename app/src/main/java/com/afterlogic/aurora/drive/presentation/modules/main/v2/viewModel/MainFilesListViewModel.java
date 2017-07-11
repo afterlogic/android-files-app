@@ -41,6 +41,7 @@ public class MainFilesListViewModel extends BaseFileListViewModel
 
     private OptionalDisposable setSearchQueryDisposable = new OptionalDisposable();
     private OptionalDisposable thumbsDisposable = new OptionalDisposable();
+    private OptionalDisposable offlineStatusDisposable = new OptionalDisposable();
 
     @Inject
     MainFilesListViewModel(MainFilesListInteractor interactor,
@@ -73,12 +74,18 @@ public class MainFilesListViewModel extends BaseFileListViewModel
 
         super.handleFiles(files);
 
-        thumbsDisposable.disposeAndClear();
         Stream.of(files)
                 .filter(AuroraFile::hasThumbnail)
                 .map(this::updateFileThumb)
                 .collect(Observables.Collectors.concatCompletable())
-                .compose(thumbsDisposable::track)
+                .compose(thumbsDisposable::disposeAndTrack)
+                .compose(subscriber::defaultSchedulers)
+                .subscribe(subscriber.justSubscribe());
+
+        Stream.of(files)
+                .map(this::checkOfflineStatus)
+                .collect(Observables.Collectors.concatCompletable())
+                .compose(offlineStatusDisposable::disposeAndTrack)
                 .compose(subscriber::defaultSchedulers)
                 .subscribe(subscriber.justSubscribe());
     }
@@ -118,6 +125,16 @@ public class MainFilesListViewModel extends BaseFileListViewModel
                 .doOnSuccess(thumb -> {
                     MainFileViewModel vm = mapper.get(file);
                     if (vm != null) vm.setThumbnail(thumb);
+                })
+                .toCompletable()
+                .onErrorComplete();
+    }
+
+    private Completable checkOfflineStatus(AuroraFile file) {
+        return interactor.getOfflineStatus(file)
+                .doOnSuccess(offline -> {
+                    MainFileViewModel vm = mapper.get(file);
+                    if (vm != null) vm.isOffline.set(offline);
                 })
                 .toCompletable()
                 .onErrorComplete();

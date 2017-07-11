@@ -89,7 +89,7 @@ public class MainFileViewModel extends BaseAuroraFileViewModel {
         }
 
         if (!ObjectsUtil.equals(statusIcon, this.statusIcon.get())) {
-            this.statusIcon.set(null);
+            this.statusIcon.set(statusIcon);
         }
     }
 }

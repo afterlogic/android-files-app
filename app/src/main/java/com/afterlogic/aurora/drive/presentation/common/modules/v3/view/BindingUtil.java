@@ -28,7 +28,7 @@ public class BindingUtil {
         if (progress == null) {
             dialogHolder.ifPresent(Dialog::dismiss);
         } else {
-            ProgressDialog dialog = dialogHolder.getValue();
+            ProgressDialog dialog = dialogHolder.get();
             if (dialog != null) {
                 if (dialog.isIndeterminate() == progress.isIndeterminate()) {
                     updateProgressDialog(progress, dialog);

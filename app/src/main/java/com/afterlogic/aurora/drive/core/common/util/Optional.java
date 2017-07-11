@@ -30,7 +30,7 @@ public class Optional<T> {
     }
 
     @Nullable
-    public T getValue() {
+    public T get() {
         return value;
     }
 
