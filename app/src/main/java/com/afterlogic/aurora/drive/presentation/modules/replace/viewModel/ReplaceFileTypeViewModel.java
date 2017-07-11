@@ -14,7 +14,7 @@ import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnListChangedCallback;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.BaseViewModel;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.LifecycleViewModel;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ProgressViewModel;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.UiObservableField;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ViewModelState;
@@ -23,17 +23,16 @@ import com.afterlogic.aurora.drive.presentation.modules.replace.view.ReplaceFile
 import com.annimon.stream.Stream;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by aleksandrcikin on 04.07.17.
  * mail: mail@sunnydaydev.me
  */
 
-public class ReplaceFileTypeViewModel extends BaseViewModel {
+public class ReplaceFileTypeViewModel extends LifecycleViewModel {
 
     public final ObservableField<ViewModelState> viewModelState = new UiObservableField<>();
     public final ObservableList<ReplaceFileViewModel> items = new ObservableArrayList<>();
@@ -42,43 +41,40 @@ public class ReplaceFileTypeViewModel extends BaseViewModel {
     private final ReplaceFileTypeInteractor interactor;
     private final Subscriber subscriber;
     private final AppResources appResources;
+    private final ViewModelsConnection viewModelsConnection;
 
     private String fileType;
 
-    private final ObservableList<AuroraFile> foldersStack = new ObservableArrayList<>();
+    final ObservableList<AuroraFile> foldersStack = new ObservableArrayList<>();
     private final Mapper<ReplaceFileViewModel, AuroraFile> mapper = new FileMapper(((position, item) -> onFileClicked(item)));
 
     private final OptionalDisposable reloadDisposable = new OptionalDisposable();
     private final OptionalDisposable popListenerDisposable = new OptionalDisposable();
     private final OptionalDisposable createFolderListenerDisposable = new OptionalDisposable();
 
+    private final AtomicBoolean firstSetArgs = new AtomicBoolean(true);
+
     @Inject
-    ReplaceFileTypeViewModel(ReplaceFileTypeInteractor interactor, Subscriber subscriber, AppResources appResources) {
+    ReplaceFileTypeViewModel(ReplaceFileTypeInteractor interactor,
+                             Subscriber subscriber,
+                             AppResources appResources,
+                             ViewModelsConnection viewModelsConnection) {
         this.interactor = interactor;
         this.subscriber = subscriber;
         this.appResources = appResources;
+        this.viewModelsConnection = viewModelsConnection;
 
-        SimpleOnListChangedCallback.addTo(foldersStack, list -> {
-            interactor.notifyStackChanged(fileType, list.size());
-            interactor.notifyCurrentFolderChanged(fileType, list.size() > 0 ? list.get(0) : null);
-            reloadCurrentFolder();
-        });
+        SimpleOnListChangedCallback.addTo(foldersStack, stack -> onRefresh());
     }
 
     public void setArgs(ReplaceFileTypeArgs args) {
         fileType = args.getType();
 
+        if (firstSetArgs.getAndSet(false)) {
+            viewModelsConnection.register(fileType, this);
+        }
+
         popListenerDisposable.disposeAndClear();
-
-        interactor.listenPopRequest(fileType)
-                .compose(popListenerDisposable::track)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(subscriber.subscribe(type -> popStack()));
-
-        interactor.listenCreateFolder(fileType)
-                .compose(popListenerDisposable::track)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(subscriber.subscribe(type -> onCreateFolder()));
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -92,6 +88,21 @@ public class ReplaceFileTypeViewModel extends BaseViewModel {
 
     public void onRefresh() {
         reloadCurrentFolder();
+    }
+
+    void onPopFolder() {
+        if (foldersStack.size() > 1) {
+            foldersStack.remove(0);
+        }
+    }
+
+    void onCreateFolder() {
+        if (foldersStack.size() == 0) {
+            return;
+        }
+
+        interactor.getCreateFolderName()
+                .subscribe(subscriber.subscribe(this::createFolder));
     }
 
     private void reloadCurrentFolder() {
@@ -123,21 +134,6 @@ public class ReplaceFileTypeViewModel extends BaseViewModel {
         }
     }
 
-    private void popStack() {
-        if (foldersStack.size() > 1) {
-            foldersStack.remove(0);
-        }
-    }
-
-    private void onCreateFolder() {
-        if (foldersStack.size() == 0) {
-            return;
-        }
-
-        interactor.getCreateFolderName()
-                .subscribe(subscriber.subscribe(this::createFolder));
-    }
-
     private void createFolder(String name) {
         interactor.createFolder(name, foldersStack.get(0))
                 .doOnSubscribe(disposable -> progress.set(ProgressViewModel.indeterminate(
@@ -159,5 +155,6 @@ public class ReplaceFileTypeViewModel extends BaseViewModel {
         popListenerDisposable.disposeAndClear();
         createFolderListenerDisposable.disposeAndClear();
         reloadDisposable.disposeAndClear();
+        viewModelsConnection.unregister(this);
     }
 }

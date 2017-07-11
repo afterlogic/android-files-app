@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 
 import com.afterlogic.aurora.drive.BR;
 import com.afterlogic.aurora.drive.application.assembly.Injectable;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.BaseViewModel;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.LifecycleViewModel;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 
 import javax.inject.Inject;
@@ -24,7 +24,7 @@ import javax.inject.Inject;
  * mail: mail@sunnydaydev.me
  */
 
-public abstract class InjectableMVVMFragment<VM extends BaseViewModel> extends Fragment implements LifecycleRegistryOwner, Injectable {
+public abstract class InjectableMVVMFragment<VM extends LifecycleViewModel> extends Fragment implements LifecycleRegistryOwner, Injectable {
 
     private LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
 

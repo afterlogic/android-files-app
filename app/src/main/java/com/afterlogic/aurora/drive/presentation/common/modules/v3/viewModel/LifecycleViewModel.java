@@ -8,6 +8,6 @@ import android.arch.lifecycle.ViewModel;
  * mail: mail@sunnydaydev.me
  */
 
-public class BaseViewModel extends ViewModel implements LifecycleObserver {
+public class LifecycleViewModel extends ViewModel implements LifecycleObserver {
 
 }

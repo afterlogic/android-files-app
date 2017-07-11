@@ -12,7 +12,8 @@ import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileType;
 import com.afterlogic.aurora.drive.presentation.common.binding.binder.Bindable;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.BaseViewModel;
+import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnListChangedCallback;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.LifecycleViewModel;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ProgressViewModel;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.UiObservableField;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ViewModelState;
@@ -23,7 +24,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.Completable;
 import ru.terrakok.cicerone.Router;
 
 /**
@@ -31,7 +32,7 @@ import ru.terrakok.cicerone.Router;
  * mail: mail@sunnydaydev.me
  */
 
-public class ReplaceViewModel extends BaseViewModel {
+public class ReplaceViewModel extends LifecycleViewModel implements ViewModelsConnection.OnChangedListener {
 
     public final ObservableField<String> title = new ObservableField<>();
     public final ObservableField<String> subtitle = new UiObservableField<>();
@@ -46,26 +47,46 @@ public class ReplaceViewModel extends BaseViewModel {
     private final Subscriber subscriber;
     private final Router router;
     private final AppResources appResources;
+    private final ViewModelsConnection viewModelsConnection;
 
     private final OptionalDisposable loadingDisposable = new OptionalDisposable();
 
-    private String lockedViewModelType = null;
+    private SimpleOnListChangedCallback<ObservableList<AuroraFile>> stackChangeListener = new SimpleOnListChangedCallback<>(this::onStackChanged);
 
     private boolean isCopyMode = false;
     private List<AuroraFile> filesForAction = null;
 
     @Inject
-    ReplaceViewModel(ReplaceInteractor interactor, Subscriber subscriber, Router router, AppResources appResources) {
+    ReplaceViewModel(ReplaceInteractor interactor,
+                     Subscriber subscriber,
+                     Router router,
+                     AppResources appResources,
+                     ViewModelsConnection viewModelsConnection) {
         this.interactor = interactor;
         this.subscriber = subscriber;
         this.router = router;
         this.appResources = appResources;
+        this.viewModelsConnection = viewModelsConnection;
 
-        interactor.listenFoldersStack()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(subscriber.subscribe(this::handleStackChanges));
+        viewModelsConnection.setListener(this);
 
         startLoad();
+    }
+
+    @Override
+    public void onRegistered(String type, ReplaceFileTypeViewModel vm) {
+        vm.foldersStack.addOnListChangedCallback(stackChangeListener);
+    }
+
+    @Override
+    public void onUnregistered(ReplaceFileTypeViewModel vm) {
+        vm.foldersStack.removeOnListChangedCallback(stackChangeListener);
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        viewModelsConnection.setListener(null);
     }
 
     public void setArgs(ReplaceArgs args) {
@@ -77,11 +98,15 @@ public class ReplaceViewModel extends BaseViewModel {
     }
 
     public void onBackPressed() {
-        if (fileTypesLocked.get() && lockedViewModelType != null) {
-            interactor.popFolder(lockedViewModelType);
-        } else {
-            router.exit();
+        if (fileTypesLocked.get() && getCurrentFileType() != null) {
+            ReplaceFileTypeViewModel vm = viewModelsConnection.get(getCurrentFileType());
+            if (vm != null) {
+                vm.onPopFolder();
+                return;
+            }
         }
+
+        router.exit();
     }
 
     public void onRefresh() {
@@ -90,22 +115,27 @@ public class ReplaceViewModel extends BaseViewModel {
     }
 
     public void onCreateFolder() {
-        interactor.notifyCreateFolder(getCurrentFileType());
+        ReplaceFileTypeViewModel vm = viewModelsConnection.get(getCurrentFileType());
+        if (vm != null) {
+            vm.onCreateFolder();
+        }
     }
 
     public void onPasteAction() {
-        interactor.getCurrentFolder(getCurrentFileType())
-                .doOnSubscribe(disposable -> progress.set(createProgressViewModel()))
-                .doFinally(() -> progress.set(null))
-                .flatMapCompletable(folder -> {
-                    if (isCopyMode) {
-                        return interactor.copyFiles(folder, filesForAction);
-                    } else {
-                        return interactor.replaceFiles(folder, filesForAction);
-                    }
-                })
-                .compose(subscriber::defaultSchedulers)
-                .subscribe(subscriber.subscribe(router::exit));
+        ReplaceFileTypeViewModel vm = viewModelsConnection.get(getCurrentFileType());
+        if (vm != null) {
+            AuroraFile topFolder = vm.foldersStack.get(0);
+            Completable action;
+            if (isCopyMode) {
+                action =  interactor.copyFiles(topFolder, filesForAction);
+            } else {
+                action = interactor.replaceFiles(topFolder, filesForAction);
+            }
+            action.doOnSubscribe(disposable -> progress.set(createProgressViewModel()))
+                    .doFinally(() -> progress.set(null))
+                    .compose(subscriber::defaultSchedulers)
+                    .subscribe(subscriber.subscribe(router::exit));
+        }
     }
 
     private void startLoad() {
@@ -126,23 +156,15 @@ public class ReplaceViewModel extends BaseViewModel {
         this.fileTypes.addAll(fileTypes);
     }
 
-    private void handleStackChanges(FolderStackSize stackSize) {
-        if (stackSize.getDepth() > 1) {
+    private void onStackChanged(List<AuroraFile> files) {
+        if (files.size() > 1) {
             fileTypesLocked.set(true);
-            lockedViewModelType = stackSize.getType();
-            updateSubtitle();
+            AuroraFile topFolder = files.get(0);
+            subtitle.set(topFolder.getName());
         } else {
-            lockedViewModelType = null;
             fileTypesLocked.set(false);
             subtitle.set(null);
         }
-    }
-
-    private void updateSubtitle() {
-        interactor.getCurrentFolder(lockedViewModelType)
-                .map(AuroraFile::getFullPath)
-                .compose(subscriber::defaultSchedulers)
-                .subscribe(subscriber.subscribe(subtitle::set));
     }
 
     private String getCurrentFileType() {
