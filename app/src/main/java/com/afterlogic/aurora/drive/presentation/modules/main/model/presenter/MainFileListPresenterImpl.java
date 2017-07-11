@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.support.annotation.StringRes;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.application.AppNavigator;
+import com.afterlogic.aurora.drive.application.navigation.AppRouter;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
@@ -394,7 +394,7 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
         if (items.size() != 0) {
             mModel.setMultiChoiseMode(false);
             mModel.setFileForActions(null);
-            router.navigateTo(isCopyMode ? AppNavigator.COPY : AppNavigator.REPLACE, items);
+            router.navigateTo(isCopyMode ? AppRouter.COPY : AppRouter.REPLACE, items);
         }
     }
 

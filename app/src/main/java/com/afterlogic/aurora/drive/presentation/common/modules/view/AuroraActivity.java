@@ -10,7 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.afterlogic.aurora.drive.application.App;
-import com.afterlogic.aurora.drive.application.AppNavigator;
+import com.afterlogic.aurora.drive.application.navigation.AppNavigator;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;

@@ -1,6 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.assembly.modules;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
+import com.afterlogic.aurora.drive.presentation.modules._util.BackToNullActivity;
 import com.afterlogic.aurora.drive.presentation.modules.main.v2.di.MainModule;
 import com.afterlogic.aurora.drive.presentation.modules.main.v2.view.MainActivity;
 import com.afterlogic.aurora.drive.presentation.modules.replace.assembly.ReplaceModule;
@@ -19,6 +20,9 @@ import dagger.android.ContributesAndroidInjector;
         ViewModelModule.class
 })
 public abstract class AutoInjectPresentationModule {
+
+    @ContributesAndroidInjector
+    abstract BackToNullActivity contributeBackToNull();
 
     @ModuleScope
     @ContributesAndroidInjector(modules = ReplaceModule.class)

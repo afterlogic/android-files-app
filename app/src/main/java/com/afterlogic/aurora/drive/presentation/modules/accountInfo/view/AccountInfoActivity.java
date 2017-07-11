@@ -1,5 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.accountInfo.view;
 
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
@@ -19,6 +21,10 @@ import com.afterlogic.aurora.drive.presentation.modules.accountInfo.viewModel.Ac
  */
 
 public class AccountInfoActivity extends MVVMActivity<AccountInfoVM> {
+
+    public static Intent intent(Context context) {
+        return new Intent(context, AccountInfoActivity.class);
+    }
 
     @Override
     public void assembly(InjectorsComponent injectors) {

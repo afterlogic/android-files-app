@@ -12,17 +12,16 @@ import android.support.v7.app.ActionBar;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.MVVMActivity;
-import com.afterlogic.aurora.drive.presentation.common.modules.viewModel.ViewModel;
 
 /**
  * Created by sashka on 07.03.17.<p/>
  * mail: sunnyday.development@gmail.com
  */
 
-public class ActivityAbout extends MVVMActivity {
+public class AboutAppActivity extends MVVMActivity {
 
     public static Intent intent(Context context){
-        return new Intent(context, ActivityAbout.class);
+        return new Intent(context, AboutAppActivity.class);
     }
 
     @Override

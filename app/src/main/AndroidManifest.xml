@@ -103,11 +103,16 @@
             android:label="@string/prompt_title_account_info"/>
 
         <activity
-            android:name=".presentation.modules.about.view.ActivityAbout"
+            android:name=".presentation.modules.about.view.AboutAppActivity"
             android:theme="@style/AppTheme"/>
 
         <activity
             android:name=".presentation.modules.replace.view.ReplaceActivity"/>
+
+        <activity
+            android:name=".presentation.modules._util.BackToNullActivity"
+            android:theme="@style/Theme.Transparent"
+            android:noHistory="true"/>
 
         <service android:name=".presentation.modulesBackground.authenticator.AuthenticatorService">
             <intent-filter>

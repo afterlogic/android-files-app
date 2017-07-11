@@ -12,7 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.afterlogic.aurora.drive.BR;
-import com.afterlogic.aurora.drive.application.AppNavigator;
+import com.afterlogic.aurora.drive.application.navigation.AppNavigator;
 import com.afterlogic.aurora.drive.application.assembly.Injectable;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.LifecycleViewModel;

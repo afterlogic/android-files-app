@@ -32,6 +32,7 @@ public class MainActivity extends InjectableMVVMActivity<MainViewModel> implemen
     @Inject
     protected DispatchingAndroidInjector<Fragment> fragmentInjector;
 
+    private MenuItem logoutMenuItem;
     private SearchView searchView;
 
     @Override
@@ -49,6 +50,9 @@ public class MainActivity extends InjectableMVVMActivity<MainViewModel> implemen
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        logoutMenuItem = menu.findItem(R.id.action_logout);
+        logoutMenuItem.setTitle(getViewModel().logoutButtonText.get());
 
         MenuItem searchMenuItem = menu.findItem(R.id.action_search);
         initSearchView((SearchView) searchMenuItem.getActionView());
@@ -81,8 +85,33 @@ public class MainActivity extends InjectableMVVMActivity<MainViewModel> implemen
             if (searchView == null) return;
             searchView.setQuery(query.get(), false);
         });
+
+        UnbindableObservable.bind(vm.logoutButtonText, bag, logoutText -> {
+            if (logoutMenuItem == null) return;
+            logoutMenuItem.setTitle(logoutText.get());
+        });
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.action_logout:
+                getViewModel().onLogout();
+                return true;
+
+            case R.id.action_about:
+                getViewModel().onOpenAbout();
+                return true;
+
+            case R.id.action_offline_mode:
+                getViewModel().onOpenOfflineMode();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     @Override
     public void onBackPressed() {
