@@ -41,6 +41,15 @@ public class ViewBinding {
         view.setOnLongClickListener(onClickListener);
     }
 
+    @BindingAdapter("onLongClick")
+    public static void setOnLongClick(View view, Runnable action){
+        view.setClickable(true);
+        view.setOnLongClickListener(v -> {
+            action.run();
+            return true;
+        });
+    }
+
     @BindingAdapter("alpha")
     public static void setAlpha(View view, float alpha){
         ViewCompat.setAlpha(view, alpha);

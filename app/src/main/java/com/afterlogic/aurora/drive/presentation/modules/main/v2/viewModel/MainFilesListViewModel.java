@@ -31,6 +31,7 @@ public class MainFilesListViewModel extends BaseFileListViewModel
 
     private final MainFilesListInteractor interactor;
     private final MainViewModelsConnection viewModelsConnection;
+    private final FilesMapper mapper;
 
     private ObservableField<String> searchPattern = new ObservableField<>("");
 
@@ -39,17 +40,19 @@ public class MainFilesListViewModel extends BaseFileListViewModel
     @Inject
     MainFilesListViewModel(MainFilesListInteractor interactor,
                            Subscriber subscriber,
-                           MainViewModelsConnection viewModelsConnection) {
+                           MainViewModelsConnection viewModelsConnection,
+                           FilesMapper mapper) {
         super(interactor, subscriber, viewModelsConnection);
         this.interactor = interactor;
         this.viewModelsConnection = viewModelsConnection;
+        this.mapper = mapper;
 
         SimpleOnPropertyChangedCallback.addTo(searchPattern, this::reloadCurrentFolder);
     }
 
     @Override
     protected MainFileViewModel mapFileItem(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener) {
-        return new MainFileViewModel(file, onItemClickListener);
+        return mapper.map(file, onItemClickListener);
     }
 
     @Override

@@ -35,13 +35,6 @@ public class BaseFileItemBiModel implements BaseFileItemViewModel, BaseFileItemM
         mAppResources = appResources;
     }
 
-    public BaseFileItemBiModel(OptWeakRef<? extends FilesListPresenter> presenter, AppResources appResources, AuroraFile auroraFile) {
-        mPresenter = presenter;
-        mAppResources = appResources;
-
-        setAuroraFile(auroraFile);
-    }
-
     @Override
     public void setThumbNail(Uri thumb) {
         Uri result;
