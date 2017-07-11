@@ -1,6 +1,8 @@
 package com.afterlogic.aurora.drive.data.modules.files.repository;
 
 import android.net.Uri;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.rx.SimpleObservableSource;
@@ -114,12 +116,17 @@ public class P7FileSubRepositoryImpl extends AuthorizedRepository implements Fil
 
     @Override
     public Single<List<AuroraFile>> getFiles(AuroraFile folder) {
+        return getFiles(folder, null);
+    }
+
+    @Override
+    public Single<List<AuroraFile>> getFiles(AuroraFile folder, @Nullable String pattern) {
         return Single.defer(() -> {
-            if ("".equals(folder.getFullPath()) && CHECKED_TYPES.containsKey(folder.getType())){
+            if (TextUtils.isEmpty(pattern) && "".equals(folder.getFullPath()) && CHECKED_TYPES.containsKey(folder.getType())){
                 List<AuroraFile> cached = CHECKED_TYPES.remove(folder.getType());
                 return Single.just(cached);
             } else {
-                return mCloudService.getFiles(folder.getFullPath(), folder.getType(), null)
+                return mCloudService.getFiles(folder.getFullPath(), folder.getType(), pattern)
                         .compose(Repository::withNetMapper)
                         .compose(this::withRelogin)
                         .map(this::mapFilesResponse);

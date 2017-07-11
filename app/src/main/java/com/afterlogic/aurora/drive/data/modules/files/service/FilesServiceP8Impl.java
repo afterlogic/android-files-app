@@ -46,46 +46,40 @@ public class FilesServiceP8Impl extends CloudServiceP8 implements FilesServiceP8
 
     @Override
     public Single<ApiResponseP8<FilesResponseP8>> getFiles(String type, String path, String pattern) {
-        return Single.defer(() -> {
-            return mApi.getFiles(getDefaultFields(
-                    Api8.Method.GET_FILES,
-                    new ParamsBuilder()
-                            .put(Api8.Param.TYPE, type)
-                            .put(Api8.Param.PATH, path)
-                            .put(Api8.Param.PATTERN, pattern)
-                            .create()
-            ));
-        });
+        return Single.defer(() -> mApi.getFiles(getDefaultFields(
+                Api8.Method.GET_FILES,
+                new ParamsBuilder()
+                        .put(Api8.Param.TYPE, type)
+                        .put(Api8.Param.PATH, path)
+                        .put(Api8.Param.PATTERN, pattern)
+                        .create()
+        )));
     }
 
     @Override
     public Single<ResponseBody> getFileThumbnail(String type, String path, String name, String publicHash) {
-        return Single.defer(() -> {
-            return mApi.getFileThumbnail(getDefaultFields(
-                    Api8.Method.GET_FILE_THUMBNAIL,
-                    new ParamsBuilder()
-                            .put(Api8.Param.TYPE, type)
-                            .put(Api8.Param.PATH, path)
-                            .put(Api8.Param.NAME, name)
-                            .put(Api8.Param.SHARED_HASH, publicHash)
-                            .create()
-            ));
-        });
+        return Single.defer(() -> mApi.getFileThumbnail(getDefaultFields(
+                Api8.Method.GET_FILE_THUMBNAIL,
+                new ParamsBuilder()
+                        .put(Api8.Param.TYPE, type)
+                        .put(Api8.Param.PATH, path)
+                        .put(Api8.Param.NAME, name)
+                        .put(Api8.Param.SHARED_HASH, publicHash)
+                        .create()
+        )));
     }
 
     @Override
     public Single<ResponseBody> viewFile(String type, String path, String name, String publicHash) {
-        return Single.defer(() -> {
-            return mApi.getFile(getDefaultFields(
-                    Api8.Method.VIEW_FILE,
-                    new ParamsBuilder()
-                            .put(Api8.Param.TYPE, type)
-                            .put(Api8.Param.PATH, path)
-                            .put(Api8.Param.NAME, name)
-                            .put(Api8.Param.SHARED_HASH, publicHash)
-                            .create()
-            ));
-        });
+        return Single.defer(() -> mApi.getFile(getDefaultFields(
+                Api8.Method.VIEW_FILE,
+                new ParamsBuilder()
+                        .put(Api8.Param.TYPE, type)
+                        .put(Api8.Param.PATH, path)
+                        .put(Api8.Param.NAME, name)
+                        .put(Api8.Param.SHARED_HASH, publicHash)
+                        .create()
+        )));
     }
 
     @Override

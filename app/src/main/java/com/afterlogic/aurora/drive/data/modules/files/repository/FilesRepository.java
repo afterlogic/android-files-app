@@ -23,6 +23,8 @@ public interface FilesRepository {
 
     Single<List<AuroraFile>> getFiles(AuroraFile folder);
 
+    Single<List<AuroraFile>> getFiles(AuroraFile folder, String pattern);
+
     Single<Uri> getFileThumbnail(AuroraFile file);
 
     Single<Uri> viewFile(AuroraFile file);
