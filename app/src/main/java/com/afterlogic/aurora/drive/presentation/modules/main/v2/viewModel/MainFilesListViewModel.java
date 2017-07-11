@@ -1,5 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.v2.viewModel;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.OnLifecycleEvent;
 import android.databinding.ObservableField;
 import android.text.TextUtils;
 
@@ -13,6 +15,7 @@ import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickLis
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.BaseFileListArgs;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.BaseFileListViewModel;
 import com.afterlogic.aurora.drive.presentation.modules.main.v2.interactor.MainFilesListInteractor;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
 import com.annimon.stream.Stream;
 
 import java.util.List;
@@ -42,6 +45,7 @@ public class MainFilesListViewModel extends BaseFileListViewModel
     private OptionalDisposable setSearchQueryDisposable = new OptionalDisposable();
     private OptionalDisposable thumbsDisposable = new OptionalDisposable();
     private OptionalDisposable offlineStatusDisposable = new OptionalDisposable();
+    private OptionalDisposable syncProgressDisposable = new OptionalDisposable();
 
     @Inject
     MainFilesListViewModel(MainFilesListInteractor interactor,
@@ -55,6 +59,7 @@ public class MainFilesListViewModel extends BaseFileListViewModel
         this.mapper = mapper;
 
         SimpleOnPropertyChangedCallback.addTo(searchPattern, this::reloadCurrentFolder);
+
     }
 
     @Override
@@ -66,6 +71,23 @@ public class MainFilesListViewModel extends BaseFileListViewModel
     protected void onFileClicked(AuroraFile file) {
         super.onFileClicked(file);
         viewModelsConnection.fileClickedPublisher.onNext(file);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        Stream.of(items).forEach(vm -> vm.syncProgress.set(-1));
+
+        interactor.getSyncProgress()
+                .compose(syncProgressDisposable::disposeAndTrack)
+                .compose(subscriber::defaultSchedulers)
+                .subscribe(subscriber.subscribe(this::handleSyncProgress));
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    public void onStop() {
+        syncProgressDisposable.disposeAndClear();
     }
 
     @Override
@@ -138,5 +160,10 @@ public class MainFilesListViewModel extends BaseFileListViewModel
                 })
                 .toCompletable()
                 .onErrorComplete();
+    }
+
+    private void handleSyncProgress(SyncProgress progress) {
+        MainFileViewModel vm = mapper.get(progress.getFilePathSpec());
+        if (vm != null) vm.syncProgress.set(progress.isDone() ? -1 : progress.getProgress());
     }
 }

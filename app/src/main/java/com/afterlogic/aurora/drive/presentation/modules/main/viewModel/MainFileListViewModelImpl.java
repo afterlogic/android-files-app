@@ -141,7 +141,7 @@ public class MainFileListViewModelImpl extends BaseFilesListBiModel<MainFileItem
                 .map(MainFileItemViewModel::getModel)
                 .filter(model -> {
                     AuroraFile file = model.getFile();
-                    return file.getPathSpec().equals(progress.getFile());
+                    return file.getPathSpec().equals(progress.getFilePathSpec());
                 })
                 .findFirst()
                 .ifPresent(model -> {

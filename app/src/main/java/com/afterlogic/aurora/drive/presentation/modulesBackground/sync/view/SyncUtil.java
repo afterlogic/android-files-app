@@ -13,7 +13,7 @@ class SyncUtil {
 
     static Bundle map(SyncProgress progress){
         Bundle bundle = new Bundle();
-        bundle.putString("file", progress.getFile());
+        bundle.putString("file", progress.getFilePathSpec());
         bundle.putString("filename", progress.getFileName());
         bundle.putInt("progress", progress.getProgress());
         bundle.putBoolean("done", progress.isDone());

@@ -20,7 +20,8 @@ class FilesMapper {
 
     private final AppResources appResources;
 
-    private final Map<AuroraFile, MainFileViewModel> filesMap = new HashMap<>();
+    private final Map<AuroraFile, MainFileViewModel> byFileMap = new HashMap<>();
+    private final Map<String, MainFileViewModel> byFileSpecMap = new HashMap<>();
 
     @Inject
     FilesMapper(AppResources appResources) {
@@ -29,16 +30,23 @@ class FilesMapper {
 
     public MainFileViewModel map(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener) {
         MainFileViewModel vm = new MainFileViewModel(file, onItemClickListener, appResources);
-        filesMap.put(file, vm);
+        byFileMap.put(file, vm);
+        byFileSpecMap.put(file.getPathSpec(), vm);
         return vm;
     }
 
     @Nullable
     public MainFileViewModel get(AuroraFile file) {
-        return filesMap.get(file);
+        return byFileMap.get(file);
+    }
+
+    @Nullable
+    public MainFileViewModel get(String fileSpec) {
+        return byFileSpecMap.get(fileSpec);
     }
 
     void clear() {
-        filesMap.clear();
+        byFileMap.clear();
+        byFileSpecMap.clear();
     }
 }
