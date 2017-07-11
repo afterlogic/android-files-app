@@ -7,11 +7,11 @@ ext{
     prepareVersions = this.&prepareVersions
 }
 
-//import groovy.swing.SwingBuilder
-/*
+/**
  * Result apk naming.
  */
-/* android.applicationVariants.all { variant ->;
+android.applicationVariants.all { variant ->
+
     def appName
     //Check if an applicationName property is supplied; if not use the name of the parent project.
     if (project.hasProperty("applicationName")) {
@@ -20,7 +20,7 @@ ext{
         appName = parent.name
     }
 
-    variant.outputs.each { output ->;
+    variant.outputs.all { output ->
         def newApkName
         //If there's no ZipAlign task it means that our artifact will be unaligned and we need to mark it as such.
         if (output.zipAlign) {
@@ -28,9 +28,9 @@ ext{
         } else {
             newApkName = "${appName}-${project.name}-${output.baseName}-${variant.versionName}-b${variant.versionCode}-unaligned.apk"
         }
-        output.outputFile = new File(output.outputFile.parent, newApkName)
+        outputFileName = newApkName
     }
-}*/
+}
 
 void prepareVersions(){
     Properties versionProperties = new Properties()
