@@ -9,7 +9,7 @@ import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnPropertyChangedCallback;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.SearchableFilesListInteractor;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.BaseFileListArgs;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileListArgs;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +25,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 public abstract class SearchableFileListViewModel<
         FileListVM extends SearchableFileListViewModel,
         FileVM extends AuroraFileViewModel,
-        Args extends BaseFileListArgs
+        Args extends FileListArgs
 > extends FileListViewModel<FileListVM, FileVM, Args> {
 
     private final SearchableFilesListInteractor interactor;

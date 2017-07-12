@@ -18,7 +18,6 @@ import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
-import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 
 import java.io.File;
@@ -69,14 +68,7 @@ public class OfflineInteractorImpl implements OfflineInteractor {
 
     @Override
     public Single<List<AuroraFile>> getOfflineFiles() {
-        return mFilesRepository.getOfflineFiles()
-                .map(list -> Stream.of(list)
-                        //.filter(file -> {
-                        //    File localFile = new File(mOfflineDir, file.getPathSpec());
-                        //    return localFile.exists();
-                        //})
-                        .collect(Collectors.toList())
-                );
+        return mFilesRepository.getOfflineFiles();
     }
 
     @Override

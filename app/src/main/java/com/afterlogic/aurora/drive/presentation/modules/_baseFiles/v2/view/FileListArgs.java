@@ -9,15 +9,15 @@ import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.Args;
  * mail: mail@sunnydaydev.me
  */
 
-public class BaseFileListArgs extends Args {
+public class FileListArgs extends Args {
 
-    private static final String KEY_TYPE = BaseFileListArgs.class.getName() + ".type";
+    private static final String KEY_TYPE = FileListArgs.class.getName() + ".type";
 
-    public BaseFileListArgs(Bundle args) {
+    public FileListArgs(Bundle args) {
         super(args);
     }
 
-    public BaseFileListArgs() {
+    public FileListArgs() {
         super(new Bundle());
     }
 

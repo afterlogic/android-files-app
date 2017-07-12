@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="com.afterlogic.aurora.drive.presentation.modules.offline.v2.viewModel.OfflineFileListViewModel"/>
+    </data>
+
+    <!-- SwipeRefresh for refreshing on error and progress indication-->
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:onRefresh="@{() -> vm.onRefresh()}"
+        app:refreshing="@{vm.viewModelState.isLoading()}"
+        app:colorSchemeResources="@{@intArray/swipe_refresh_color_scheme}">
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            app:offline_filesAdapter="@{vm.items}"
+            tools:listitem="@layout/offline_item_list_file"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</layout>

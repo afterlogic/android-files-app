@@ -8,7 +8,7 @@ import com.afterlogic.aurora.drive.core.common.rx.OptionalDisposable;
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.BaseFileListArgs;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileListArgs;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFileListViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.ViewModelsConnection;
 import com.afterlogic.aurora.drive.presentation.modules.main.v2.interactor.MainFilesListInteractor;
@@ -26,7 +26,7 @@ import io.reactivex.Completable;
  * mail: mail@sunnydaydev.me
  */
 
-public class MainFilesListViewModel extends SearchableFileListViewModel<MainFilesListViewModel, MainFileViewModel, BaseFileListArgs> {
+public class MainFilesListViewModel extends SearchableFileListViewModel<MainFilesListViewModel, MainFileViewModel, FileListArgs> {
 
     private final MainFilesListInteractor interactor;
     private final Subscriber subscriber;

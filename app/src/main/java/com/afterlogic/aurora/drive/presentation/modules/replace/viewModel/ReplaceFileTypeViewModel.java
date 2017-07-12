@@ -6,7 +6,7 @@ import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ProgressViewModel;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.BaseFileListArgs;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileListArgs;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFileListViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.ViewModelsConnection;
 import com.afterlogic.aurora.drive.presentation.modules.replace.interactor.ReplaceFileTypeInteractor;
@@ -24,7 +24,7 @@ import javax.inject.Inject;
 public class ReplaceFileTypeViewModel extends SearchableFileListViewModel<
         ReplaceFileTypeViewModel,
         ReplaceFileViewModel,
-        BaseFileListArgs
+        FileListArgs
 > {
 
     private final ReplaceFileTypeInteractor interactor;

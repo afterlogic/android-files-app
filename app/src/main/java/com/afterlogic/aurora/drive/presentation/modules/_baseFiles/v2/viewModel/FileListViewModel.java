@@ -17,7 +17,7 @@ import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.Prog
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.UiObservableField;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ViewModelState;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.FilesListInteractor;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.BaseFileListArgs;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileListArgs;
 import com.annimon.stream.Stream;
 
 import java.util.List;
@@ -33,7 +33,7 @@ import io.reactivex.Single;
 public abstract class FileListViewModel<
         FileListVM extends FileListViewModel,
         FileVM extends AuroraFileViewModel,
-        Args extends BaseFileListArgs
+        Args extends FileListArgs
 > extends LifecycleViewModel {
 
     public final ObservableField<ViewModelState> viewModelState = new UiObservableField<>();

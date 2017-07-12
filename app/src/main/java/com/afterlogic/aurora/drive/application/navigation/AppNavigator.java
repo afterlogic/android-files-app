@@ -9,7 +9,7 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.modules._util.BackToNullActivity;
 import com.afterlogic.aurora.drive.presentation.modules.about.view.AboutAppActivity;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
-import com.afterlogic.aurora.drive.presentation.modules.offline.view.OfflineActivity;
+import com.afterlogic.aurora.drive.presentation.modules.offline.v2.view.OfflineActivity;
 import com.afterlogic.aurora.drive.presentation.modules.replace.view.ReplaceActivity;
 
 import java.util.List;
@@ -63,7 +63,7 @@ public class AppNavigator extends SupportAppNavigator {
                 return LoginActivity.intent(false, activity);
 
             case AppRouter.OFFLINE:
-                return OfflineActivity.intent(true, activity);
+                return OfflineActivity.intent(activity, true);
 
             case AppRouter.ABOUT:
                 return AboutAppActivity.intent(activity);

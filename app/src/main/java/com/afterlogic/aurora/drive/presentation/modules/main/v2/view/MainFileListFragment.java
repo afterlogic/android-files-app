@@ -12,7 +12,7 @@ import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.BindingUtil;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMFragment;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.BaseFileListArgs;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileListArgs;
 import com.afterlogic.aurora.drive.presentation.modules.main.v2.viewModel.MainFilesListViewModel;
 
 /**
@@ -26,7 +26,7 @@ public class MainFileListFragment extends InjectableMVVMFragment<MainFilesListVi
 
         MainFileListFragment fragment = new MainFileListFragment();
 
-        BaseFileListArgs args = new BaseFileListArgs();
+        FileListArgs args = new FileListArgs();
         args.setType(type);
 
         fragment.setArguments(args.getBundle());
@@ -37,7 +37,7 @@ public class MainFileListFragment extends InjectableMVVMFragment<MainFilesListVi
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getViewModel().setArgs(new BaseFileListArgs(getArguments()));
+        getViewModel().setArgs(new FileListArgs(getArguments()));
     }
 
     @Override
