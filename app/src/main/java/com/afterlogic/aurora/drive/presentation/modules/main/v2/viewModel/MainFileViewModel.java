@@ -32,14 +32,18 @@ public class MainFileViewModel extends AuroraFileViewModel {
     private final AuroraFile file;
     private final AppResources appResources;
 
+    private final OnItemClickListener<AuroraFile> onLongClickListener;
+
     private Uri thumbnail;
 
     MainFileViewModel(AuroraFile file,
                       OnItemClickListener<AuroraFile> onItemClickListener,
+                      OnItemClickListener<AuroraFile> onLongClickListener,
                       AppResources appResources) {
         super(file, onItemClickListener);
         this.file = file;
         this.appResources = appResources;
+        this.onLongClickListener = onLongClickListener;
 
         SimpleOnPropertyChangedCallback.addTo(this::onOfflineStatusChanged, isOffline, syncProgress);
         isOffline.notifyChange();
@@ -49,7 +53,7 @@ public class MainFileViewModel extends AuroraFileViewModel {
     }
 
     public void onLongClick() {
-
+        onLongClickListener.onItemClicked(-1, file);
     }
 
     void setThumbnail(Uri thumb) {

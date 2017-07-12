@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        
+        <import type="com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.viewModel.MainFilesActionViewModel"/>
+        
+        <variable
+            name="vm"
+            type="com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.viewModel.MainFilesActionViewModel"/>
+    </data>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:behavior_hideable="true"
+        app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:background="@drawable/bg_simple_highlight"
+            android:gravity="center"
+            style="@style/RootLayout.Item">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:contentDescription="@string/content_descroption_file_icon"
+                app:imageUri="@{vm.file.icon}"
+                tools:src="@mipmap/ic_launcher"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingRight="8dp"
+                android:paddingLeft="8dp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:text="@{vm.file.title}"
+                android:gravity="start"
+                tools:text="asdfasfdasdf.sdf-asdfasdfasdfasdf-sdfasdfasdf"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorAccent"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:fileActions_adapter="@{vm.items}"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            tools:listitem="@layout/main_item_list_file_action_button"/>
+
+    </LinearLayout>
+</layout>

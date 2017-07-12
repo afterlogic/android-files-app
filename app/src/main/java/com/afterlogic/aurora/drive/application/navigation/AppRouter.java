@@ -15,4 +15,6 @@ public class AppRouter extends Router {
     public static final String OFFLINE = "offline";
     public static final String ABOUT = "about";
 
+    public static final String MAIN_FILE_ACTIONS = "main_file_actions";
+
 }

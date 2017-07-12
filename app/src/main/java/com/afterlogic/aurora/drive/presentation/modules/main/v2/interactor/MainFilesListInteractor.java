@@ -6,6 +6,8 @@ import android.net.Uri;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.SearchableFilesListInteractor;
+import com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.interactor.MainFileActionRequest;
+import com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.interactor.MainFilesActionsInteractor;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncListener;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
 
@@ -24,13 +26,18 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
     private final FilesRepository filesRepository;
     private final SyncListener syncListener;
 
+    private final MainFilesActionsInteractor filesActionsInteractor;
+
     private volatile int syncObservablesCount = 0;
 
     @Inject
-    MainFilesListInteractor(FilesRepository filesRepository, Context appContext) {
+    MainFilesListInteractor(FilesRepository filesRepository,
+                            Context appContext,
+                            MainFilesActionsInteractor filesActionsInteractor) {
         super(filesRepository);
         this.filesRepository = filesRepository;
         this.syncListener = new SyncListener(appContext);
+        this.filesActionsInteractor = filesActionsInteractor;
     }
 
     public Single<Uri> getThumbnail(AuroraFile file) {
@@ -55,5 +62,9 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
                         syncListener.onStop();
                     }
                 });
+    }
+
+    public void setFileForAction(MainFileActionRequest request) {
+        filesActionsInteractor.setFileActionRequest(request);
     }
 }

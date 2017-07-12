@@ -4,11 +4,13 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.modules._util.BackToNullActivity;
 import com.afterlogic.aurora.drive.presentation.modules.about.view.AboutAppActivity;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
+import com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.view.MainFilesActionBottomSheet;
 import com.afterlogic.aurora.drive.presentation.modules.offline.v2.view.OfflineActivity;
 import com.afterlogic.aurora.drive.presentation.modules.replace.view.ReplaceActivity;
 
@@ -17,6 +19,7 @@ import java.util.List;
 import ru.terrakok.cicerone.android.SupportAppNavigator;
 import ru.terrakok.cicerone.commands.BackTo;
 import ru.terrakok.cicerone.commands.Command;
+import ru.terrakok.cicerone.commands.Forward;
 
 /**
  * Created by aleksandrcikin on 04.07.17.
@@ -44,6 +47,19 @@ public class AppNavigator extends SupportAppNavigator {
             if (back.getScreenKey() == null) {
                 activity.startActivity(BackToNullActivity.restartTaskIntent(activity));
                 return;
+            }
+        }
+        if (command instanceof Forward) {
+            Forward forward = (Forward) command;
+            switch (forward.getScreenKey()) {
+                case AppRouter.MAIN_FILE_ACTIONS:
+
+                    MainFilesActionBottomSheet actions = MainFilesActionBottomSheet.newInstance();
+                    FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction()
+                            .addToBackStack(forward.getScreenKey());
+                    actions.show(transaction, forward.getScreenKey());
+
+                    return;
             }
         }
         super.applyCommand(command);

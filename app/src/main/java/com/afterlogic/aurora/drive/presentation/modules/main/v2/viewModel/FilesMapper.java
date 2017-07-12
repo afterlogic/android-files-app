@@ -23,13 +23,19 @@ class FilesMapper {
     private final Map<AuroraFile, MainFileViewModel> byFileMap = new HashMap<>();
     private final Map<String, MainFileViewModel> byFileSpecMap = new HashMap<>();
 
+    private OnItemClickListener<AuroraFile> onLongClickListner;
+
     @Inject
     FilesMapper(AppResources appResources) {
         this.appResources = appResources;
     }
 
+    public void setOnLongClickListner(OnItemClickListener<AuroraFile> onLongClickListner) {
+        this.onLongClickListner = onLongClickListner;
+    }
+
     public MainFileViewModel map(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener) {
-        MainFileViewModel vm = new MainFileViewModel(file, onItemClickListener, appResources);
+        MainFileViewModel vm = new MainFileViewModel(file, onItemClickListener, onLongClickListner, appResources);
         byFileMap.put(file, vm);
         byFileSpecMap.put(file.getPathSpec(), vm);
         return vm;

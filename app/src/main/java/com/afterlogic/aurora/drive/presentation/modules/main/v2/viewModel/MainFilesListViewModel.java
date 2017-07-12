@@ -3,6 +3,7 @@ package com.afterlogic.aurora.drive.presentation.modules.main.v2.viewModel;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.OnLifecycleEvent;
 
+import com.afterlogic.aurora.drive.application.navigation.AppRouter;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.core.common.rx.OptionalDisposable;
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
@@ -11,6 +12,8 @@ import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickLis
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileListArgs;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFileListViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.ViewModelsConnection;
+import com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.interactor.MainFileActionCallback;
+import com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.interactor.MainFileActionRequest;
 import com.afterlogic.aurora.drive.presentation.modules.main.v2.interactor.MainFilesListInteractor;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
 import com.annimon.stream.Stream;
@@ -20,6 +23,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Completable;
+import ru.terrakok.cicerone.Router;
 
 /**
  * Created by aleksandrcikin on 11.07.17.
@@ -31,21 +35,26 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     private final MainFilesListInteractor interactor;
     private final Subscriber subscriber;
     private final FilesMapper mapper;
+    private final Router router;
 
     private OptionalDisposable thumbsDisposable = new OptionalDisposable();
     private OptionalDisposable offlineStatusDisposable = new OptionalDisposable();
     private OptionalDisposable syncProgressDisposable = new OptionalDisposable();
 
+    private boolean fileActionMode = false;
+
     @Inject
     MainFilesListViewModel(MainFilesListInteractor interactor,
                            Subscriber subscriber,
                            ViewModelsConnection<MainFilesListViewModel> viewModelsConnection,
-                           FilesMapper mapper) {
+                           FilesMapper mapper, Router router) {
         super(interactor, subscriber, viewModelsConnection);
         this.interactor = interactor;
         this.subscriber = subscriber;
         this.mapper = mapper;
+        this.router = router;
 
+        mapper.setOnLongClickListner((position, item) -> onFileLongClick(item));
     }
 
     @Override
@@ -54,7 +63,6 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     }
 
     @Override
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void onStart() {
         super.onStart();
 
@@ -93,6 +101,59 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                 .subscribe(subscriber.justSubscribe());
     }
 
+    private void onFileLongClick(AuroraFile file) {
+        MainFileViewModel fileVM = mapper.get(file);
+        if (fileVM == null) return;
+
+        interactor.setFileForAction(new MainFileActionRequest(file, fileVM.icon, fileVM.isOffline, new MainFileActionCallback() {
+            @Override
+            public void onRenameFileAction() {
+                onFileAction();
+            }
+
+            @Override
+            public void onDeleteFileAction() {
+                onFileAction();
+            }
+
+            @Override
+            public void onDownloadFileAction() {
+                onFileAction();
+            }
+
+            @Override
+            public void onShareFileAction() {
+                onFileAction();
+            }
+
+            @Override
+            public void onMakeOfflineFileAction(boolean offline) {
+                onFileAction();
+            }
+
+            @Override
+            public void onMakePublicLink(boolean publicLink) {
+                onFileAction();
+            }
+
+            @Override
+            public void onCopyPublicLinkFileAction() {
+                onFileAction();
+            }
+
+            @Override
+            public void onCopyFileAction() {
+                onFileAction();
+            }
+
+            @Override
+            public void onReplaceFileAction() {
+                onFileAction();
+            }
+        }));
+
+        router.navigateTo(AppRouter.MAIN_FILE_ACTIONS);
+    }
 
     private Completable updateFileThumb(AuroraFile file){
         if (!file.hasThumbnail()) return Completable.complete();
@@ -119,5 +180,18 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     private void handleSyncProgress(SyncProgress progress) {
         MainFileViewModel vm = mapper.get(progress.getFilePathSpec());
         if (vm != null) vm.syncProgress.set(progress.isDone() ? -1 : progress.getProgress());
+    }
+
+    private void onFileAction() {
+        interactor.setFileForAction(null);
+        fileActionMode = false;
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        if (fileActionMode) {
+            interactor.setFileForAction(null);
+        }
     }
 }
