@@ -119,7 +119,7 @@ public abstract class FileListViewModel<
     protected void handleFiles(List<AuroraFile> files) {
         viewModelState.set(files.size() > 0 ? ViewModelState.CONTENT : ViewModelState.EMPTY);
 
-        OnItemClickListener<AuroraFile> onItemClickListener = (p, file) -> onFileClicked(file);
+        OnItemClickListener<AuroraFile> onItemClickListener = (p, file) -> onFileClick(file);
         Stream.of(files)
                 .map(file -> mapFileItem(file, onItemClickListener))
                 .collect(StreamCollectors.setListByClearAdd(items));
@@ -127,7 +127,7 @@ public abstract class FileListViewModel<
 
     protected abstract FileVM mapFileItem(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener);
 
-    protected void onFileClicked(AuroraFile file) {
+    protected void onFileClick(AuroraFile file) {
         if (file.isFolder()) {
             foldersStack.add(0, file);
         }

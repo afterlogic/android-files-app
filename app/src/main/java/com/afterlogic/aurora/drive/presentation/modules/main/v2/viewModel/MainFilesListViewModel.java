@@ -2,19 +2,27 @@ package com.afterlogic.aurora.drive.presentation.modules.main.v2.viewModel;
 
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.OnLifecycleEvent;
+import android.databinding.ObservableBoolean;
+import android.support.annotation.Nullable;
 
+import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.application.navigation.AppRouter;
+import com.afterlogic.aurora.drive.application.navigation.args.OpenExternalArgs;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.core.common.rx.OptionalDisposable;
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
+import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ProgressViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileListArgs;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFileListViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.ViewModelsConnection;
+import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewArgs;
+import com.afterlogic.aurora.drive.presentation.modules.main.v2.interactor.MainFilesListInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.interactor.MainFileActionCallback;
 import com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.interactor.MainFileActionRequest;
-import com.afterlogic.aurora.drive.presentation.modules.main.v2.interactor.MainFilesListInteractor;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
 import com.annimon.stream.Stream;
 
@@ -32,10 +40,13 @@ import ru.terrakok.cicerone.Router;
 
 public class MainFilesListViewModel extends SearchableFileListViewModel<MainFilesListViewModel, MainFileViewModel, FileListArgs> {
 
+    public final ObservableBoolean isMultiChoise = new ObservableBoolean();
+
     private final MainFilesListInteractor interactor;
     private final Subscriber subscriber;
     private final FilesMapper mapper;
     private final Router router;
+    private final AppResources appResources;
 
     private OptionalDisposable thumbsDisposable = new OptionalDisposable();
     private OptionalDisposable offlineStatusDisposable = new OptionalDisposable();
@@ -43,16 +54,22 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
 
     private boolean fileActionMode = false;
 
+    @Nullable
+    private List<AuroraFile> files;
+
     @Inject
     MainFilesListViewModel(MainFilesListInteractor interactor,
                            Subscriber subscriber,
                            ViewModelsConnection<MainFilesListViewModel> viewModelsConnection,
-                           FilesMapper mapper, Router router) {
+                           FilesMapper mapper,
+                           Router router,
+                           AppResources appResources) {
         super(interactor, subscriber, viewModelsConnection);
         this.interactor = interactor;
         this.subscriber = subscriber;
         this.mapper = mapper;
         this.router = router;
+        this.appResources = appResources;
 
         mapper.setOnLongClickListner((position, item) -> onFileLongClick(item));
     }
@@ -85,6 +102,8 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
 
         super.handleFiles(files);
 
+        this.files = files;
+
         Stream.of(files)
                 .filter(AuroraFile::hasThumbnail)
                 .map(this::updateFileThumb)
@@ -99,6 +118,67 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                 .compose(offlineStatusDisposable::disposeAndTrack)
                 .compose(subscriber::defaultSchedulers)
                 .subscribe(subscriber.justSubscribe());
+    }
+
+    @Override
+    protected void reloadCurrentFolder() {
+        files = null;
+        super.reloadCurrentFolder();
+    }
+
+    @Override
+    protected void onFileClick(AuroraFile file) {
+        super.onFileClick(file);
+
+        if (isMultiChoise.get()){
+            MainFileViewModel vm = mapper.get(file);
+            if (vm == null) return;
+
+            vm.selected.set(!vm.selected.get());
+            return;
+        }
+
+        if (file.isFolder()){ // TODO: isListAction
+            super.onFileClick(file);
+        } else {
+
+            // TODO: check can open
+            //if (!mRouter.canOpenFile(file)){
+            //    onCantOpenFile();
+            //    return;
+            //}
+
+            if (file.isLink()){
+                router.navigateTo(AppRouter.EXTERNAL_BROWSER, file.getLinkUrl());
+            }else {
+                if (file.isPreviewAble()){
+                    FileViewArgs args = new FileViewArgs(file, files);
+                    router.navigateTo(AppRouter.IMAGE_VIEW, args);
+                }else {
+                    interactor.downloadForOpen(file)
+                            .doOnNext(progress -> {
+                                float value = progress.getMax() > 0 && progress.getProgress() >= 0 ?
+                                        (float) progress.getProgress() / progress.getMax() : -1;
+                                this.progress.set(new ProgressViewModel(
+                                        appResources.getString(R.string.dialog_downloading),
+                                        progress.getName(),
+                                        value == -1,
+                                        (int) (100 * value),
+                                        100
+
+                                ));
+                            })
+                            .doFinally(() -> this.progress.set(null))
+                            .filter(Progressible::isDone)
+                            .map(Progressible::getData)
+                            .compose(subscriber::defaultSchedulers)
+                            .subscribe(subscriber.subscribe(localFile -> {
+                                OpenExternalArgs args = new OpenExternalArgs(file, localFile);
+                                router.navigateTo(AppRouter.EXTERNAL_OPEN_FILE, args);
+                            }));
+                }
+            }
+        }
     }
 
     private void onFileLongClick(AuroraFile file) {

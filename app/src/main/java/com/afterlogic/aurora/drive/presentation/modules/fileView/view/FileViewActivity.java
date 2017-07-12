@@ -20,7 +20,6 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
-import com.afterlogic.aurora.drive.core.common.streams.ExtCollectors;
 import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.databinding.ActivityViewFileBinding;
 import com.afterlogic.aurora.drive.model.AuroraFile;
@@ -35,10 +34,10 @@ import com.afterlogic.aurora.drive.presentation.common.util.DialogUtil;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.presenter.FileViewPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.viewModel.FileViewImageItemViewModel;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.viewModel.FileViewViewModel;
-import com.annimon.stream.Stream;
+
+import org.parceler.Parcels;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.WeakHashMap;
 
@@ -68,15 +67,12 @@ public class FileViewActivity extends MVPActivity implements FileViewPresentatio
     private MenuItem mOfflineMenuItem;
 
     public static Intent intent(@Nullable AuroraFile file, @NonNull List<AuroraFile> files, Context context){
-        Intent intent = new Intent(context, FileViewActivity.class);
-        intent.putExtra("file", file);
+        return intent(new FileViewArgs(file, files), context);
+    }
 
-        ArrayList<AuroraFile> prewieable = Stream.of(files)
-                .filter(AuroraFile::isPreviewAble)
-                .collect(ExtCollectors.toArrayList());
-        intent.putParcelableArrayListExtra("files", prewieable);
-
-        return intent;
+    public static Intent intent(FileViewArgs args, Context context) {
+        return new Intent(context, FileViewActivity.class)
+                .putExtra("args", Parcels.wrap(args));
     }
 
     @Override
@@ -88,9 +84,12 @@ public class FileViewActivity extends MVPActivity implements FileViewPresentatio
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null){
+
+            FileViewArgs args = Parcels.unwrap(getIntent().getParcelableExtra("args"));
+
             mViewModel.viewCreatedWith(
-                    getIntent().getParcelableExtra("file"),
-                    getIntent().getParcelableArrayListExtra("files")
+                    args.getFile(),
+                    args.getFolderContent()
             );
         }
 

@@ -14,7 +14,11 @@ public class AppRouter extends Router {
     public static final String LOGIN = "login";
     public static final String OFFLINE = "offline";
     public static final String ABOUT = "about";
+    public static final String IMAGE_VIEW = "imageView";
 
-    public static final String MAIN_FILE_ACTIONS = "main_file_actions";
+    public static final String MAIN_FILE_ACTIONS = "mainFileActions";
+
+    public static final String EXTERNAL_BROWSER = "externalBrowser";
+    public static final String EXTERNAL_OPEN_FILE = "externalOpenFile";
 
 }

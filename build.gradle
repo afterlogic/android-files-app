@@ -50,6 +50,8 @@ ext{
 
     lastAdapterVersion = '2.2.2'
     materialProgressBarVersion = '1.1.5'
+
+    parcellerVersion = '1.1.9'
 }
 
 task clean(type: Delete) {

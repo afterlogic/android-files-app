@@ -1,14 +1,19 @@
 package com.afterlogic.aurora.drive.application.navigation;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.FileProvider;
 
+import com.afterlogic.aurora.drive.application.navigation.args.OpenExternalArgs;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.modules._util.BackToNullActivity;
 import com.afterlogic.aurora.drive.presentation.modules.about.view.AboutAppActivity;
+import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewActivity;
+import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewArgs;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
 import com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.view.MainFilesActionBottomSheet;
 import com.afterlogic.aurora.drive.presentation.modules.offline.v2.view.OfflineActivity;
@@ -20,6 +25,11 @@ import ru.terrakok.cicerone.android.SupportAppNavigator;
 import ru.terrakok.cicerone.commands.BackTo;
 import ru.terrakok.cicerone.commands.Command;
 import ru.terrakok.cicerone.commands.Forward;
+
+import static android.content.Intent.ACTION_VIEW;
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
+import static android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
 
 /**
  * Created by aleksandrcikin on 04.07.17.
@@ -62,7 +72,11 @@ public class AppNavigator extends SupportAppNavigator {
                     return;
             }
         }
-        super.applyCommand(command);
+        try {
+            super.applyCommand(command);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -84,6 +98,26 @@ public class AppNavigator extends SupportAppNavigator {
             case AppRouter.ABOUT:
                 return AboutAppActivity.intent(activity);
 
+            case AppRouter.EXTERNAL_BROWSER:
+                return new Intent(ACTION_VIEW)
+                        .setData(Uri.parse(data.toString()));
+
+            case AppRouter.IMAGE_VIEW:
+                FileViewArgs viewArgs = (FileViewArgs) data;
+                return FileViewActivity.intent(viewArgs, activity);
+
+            case AppRouter.EXTERNAL_OPEN_FILE:
+
+                OpenExternalArgs openArgs = (OpenExternalArgs) data;
+
+                Uri fileUri = FileProvider.getUriForFile(
+                        activity, activity.getPackageName() + ".fileProvider", openArgs.getLocal()
+                );
+
+                //Open file in suitable application
+                return new Intent(ACTION_VIEW)
+                        .setDataAndType(fileUri, openArgs.getRemote().getContentType())
+                        .setFlags(FLAG_ACTIVITY_NEW_TASK | FLAG_GRANT_WRITE_URI_PERMISSION | FLAG_GRANT_READ_URI_PERMISSION);
         }
         return null;
     }

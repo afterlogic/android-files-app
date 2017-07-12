@@ -2,7 +2,6 @@ package com.afterlogic.aurora.drive.presentation.modules.main.model.presenter;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.StringRes;
 
 import com.afterlogic.aurora.drive.R;
@@ -120,9 +119,6 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
                 if (file.isPreviewAble()){
                     mRouter.openImagePreview(file, mModel.getFiles());
                 }else {
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setType(file.getContentType());
-
                     mInteractor.downloadForOpen(file)
                             .compose(progressibleLoadTask(true))
                             .subscribe(

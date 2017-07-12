@@ -14,11 +14,12 @@ import dagger.multibindings.IntoMap;
  * mail: mail@sunnydaydev.me
  */
 
-@Module
+@Module(includes = MainFilesListProvidesModule.class)
 public abstract class MainFilesListModule {
 
     @Binds
     @IntoMap
     @ViewModelKey(MainFilesListViewModel.class)
     abstract ViewModel bindViewModel(MainFilesListViewModel vm);
+
 }
