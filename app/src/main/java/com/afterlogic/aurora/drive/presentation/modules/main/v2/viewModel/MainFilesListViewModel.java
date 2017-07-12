@@ -2,47 +2,36 @@ package com.afterlogic.aurora.drive.presentation.modules.main.v2.viewModel;
 
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.OnLifecycleEvent;
-import android.databinding.ObservableField;
-import android.text.TextUtils;
 
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.core.common.rx.OptionalDisposable;
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
-import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnPropertyChangedCallback;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.BaseFileListArgs;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.BaseFileListViewModel;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFileListViewModel;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.ViewModelsConnection;
 import com.afterlogic.aurora.drive.presentation.modules.main.v2.interactor.MainFilesListInteractor;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
 import com.annimon.stream.Stream;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import io.reactivex.Completable;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by aleksandrcikin on 11.07.17.
  * mail: mail@sunnydaydev.me
  */
 
-public class MainFilesListViewModel extends BaseFileListViewModel
-        <MainFilesListViewModel, MainFileViewModel, BaseFileListArgs> {
+public class MainFilesListViewModel extends SearchableFileListViewModel<MainFilesListViewModel, MainFileViewModel, BaseFileListArgs> {
 
     private final MainFilesListInteractor interactor;
     private final Subscriber subscriber;
-    private final MainViewModelsConnection viewModelsConnection;
     private final FilesMapper mapper;
 
-    private ObservableField<String> searchPattern = new ObservableField<>("");
-
-    private OptionalDisposable setSearchQueryDisposable = new OptionalDisposable();
     private OptionalDisposable thumbsDisposable = new OptionalDisposable();
     private OptionalDisposable offlineStatusDisposable = new OptionalDisposable();
     private OptionalDisposable syncProgressDisposable = new OptionalDisposable();
@@ -50,15 +39,12 @@ public class MainFilesListViewModel extends BaseFileListViewModel
     @Inject
     MainFilesListViewModel(MainFilesListInteractor interactor,
                            Subscriber subscriber,
-                           MainViewModelsConnection viewModelsConnection,
+                           ViewModelsConnection<MainFilesListViewModel> viewModelsConnection,
                            FilesMapper mapper) {
         super(interactor, subscriber, viewModelsConnection);
         this.interactor = interactor;
         this.subscriber = subscriber;
-        this.viewModelsConnection = viewModelsConnection;
         this.mapper = mapper;
-
-        SimpleOnPropertyChangedCallback.addTo(searchPattern, this::reloadCurrentFolder);
 
     }
 
@@ -68,12 +54,7 @@ public class MainFilesListViewModel extends BaseFileListViewModel
     }
 
     @Override
-    protected void onFileClicked(AuroraFile file) {
-        super.onFileClicked(file);
-        viewModelsConnection.fileClickedPublisher.onNext(file);
-    }
-
-    @Override
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void onStart() {
         super.onStart();
 
@@ -110,33 +91,6 @@ public class MainFilesListViewModel extends BaseFileListViewModel
                 .compose(offlineStatusDisposable::disposeAndTrack)
                 .compose(subscriber::defaultSchedulers)
                 .subscribe(subscriber.justSubscribe());
-    }
-
-    void onSearchQuery(String query) {
-
-        String checkedQuery = query == null ? "" : query;
-
-        if (!ObjectsUtil.equals(searchPattern.get(), checkedQuery)) {
-
-            if (TextUtils.isEmpty(checkedQuery)) {
-
-                searchPattern.set(checkedQuery);
-
-            } else {
-
-                setSearchQueryDisposable.disposeAndClear();
-
-                Single.timer(500, TimeUnit.MILLISECONDS)
-                        .compose(setSearchQueryDisposable::track)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(tick -> searchPattern.set(checkedQuery));
-            }
-        }
-    }
-
-    @Override
-    protected Single<List<AuroraFile>> getFilesSource(AuroraFile folder) {
-        return interactor.getFiles(folder, searchPattern.get());
     }
 
 

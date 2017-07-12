@@ -5,26 +5,23 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import io.reactivex.Single;
 
 /**
- * Created by aleksandrcikin on 04.07.17.
+ * Created by aleksandrcikin on 12.07.17.
  * mail: mail@sunnydaydev.me
  */
 
-public class BaseFilesListInteractor {
+public class SearchableFilesListInteractor extends FilesListInteractor {
 
     private final FilesRepository filesRepository;
 
-    @Inject
-    protected BaseFilesListInteractor(FilesRepository filesRepository) {
+    protected SearchableFilesListInteractor(FilesRepository filesRepository) {
+        super(filesRepository);
         this.filesRepository = filesRepository;
     }
 
-    public Single<List<AuroraFile>> getFiles(AuroraFile folder) {
-        return filesRepository.getFiles(folder);
+    public Single<List<AuroraFile>> getFiles(AuroraFile folder, String pattern) {
+        return filesRepository.getFiles(folder, pattern);
     }
-
 }

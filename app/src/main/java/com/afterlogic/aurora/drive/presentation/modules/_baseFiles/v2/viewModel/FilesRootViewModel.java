@@ -17,10 +17,11 @@ import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.Life
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ProgressViewModel;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.UiObservableField;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ViewModelState;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.BaseFilesRootInteractor;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.FilesRootInteractor;
 
 import java.util.List;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import ru.terrakok.cicerone.Router;
 
 /**
@@ -28,8 +29,8 @@ import ru.terrakok.cicerone.Router;
  * mail: mail@sunnydaydev.me
  */
 
-public class BaseFilesRootViewModel<
-        FileListVM extends BaseFileListViewModel<FileListVM, ?, ?>
+public class FilesRootViewModel<
+        FileListVM extends FileListViewModel<FileListVM, ?, ?>
 > extends LifecycleViewModel implements ViewModelsConnection.OnChangedListener<FileListVM> {
 
     public final ObservableField<String> title = new ObservableField<>();
@@ -42,21 +43,22 @@ public class BaseFilesRootViewModel<
 
     private boolean hasFixedTitle = false;
 
-    private final BaseFilesRootInteractor interactor;
+    private final FilesRootInteractor interactor;
     private final Subscriber subscriber;
     private final Router router;
     private final AppResources appResources;
     private final ViewModelsConnection<FileListVM> viewModelsConnection;
 
     private final OptionalDisposable loadingDisposable = new OptionalDisposable();
+    private final OptionalDisposable fileClickDisposable = new OptionalDisposable();
 
     private SimpleOnListChangedCallback<ObservableList<AuroraFile>> stackChangeListener = new SimpleOnListChangedCallback<>(this::onStackChanged);
 
-    protected BaseFilesRootViewModel(BaseFilesRootInteractor interactor,
-                                     Subscriber subscriber,
-                                     Router router,
-                                     AppResources appResources,
-                                     ViewModelsConnection<FileListVM> viewModelsConnection) {
+    protected FilesRootViewModel(FilesRootInteractor interactor,
+                                 Subscriber subscriber,
+                                 Router router,
+                                 AppResources appResources,
+                                 ViewModelsConnection<FileListVM> viewModelsConnection) {
         this.interactor = interactor;
         this.subscriber = subscriber;
         this.router = router;
@@ -64,6 +66,11 @@ public class BaseFilesRootViewModel<
         this.viewModelsConnection = viewModelsConnection;
 
         viewModelsConnection.setListener(this);
+
+        viewModelsConnection.fileClickedPublisher
+                .compose(fileClickDisposable::track)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::onFileClicked);
 
         startLoad();
 
@@ -124,6 +131,11 @@ public class BaseFilesRootViewModel<
         return appResources.getString(R.string.app_name);
     }
 
+
+    protected void onFileClicked(AuroraFile file) {
+       //no-op
+    }
+
     private void startLoad() {
         loadingDisposable.disposeAndClear();
         fileTypes.clear();
@@ -145,5 +157,6 @@ public class BaseFilesRootViewModel<
     protected void onCleared() {
         super.onCleared();
         viewModelsConnection.setListener(null);
+        fileClickDisposable.disposeAndClear();
     }
 }

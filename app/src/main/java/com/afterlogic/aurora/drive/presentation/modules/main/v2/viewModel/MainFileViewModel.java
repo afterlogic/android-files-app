@@ -12,14 +12,14 @@ import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnPropertyChangedCallback;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.BaseAuroraFileViewModel;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.AuroraFileViewModel;
 
 /**
  * Created by aleksandrcikin on 11.07.17.
  * mail: mail@sunnydaydev.me
  */
 
-public class MainFileViewModel extends BaseAuroraFileViewModel {
+public class MainFileViewModel extends AuroraFileViewModel {
 
     public final ObservableField<Uri> icon = new ObservableField<>();
     public final ObservableField<Uri> statusIcon = new ObservableField<>();

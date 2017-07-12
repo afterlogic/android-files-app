@@ -16,7 +16,7 @@ import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.Life
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ProgressViewModel;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.UiObservableField;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ViewModelState;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.BaseFilesListInteractor;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.FilesListInteractor;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.BaseFileListArgs;
 import com.annimon.stream.Stream;
 
@@ -30,9 +30,9 @@ import io.reactivex.Single;
  * mail: mail@sunnydaydev.me
  */
 
-public abstract class BaseFileListViewModel<
-        FileListVM extends BaseFileListViewModel,
-        FileVM extends BaseAuroraFileViewModel,
+public abstract class FileListViewModel<
+        FileListVM extends FileListViewModel,
+        FileVM extends AuroraFileViewModel,
         Args extends BaseFileListArgs
 > extends LifecycleViewModel {
 
@@ -40,7 +40,7 @@ public abstract class BaseFileListViewModel<
     public final ObservableList<FileVM> items = new ObservableArrayList<>();
     public final ObservableField<ProgressViewModel> progress = new UiObservableField<>(null);
 
-    private final BaseFilesListInteractor interactor;
+    private final FilesListInteractor interactor;
     private final Subscriber subscriber;
     private final ViewModelsConnection<FileListVM> viewModelsConnection;
 
@@ -54,9 +54,9 @@ public abstract class BaseFileListViewModel<
 
     private final AtomicBoolean firstSetArgs = new AtomicBoolean(true);
 
-    protected BaseFileListViewModel(BaseFilesListInteractor interactor,
-                          Subscriber subscriber,
-                          ViewModelsConnection<FileListVM> viewModelsConnection) {
+    protected FileListViewModel(FilesListInteractor interactor,
+                                Subscriber subscriber,
+                                ViewModelsConnection<FileListVM> viewModelsConnection) {
         this.interactor = interactor;
         this.subscriber = subscriber;
         this.viewModelsConnection = viewModelsConnection;
@@ -131,6 +131,8 @@ public abstract class BaseFileListViewModel<
         if (file.isFolder()) {
             foldersStack.add(0, file);
         }
+
+        viewModelsConnection.fileClickedPublisher.onNext(file);
     }
 
     @Override

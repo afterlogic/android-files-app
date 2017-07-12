@@ -5,11 +5,9 @@ import android.net.Uri;
 
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.BaseFilesListInteractor;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.SearchableFilesListInteractor;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncListener;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -21,7 +19,7 @@ import io.reactivex.Single;
  * mail: mail@sunnydaydev.me
  */
 
-public class MainFilesListInteractor extends BaseFilesListInteractor {
+public class MainFilesListInteractor extends SearchableFilesListInteractor {
 
     private final FilesRepository filesRepository;
     private final SyncListener syncListener;
@@ -33,10 +31,6 @@ public class MainFilesListInteractor extends BaseFilesListInteractor {
         super(filesRepository);
         this.filesRepository = filesRepository;
         this.syncListener = new SyncListener(appContext);
-    }
-
-    public Single<List<AuroraFile>> getFiles(AuroraFile folder, String pattern) {
-        return filesRepository.getFiles(folder, pattern);
     }
 
     public Single<Uri> getThumbnail(AuroraFile file) {

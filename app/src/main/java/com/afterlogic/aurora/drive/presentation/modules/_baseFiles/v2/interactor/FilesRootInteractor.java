@@ -17,14 +17,14 @@ import io.reactivex.Single;
  * mail: mail@sunnydaydev.me
  */
 
-public class BaseFilesRootInteractor {
+public class FilesRootInteractor {
 
     private final FilesRepository filesRepository;
 
     private final Mapper<FileType, String> typesMapper;
 
     @Inject
-    protected BaseFilesRootInteractor(FilesRepository filesRepository, AppResources appResources) {
+    protected FilesRootInteractor(FilesRepository filesRepository, AppResources appResources) {
         this.filesRepository = filesRepository;
         typesMapper = new TypesMapper(appResources);
     }

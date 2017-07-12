@@ -2,6 +2,7 @@ package com.afterlogic.aurora.drive.presentation.modules.main.v2.view;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.databinding.DataBindingUtil;
+import android.databinding.ObservableField;
 import android.databinding.ViewDataBinding;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -33,7 +34,7 @@ public class MainActivity extends InjectableMVVMActivity<MainViewModel> implemen
     protected DispatchingAndroidInjector<Fragment> fragmentInjector;
 
     private MenuItem logoutMenuItem;
-    private SearchView searchView;
+    private ObservableField<SearchView> searchView = new ObservableField<>();
 
     @Override
     public MainViewModel createViewModel(ViewModelProvider provider) {
@@ -55,7 +56,7 @@ public class MainActivity extends InjectableMVVMActivity<MainViewModel> implemen
         logoutMenuItem.setTitle(getViewModel().logoutButtonText.get());
 
         MenuItem searchMenuItem = menu.findItem(R.id.action_search);
-        initSearchView((SearchView) searchMenuItem.getActionView());
+        searchView.set((SearchView) searchMenuItem.getActionView());
         return true;
     }
 
@@ -68,22 +69,15 @@ public class MainActivity extends InjectableMVVMActivity<MainViewModel> implemen
     @Override
     protected void bindStarted(MainViewModel vm, UnbindableObservable.Bag bag) {
         super.bindStarted(vm, bag);
+
         BindingUtil.bindProgressDialog(vm.progress, bag, this);
+        BindingUtil.bindSearchView(searchView, vm.searchQuery, vm.showSearch, bag);
 
         UnbindableObservable.bind(vm.showBackButton, bag, showBack -> {
             ActionBar ab = getSupportActionBar();
             if (ab != null) {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(showBack.get());
             }
-        });
-
-        UnbindableObservable.bind(vm.showSearch, bag, showSearch -> {
-            if (searchView == null) return;
-            searchView.setIconified(!showSearch.get());
-        });
-        UnbindableObservable.bind(vm.searchQuery, bag, query -> {
-            if (searchView == null) return;
-            searchView.setQuery(query.get(), false);
         });
 
         UnbindableObservable.bind(vm.logoutButtonText, bag, logoutText -> {
@@ -123,34 +117,4 @@ public class MainActivity extends InjectableMVVMActivity<MainViewModel> implemen
         return fragmentInjector;
     }
 
-    private void initSearchView(SearchView searchView) {
-        this.searchView = searchView;
-        searchView.setMaxWidth(Integer.MAX_VALUE);
-
-        searchView.setOnSearchClickListener(view -> {
-            getViewModel().showSearch.set(true);
-            searchView.setQuery(getViewModel().searchQuery.get(), false);
-        });
-
-        searchView.setOnCloseListener(() -> {
-            getViewModel().showSearch.set(false);
-            return false;
-        });
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                getViewModel().searchQuery.set(newText);
-                return false;
-            }
-        });
-
-        searchView.setIconified(!getViewModel().showSearch.get());
-        searchView.setQuery(getViewModel().searchQuery.get(), false);
-    }
 }

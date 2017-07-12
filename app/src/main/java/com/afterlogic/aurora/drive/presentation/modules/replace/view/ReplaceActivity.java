@@ -4,11 +4,13 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.databinding.ObservableField;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -38,7 +40,9 @@ public class ReplaceActivity extends InjectableMVVMActivity<ReplaceViewModel> im
     private static final String KEY_ARGS = "args";
 
     @Inject
-    DispatchingAndroidInjector<Fragment> fragmentInjector;
+    protected DispatchingAndroidInjector<Fragment> fragmentInjector;
+
+    private final ObservableField<SearchView> searchView = new ObservableField<>();
 
     public static Intent newReplaceIntent(Context context, List<AuroraFile> files) {
         ReplaceArgs args = new ReplaceArgs();
@@ -84,6 +88,10 @@ public class ReplaceActivity extends InjectableMVVMActivity<ReplaceViewModel> im
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_replace, menu);
+
+        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+        searchView.set((SearchView) searchMenuItem.getActionView());
+
         return true;
     }
 
@@ -103,6 +111,7 @@ public class ReplaceActivity extends InjectableMVVMActivity<ReplaceViewModel> im
     protected void bindStarted(ReplaceViewModel vm, UnbindableObservable.Bag bag) {
         super.bindStarted(vm, bag);
         BindingUtil.bindProgressDialog(vm.progress, bag, this);
+        BindingUtil.bindSearchView(searchView, vm.searchQuery, vm.showSearch, bag);
     }
 
     @Override

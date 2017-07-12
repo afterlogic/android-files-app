@@ -7,7 +7,7 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ProgressViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.BaseFileListArgs;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.BaseFileListViewModel;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFileListViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.ViewModelsConnection;
 import com.afterlogic.aurora.drive.presentation.modules.replace.interactor.ReplaceFileTypeInteractor;
 import com.annimon.stream.Stream;
@@ -21,7 +21,7 @@ import javax.inject.Inject;
  * mail: mail@sunnydaydev.me
  */
 
-public class ReplaceFileTypeViewModel extends BaseFileListViewModel<
+public class ReplaceFileTypeViewModel extends SearchableFileListViewModel<
         ReplaceFileTypeViewModel,
         ReplaceFileViewModel,
         BaseFileListArgs

@@ -11,12 +11,12 @@ import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickLis
  * mail: mail@sunnydaydev.me
  */
 
-public class BaseAuroraFileViewModel extends BaseObservable {
+public class AuroraFileViewModel extends BaseObservable {
 
     private final AuroraFile file;
     private final OnItemClickListener<AuroraFile> onItemClickListener;
 
-    public BaseAuroraFileViewModel(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener) {
+    public AuroraFileViewModel(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener) {
         this.file = file;
         this.onItemClickListener = onItemClickListener;
     }
