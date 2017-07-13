@@ -166,44 +166,11 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
                 )
                 .flatMapObservable(checked -> {
                     boolean isOffline = !mLocalService.get(file.getPathSpec()).isEmpty().blockingGet();
-                    boolean toDownloads = target.getPath().startsWith(mDownloadsDir.getPath());
 
                     if (isOffline){
-                        File offlineFile = new File(mOfflineDir, checked.getPathSpec());
-                        if (offlineFile.exists() && offlineFile.lastModified() >= checked.getLastModified()){
-                            return Observable.just(new Progressible<>(offlineFile, 0, 0, checked.getName(), true));
-                        } else {
-                            Observable<Progressible<File>> download = downloadFile(checked, target)
-                                    .map(progress -> {
-                                        if (toDownloads && progress.getProgress() > 0) {
-                                            progress.setProgress((long) (progress.getProgress() * 0.9f));
-                                        }
-                                        return progress;
-                                    });
-                            Observable<Progressible<File>> copyFile = copyFile(checked.getName(), offlineFile, target)
-                                    .map(progress -> {
-                                        if (toDownloads && progress.getProgress() > 0){
-                                            progress.setProgress((long) (progress.getMax() * 0.9f + progress.getProgress() * 0.1f));
-                                        }
-                                        return progress;
-                                    });
-                            return Observable.concat(
-                                    download,
-                                    toDownloads ? copyFile : Observable.empty()
-                            );
-                        }
-
+                        return checkOfflineAndDownload(checked, target);
                     } else {
-                        File localActual = new File(mCacheDir, checked.getPathSpec());
-                        if (localActual.exists() && localActual.lastModified() == checked.getLastModified()){
-                            if (toDownloads){
-                                return copyFile(checked.getName(), localActual, target);
-                            } else {
-                                return Observable.just(new Progressible<>(localActual, 0, 0, checked.getName(), true));
-                            }
-                        } else {
-                            return downloadFile(checked, target);
-                        }
+                        return checkCacheAndDownload(checked, target);
                     }
 
                 });
@@ -359,6 +326,67 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
         }
     }
 
+    private Observable<Progressible<File>> checkOfflineAndDownload(AuroraFile checked, File target) throws IOException{
+
+        boolean toDownloads = target.getPath().startsWith(mDownloadsDir.getPath());
+
+        File offlineFile = new File(mOfflineDir, checked.getPathSpec());
+
+        if (offlineFile.exists() && offlineFile.lastModified() >= checked.getLastModified()){
+
+            return Observable.just(new Progressible<>(offlineFile, 0, 0, checked.getName(), true));
+
+        } else {
+
+            Observable<Progressible<File>> download = downloadFile(checked, target)
+                    .map(progress -> {
+                        if (toDownloads && progress.getProgress() > 0) {
+                            progress.setProgress((long) (progress.getProgress() * 0.9f));
+                        }
+                        return progress;
+                    });
+
+            Observable<Progressible<File>> copyFile = copyFile(checked.getName(), offlineFile, target)
+                    .map(progress -> {
+                        if (toDownloads && progress.getProgress() > 0){
+                            progress.setProgress((long) (progress.getMax() * 0.9f + progress.getProgress() * 0.1f));
+                        }
+                        return progress;
+                    });
+
+            return Observable.concat(
+                    download,
+                    toDownloads ? copyFile : Observable.empty()
+            );
+
+        }
+    }
+
+    private Observable<Progressible<File>> checkCacheAndDownload(AuroraFile file, File target) throws IOException{
+
+        boolean toDownloads = target.getPath().startsWith(mDownloadsDir.getPath());
+
+        File localActual = new File(mCacheDir, file.getPathSpec());
+
+        if (localActual.exists() && localActual.lastModified() == file.getLastModified()){
+
+            if (toDownloads){
+
+                return copyFile(file.getName(), localActual, target);
+
+            } else {
+
+                return Observable.just(new Progressible<>(localActual, 0, 0, file.getName(), true));
+
+            }
+
+        } else {
+
+            return downloadFile(file, target);
+
+        }
+    }
+
     private Observable<Progressible<File>> copyFile(String progressName, File source, File target) throws IOException{
         return Observable.create(emitter -> {
             FileInputStream fis = null;
@@ -376,20 +404,26 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
     }
 
     private Observable<Progressible<File>> downloadFile(AuroraFile file, File target){
+
         Observable<Progressible<File>> request = mFileSubRepo.downloadFileBody(file)
                 .flatMapObservable(fileBody -> Observable.create(emitter -> {
 
                     long maxSize = file.getSize();
 
                     InputStream is = fileBody.byteStream();
+
                     try{
+
                         FileUtil.writeFile(is, target, maxSize,
                                 written -> emitter.onNext(
                                         new Progressible<>(null, maxSize, written, file.getName(), false)
                                 )
                         );
+
                     } finally {
+
                         IOUtil.closeQuietly(is);
+
                     }
 
                     if (!target.setLastModified(file.getLastModified())){
@@ -399,7 +433,9 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
                     emitter.onNext(new Progressible<>(target, maxSize, maxSize, file.getName(), true));
 
                     emitter.onComplete();
+
                 }));
+
         return Observable.concat(
                 Observable.just(new Progressible<>(null, 0, 0, file.getName(), false)),
                 request
