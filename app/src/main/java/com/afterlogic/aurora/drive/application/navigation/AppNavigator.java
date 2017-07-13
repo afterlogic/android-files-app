@@ -64,10 +64,11 @@ public class AppNavigator extends SupportAppNavigator {
             switch (forward.getScreenKey()) {
                 case AppRouter.MAIN_FILE_ACTIONS:
 
-                    MainFilesActionBottomSheet actions = MainFilesActionBottomSheet.newInstance();
+                    MainFilesActionBottomSheet actionsFragment = MainFilesActionBottomSheet.newInstance();
+
                     FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction()
                             .addToBackStack(forward.getScreenKey());
-                    actions.show(transaction, forward.getScreenKey());
+                    actionsFragment.show(transaction, forward.getScreenKey());
 
                     return;
             }

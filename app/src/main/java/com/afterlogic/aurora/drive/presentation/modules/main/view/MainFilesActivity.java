@@ -180,7 +180,7 @@ public class MainFilesActivity extends BaseFilesMVVMActivity<MainFilesViewModel>
 
         boolean hasFolder = field.get();
         Menu menu = mMultiChoiseActionMode.getMenu();
-        Stream.of(R.id.action_offline, R.id.action_download, R.id.action_send)
+        Stream.of(R.id.action_offline, R.id.action_download, R.id.action_share)
                 .map(menu::findItem)
                 .filter(ObjectsUtil::nonNull)
                 .forEach(item -> item.setVisible(!hasFolder));

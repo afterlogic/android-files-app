@@ -1,11 +1,13 @@
 package com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.interactor;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
+import com.afterlogic.aurora.drive.core.common.rx.OptionalDisposable;
 import com.afterlogic.aurora.drive.core.common.rx.RxVariable;
 
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
 
 /**
  * Created by aleksandrcikin on 12.07.17.
@@ -15,17 +17,36 @@ import io.reactivex.Observable;
 @ModuleScope
 public class MainFilesActionsInteractor {
 
-    private RxVariable<MainFileActionRequest> fileForAction = new RxVariable<>();
+   private RxVariable<MainFileActionsFile> file = new RxVariable<>();
+   private OptionalDisposable requestDisposable = new OptionalDisposable();
+   private PublishSubject<MainFileAction> actionPublishSubject = PublishSubject.create();
 
     @Inject
     public MainFilesActionsInteractor() {
     }
 
-    public void setFileActionRequest(MainFileActionRequest file) {
-        fileForAction.set(file);
+    public void finishCurrentRequest() {
+        requestDisposable.disposeAndClear();
     }
 
-    public Observable<RxVariable.Value<MainFileActionRequest>> getFileActionRequest() {
-        return fileForAction.asObservable();
+    public void postAction(MainFileAction action) {
+        actionPublishSubject.onNext(action);
+    }
+
+    public Observable<RxVariable.Value<MainFileActionsFile>> getFile() {
+        return file.asObservable();
+    }
+
+    public Observable<MainFileAction> setFileForAction(MainFileActionsFile file) {
+        return actionPublishSubject
+                .doOnSubscribe(disposable -> {
+                    if (this.file.get() != null) {
+                        throw new IllegalStateException("Only one action request at one time allowed.");
+                    }
+
+                    this.file.set(file);
+                })
+                .doFinally(() -> this.file.set(null))
+                .compose(requestDisposable::track);
     }
 }

@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
@@ -19,6 +20,12 @@ public class DisposableBag {
 
 
     private final Set<Disposable> disposables = new HashSet<>();
+
+    public <T> Maybe<T> track(Maybe<T> maybe) {
+        AtomicReference<Disposable> reference = new AtomicReference<>();
+        return maybe.doOnSubscribe(disposable -> trackDisposable(reference, disposable))
+                .doOnDispose(() -> disposables.remove(reference.get()));
+    }
 
     public <T> Single<T> track(Single<T> single) {
         AtomicReference<Disposable> reference = new AtomicReference<>();

@@ -120,7 +120,7 @@ public class FileViewActivity extends MVPActivity implements FileViewPresentatio
             case R.id.action_rename: mViewModel.onRename(); return true;
             case R.id.action_download: mViewModel.onDownload(); return true;
             case R.id.action_offline: mViewModel.onOffline(); return true;
-            case R.id.action_send: mViewModel.onSend(); return true;
+            case R.id.action_share: mViewModel.onSend(); return true;
         }
         return super.onOptionsItemSelected(item);
     }

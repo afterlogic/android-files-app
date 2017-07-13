@@ -227,7 +227,7 @@ public class MainFileListFragment extends BaseFilesListFragment<MainFileListView
         switch (action){
             case R.id.action_download: mPresenter.onDownload(); return true;
             case R.id.action_delete: mPresenter.onDelete(); return true;
-            case R.id.action_send: mPresenter.onSendTo(); return true;
+            case R.id.action_share: mPresenter.onSendTo(); return true;
             case R.id.action_rename: mPresenter.onRename(); return true;
             case R.id.action_offline: mPresenter.onToggleOffline(); return true;
             case R.id.action_public_link: mPresenter.onTogglePublicLink(); return true;

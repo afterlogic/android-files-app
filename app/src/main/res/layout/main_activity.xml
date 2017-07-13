@@ -38,7 +38,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:layout_gravity="bottom"
                 app:pager="@{viewpager}"
-                android:visibility="@{vm.fileTypesLocked || vm.fileTypes.size() == 0 ? View.GONE : View.VISIBLE}"
+                android:visibility="@{vm.fileTypesLocked || vm.fileTypes.size() == 0 || vm.multiChoiceMode ? View.GONE : View.VISIBLE}"
                 app:layout_scrollFlags="scroll|enterAlways"/>
 
         </android.support.design.widget.AppBarLayout>
@@ -77,9 +77,44 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:main_fileTypesAdapter="@{vm.fileTypes}"
             app:currentItem="@{vm.currentFileTypePosition}"
-            app:swipeEnabled="@{!vm.fileTypesLocked}"/>
+            app:swipeEnabled="@{!(vm.fileTypesLocked || vm.multiChoiceMode)}"/>
 
+        <com.getbase.floatingactionbutton.FloatingActionsMenu
+            android:id="@+id/add_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:visibility="@{vm.multiChoiceMode || !vm.viewModelState.isContent() ? View.GONE : View.VISIBLE}"
+            app:fab_expandDirection="up"
+            app:fab_addButtonSize="normal"
+            app:fab_labelStyle="@style/fab_labels_style"
+            style="@style/FabMenuButton"
+            tools:ignore="RtlHardcoded">
 
+            <com.afterlogic.aurora.drive.presentation.common.view.FloatingActionButton
+                android:id="@+id/create_folder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{() -> vm.onCreateFolderClick()}"
+                app:autoCollapseMenu="@{true}"
+                app:fab_size="mini"
+                app:fab_title="@string/prompt_create_folder"
+                app:fab_icon="@drawable/ic_create_new_folder"
+                style="@style/FabButton"
+                />
+
+            <com.afterlogic.aurora.drive.presentation.common.view.FloatingActionButton
+                android:id="@+id/upload_file"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{() -> vm.onUploadFileClick()}"
+                app:autoCollapseMenu="@{true}"
+                app:fab_size="mini"
+                app:fab_title="@string/prompt_upload_file"
+                app:fab_icon="@drawable/ic_cloud_upload"
+                style="@style/FabButton"
+                />
+        </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
     </android.support.design.widget.CoordinatorLayout>
 </layout>

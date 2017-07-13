@@ -94,7 +94,7 @@ public abstract class FileListViewModel<
     }
 
     protected String getFileType() {
-        return getFileType();
+        return fileType;
     }
 
     protected void reloadCurrentFolder() {

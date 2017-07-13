@@ -35,7 +35,7 @@ public class FileActionDialogViewModel {
         actions.add(new FileAction(R.id.action_delete, R.string.prompt_delete, R.drawable.ic_delete));
         if (!file.isFolder() && !file.isLink()){
             actions.add(new FileAction(R.id.action_download, R.string.prompt_action_download, R.drawable.ic_download_black));
-            actions.add(new FileAction(R.id.action_send, R.string.prompt_send, R.drawable.ic_action_share));
+            actions.add(new FileAction(R.id.action_share, R.string.prompt_send, R.drawable.ic_action_share));
             actions.add(new FileAction(R.id.action_offline, R.string.prompt_action_make_offline, R.drawable.ic_offline, true));
         }
 

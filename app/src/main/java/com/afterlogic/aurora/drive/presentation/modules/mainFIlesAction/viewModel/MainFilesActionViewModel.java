@@ -14,8 +14,8 @@ import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.LifecycleViewModel;
-import com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.interactor.MainFileActionCallback;
-import com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.interactor.MainFileActionRequest;
+import com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.interactor.MainFileAction;
+import com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.interactor.MainFileActionsFile;
 import com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.interactor.MainFilesActionsInteractor;
 
 import javax.inject.Inject;
@@ -30,7 +30,7 @@ import ru.terrakok.cicerone.Router;
 
 public class MainFilesActionViewModel extends LifecycleViewModel {
 
-    public final ObservableField<MainFileActionRequest> file = new ObservableField<>();
+    public final ObservableField<MainFileActionsFile> file = new ObservableField<>();
     public final ObservableList<FileActionViewModel> items = new ObservableArrayList<>();
 
     private final MainFilesActionsInteractor interactor;
@@ -56,14 +56,15 @@ public class MainFilesActionViewModel extends LifecycleViewModel {
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     public void onStart() {
 
-        interactor.getFileActionRequest()
+        interactor.getFile()
+                .map(RxVariable.Value::get)
                 .compose(fileForActionDisposable::track)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber.subscribe(
                         this::handleFileForAction,
                         error -> {
                             router.exit();
-                            return false;
+                            return error instanceof NullPointerException;
                         }
                 ));
     }
@@ -74,49 +75,70 @@ public class MainFilesActionViewModel extends LifecycleViewModel {
         unbindOffline();
     }
 
-    private void handleFileForAction(RxVariable.Value<MainFileActionRequest> requestValue) {
+    private void handleFileForAction(MainFileActionsFile fileForAction) {
         unbindOffline();
 
-        MainFileActionRequest request = requestValue.get();
-        this.file.set(request);
+        this.file.set(fileForAction);
 
-        if (request == null) {
-            fileForActionDisposable.disposeAndClear();
-            router.exit();
-            return;
-        }
-
-        AuroraFile file = request.getFile();
-        MainFileActionCallback callback = request.getCallback();
+        AuroraFile file = fileForAction.getFile();
 
         items.clear();
 
-        items.add(creator.button(R.string.prompt_rename, R.drawable.ic_edit, callback::onRenameFileAction));
-        items.add(creator.button(R.string.prompt_delete, R.drawable.ic_delete, callback::onDeleteFileAction));
+        items.add(creator.button(
+                R.string.prompt_rename, R.drawable.ic_edit,
+                () -> postAction(MainFileAction.RENAME)
+        ));
+        items.add(creator.button(
+                R.string.prompt_delete, R.drawable.ic_delete,
+                () -> postAction(MainFileAction.DELETE)
+        ));
         if (!file.isFolder()) {
-            items.add(creator.button(R.string.prompt_action_download, R.drawable.ic_download_black, callback::onDownloadFileAction));
-            items.add(creator.button(R.string.prompt_send, R.drawable.ic_action_share, callback::onShareFileAction));
+            items.add(creator.button(
+                    R.string.prompt_action_download, R.drawable.ic_download_black,
+                    () -> postAction(MainFileAction.DOWNLOAD)
+            ));
+            items.add(creator.button(
+                    R.string.prompt_send, R.drawable.ic_action_share,
+                    () -> postAction(MainFileAction.SHARE)
+            ));
 
             CheckableFileActionViewModel offline = creator.checkable(
-                    R.string.prompt_offline_mode, R.drawable.ic_offline, request.getOffline().get(), callback::onMakeOfflineFileAction
+                    R.string.prompt_offline_mode, R.drawable.ic_offline, fileForAction.getOffline().get(),
+                    checked -> postAction(MainFileAction.OFFLINE)
             );
             items.add(offline);
 
-            offlineUnbindable = UnbindableObservable.create(request.getOffline())
+            offlineUnbindable = UnbindableObservable.create(fileForAction.getOffline())
                     .addListener(field -> offline.setChecked(field.get()))
                     .bind()
                     .notifyChanged();
         }
 
         if (!file.isLink()) {
-            items.add(creator.checkable(R.string.prompt_action_public_link, R.drawable.ic_action_public_link, file.isShared(), callback::onMakePublicLink));
+            items.add(creator.checkable(
+                    R.string.prompt_action_public_link, R.drawable.ic_action_public_link, file.isShared(),
+                    checked -> postAction(MainFileAction.PUBLIC_LINK)
+            ));
             if (file.isShared()) {
-                items.add(creator.button(R.string.prompt_action_public_link_copy, View.NO_ID, callback::onCopyPublicLinkFileAction));
+                items.add(creator.button(
+                        R.string.prompt_action_public_link_copy, View.NO_ID,
+                        () -> postAction(MainFileAction.COPY_PUBLIC_LINK)
+                ));
             }
         }
 
-        items.add(creator.button(R.string.prompt_action__replace, R.drawable.ic_content_cut, callback::onReplaceFileAction));
-        items.add(creator.button(R.string.prompt_action__copy, R.drawable.ic_action_copy, callback::onCopyFileAction));
+        items.add(creator.button(
+                R.string.prompt_action__replace, R.drawable.ic_content_cut,
+                () -> postAction(MainFileAction.REPLACE)
+        ));
+        items.add(creator.button(
+                R.string.prompt_action__copy, R.drawable.ic_action_copy,
+                () -> postAction(MainFileAction.COPY)
+        ));
+    }
+
+    private void postAction(MainFileAction action) {
+        interactor.postAction(action);
     }
 
     private void unbindOffline() {
@@ -126,10 +148,14 @@ public class MainFilesActionViewModel extends LifecycleViewModel {
         }
     }
 
+    public void onCancel() {
+        interactor.finishCurrentRequest();
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();
-        interactor.setFileActionRequest(null);
+        interactor.finishCurrentRequest();
         unbindOffline();
     }
 }

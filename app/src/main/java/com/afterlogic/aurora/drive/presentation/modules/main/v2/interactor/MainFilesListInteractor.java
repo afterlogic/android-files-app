@@ -10,8 +10,6 @@ import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.SearchableFilesListInteractor;
-import com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.interactor.MainFileActionRequest;
-import com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.interactor.MainFilesActionsInteractor;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncListener;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
 
@@ -38,7 +36,6 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
 
     private final FilesRepository filesRepository;
     private final SyncListener syncListener;
-    private final MainFilesActionsInteractor filesActionsInteractor;
 
     private final Context appContext;
     private final File cacheDir;
@@ -50,13 +47,11 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
     @Inject
     MainFilesListInteractor(FilesRepository filesRepository,
                             Context appContext,
-                            MainFilesActionsInteractor filesActionsInteractor,
                             @Named(CACHE_DIR) File cacheDir,
                             MainFilesListViewInteractor viewInteractor) {
         super(filesRepository);
         this.filesRepository = filesRepository;
         this.syncListener = new SyncListener(appContext);
-        this.filesActionsInteractor = filesActionsInteractor;
         this.appContext = appContext;
         this.cacheDir = cacheDir;
         this.viewInteractor = viewInteractor;
@@ -84,10 +79,6 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
                         syncListener.onStop();
                     }
                 });
-    }
-
-    public void setFileForAction(MainFileActionRequest request) {
-        filesActionsInteractor.setFileActionRequest(request);
     }
 
     public Observable<Progressible<File>> downloadForOpen(AuroraFile file) {

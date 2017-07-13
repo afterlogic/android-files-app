@@ -9,7 +9,7 @@ import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FilesSelection;
-import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.SimpleOnObservableListChagnedListener;
+import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.SimpleOnObservableListChangedListener;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFilesListBiModel;
 import com.afterlogic.aurora.drive.presentation.modules.main.model.MainFilesListModel;
 import com.afterlogic.aurora.drive.presentation.modules.main.model.presenter.MainFileListPresenter;
@@ -42,7 +42,7 @@ public class MainFileListViewModelImpl extends BaseFilesListBiModel<MainFileItem
     MainFileListViewModelImpl(OptWeakRef<MainFileListPresenter> presenter, Provider<MainFileItemBiModel> itemProvider) {
         super(presenter);
         mItemProvider = itemProvider;
-        mMultiChoiseResult.addOnListChangedCallback(new SimpleOnObservableListChagnedListener<>(
+        mMultiChoiseResult.addOnListChangedCallback(new SimpleOnObservableListChangedListener<>(
                 () -> {
                     updateSelected();
                     mSelection.set(new FilesSelection(

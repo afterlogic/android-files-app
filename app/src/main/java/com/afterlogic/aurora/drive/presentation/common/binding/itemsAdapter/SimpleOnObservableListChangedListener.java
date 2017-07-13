@@ -7,11 +7,11 @@ import android.databinding.ObservableList;
  * mail: sunnyday.development@gmail.com
  */
 
-public class SimpleOnObservableListChagnedListener<T> extends  ObservableList.OnListChangedCallback<ObservableList<T>> {
+public class SimpleOnObservableListChangedListener<T> extends  ObservableList.OnListChangedCallback<ObservableList<T>> {
 
     private final Runnable mOnChangedAction;
 
-    public SimpleOnObservableListChagnedListener(Runnable onChangedAction) {
+    public SimpleOnObservableListChangedListener(Runnable onChangedAction) {
         mOnChangedAction = onChangedAction;
     }
 

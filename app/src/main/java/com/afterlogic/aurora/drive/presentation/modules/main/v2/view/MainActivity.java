@@ -1,21 +1,27 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.v2.view;
 
 import android.arch.lifecycle.ViewModelProvider;
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.databinding.ObservableField;
 import android.databinding.ViewDataBinding;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
+import com.afterlogic.aurora.drive.core.common.util.Optional;
 import com.afterlogic.aurora.drive.databinding.MainActivityBinding;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.BindingUtil;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMActivity;
 import com.afterlogic.aurora.drive.presentation.modules.main.v2.viewModel.MainViewModel;
+import com.annimon.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -29,6 +35,10 @@ import dagger.android.support.HasSupportFragmentInjector;
  */
 
 public class MainActivity extends InjectableMVVMActivity<MainViewModel> implements HasSupportFragmentInjector {
+
+    public static Intent intent(Context context) {
+        return new Intent(context, MainActivity.class);
+    }
 
     @Inject
     protected DispatchingAndroidInjector<Fragment> fragmentInjector;
@@ -85,6 +95,8 @@ public class MainActivity extends InjectableMVVMActivity<MainViewModel> implemen
             if (logoutMenuItem == null) return;
             logoutMenuItem.setTitle(logoutText.get());
         });
+
+        bindMultiChoice(vm, bag);
     }
 
     @Override
@@ -103,6 +115,10 @@ public class MainActivity extends InjectableMVVMActivity<MainViewModel> implemen
                 getViewModel().onOpenOfflineMode();
                 return true;
 
+            case R.id.action_multichoise:
+                getViewModel().onMultiChoice();
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -116,6 +132,96 @@ public class MainActivity extends InjectableMVVMActivity<MainViewModel> implemen
     @Override
     public AndroidInjector<Fragment> supportFragmentInjector() {
         return fragmentInjector;
+    }
+
+    private void bindMultiChoice(MainViewModel vm, UnbindableObservable.Bag bag) {
+        Optional<ActionMode> optionalMultiChoice = new Optional<>();
+
+        UnbindableObservable selectedCount = UnbindableObservable.bind(vm.multiChoiceCount, bag, count -> {
+
+            ActionMode mode = optionalMultiChoice.get();
+            if (mode == null) return;
+
+            String title = getString(R.string.title_action_selected, count.get());
+            mode.setTitle(title);
+
+        });
+
+        UnbindableObservable hasFolderBindable = UnbindableObservable.bind(vm.multiChoiceHasFolder, bag, hasFolder -> {
+
+            ActionMode mode = optionalMultiChoice.get();
+            if (mode == null) return;
+
+            Menu menu = mode.getMenu();
+            Stream.of(R.id.action_offline, R.id.action_download, R.id.action_share)
+                    .map(menu::findItem)
+                    .filter(ObjectsUtil::nonNull)
+                    .forEach(item -> item.setVisible(!hasFolder.get()));
+        });
+
+        UnbindableObservable.bind(vm.multiChoiceMode, bag, mode -> {
+            if (!mode.get()) {
+                optionalMultiChoice.ifPresent(ActionMode::finish);
+            } else {
+                startSupportActionMode(new ActionMode.Callback() {
+                    @Override
+                    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                        optionalMultiChoice.set(mode);
+                        mode.getMenuInflater().inflate(R.menu.menu_multichoise, menu);
+                        selectedCount.notifyChanged();
+                        hasFolderBindable.notifyChanged();
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                        switch (item.getItemId()) {
+
+                            case R.id.action_delete:
+                                getViewModel().onMultiChoiceDelete();
+                                return true;
+
+
+                            case R.id.action_download:
+                                getViewModel().onMultiChoiceDownload();
+                                return true;
+
+
+                            case R.id.action_share:
+                                getViewModel().onMultiChoiceShare();
+                                return true;
+
+
+                            case R.id.action_replace:
+                                getViewModel().onMultiChoiceReplace();
+                                return true;
+
+
+                            case R.id.action_copy:
+                                getViewModel().onMultiChoiceCopy();
+                                return true;
+
+                            case R.id.action_offline:
+                                getViewModel().onMultiChoiceOffline();
+                                return true;
+
+                        }
+                        return false;
+                    }
+
+                    @Override
+                    public void onDestroyActionMode(ActionMode mode) {
+                        optionalMultiChoice.set(null);
+                        getViewModel().multiChoiceMode.set(false);
+                    }
+                });
+            }
+        });
     }
 
 }
