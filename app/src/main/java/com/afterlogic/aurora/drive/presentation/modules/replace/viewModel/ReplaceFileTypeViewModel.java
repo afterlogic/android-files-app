@@ -66,7 +66,7 @@ public class ReplaceFileTypeViewModel extends SearchableFileListViewModel<
 
     private void createFolder(String name) {
         interactor.createFolder(name, foldersStack.get(0))
-                .doOnSubscribe(disposable -> progress.set(ProgressViewModel.indeterminate(
+                .doOnSubscribe(disposable -> progress.set(ProgressViewModel.Factory.indeterminateCircle(
                         appResources.getString(R.string.prompt_dialog_title_folder_cration),
                         name
                 )))

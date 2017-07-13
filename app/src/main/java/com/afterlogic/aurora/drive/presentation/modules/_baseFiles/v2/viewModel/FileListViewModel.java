@@ -38,7 +38,7 @@ public abstract class FileListViewModel<
 
     public final ObservableField<ViewModelState> viewModelState = new UiObservableField<>();
     public final ObservableList<FileVM> items = new ObservableArrayList<>();
-    public final ObservableField<ProgressViewModel> progress = new UiObservableField<>(null);
+    public final ObservableField<ProgressViewModel> progress = new ObservableField<>(null);
 
     private final FilesListInteractor interactor;
     private final Subscriber subscriber;

@@ -31,6 +31,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Completable;
+import io.reactivex.Observable;
 import ru.terrakok.cicerone.Router;
 
 /**
@@ -156,22 +157,30 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                     router.navigateTo(AppRouter.IMAGE_VIEW, args);
                 }else {
                     interactor.downloadForOpen(file)
+                            .compose(subscriber::defaultSchedulers)
                             .doOnNext(progress -> {
+
                                 float value = progress.getMax() > 0 && progress.getProgress() >= 0 ?
                                         (float) progress.getProgress() / progress.getMax() : -1;
-                                this.progress.set(new ProgressViewModel(
-                                        appResources.getString(R.string.dialog_downloading),
-                                        progress.getName(),
-                                        value == -1,
-                                        (int) (100 * value),
-                                        100
 
-                                ));
+                                if (value == -1) {
+                                    this.progress.set(ProgressViewModel.Factory.indeterminateProgress(
+                                            appResources.getString(R.string.dialog_downloading),
+                                            progress.getName()
+                                    ));
+                                } else {
+                                    this.progress.set(ProgressViewModel.Factory.progress(
+                                            appResources.getString(R.string.dialog_downloading),
+                                            progress.getName(),
+                                            (int) (100 * value),
+                                            100
+                                    ));
+                                }
                             })
+
                             .doFinally(() -> this.progress.set(null))
                             .filter(Progressible::isDone)
                             .map(Progressible::getData)
-                            .compose(subscriber::defaultSchedulers)
                             .subscribe(subscriber.subscribe(localFile -> {
                                 OpenExternalArgs args = new OpenExternalArgs(file, localFile);
                                 router.navigateTo(AppRouter.EXTERNAL_OPEN_FILE, args);

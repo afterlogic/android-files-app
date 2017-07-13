@@ -11,6 +11,7 @@ import com.afterlogic.aurora.drive.core.common.util.Optional;
 import com.afterlogic.aurora.drive.presentation.common.binding.binder.Bindable;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ProgressViewModel;
+import com.afterlogic.aurora.drive.presentation.common.view.AppProgressDialog;
 
 /**
  * Created by aleksandrcikin on 05.07.17.
@@ -67,40 +68,70 @@ public class BindingUtil {
     }
 
     public static void bindProgressDialog(ObservableField<ProgressViewModel> field, UnbindableObservable.Bag bag, Context context) {
-        Optional<ProgressDialog> progressDialog = new Optional<>();
-        UnbindableObservable.bind(field, bag, f -> onProgressChanged(f, progressDialog, context))
+        Optional<AppProgressDialog> progressDialog = new Optional<>();
+        UnbindableObservable
+                .bind(field, bag, f -> onProgressChanged(f.get(), progressDialog, context))
                 .addOnUnbindListener(f -> progressDialog.ifPresent(Dialog::dismiss));
     }
 
-    private static void onProgressChanged(ObservableField<ProgressViewModel> field, Optional<ProgressDialog> dialogHolder, Context context) {
-        ProgressViewModel progress = field.get();
+    private static void onProgressChanged(ProgressViewModel progress, Optional<AppProgressDialog> optionalProgressDialog, Context context) {
         if (progress == null) {
-            dialogHolder.ifPresent(Dialog::dismiss);
+            optionalProgressDialog.ifPresent(Dialog::dismiss);
+            optionalProgressDialog.set(null);
         } else {
-            ProgressDialog dialog = dialogHolder.get();
-            if (dialog != null) {
-                if (dialog.isIndeterminate() == progress.isIndeterminate()) {
-                    updateProgressDialog(progress, dialog);
-                } else {
-                    dialog = null;
-                }
+
+            AppProgressDialog dialog = optionalProgressDialog.get();
+            if (dialog != null && needRecreateDialog(dialog, progress)) {
+                dialog.dismiss();
+                dialog = null;
             }
 
             if (dialog == null) {
-                dialog = new ProgressDialog(context, R.style.AppTheme_Dialog_CompatBackground);
-                dialog.setOnDismissListener(dialogInterface -> dialogHolder.clear());
-                updateProgressDialog(progress, dialog);
-                dialogHolder.set(dialog);
+
+                dialog = instantiateNewDialog(progress, context);
+
+                optionalProgressDialog.set(dialog);
+                dialog.setOnDismissListener(dialogInterface -> {
+                    if (optionalProgressDialog.get() == dialogInterface) {
+                        optionalProgressDialog.clear();
+                    }
+                });
+
                 dialog.show();
+            } else {
+                updateProgressDialog(progress, dialog);
             }
         }
     }
 
+    private static boolean needRecreateDialog(AppProgressDialog currentDialog, ProgressViewModel progress) {
+        boolean viewModelSpinner = progress.getProgressBar() instanceof ProgressViewModel.CircleProgressBar;
+        boolean dialogSpinner = currentDialog.getProgressStyle() == ProgressDialog.STYLE_SPINNER;
+
+        return viewModelSpinner != dialogSpinner;
+    }
+
+    private static AppProgressDialog instantiateNewDialog(ProgressViewModel progress, Context context) {
+        AppProgressDialog dialog = new AppProgressDialog(context, R.style.AppTheme_Dialog_CompatBackground);
+
+        ProgressViewModel.ProgressBar progressBar = progress.getProgressBar();
+        if (progressBar instanceof ProgressViewModel.CircleProgressBar) {
+            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        } else {
+            dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        }
+
+        updateProgressDialog(progress, dialog);
+        return dialog;
+    }
+
     private static void updateProgressDialog(ProgressViewModel progress, ProgressDialog dialog) {
-        dialog.setIndeterminate(progress.isIndeterminate());
         dialog.setMessage(progress.getMessage());
         dialog.setTitle(progress.getTitle());
-        dialog.setMax(progress.getMax());
-        dialog.setProgress(progress.getProgress());
+
+        ProgressViewModel.ProgressBar progressBar = progress.getProgressBar();
+        dialog.setIndeterminate(progressBar.isIndeterminate());
+        dialog.setMax(progressBar.getMax());
+        dialog.setProgress(progressBar.getProgress());
     }
 }

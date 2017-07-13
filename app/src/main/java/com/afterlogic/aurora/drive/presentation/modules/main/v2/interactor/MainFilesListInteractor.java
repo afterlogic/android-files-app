@@ -21,9 +21,9 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.afterlogic.aurora.drive.data.modules.files.FilesDataModule.CACHE_DIR;
 
@@ -93,13 +93,16 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
     public Observable<Progressible<File>> downloadForOpen(AuroraFile file) {
         File target = FileUtil.getFile(cacheDir, file);
         return filesRepository.downloadOrGetOffline(file, target)
+                .startWith(Observable.just(new Progressible<>(null, 0, 0, file.getName(), false)))
                 .compose(this::prepareLoadTask);
     }
 
     private <T> Observable<T> prepareLoadTask(Observable<T> upstream) {
-        return upstream.startWith(Completable.fromAction(() -> {
-            viewInteractor.requireWritePermission().blockingAwait();
-        }).toObservable())
+        return upstream.startWith(
+                viewInteractor.requireWritePermission()
+                        .observeOn(Schedulers.io())
+                        .toObservable()
+        )//-----|
                 .compose(this::wakeLock);
 
     }

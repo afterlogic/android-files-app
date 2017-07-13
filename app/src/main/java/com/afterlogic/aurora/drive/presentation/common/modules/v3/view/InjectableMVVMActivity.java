@@ -84,7 +84,7 @@ public abstract class InjectableMVVMActivity<VM extends LifecycleViewModel> exte
     @Override
     protected void onStart() {
         super.onStart();
-        bindStarted(viewModel, createdBindingsBag);
+        bindStarted(viewModel, startedBindingsBag);
     }
 
     @Override

@@ -40,7 +40,7 @@ public class P7NetworkDataModule {
         clientBuilder.addInterceptor(new UploadInterceptor());
 
         //Add logging for debug
-        if (BuildConfig.DEBUG) {
+        if (false && BuildConfig.DEBUG) {
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             clientBuilder.addInterceptor(interceptor);

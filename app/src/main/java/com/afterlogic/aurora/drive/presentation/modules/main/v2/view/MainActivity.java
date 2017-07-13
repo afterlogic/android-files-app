@@ -71,6 +71,7 @@ public class MainActivity extends InjectableMVVMActivity<MainViewModel> implemen
         super.bindStarted(vm, bag);
 
         BindingUtil.bindProgressDialog(vm.progress, bag, this);
+
         BindingUtil.bindSearchView(searchView, vm.searchQuery, vm.showSearch, bag);
 
         UnbindableObservable.bind(vm.showBackButton, bag, showBack -> {

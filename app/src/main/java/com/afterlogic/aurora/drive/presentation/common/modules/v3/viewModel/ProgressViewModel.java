@@ -9,39 +9,93 @@ public class ProgressViewModel {
 
     private final String title;
     private final String message;
-    private final boolean isIndeterminate;
-    private final int progress;
-    private final int max;
+    private final ProgressBar progressBar;
 
-    public static ProgressViewModel indeterminate(String title, String message) {
-        return new ProgressViewModel(title, message, true, 0, 0);
-    }
-
-    public ProgressViewModel(String title, String message, boolean isIndeterminate, int progress, int max) {
+    public ProgressViewModel(String title, String message, ProgressBar progressBar) {
         this.title = title;
         this.message = message;
-        this.isIndeterminate = isIndeterminate;
-        this.progress = progress;
-        this.max = max;
+        this.progressBar = progressBar;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public boolean isIndeterminate() {
-        return isIndeterminate;
-    }
-
-    public int getProgress() {
-        return progress;
-    }
-
-    public int getMax() {
-        return max;
-    }
-
     public String getMessage() {
         return message;
+    }
+
+    public ProgressBar getProgressBar() {
+        return progressBar;
+    }
+
+    public interface ProgressBar {
+        boolean isIndeterminate();
+        int getProgress();
+        int getMax();
+    }
+
+    public static class CircleProgressBar implements ProgressBar {
+
+        @Override
+        public boolean isIndeterminate() {
+            return true;
+        }
+
+        @Override
+        public int getProgress() {
+            return 0;
+        }
+
+        @Override
+        public int getMax() {
+            return 0;
+        }
+    }
+
+    public static class LineProgressBar implements ProgressBar {
+
+        private final boolean indeterminate;
+        private final int progress;
+        private final int max;
+
+        LineProgressBar(boolean indeterminate, int progress, int max) {
+            this.indeterminate = indeterminate;
+            this.progress = progress;
+            this.max = max;
+        }
+
+        @Override
+        public boolean isIndeterminate() {
+            return indeterminate;
+        }
+
+        @Override
+        public int getProgress() {
+            return progress;
+        }
+
+        @Override
+        public int getMax() {
+            return max;
+        }
+    }
+
+    public static class Factory {
+
+        public static ProgressViewModel indeterminateCircle(String title, String message) {
+            return new ProgressViewModel(title, message, new CircleProgressBar());
+        }
+
+        public static ProgressViewModel indeterminateProgress(String title, String message) {
+            LineProgressBar bar = new LineProgressBar(true, 0, 0);
+            return new ProgressViewModel(title, message, bar);
+        }
+
+        public static ProgressViewModel progress(String title, String message, int progress, int max) {
+            LineProgressBar bar = new LineProgressBar(false, progress, max);
+            return new ProgressViewModel(title, message, bar);
+        }
+
     }
 }
