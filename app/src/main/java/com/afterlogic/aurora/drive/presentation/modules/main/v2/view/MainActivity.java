@@ -1,5 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.v2.view;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.support.v7.view.ActionMode;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
@@ -22,6 +24,7 @@ import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.BindingUt
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMActivity;
 import com.afterlogic.aurora.drive.presentation.modules.main.v2.viewModel.MainViewModel;
 import com.annimon.stream.Stream;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 import javax.inject.Inject;
 
@@ -51,10 +54,28 @@ public class MainActivity extends InjectableMVVMActivity<MainViewModel> implemen
         return provider.get(MainViewModel.class);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public ViewDataBinding createBinding() {
         MainActivityBinding binding = DataBindingUtil.setContentView(this, R.layout.main_activity);
         setSupportActionBar(binding.toolbar);
+
+        binding.fabCollapser.setOnTouchListener((v, event) -> {
+            binding.addMenu.collapse();
+            return true;
+        });
+
+        binding.addMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
+            @Override
+            public void onMenuExpanded() {
+                binding.fabCollapser.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onMenuCollapsed() {
+                binding.fabCollapser.setVisibility(View.GONE);
+            }
+        });
         return binding;
     }
 

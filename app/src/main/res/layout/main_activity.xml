@@ -79,6 +79,12 @@
             app:currentItem="@{vm.currentFileTypePosition}"
             app:swipeEnabled="@{!(vm.fileTypesLocked || vm.multiChoiceMode)}"/>
 
+        <View
+            android:id="@+id/fab_collapser"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
         <com.getbase.floatingactionbutton.FloatingActionsMenu
             android:id="@+id/add_menu"
             android:layout_width="wrap_content"
