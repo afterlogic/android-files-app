@@ -97,7 +97,7 @@
     <string name="content_descroption_file_icon">Иконка файла</string>
     <string name="prompt_syncing">Синхронизация</string>
     <string name="prompt_dialog_title_deleting">Удаление:</string>
-    <string name="prompt_dialog_title_folder_cration">Создание папки:</string>
+    <string name="prompt_dialog_title_folder_creation">Создание папки:</string>
     <string name="promtp_dialog_error_message_doesnt_have_chooser">Нет приложения для выбора файлов.</string>
     <string name="prompt_dialog_title_renaming">Переименовывание:</string>
     <string name="main__prompt__actions_not_allowed_in_zip">Действия над файлами не возможны в zip или GoogleDrive папке.</string>

@@ -44,7 +44,7 @@ public class ReplaceFileTypeFragment extends InjectableMVVMFragment<ReplaceFileT
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewInteractor.bind(this);
+        viewInteractor.bindView(this);
         getViewModel().setArgs(new FileListArgs(getArguments()));
     }
 
@@ -62,5 +62,11 @@ public class ReplaceFileTypeFragment extends InjectableMVVMFragment<ReplaceFileT
     protected void bindStarted(ReplaceFileTypeViewModel vm, UnbindableObservable.Bag bag) {
         super.bindStarted(vm, bag);
         BindingUtil.bindProgressDialog(vm.progress, bag, getContext());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        viewInteractor.clearView();
     }
 }

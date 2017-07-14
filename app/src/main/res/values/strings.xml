@@ -103,7 +103,7 @@
     <string name="content_descroption_file_icon">File icon</string>
     <string name="prompt_syncing">Syncing</string>
     <string name="prompt_dialog_title_deleting">Deleting:</string>
-    <string name="prompt_dialog_title_folder_cration">Folder creating:</string>
+    <string name="prompt_dialog_title_folder_creation">Folder creating:</string>
     <string name="promtp_dialog_error_message_doesnt_have_chooser">Doesn\'t have application for file choosing.</string>
     <string name="prompt_dialog_title_renaming">Renaming:</string>
     <string name="prompt_title_account_info">Aurora account</string>

@@ -314,7 +314,7 @@ public class MainFileListPresenterImpl extends BaseFilesListPresenter<MainFileLi
         getView().showNewFolderNameDialog(name -> mInteractor.createFolder(getCurrentFolder(), name)
                 .doOnSubscribe(disposable -> getView().showProgress(
                         mAppResources.getString(
-                                R.string.prompt_dialog_title_folder_cration),
+                                R.string.prompt_dialog_title_folder_creation),
                         name
                 ))
                 .doFinally(() -> getView().hideProgress())

@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
@@ -86,6 +87,19 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
         return filesRepository.downloadOrGetOffline(file, target)
                 .startWith(Observable.just(new Progressible<>(null, 0, 0, file.getName(), false)))
                 .compose(this::prepareLoadTask);
+    }
+
+    public Maybe<String> getNewFolderName() {
+        return viewInteractor.getNewFolderName();
+    }
+
+    public Single<AuroraFile> createNewFolder(String name, AuroraFile parentFolder) {
+        return Single.defer(() -> {
+            AuroraFile newFolder = AuroraFile.create(parentFolder, name, true);
+
+            return filesRepository.createFolder(newFolder)
+                    .andThen(Single.just(newFolder));
+        });
     }
 
     private <T> Observable<T> prepareLoadTask(Observable<T> upstream) {

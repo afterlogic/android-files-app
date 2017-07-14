@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.model.events.PermissionGrantEvent;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.di.ForViewInteractor;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.BindingUtil;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMFragment;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileListArgs;
@@ -45,6 +46,7 @@ public class MainFileListFragment extends InjectableMVVMFragment<MainFilesListVi
     protected MainFilesListViewInteractor viewInteractor;
 
     @Inject
+    @ForViewInteractor
     protected EventBus eventBus;
 
     @Override

@@ -38,6 +38,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Completable;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import ru.terrakok.cicerone.Router;
 
@@ -249,6 +252,29 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
 
     private void handleMainAction(MainAction action) {
         MyLog.d(getFileType() + ":handleMainAction:" + action);
+
+        switch (action) {
+            case CREATE_FOLDER: createFolder(); break;
+        }
+    }
+
+    private void createFolder() {
+        interactor.getNewFolderName()
+                .observeOn(Schedulers.io())
+                .flatMapSingle(this::createFolder)
+                .compose(globalDisposableBag::track)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber.subscribe(folder -> foldersStack.add(0, folder)));
+    }
+
+    private Single<AuroraFile> createFolder(String name) {
+        return interactor.createNewFolder(name, foldersStack.get(0))
+                .doOnSubscribe(disposable -> progress.set(ProgressViewModel.Factory.indeterminateCircle(
+                        appResources.getString(R.string.prompt_dialog_title_folder_creation),
+                        name
+                )))
+                .doFinally(() -> progress.set(null));
     }
 
     private void onFileLongClick(AuroraFile file) {
