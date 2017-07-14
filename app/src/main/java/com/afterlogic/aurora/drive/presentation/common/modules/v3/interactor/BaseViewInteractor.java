@@ -14,10 +14,13 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.core.common.rx.ActivityResultEventSource;
 import com.afterlogic.aurora.drive.core.common.rx.PermissionEventSource;
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
+import com.afterlogic.aurora.drive.model.error.ActivityResultError;
 import com.afterlogic.aurora.drive.model.error.PermissionDeniedError;
 import com.afterlogic.aurora.drive.model.error.ViewNotPresentError;
+import com.afterlogic.aurora.drive.model.events.ActivityResultEvent;
 import com.annimon.stream.Stream;
 
 import org.greenrobot.eventbus.EventBus;
@@ -29,6 +32,7 @@ import javax.inject.Inject;
 
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
+import io.reactivex.Single;
 
 /**
  * Created by aleksandrcikin on 14.07.17.
@@ -54,7 +58,7 @@ public class BaseViewInteractor {
         weakView.clear();
     }
 
-    Completable requireWritePermission(int requestId, String[] permissions) {
+    protected Completable requireWritePermission(int requestId, String[] permissions) {
         return PermissionEventSource.create(bus)
                 .startWith(requestPermission(requestId, permissions).toObservable())
                 .filter(event -> event.getRequestId() == requestId)
@@ -66,6 +70,10 @@ public class BaseViewInteractor {
                         return Completable.error(new PermissionDeniedError(requestId, permissions));
                     }
                 });
+    }
+
+    protected Single<ActivityResultEvent> requireActivityResult(int requestId) {
+        return ActivityResultEventSource.create(bus, requestId);
     }
 
     protected Maybe<String> getInputDialog(int title) {
@@ -144,7 +152,7 @@ public class BaseViewInteractor {
                 .doFinally(() -> Stream.of(finalizers).forEach(Runnable::run));
     }
 
-    protected Completable requestPermission(int requestId, String[] permissions) {
+    private Completable requestPermission(int requestId, String[] permissions) {
         return Completable.fromAction(() -> {
 
             Fragment fragment = weakView.get();
@@ -153,6 +161,16 @@ public class BaseViewInteractor {
             }
 
             fragment.requestPermissions(permissions, requestId);
+        });
+    }
+
+    protected Single<ActivityResultEvent> checkSuccess(Single<ActivityResultEvent> upstream) {
+        return upstream.flatMap(event -> {
+            if (event.isSuccess()) {
+                return Single.just(event);
+            } else {
+                return Single.error(new ActivityResultError(-1));
+            }
         });
     }
 }

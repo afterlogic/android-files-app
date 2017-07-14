@@ -102,6 +102,15 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
         });
     }
 
+    public Single<Uri> getFileForUpload() {
+        return viewInteractor.getFileForUpload();
+    }
+
+    public Observable<Progressible<AuroraFile>> uploadFile(AuroraFile folder, Uri file) {
+        return filesRepository.uploadFile(folder, file)
+                .compose(this::prepareLoadTask);
+    }
+
     private <T> Observable<T> prepareLoadTask(Observable<T> upstream) {
         return upstream.startWith(
                 viewInteractor.requireWritePermission()

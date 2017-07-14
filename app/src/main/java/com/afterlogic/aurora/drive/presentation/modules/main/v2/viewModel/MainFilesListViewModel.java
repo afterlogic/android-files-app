@@ -5,6 +5,7 @@ import android.arch.lifecycle.OnLifecycleEvent;
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableList;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 
 import com.afterlogic.aurora.drive.R;
@@ -38,6 +39,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Completable;
+import io.reactivex.ObservableTransformer;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -196,27 +198,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                 }else {
                     interactor.downloadForOpen(file)
                             .compose(subscriber::defaultSchedulers)
-                            .doOnNext(progress -> {
-
-                                float value = progress.getMax() > 0 && progress.getProgress() >= 0 ?
-                                        (float) progress.getProgress() / progress.getMax() : -1;
-
-                                if (value == -1) {
-                                    this.progress.set(ProgressViewModel.Factory.indeterminateProgress(
-                                            appResources.getString(R.string.dialog_downloading),
-                                            progress.getName()
-                                    ));
-                                } else {
-                                    this.progress.set(ProgressViewModel.Factory.progress(
-                                            appResources.getString(R.string.dialog_downloading),
-                                            progress.getName(),
-                                            (int) (100 * value),
-                                            100
-                                    ));
-                                }
-                            })
-
-                            .doFinally(() -> this.progress.set(null))
+                            .compose(notifyProgress(appResources.getString(R.string.dialog_downloading)))
                             .filter(Progressible::isDone)
                             .map(Progressible::getData)
                             .subscribe(subscriber.subscribe(localFile -> {
@@ -255,6 +237,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
 
         switch (action) {
             case CREATE_FOLDER: createFolder(); break;
+            case UPLOAD_FILE: uploadFile(); break;
         }
     }
 
@@ -275,6 +258,25 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                         name
                 )))
                 .doFinally(() -> progress.set(null));
+    }
+
+    private void uploadFile() {
+        interactor.getFileForUpload()
+                .observeOn(Schedulers.io())
+                .flatMap(this::uploadFile)
+                .compose(globalDisposableBag::track)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber.subscribe(this::reloadCurrentFolder));
+    }
+
+    private Single<AuroraFile> uploadFile(Uri file) {
+        return interactor.uploadFile(foldersStack.get(0), file)
+                .observeOn(AndroidSchedulers.mainThread())
+                .compose(notifyProgress(appResources.getString(R.string.dialog_files_title_uploading)))
+                .filter(Progressible::isDone)
+                .map(Progressible::getData)
+                .firstOrError();
     }
 
     private void onFileLongClick(AuroraFile file) {
@@ -332,6 +334,29 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                     .filter(item -> item.selected.get())
                     .forEach(item -> item.selected.set(false));
         }
+    }
+
+    private <T extends Progressible> ObservableTransformer<T, T> notifyProgress(String title) {
+        return upstream -> upstream
+                .doOnNext(progress -> {
+                    float value = progress.getMax() > 0 && progress.getProgress() >= 0 ?
+                            (float) progress.getProgress() / progress.getMax() : -1;
+
+                    if (value == -1) {
+                        this.progress.set(ProgressViewModel.Factory.indeterminateProgress(
+                                title,
+                                progress.getName()
+                        ));
+                    } else {
+                        this.progress.set(ProgressViewModel.Factory.progress(
+                                title,
+                                progress.getName(),
+                                (int) (100 * value),
+                                100
+                        ));
+                    }
+                })
+                .doFinally(() -> progress.set(null));
     }
 
     @Override

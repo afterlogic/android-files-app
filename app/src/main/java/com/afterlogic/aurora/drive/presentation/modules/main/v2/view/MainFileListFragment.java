@@ -1,6 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.v2.view;
 
 import android.arch.lifecycle.ViewModelProvider;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.model.events.ActivityResultEvent;
 import com.afterlogic.aurora.drive.model.events.PermissionGrantEvent;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.di.ForViewInteractor;
@@ -88,5 +90,11 @@ public class MainFileListFragment extends InjectableMVVMFragment<MainFilesListVi
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         eventBus.post(new PermissionGrantEvent(requestCode, permissions, grantResults));
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        eventBus.post(new ActivityResultEvent(requestCode, resultCode, data));
     }
 }

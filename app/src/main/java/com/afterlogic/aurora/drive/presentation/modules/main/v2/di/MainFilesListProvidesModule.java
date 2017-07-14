@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.v2.di;
 
-import com.afterlogic.aurora.drive.core.common.annotation.scopes.SubModuleScope;
+import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.di.ForViewInteractor;
 
 import org.greenrobot.eventbus.EventBus;
@@ -17,7 +17,7 @@ import dagger.Provides;
 public class MainFilesListProvidesModule {
 
     @Provides
-    @SubModuleScope
+    @ModuleScope
     @ForViewInteractor
     EventBus eventBus() {
         return new EventBus();

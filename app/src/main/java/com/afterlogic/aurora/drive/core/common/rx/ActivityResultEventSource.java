@@ -10,8 +10,8 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Maybe;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 
 /**
  * Created by sashka on 14.04.17.<p/>
@@ -33,10 +33,10 @@ public class ActivityResultEventSource {
                 .doFinally(() -> Stream.of(finalizers).forEach(Runnable::run));
     }
 
-    public static Maybe<ActivityResultEvent> create(EventBus eventBus, int requestCode) {
+    public static Single<ActivityResultEvent> create(EventBus eventBus, int requestCode) {
         return create(eventBus)
                 .filter(result -> result.getRequestId() == requestCode)
-                .firstElement();
+                .firstOrError();
     }
 
     private static class ActivityEventHandler{

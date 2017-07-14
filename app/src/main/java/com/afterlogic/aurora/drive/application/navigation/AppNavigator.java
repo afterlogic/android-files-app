@@ -59,6 +59,19 @@ public class AppNavigator extends SupportAppNavigator {
                 return;
             }
         }
+
+        if (command instanceof ForwardWithResult) {
+            ForwardWithResult forwardWithResult = (ForwardWithResult) command;
+
+            Intent activityIntent = createActivityIntent(forwardWithResult.getScreenKey(), forwardWithResult.getTransitionData());
+
+            // Start activity
+            if (activityIntent != null) {
+                activity.startActivityForResult(activityIntent, forwardWithResult.getRequestCode());
+                return;
+            }
+        }
+
         if (command instanceof Forward) {
             Forward forward = (Forward) command;
             switch (forward.getScreenKey()) {
@@ -99,13 +112,21 @@ public class AppNavigator extends SupportAppNavigator {
             case AppRouter.ABOUT:
                 return AboutAppActivity.intent(activity);
 
+            case AppRouter.IMAGE_VIEW:
+                FileViewArgs viewArgs = (FileViewArgs) data;
+                return FileViewActivity.intent(viewArgs, activity);
+
+
+
             case AppRouter.EXTERNAL_BROWSER:
                 return new Intent(ACTION_VIEW)
                         .setData(Uri.parse(data.toString()));
 
-            case AppRouter.IMAGE_VIEW:
-                FileViewArgs viewArgs = (FileViewArgs) data;
-                return FileViewActivity.intent(viewArgs, activity);
+            case AppRouter.EXTERNAL_CHOOSE_FILE_FOR_UPLOAD:
+                return new Intent()
+                        .setType("*/*")
+                        .setAction(Intent.ACTION_GET_CONTENT)
+                        .addCategory(Intent.CATEGORY_OPENABLE);
 
             case AppRouter.EXTERNAL_OPEN_FILE:
 

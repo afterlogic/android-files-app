@@ -1,6 +1,9 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.v2.interactor;
 
+import android.net.Uri;
+
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.application.navigation.AppRouter;
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.SubModuleScope;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.di.ForViewInteractor;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.interactor.BaseViewInteractor;
@@ -11,6 +14,7 @@ import javax.inject.Inject;
 
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
+import io.reactivex.Single;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
@@ -28,13 +32,25 @@ public class MainFilesListViewInteractor extends BaseViewInteractor{
             WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
     };
 
+    private static final int UPLOAD_ACTIVITY_REQUEST = 1;
+
+    private final AppRouter appRouter;
+
     @Inject
-    public MainFilesListViewInteractor(@ForViewInteractor EventBus bus) {
+    MainFilesListViewInteractor(@ForViewInteractor EventBus bus, AppRouter appRouter) {
         super(bus);
+        this.appRouter = appRouter;
     }
 
     Completable requireWritePermission() {
-        return requestPermission(STORAGE_PERMISSION_REQUEST, STORAGE_PERMISSIONS);
+        return requireWritePermission(STORAGE_PERMISSION_REQUEST, STORAGE_PERMISSIONS);
+    }
+
+    Single<Uri> getFileForUpload() {
+        return requireActivityResult(UPLOAD_ACTIVITY_REQUEST)
+                .doOnSubscribe(disposable -> appRouter.navigateToWithResult(AppRouter.EXTERNAL_CHOOSE_FILE_FOR_UPLOAD, UPLOAD_ACTIVITY_REQUEST))
+                .compose(this::checkSuccess)
+                .map(event -> event.getResult().getData());
     }
 
 

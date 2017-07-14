@@ -20,5 +20,14 @@ public class AppRouter extends Router {
 
     public static final String EXTERNAL_BROWSER = "externalBrowser";
     public static final String EXTERNAL_OPEN_FILE = "externalOpenFile";
+    public static final String EXTERNAL_CHOOSE_FILE_FOR_UPLOAD = "externalChooseFileForUpload";
+
+    public void navigateToWithResult(String screenKey, int requestId) {
+        navigateToWithResult(screenKey, requestId, null);
+    }
+
+    public void navigateToWithResult(String screenKey, int requestId, Object data) {
+        executeCommand(new ForwardWithResult(screenKey, requestId, data));
+    }
 
 }
