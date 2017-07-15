@@ -186,9 +186,14 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
             return;
         }
 
-        if (file.isFolder()){ // TODO: isListAction
+        if (file.isFolder()) {
             super.onFileClick(file);
         } else {
+
+            if (file.getActions() != null && file.getActions().hasList()) {
+                foldersStack.add(0, file);
+                return;
+            }
 
             if (file.isLink()){
                 router.navigateTo(AppRouter.EXTERNAL_BROWSER, file.getLinkUrl());
