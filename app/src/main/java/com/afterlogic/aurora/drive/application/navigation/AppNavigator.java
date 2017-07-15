@@ -8,7 +8,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 
-import com.afterlogic.aurora.drive.application.navigation.args.OpenExternalArgs;
+import com.afterlogic.aurora.drive.application.navigation.args.ExternalOpenFIleArgs;
+import com.afterlogic.aurora.drive.application.navigation.args.ExternalShareFileArgs;
+import com.afterlogic.aurora.drive.application.navigation.args.ExternalShareFilesArgs;
+import com.afterlogic.aurora.drive.core.common.streams.ExtCollectors;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.modules._util.BackToNullActivity;
 import com.afterlogic.aurora.drive.presentation.modules.about.view.AboutAppActivity;
@@ -18,7 +21,9 @@ import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity
 import com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.view.MainFilesActionBottomSheet;
 import com.afterlogic.aurora.drive.presentation.modules.offline.v2.view.OfflineActivity;
 import com.afterlogic.aurora.drive.presentation.modules.replace.view.ReplaceActivity;
+import com.annimon.stream.Stream;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ru.terrakok.cicerone.android.SupportAppNavigator;
@@ -30,6 +35,7 @@ import static android.content.Intent.ACTION_VIEW;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
 import static android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
+import static com.afterlogic.aurora.drive.R.string.prompt_send_by_email_chooser;
 
 /**
  * Created by aleksandrcikin on 04.07.17.
@@ -128,9 +134,48 @@ public class AppNavigator extends SupportAppNavigator {
                         .setAction(Intent.ACTION_GET_CONTENT)
                         .addCategory(Intent.CATEGORY_OPENABLE);
 
+            case AppRouter.EXTERNAL_SHARE:
+                if (data instanceof ExternalShareFileArgs) {
+
+                    ExternalShareFileArgs args = (ExternalShareFileArgs) data;
+
+                    Uri fileUri = FileProvider.getUriForFile(
+                            activity, activity.getPackageName() + ".fileProvider", args.getLocal()
+                    );
+
+                    //Start 'send' intent, for attaching to email
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setType(args.getRemote().getContentType());
+                    intent.putExtra(Intent.EXTRA_STREAM, fileUri);
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                    return Intent.createChooser(intent, activity.getString(prompt_send_by_email_chooser));
+
+                } else {
+
+                    ExternalShareFilesArgs args = (ExternalShareFilesArgs) data;
+
+
+                    ArrayList<Uri> fileUris = Stream.of(args.getFile())
+                            .map(file -> FileProvider.getUriForFile(
+                                    activity, activity.getPackageName() + ".fileProvider", file
+                            ))
+                            .collect(ExtCollectors.toArrayList());
+
+                    //Start 'send' intent, for attaching to email
+                    Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setType("*/*");
+                    intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, fileUris);
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                    return Intent.createChooser(intent, activity.getString(prompt_send_by_email_chooser));
+                }
+
             case AppRouter.EXTERNAL_OPEN_FILE:
 
-                OpenExternalArgs openArgs = (OpenExternalArgs) data;
+                ExternalOpenFIleArgs openArgs = (ExternalOpenFIleArgs) data;
 
                 Uri fileUri = FileProvider.getUriForFile(
                         activity, activity.getPackageName() + ".fileProvider", openArgs.getLocal()

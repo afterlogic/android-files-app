@@ -5,16 +5,16 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
 import java.io.File;
 
 /**
- * Created by aleksandrcikin on 12.07.17.
+ * Created by aleksandrcikin on 15.07.17.
  * mail: mail@sunnydaydev.me
  */
 
-public class OpenExternalArgs {
+public class ExternalShareFileArgs {
 
     private final AuroraFile remote;
     private final File local;
 
-    public OpenExternalArgs(AuroraFile remote, File local) {
+    public ExternalShareFileArgs(AuroraFile remote, File local) {
         this.remote = remote;
         this.local = local;
     }

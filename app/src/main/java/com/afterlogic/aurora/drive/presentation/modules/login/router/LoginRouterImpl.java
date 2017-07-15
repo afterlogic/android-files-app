@@ -6,7 +6,7 @@ import android.content.Intent;
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.presentation.common.modules.model.router.BaseMVVMRouter;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
-import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFilesActivity;
+import com.afterlogic.aurora.drive.presentation.modules.main.v2.view.MainActivity;
 
 import javax.inject.Inject;
 
@@ -32,7 +32,7 @@ public class LoginRouterImpl extends BaseMVVMRouter<LoginActivity> implements Lo
             if (!requestIntent.getBooleanExtra(EXTRA_FINISH_ON_RESULT, false)) {
                 Class nextActivityClass = (Class) requestIntent.getSerializableExtra(EXTRA_NEXT_ACTIVITY);
                 if (nextActivityClass == null) {
-                    nextActivityClass = MainFilesActivity.class;
+                    nextActivityClass = MainActivity.class;
                 }
                 activity.startActivity(new Intent(activity, nextActivityClass));
             } else {

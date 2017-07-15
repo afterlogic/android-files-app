@@ -1,9 +1,11 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.v2.interactor;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.net.Uri;
 import android.os.PowerManager;
 
+import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.core.common.util.Holder;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
@@ -11,6 +13,7 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.SearchableFilesListInteractor;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncListener;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncService;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
 
 import java.io.File;
@@ -19,12 +22,15 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
+import static android.content.Context.DOWNLOAD_SERVICE;
 import static com.afterlogic.aurora.drive.data.modules.files.FilesDataModule.CACHE_DIR;
+import static com.afterlogic.aurora.drive.data.modules.files.FilesDataModule.DOWNLOADS_DIR;
 
 /**
  * Created by aleksandrcikin on 11.07.17.
@@ -40,6 +46,7 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
 
     private final Context appContext;
     private final File cacheDir;
+    private final File dowloadsDir;
 
     private final MainFilesListViewInteractor viewInteractor;
 
@@ -49,12 +56,14 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
     MainFilesListInteractor(FilesRepository filesRepository,
                             Context appContext,
                             @Named(CACHE_DIR) File cacheDir,
+                            @Named(DOWNLOADS_DIR) File dowloadsDir,
                             MainFilesListViewInteractor viewInteractor) {
         super(filesRepository);
         this.filesRepository = filesRepository;
         this.syncListener = new SyncListener(appContext);
         this.appContext = appContext;
         this.cacheDir = cacheDir;
+        this.dowloadsDir = dowloadsDir;
         this.viewInteractor = viewInteractor;
     }
 
@@ -118,6 +127,41 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
     public Single<AuroraFile> rename(AuroraFile file, String newName) {
         return filesRepository.rename(file, newName);
     }
+
+    public Completable deleteFile(AuroraFile file) {
+        return filesRepository.delete(file);
+    }
+
+    public Observable<Progressible<File>> downloadToDownloads(AuroraFile file) {
+        File target = FileUtil.getFile(dowloadsDir, file);
+        return filesRepository.downloadOrGetOffline(file, target)
+                .compose(this::prepareLoadTask)
+                .doOnNext(progress -> {
+                    if (progress.isDone()){
+                        DownloadManager dm = (DownloadManager) appContext.getSystemService(DOWNLOAD_SERVICE);
+                        dm.addCompletedDownload(
+                                target.getName(),
+                                appContext.getString(R.string.prompt_downloaded_file_description),
+                                true,
+                                FileUtil.getFileMimeType(target),
+                                target.getAbsolutePath(),
+                                target.length(),
+                                false
+                        );
+                    }
+                });
+    }
+
+    public Completable setOffline(AuroraFile file, boolean offline) {
+        return filesRepository.setOffline(file, offline)
+                .andThen(Completable.fromAction(() -> {
+                    // Start sync
+                    if (offline) {
+                        SyncService.requestSync(file, appContext);
+                    }
+                }));
+    }
+
 
     private <T> Observable<T> prepareLoadTask(Observable<T> upstream) {
         return upstream.startWith(

@@ -6,5 +6,5 @@ package com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.interac
  */
 
 public enum  MainFileAction {
-    READY, DELETE, RENAME, DOWNLOAD, SHARE, COPY, REPLACE, OFFLINE, PUBLIC_LINK, COPY_PUBLIC_LINK
+    DELETE, RENAME, DOWNLOAD, SHARE, COPY, REPLACE, OFFLINE, PUBLIC_LINK, COPY_PUBLIC_LINK
 }
