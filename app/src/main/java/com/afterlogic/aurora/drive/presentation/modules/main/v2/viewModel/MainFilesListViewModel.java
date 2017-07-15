@@ -16,6 +16,7 @@ import com.afterlogic.aurora.drive.core.common.rx.DisposableBag;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.core.common.rx.OptionalDisposable;
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
+import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
@@ -41,6 +42,7 @@ import javax.inject.Inject;
 import io.reactivex.Completable;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.Single;
+import io.reactivex.SingleTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
@@ -53,8 +55,7 @@ import ru.terrakok.cicerone.Router;
 
 public class MainFilesListViewModel extends SearchableFileListViewModel<MainFilesListViewModel, MainFileViewModel, FileListArgs> {
 
-    public final ObservableBoolean multiChoiceMode = new ObservableBoolean();
-
+    private final ObservableBoolean multiChoiceMode = new ObservableBoolean();
     private final ObservableList<AuroraFile> selectedFiles = new ObservableArrayList<>();
 
     private final MainFilesListInteractor interactor;
@@ -72,10 +73,10 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
 
     private DisposableBag globalDisposableBag = new DisposableBag();
 
-    private boolean fileActionMode = false;
-
     @Nullable
-    private List<AuroraFile> files;
+    private List<AuroraFile> files = null;
+    @Nullable
+    private AuroraFile fileForAction = null;
 
     @Inject
     MainFilesListViewModel(MainFilesListInteractor interactor,
@@ -92,7 +93,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
         this.router = router;
         this.appResources = appResources;
 
-        mapper.setOnLongClickListner((position, item) -> onFileLongClick(item));
+        mapper.setOnLongClickListener((position, item) -> onFileLongClick(item));
 
         viewModelsConnection.getMultiChoiceMode()
                 .compose(globalDisposableBag::track)
@@ -127,7 +128,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
 
     @Override
     protected MainFileViewModel mapFileItem(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener) {
-        return mapper.map(file, onItemClickListener);
+        return mapper.mapAndStore(file, onItemClickListener);
     }
 
     @Override
@@ -253,11 +254,10 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
 
     private Single<AuroraFile> createFolder(String name) {
         return interactor.createNewFolder(name, foldersStack.get(0))
-                .doOnSubscribe(disposable -> progress.set(ProgressViewModel.Factory.indeterminateCircle(
+                .compose(notifyIndeterminateProgress(
                         appResources.getString(R.string.prompt_dialog_title_folder_creation),
                         name
-                )))
-                .doFinally(() -> progress.set(null));
+                ));
     }
 
     private void uploadFile() {
@@ -287,16 +287,59 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                 .firstElement()
                 .compose(subscriber::defaultSchedulers)
                 .doOnSubscribe(disposable -> {
-                    fileActionMode = true;
+                    fileForAction = file;
                     router.navigateTo(AppRouter.MAIN_FILE_ACTIONS);
                 })
-                .doFinally(() -> fileActionMode = false)
+                .doFinally(() -> fileForAction = null)
                 .compose(globalDisposableBag::track)
                 .subscribe(subscriber.subscribe(this::handleFileAction));
     }
 
     private void handleFileAction(MainFileAction action) {
         MyLog.d(getFileType() + ":handleFileAction:" + action);
+
+        switch (action) {
+            case RENAME: renameFile(fileForAction);
+        }
+    }
+
+    private void renameFile(AuroraFile file) {
+        interactor.getNewFileName(file)
+                .observeOn(Schedulers.io())
+                .flatMap(name -> renameFile(file, name).toMaybe())
+                .observeOn(AndroidSchedulers.mainThread())
+                .compose(globalDisposableBag::track)
+                .subscribe(subscriber.subscribe(newFile -> handleFileRenaming(file, newFile)));
+    }
+
+    private void handleFileRenaming(AuroraFile file, AuroraFile newFile) {
+        MainFileViewModel vm = mapper.remove(file);
+        if (vm != null) {
+            items.remove(vm);
+
+            MainFileViewModel newVM = mapper.mapAndStore(newFile, (p, item) -> onFileClick(item));
+
+            int newPosition = Stream.of(mapper.getKeys())
+                    .sorted(FileUtil.AURORA_FILE_COMPARATOR)
+                    .toList()
+                    .indexOf(newFile);
+
+            if (newPosition != -1) {
+                items.add(newPosition, newVM);
+
+                updateFileThumb(newFile)
+                        .compose(subscriber::defaultSchedulers)
+                        .subscribe();
+            }
+        }
+    }
+
+    private Single<AuroraFile> renameFile(AuroraFile file, String newName) {
+        return interactor.rename(file, newName)
+                .compose(notifyIndeterminateProgress(
+                        appResources.getString(R.string.prompt_dialog_title_renaming),
+                        file.getName()
+                ));
     }
 
     private Completable updateFileThumb(AuroraFile file){
@@ -334,6 +377,15 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                     .filter(item -> item.selected.get())
                     .forEach(item -> item.selected.set(false));
         }
+    }
+
+    private <T> SingleTransformer<T, T> notifyIndeterminateProgress(String title, String message) {
+        return upstream -> upstream
+                .doOnSubscribe(disposable -> progress.set(ProgressViewModel.Factory.indeterminateCircle(
+                        title,
+                        message
+                )))
+                .doFinally(() -> progress.set(null));
     }
 
     private <T extends Progressible> ObservableTransformer<T, T> notifyProgress(String title) {

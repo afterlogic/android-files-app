@@ -111,6 +111,14 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
                 .compose(this::prepareLoadTask);
     }
 
+    public Maybe<String> getNewFileName(AuroraFile file) {
+        return viewInteractor.getNewNameForFile(file);
+    }
+
+    public Single<AuroraFile> rename(AuroraFile file, String newName) {
+        return filesRepository.rename(file, newName);
+    }
+
     private <T> Observable<T> prepareLoadTask(Observable<T> upstream) {
         return upstream.startWith(
                 viewInteractor.requireWritePermission()

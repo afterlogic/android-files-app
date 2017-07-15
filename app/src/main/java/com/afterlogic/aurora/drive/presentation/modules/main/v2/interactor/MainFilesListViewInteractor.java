@@ -5,6 +5,8 @@ import android.net.Uri;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.application.navigation.AppRouter;
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.SubModuleScope;
+import com.afterlogic.aurora.drive.core.common.util.FileUtil;
+import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.di.ForViewInteractor;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.interactor.BaseViewInteractor;
 
@@ -51,6 +53,41 @@ public class MainFilesListViewInteractor extends BaseViewInteractor{
                 .doOnSubscribe(disposable -> appRouter.navigateToWithResult(AppRouter.EXTERNAL_CHOOSE_FILE_FOR_UPLOAD, UPLOAD_ACTIVITY_REQUEST))
                 .compose(this::checkSuccess)
                 .map(event -> event.getResult().getData());
+    }
+
+    Maybe<String> getNewNameForFile(AuroraFile file) {
+        return getInputDialog(
+                R.string.prompt_input_new_file_name,
+                inputView -> {
+                    final String ext = FileUtil.getFileExtension(file.getName());
+
+                    if (ext != null && !file.isFolder() && !file.isLink()) {
+
+                        //Set disallow only for 'normal' file
+                        inputView.setOnSelectionChangeListener((start, end) -> {
+                            int lenght = inputView.getText().length();
+                            int max = lenght - ext.length() - 1;
+                            boolean fixed = false;
+                            if (start > max){
+                                start = max;
+                                fixed = true;
+                            }
+                            if (end > max){
+                                end = max;
+                                fixed = true;
+                            }
+                            if (fixed){
+                                inputView.setSelection(start, end);
+                            }
+                        });
+
+                    }
+
+                    inputView.setText(file.getName());
+                    inputView.setSelection(file.getName().length());
+                },
+                null
+        );
     }
 
 

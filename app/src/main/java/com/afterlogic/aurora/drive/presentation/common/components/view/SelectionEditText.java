@@ -1,16 +1,14 @@
 package com.afterlogic.aurora.drive.presentation.common.components.view;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
+import android.support.v7.widget.AppCompatEditText;
 import android.util.AttributeSet;
-import android.widget.EditText;
 
 /**
  * Created by sashka on 25.04.16.
  * mail: sunnyday.development@gmail.com
  */
-public class SelectionEditText extends EditText {
+public class SelectionEditText extends AppCompatEditText {
 
     private OnSelectionChangeListener mOnSelectionChangeListener;
 
@@ -24,11 +22,6 @@ public class SelectionEditText extends EditText {
 
     public SelectionEditText(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public SelectionEditText(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
     @Override

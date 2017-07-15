@@ -8,6 +8,7 @@ import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickLis
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -23,32 +24,42 @@ class FilesMapper {
     private final Map<AuroraFile, MainFileViewModel> byFileMap = new HashMap<>();
     private final Map<String, MainFileViewModel> byFileSpecMap = new HashMap<>();
 
-    private OnItemClickListener<AuroraFile> onLongClickListner;
+    private OnItemClickListener<AuroraFile> onLongClickListener;
 
     @Inject
     FilesMapper(AppResources appResources) {
         this.appResources = appResources;
     }
 
-    public void setOnLongClickListner(OnItemClickListener<AuroraFile> onLongClickListner) {
-        this.onLongClickListner = onLongClickListner;
+    void setOnLongClickListener(OnItemClickListener<AuroraFile> onLongClickListener) {
+        this.onLongClickListener = onLongClickListener;
     }
 
-    public MainFileViewModel map(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener) {
-        MainFileViewModel vm = new MainFileViewModel(file, onItemClickListener, onLongClickListner, appResources);
+    MainFileViewModel mapAndStore(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener) {
+        MainFileViewModel vm = new MainFileViewModel(file, onItemClickListener, onLongClickListener, appResources);
         byFileMap.put(file, vm);
         byFileSpecMap.put(file.getPathSpec(), vm);
         return vm;
     }
 
     @Nullable
-    public MainFileViewModel get(AuroraFile file) {
+    MainFileViewModel get(AuroraFile file) {
         return byFileMap.get(file);
     }
 
     @Nullable
-    public MainFileViewModel get(String fileSpec) {
+    MainFileViewModel get(String fileSpec) {
         return byFileSpecMap.get(fileSpec);
+    }
+
+    @Nullable
+    MainFileViewModel remove(AuroraFile file) {
+        byFileSpecMap.remove(file.getPathSpec());
+        return byFileMap.remove(file);
+    }
+
+    Set<AuroraFile> getKeys() {
+        return byFileMap.keySet();
     }
 
     void clear() {
