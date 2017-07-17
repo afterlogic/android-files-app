@@ -12,6 +12,7 @@ import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.application.navigation.AppRouter;
 import com.afterlogic.aurora.drive.application.navigation.args.ExternalOpenFIleArgs;
 import com.afterlogic.aurora.drive.application.navigation.args.ExternalShareFileArgs;
+import com.afterlogic.aurora.drive.application.navigation.args.ReplaceScreenArgs;
 import com.afterlogic.aurora.drive.core.common.contextWrappers.Toaster;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.rx.DisposableBag;
@@ -55,7 +56,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
-import ru.terrakok.cicerone.Router;
 
 /**
  * Created by aleksandrcikin on 11.07.17.
@@ -71,9 +71,11 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     private final MainFilesActionsInteractor filesActionsInteractor;
     private final Subscriber subscriber;
     private final FilesMapper mapper;
-    private final Router router;
+    private final AppRouter router;
     private final AppResources appResources;
     private final Toaster toaster;
+
+    private boolean reloadAtStart = false;
 
     private OptionalDisposable thumbsDisposable = new OptionalDisposable();
     private OptionalDisposable offlineStatusDisposable = new OptionalDisposable();
@@ -82,7 +84,6 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     private PublishSubject<String> setFileTypePublisher = PublishSubject.create();
 
     private Map<AuroraFile, Disposable> publicLinkDisposables = new HashMap<>();
-
     private DisposableBag globalDisposableBag = new DisposableBag();
 
     @Nullable
@@ -96,7 +97,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                            Subscriber subscriber,
                            MainViewModelsConnection viewModelsConnection,
                            FilesMapper mapper,
-                           Router router,
+                           AppRouter router,
                            AppResources appResources,
                            Toaster toaster) {
         super(interactor, subscriber, viewModelsConnection);
@@ -151,12 +152,18 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     public void onStart() {
         super.onStart();
 
+        if (reloadAtStart) {
+            reloadAtStart = false;
+            reloadCurrentFolder();
+        }
+
         Stream.of(items).forEach(vm -> vm.syncProgress.set(-1));
 
         interactor.getSyncProgress()
                 .compose(syncProgressDisposable::disposeAndTrack)
                 .compose(subscriber::defaultSchedulers)
                 .subscribe(subscriber.subscribe(this::handleSyncProgress));
+
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
@@ -409,9 +416,9 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                 .compose(notifyProgress(appResources.getString(R.string.dialog_files_title_dowloading)))
                 .filter(Progressible::isDone)
                 .map(Progressible::getData)
-                .subscribe(subscriber.subscribe(local -> {
-                    router.navigateTo(AppRouter.EXTERNAL_OPEN_FILE, new ExternalOpenFIleArgs(file, local));
-                }));
+                .subscribe(subscriber.subscribe(local -> router.navigateTo(
+                        AppRouter.EXTERNAL_OPEN_FILE, new ExternalOpenFIleArgs(file, local)
+                )));
     }
 
     private void shareFile(AuroraFile file) {
@@ -420,9 +427,9 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                 .compose(notifyProgress(appResources.getString(R.string.dialog_files_title_dowloading)))
                 .filter(Progressible::isDone)
                 .map(Progressible::getData)
-                .subscribe(subscriber.subscribe(local -> {
-                    router.navigateTo(AppRouter.EXTERNAL_SHARE, new ExternalShareFileArgs(file, local));
-                }));
+                .subscribe(subscriber.subscribe(local ->router.navigateTo(
+                        AppRouter.EXTERNAL_SHARE, new ExternalShareFileArgs(file, local)
+                )));
     }
 
     private void toggleOffline(AuroraFile file) {
@@ -462,11 +469,13 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     }
 
     private void replaceTo(AuroraFile file) {
-
+        reloadAtStart = true;
+        router.navigateTo(AppRouter.REPLACE, new ReplaceScreenArgs(file));
     }
 
     private void copyTo(AuroraFile file) {
-
+        reloadAtStart = true;
+        router.navigateTo(AppRouter.COPY, new ReplaceScreenArgs(file));
     }
 
     private void createPublicLink(AuroraFile file, int messageTestId) {

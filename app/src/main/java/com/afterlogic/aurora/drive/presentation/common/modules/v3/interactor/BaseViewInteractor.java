@@ -74,7 +74,7 @@ public class BaseViewInteractor {
                 });
     }
 
-    protected Single<ActivityResultEvent> requireActivityResult(int requestId) {
+    public Single<ActivityResultEvent> listenActivityResult(int requestId) {
         return ActivityResultEventSource.create(bus, requestId);
     }
 

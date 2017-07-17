@@ -26,7 +26,7 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
  * mail: mail@sunnydaydev.me
  */
 @SubModuleScope
-public class MainFilesListViewInteractor extends BaseViewInteractor{
+public class MainFilesListViewInteractor extends BaseViewInteractor {
 
     private static final int STORAGE_PERMISSION_REQUEST = 1;
 
@@ -49,7 +49,7 @@ public class MainFilesListViewInteractor extends BaseViewInteractor{
     }
 
     Single<Uri> getFileForUpload() {
-        return requireActivityResult(UPLOAD_ACTIVITY_REQUEST)
+        return this.listenActivityResult(UPLOAD_ACTIVITY_REQUEST)
                 .doOnSubscribe(disposable -> appRouter.navigateToWithResult(AppRouter.EXTERNAL_CHOOSE_FILE_FOR_UPLOAD, UPLOAD_ACTIVITY_REQUEST))
                 .compose(this::checkSuccess)
                 .map(event -> event.getResult().getData());

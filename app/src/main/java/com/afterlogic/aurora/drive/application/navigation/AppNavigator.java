@@ -11,8 +11,8 @@ import android.support.v4.content.FileProvider;
 import com.afterlogic.aurora.drive.application.navigation.args.ExternalOpenFIleArgs;
 import com.afterlogic.aurora.drive.application.navigation.args.ExternalShareFileArgs;
 import com.afterlogic.aurora.drive.application.navigation.args.ExternalShareFilesArgs;
+import com.afterlogic.aurora.drive.application.navigation.args.ReplaceScreenArgs;
 import com.afterlogic.aurora.drive.core.common.streams.ExtCollectors;
-import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.modules._util.BackToNullActivity;
 import com.afterlogic.aurora.drive.presentation.modules.about.view.AboutAppActivity;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewActivity;
@@ -24,7 +24,6 @@ import com.afterlogic.aurora.drive.presentation.modules.replace.view.ReplaceActi
 import com.annimon.stream.Stream;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import ru.terrakok.cicerone.android.SupportAppNavigator;
 import ru.terrakok.cicerone.commands.BackTo;
@@ -103,11 +102,15 @@ public class AppNavigator extends SupportAppNavigator {
     protected Intent createActivityIntent(String screenKey, Object data) {
         switch (screenKey) {
 
-            case AppRouter.REPLACE:
-                return ReplaceActivity.newReplaceIntent(activity, (List<AuroraFile>) data);
+            case AppRouter.REPLACE: {
+                ReplaceScreenArgs args = (ReplaceScreenArgs) data;
+                return ReplaceActivity.newReplaceIntent(activity, args.getFiles());
+            }
 
-            case AppRouter.COPY:
-                return ReplaceActivity.newCopyIntent(activity, (List<AuroraFile>) data);
+            case AppRouter.COPY: {
+                ReplaceScreenArgs args = (ReplaceScreenArgs) data;
+                return ReplaceActivity.newCopyIntent(activity, args.getFiles());
+            }
 
             case AppRouter.LOGIN:
                 return LoginActivity.intent(false, activity);
