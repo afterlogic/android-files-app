@@ -12,6 +12,7 @@ import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.application.navigation.AppRouter;
 import com.afterlogic.aurora.drive.application.navigation.args.ExternalOpenFIleArgs;
 import com.afterlogic.aurora.drive.application.navigation.args.ExternalShareFileArgs;
+import com.afterlogic.aurora.drive.core.common.contextWrappers.Toaster;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.rx.DisposableBag;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
@@ -36,7 +37,10 @@ import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel
 import com.annimon.stream.Stream;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
 
@@ -48,6 +52,7 @@ import io.reactivex.Single;
 import io.reactivex.SingleSource;
 import io.reactivex.SingleTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import ru.terrakok.cicerone.Router;
@@ -68,12 +73,15 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     private final FilesMapper mapper;
     private final Router router;
     private final AppResources appResources;
+    private final Toaster toaster;
 
     private OptionalDisposable thumbsDisposable = new OptionalDisposable();
     private OptionalDisposable offlineStatusDisposable = new OptionalDisposable();
     private OptionalDisposable syncProgressDisposable = new OptionalDisposable();
 
     private PublishSubject<String> setFileTypePublisher = PublishSubject.create();
+
+    private Map<AuroraFile, Disposable> publicLinkDisposables = new HashMap<>();
 
     private DisposableBag globalDisposableBag = new DisposableBag();
 
@@ -84,11 +92,13 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
 
     @Inject
     MainFilesListViewModel(MainFilesListInteractor interactor,
-                           MainFilesActionsInteractor filesActionsInteractor, Subscriber subscriber,
+                           MainFilesActionsInteractor filesActionsInteractor,
+                           Subscriber subscriber,
                            MainViewModelsConnection viewModelsConnection,
                            FilesMapper mapper,
                            Router router,
-                           AppResources appResources) {
+                           AppResources appResources,
+                           Toaster toaster) {
         super(interactor, subscriber, viewModelsConnection);
         this.interactor = interactor;
         this.filesActionsInteractor = filesActionsInteractor;
@@ -96,6 +106,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
         this.mapper = mapper;
         this.router = router;
         this.appResources = appResources;
+        this.toaster = toaster;
 
         mapper.setOnLongClickListener((position, item) -> onFileLongClick(item));
 
@@ -326,15 +337,15 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
         }
 
         switch (action) {
-            case RENAME: renameFile(fileForAction);
-            case DELETE: deleteFile(fileForAction);
-            case DOWNLOAD: downloadFile(fileForAction);
-            case SHARE: shareFile(fileForAction);
-            case OFFLINE: toggleOffline(fileForAction);
-            case PUBLIC_LINK: togglePublicLink(fileForAction);
-            case COPY_PUBLIC_LINK: copyPublicLink(fileForAction);
-            case REPLACE: replaceTo(fileForAction);
-            case COPY: copyTo(fileForAction);
+            case RENAME: renameFile(fileForAction); break;
+            case DELETE: deleteFile(fileForAction); break;
+            case DOWNLOAD: downloadFile(fileForAction); break;
+            case SHARE: shareFile(fileForAction); break;
+            case OFFLINE: toggleOffline(fileForAction); break;
+            case PUBLIC_LINK: togglePublicLink(fileForAction); break;
+            case COPY_PUBLIC_LINK: copyPublicLink(fileForAction); break;
+            case REPLACE: replaceTo(fileForAction); break;
+            case COPY: copyTo(fileForAction); break;
         }
     }
 
@@ -430,11 +441,24 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     }
 
     private void togglePublicLink(AuroraFile file) {
-
+        if (file.isShared()) {
+            interactor.deletePublicLink(file)
+                    .compose(subscriber::defaultSchedulers)
+                    .compose(new TrackInMapTransformer<>(file, publicLinkDisposables))
+                    .subscribe(() -> {
+                        file.setShared(false);
+                        MainFileViewModel vm = mapper.get(file);
+                        if (vm != null) {
+                            vm.shared.set(false);
+                        }
+                    });
+        } else {
+            createPublicLink(file, R.string.prompt_public_link_created);
+        }
     }
 
     private void copyPublicLink(AuroraFile file) {
-
+        createPublicLink(file, R.string.prompt_public_link_copied);
     }
 
     private void replaceTo(AuroraFile file) {
@@ -445,6 +469,20 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
 
     }
 
+    private void createPublicLink(AuroraFile file, int messageTestId) {
+        interactor.createPublicLink(file)
+                .compose(subscriber::defaultSchedulers)
+                .compose(new TrackInMapTransformer<>(file, publicLinkDisposables))
+                .subscribe(() -> {
+                    file.setShared(true);
+                    MainFileViewModel vm = mapper.get(file);
+                    if (vm != null) {
+                        vm.shared.set(true);
+                    }
+
+                    toaster.showShort(messageTestId);
+                });
+    }
 
     // endregion
 
@@ -517,6 +555,8 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
         globalDisposableBag.dispose();
     }
 
+    // region Helper classes
+
     private class IndeterminateProgressTransformer<T> implements SingleTransformer<T,T>, CompletableTransformer {
 
         private final String title;
@@ -548,4 +588,39 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
             );
         }
     }
+
+    private class TrackInMapTransformer<K> implements CompletableTransformer {
+
+        private final K key;
+        private final Map<K, Disposable> map;
+
+        private TrackInMapTransformer(K key, Map<K, Disposable> map) {
+            this.key = key;
+            this.map = map;
+        }
+
+        @Override
+        public CompletableSource apply(Completable upstream) {
+
+            AtomicReference<Disposable> disposableAtomicReference = new AtomicReference<>();
+
+            return upstream
+                    .doOnSubscribe(disposable -> {
+                        Disposable current = map.get(key);
+                        if (current != null) {
+                            current.dispose();
+                        }
+                        map.put(key, disposable);
+                        disposableAtomicReference.set(disposable);
+                    })
+                    .doFinally(() -> {
+                        Disposable current = map.get(key);
+                        if (current != null && disposableAtomicReference.get() == current) {
+                            map.remove(key);
+                        }
+                    });
+        }
+    }
+
+    // endregion
 }

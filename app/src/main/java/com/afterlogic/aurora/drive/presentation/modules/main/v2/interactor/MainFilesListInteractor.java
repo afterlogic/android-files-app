@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.PowerManager;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.core.common.contextWrappers.ClipboardHelper;
 import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.core.common.util.Holder;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
@@ -43,10 +44,11 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
 
     private final FilesRepository filesRepository;
     private final SyncListener syncListener;
+    private final ClipboardHelper clipboardHelper;
 
     private final Context appContext;
     private final File cacheDir;
-    private final File dowloadsDir;
+    private final File downloadsDir;
 
     private final MainFilesListViewInteractor viewInteractor;
 
@@ -54,16 +56,18 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
 
     @Inject
     MainFilesListInteractor(FilesRepository filesRepository,
+                            ClipboardHelper clipboardHelper,
                             Context appContext,
                             @Named(CACHE_DIR) File cacheDir,
-                            @Named(DOWNLOADS_DIR) File dowloadsDir,
+                            @Named(DOWNLOADS_DIR) File downloadsDir,
                             MainFilesListViewInteractor viewInteractor) {
         super(filesRepository);
         this.filesRepository = filesRepository;
+        this.clipboardHelper = clipboardHelper;
         this.syncListener = new SyncListener(appContext);
         this.appContext = appContext;
         this.cacheDir = cacheDir;
-        this.dowloadsDir = dowloadsDir;
+        this.downloadsDir = downloadsDir;
         this.viewInteractor = viewInteractor;
     }
 
@@ -133,7 +137,7 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
     }
 
     public Observable<Progressible<File>> downloadToDownloads(AuroraFile file) {
-        File target = FileUtil.getFile(dowloadsDir, file);
+        File target = FileUtil.getFile(downloadsDir, file);
         return filesRepository.downloadOrGetOffline(file, target)
                 .compose(this::prepareLoadTask)
                 .doOnNext(progress -> {
@@ -162,6 +166,15 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
                 }));
     }
 
+    public Completable createPublicLink(AuroraFile file) {
+        return filesRepository.createPublicLink(file)
+                .doOnSuccess(clipboardHelper::put)
+                .toCompletable();
+    }
+
+    public Completable deletePublicLink(AuroraFile file) {
+        return filesRepository.deletePublicLink(file);
+    }
 
     private <T> Observable<T> prepareLoadTask(Observable<T> upstream) {
         return upstream.startWith(
