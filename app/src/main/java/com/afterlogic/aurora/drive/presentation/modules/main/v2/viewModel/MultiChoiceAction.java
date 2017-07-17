@@ -6,5 +6,5 @@ package com.afterlogic.aurora.drive.presentation.modules.main.v2.viewModel;
  */
 
 enum MultiChoiceAction {
-    DOWNLOAD, DELETE, SHARE, REPLACE, COPY, OFFLINE_ON, OFFLINE_OFF
+    DOWNLOAD, DELETE, SHARE, REPLACE, COPY, TOGGLE_OFFLINE
 }

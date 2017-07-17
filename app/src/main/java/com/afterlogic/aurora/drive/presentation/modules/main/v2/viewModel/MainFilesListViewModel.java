@@ -278,6 +278,28 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     private void handleMultiChoiceAction(MultiChoiceAction action) {
         MyLog.d(getFileType() + ":handleMultiChoiceAction:" + action);
 
+        if (selectedFiles.size() == 0) return;
+
+        switch (action) {
+            case DELETE: break;
+            case SHARE: break;
+            case REPLACE: multiChoiceReplace(selectedFiles); break;
+            case COPY: multiChoiceCopy(selectedFiles); break;
+            case DOWNLOAD: break;
+            case TOGGLE_OFFLINE: break;
+        }
+
+        selectedFiles.clear();
+    }
+
+    private void multiChoiceReplace(List<AuroraFile> files) {
+        reloadAtStart = true;
+        router.navigateTo(AppRouter.REPLACE, new ReplaceScreenArgs(files));
+    }
+
+    private void multiChoiceCopy(List<AuroraFile> files) {
+        reloadAtStart = true;
+        router.navigateTo(AppRouter.COPY, new ReplaceScreenArgs(files));
     }
 
     // endregion

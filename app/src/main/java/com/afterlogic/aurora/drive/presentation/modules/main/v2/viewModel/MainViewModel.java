@@ -124,7 +124,7 @@ public class MainViewModel extends SearchableFilesRootViewModel<MainFilesListVie
     }
 
     public void onMultiChoiceOffline() {
-        onMultiChoiceAction(MultiChoiceAction.OFFLINE_ON);
+        onMultiChoiceAction(MultiChoiceAction.TOGGLE_OFFLINE);
     }
 
     private void onMultiChoiceAction(MultiChoiceAction action) {
