@@ -1,5 +1,7 @@
 package com.afterlogic.aurora.drive.application.navigation;
 
+import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
+
 import ru.terrakok.cicerone.Router;
 
 /**
@@ -31,4 +33,11 @@ public class AppRouter extends Router {
         executeCommand(new ForwardWithResult(screenKey, requestId, data));
     }
 
+    public void navigateTo(String screenKey, Object data, Consumer<Throwable> onError) {
+        executeCommand(new ForwardWithErrorHandling(screenKey, onError, data));
+    }
+
+    public void navigateTo(String screenKey, Consumer<Throwable> onError) {
+        executeCommand(new ForwardWithErrorHandling(screenKey, onError, null));
+    }
 }

@@ -4,14 +4,18 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.databinding.ObservableField;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.util.Optional;
 import com.afterlogic.aurora.drive.presentation.common.binding.binder.Bindable;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ProgressViewModel;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.MessageDialogViewModel;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.ProgressViewModel;
 import com.afterlogic.aurora.drive.presentation.common.view.AppProgressDialog;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by aleksandrcikin on 05.07.17.
@@ -66,6 +70,8 @@ public class BindingUtil {
             }
         });
     }
+
+    // region Progress
 
     public static void bindProgressDialog(ObservableField<ProgressViewModel> field, UnbindableObservable.Bag bag, Context context) {
         Optional<AppProgressDialog> progressDialog = new Optional<>();
@@ -134,4 +140,39 @@ public class BindingUtil {
         dialog.setMax(progressBar.getMax());
         dialog.setProgress(progressBar.getProgress());
     }
+
+    // endregion
+
+    // region Dialogs
+
+    public static void bindDialog(ObservableField<MessageDialogViewModel> field, UnbindableObservable.Bag bag, Context context) {
+        AtomicReference<AlertDialog> dialogRef = new AtomicReference<>();
+
+        UnbindableObservable.bind(field, bag, f -> {
+            AlertDialog dialog = dialogRef.getAndSet(null);
+            if (dialog != null) {
+                dialog.dismiss();
+            }
+
+            MessageDialogViewModel vm = f.get();
+            if (vm != null) {
+                dialog = new AlertDialog.Builder(context, R.style.AppTheme_Dialog)
+                        .setTitle(vm.getTitle())
+                        .setMessage(vm.getMessage())
+                        .setPositiveButton(android.R.string.ok, (di, i) -> vm.onClose())
+                        .setCancelable(true)
+                        .setOnCancelListener(di -> vm.onClose())
+                        .show();
+                dialogRef.set(dialog);
+            }
+        })//---|
+                .addOnUnbindListener(f -> {
+                    AlertDialog dialog = dialogRef.getAndSet(null);
+                    if (dialog != null) {
+                        dialog.dismiss();
+                    }
+                });
+    }
+
+    // endregion
 }

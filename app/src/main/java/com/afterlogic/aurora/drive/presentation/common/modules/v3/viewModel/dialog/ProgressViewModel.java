@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel;
+package com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog;
 
 /**
  * Created by aleksandrcikin on 05.07.17.

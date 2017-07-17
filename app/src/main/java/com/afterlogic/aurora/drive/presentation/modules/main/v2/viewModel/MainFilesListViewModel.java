@@ -2,8 +2,10 @@ package com.afterlogic.aurora.drive.presentation.modules.main.v2.viewModel;
 
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.OnLifecycleEvent;
+import android.content.ActivityNotFoundException;
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableBoolean;
+import android.databinding.ObservableField;
 import android.databinding.ObservableList;
 import android.net.Uri;
 import android.support.annotation.Nullable;
@@ -26,7 +28,8 @@ import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnListChangedCallback;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnPropertyChangedCallback;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ProgressViewModel;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.MessageDialogViewModel;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.ProgressViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileListArgs;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFileListViewModel;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewArgs;
@@ -63,6 +66,8 @@ import io.reactivex.subjects.PublishSubject;
  */
 
 public class MainFilesListViewModel extends SearchableFileListViewModel<MainFilesListViewModel, MainFileViewModel, FileListArgs> {
+
+    public final ObservableField<MessageDialogViewModel> messageDialog = new ObservableField<>();
 
     private final ObservableBoolean multiChoiceMode = new ObservableBoolean();
     private final ObservableList<AuroraFile> selectedFiles = new ObservableArrayList<>();
@@ -219,7 +224,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
             }
 
             if (file.isLink()){
-                router.navigateTo(AppRouter.EXTERNAL_BROWSER, file.getLinkUrl());
+                router.navigateTo(AppRouter.EXTERNAL_BROWSER, file.getLinkUrl(), this::onOpenFileError);
             }else {
                 if (file.isPreviewAble()){
                     FileViewArgs args = new FileViewArgs(file, files);
@@ -232,10 +237,20 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                             .map(Progressible::getData)
                             .subscribe(subscriber.subscribe(localFile -> {
                                 ExternalOpenFIleArgs args = new ExternalOpenFIleArgs(file, localFile);
-                                router.navigateTo(AppRouter.EXTERNAL_OPEN_FILE, args);
+                                router.navigateTo(AppRouter.EXTERNAL_OPEN_FILE, args, this::onOpenFileError);
                             }));
                 }
             }
+        }
+    }
+
+    private void onOpenFileError(Throwable e) {
+        if (e instanceof ActivityNotFoundException) {
+            MessageDialogViewModel.set(
+                    messageDialog, null, appResources.getString(R.string.prompt_cant_open_file)
+            );
+        } else {
+            MyLog.majorException(e);
         }
     }
 

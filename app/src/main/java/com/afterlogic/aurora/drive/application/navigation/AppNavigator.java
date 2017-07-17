@@ -12,6 +12,7 @@ import com.afterlogic.aurora.drive.application.navigation.args.ExternalOpenFIleA
 import com.afterlogic.aurora.drive.application.navigation.args.ExternalShareFileArgs;
 import com.afterlogic.aurora.drive.application.navigation.args.ExternalShareFilesArgs;
 import com.afterlogic.aurora.drive.application.navigation.args.ReplaceScreenArgs;
+import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.core.common.streams.ExtCollectors;
 import com.afterlogic.aurora.drive.presentation.modules._util.BackToNullActivity;
 import com.afterlogic.aurora.drive.presentation.modules.about.view.AboutAppActivity;
@@ -57,44 +58,56 @@ public class AppNavigator extends SupportAppNavigator {
 
     @Override
     public void applyCommand(Command command) {
-        if (command instanceof BackTo) {
-            BackTo back = (BackTo) command;
-            if (back.getScreenKey() == null) {
-                activity.startActivity(BackToNullActivity.restartTaskIntent(activity));
-                return;
-            }
-        }
-
-        if (command instanceof ForwardWithResult) {
-            ForwardWithResult forwardWithResult = (ForwardWithResult) command;
-
-            Intent activityIntent = createActivityIntent(forwardWithResult.getScreenKey(), forwardWithResult.getTransitionData());
-
-            // Start activity
-            if (activityIntent != null) {
-                activity.startActivityForResult(activityIntent, forwardWithResult.getRequestCode());
-                return;
-            }
-        }
-
-        if (command instanceof Forward) {
-            Forward forward = (Forward) command;
-            switch (forward.getScreenKey()) {
-                case AppRouter.MAIN_FILE_ACTIONS:
-
-                    MainFilesActionBottomSheet actionsFragment = MainFilesActionBottomSheet.newInstance();
-
-                    FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction()
-                            .addToBackStack(forward.getScreenKey());
-                    actionsFragment.show(transaction, forward.getScreenKey());
-
-                    return;
-            }
-        }
         try {
+            
+            if (command instanceof BackTo) {
+                BackTo back = (BackTo) command;
+                if (back.getScreenKey() == null) {
+                    activity.startActivity(BackToNullActivity.restartTaskIntent(activity));
+                    return;
+                }
+            }
+
+            if (command instanceof ForwardWithResult) {
+                ForwardWithResult forwardWithResult = (ForwardWithResult) command;
+
+                Intent activityIntent = createActivityIntent(forwardWithResult.getScreenKey(), forwardWithResult.getTransitionData());
+
+                // Start activity
+                if (activityIntent != null) {
+                    activity.startActivityForResult(activityIntent, forwardWithResult.getRequestCode());
+                    return;
+                }
+            }
+
+            if (command instanceof Forward) {
+                Forward forward = (Forward) command;
+                switch (forward.getScreenKey()) {
+                    case AppRouter.MAIN_FILE_ACTIONS:
+
+                        MainFilesActionBottomSheet actionsFragment = MainFilesActionBottomSheet.newInstance();
+
+                        FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction()
+                                .addToBackStack(forward.getScreenKey());
+                        actionsFragment.show(transaction, forward.getScreenKey());
+
+                        return;
+                }
+            }
+
             super.applyCommand(command);
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        } catch (Throwable e) {
+
+            if (command instanceof WithErrorHandling) {
+                Consumer<Throwable> errorConsumer = ((WithErrorHandling) command).getErrorConsumer();
+                if (errorConsumer != null) {
+                    errorConsumer.consume(e);
+                    return;
+                }
+            }
+
+            throw e;
         }
     }
 

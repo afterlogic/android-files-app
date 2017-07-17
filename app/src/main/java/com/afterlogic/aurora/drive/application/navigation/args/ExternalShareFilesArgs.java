@@ -9,6 +9,7 @@ import java.util.List;
  */
 
 public class ExternalShareFilesArgs {
+
     private final List<File> file;
 
     public ExternalShareFilesArgs(List<File> file) {

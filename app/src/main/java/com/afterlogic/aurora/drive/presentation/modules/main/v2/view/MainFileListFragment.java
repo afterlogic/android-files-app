@@ -72,6 +72,8 @@ public class MainFileListFragment extends InjectableMVVMFragment<MainFilesListVi
         super.bindStarted(vm, bag);
 
         BindingUtil.bindProgressDialog(vm.progress, bag, getContext());
+
+        BindingUtil.bindDialog(vm.messageDialog, bag, getContext());
     }
 
     @Override
@@ -82,8 +84,8 @@ public class MainFileListFragment extends InjectableMVVMFragment<MainFilesListVi
 
     @Override
     public void onStop() {
-        super.onStop();
         viewInteractor.clearView();
+        super.onStop();
     }
 
     @Override
