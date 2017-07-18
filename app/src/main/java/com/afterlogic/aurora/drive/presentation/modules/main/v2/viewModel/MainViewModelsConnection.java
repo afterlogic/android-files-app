@@ -4,7 +4,6 @@ import android.support.v4.util.Pair;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
 import com.afterlogic.aurora.drive.core.common.rx.RxVariable;
-import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.ViewModelsConnection;
 
 import java.util.List;
@@ -23,7 +22,7 @@ class MainViewModelsConnection extends ViewModelsConnection<MainFilesListViewMod
 
     private final RxVariable<Boolean> multiChoiceMode = new RxVariable<>(false);
 
-    private final RxVariable<List<AuroraFile>> multiChoice = new RxVariable<>(null);
+    private final RxVariable<List<MultiChoiceFile>> multiChoice = new RxVariable<>(null);
 
     private final PublishSubject<Pair<String, MultiChoiceAction>> multiChoiceActionPublisher = PublishSubject.create();
 
@@ -37,7 +36,7 @@ class MainViewModelsConnection extends ViewModelsConnection<MainFilesListViewMod
         this.multiChoiceMode.set(multiChoiceMode);
     }
 
-    void setMultiChoice(List<AuroraFile> multiChoice) {
+    void setMultiChoice(List<MultiChoiceFile> multiChoice) {
         this.multiChoice.set(multiChoice);
     }
 
@@ -54,7 +53,7 @@ class MainViewModelsConnection extends ViewModelsConnection<MainFilesListViewMod
                 .map(RxVariable.Value::get);
     }
 
-    Observable<RxVariable.Value<List<AuroraFile>>> getMultiChoiceCount() {
+    Observable<RxVariable.Value<List<MultiChoiceFile>>> getMultiChoice() {
         return multiChoice.asObservable();
     }
 

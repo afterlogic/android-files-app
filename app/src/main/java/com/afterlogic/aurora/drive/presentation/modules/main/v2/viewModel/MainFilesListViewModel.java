@@ -79,6 +79,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     private final AppRouter router;
     private final AppResources appResources;
     private final Toaster toaster;
+    private final MainViewModelsConnection viewModelsConnection;
 
     private boolean reloadAtStart = false;
 
@@ -113,6 +114,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
         this.router = router;
         this.appResources = appResources;
         this.toaster = toaster;
+        this.viewModelsConnection = viewModelsConnection;
 
         mapper.setOnLongClickListener((position, item) -> onFileLongClick(item));
 
@@ -137,7 +139,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
 
         SimpleOnListChangedCallback.addTo(
                 selectedFiles,
-                list -> viewModelsConnection.setMultiChoice(new ArrayList<>(selectedFiles))
+                this::onSelectedFilesChanged
         );
     }
 
@@ -275,21 +277,89 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
         }
     }
 
+    private void onSelectedFilesChanged(List<AuroraFile> selectedFiles) {
+        List<MultiChoiceFile> multiChoiceFiles = Stream.of(selectedFiles)
+                .map(file -> {
+                    MainFileViewModel vm = mapper.get(file);
+                    return new MultiChoiceFile(file, vm.isOffline.get());
+                })
+                .toList();
+
+        viewModelsConnection.setMultiChoice(multiChoiceFiles);
+    }
+
     private void handleMultiChoiceAction(MultiChoiceAction action) {
         MyLog.d(getFileType() + ":handleMultiChoiceAction:" + action);
 
-        if (selectedFiles.size() == 0) return;
+        List<AuroraFile> filesForAction = new ArrayList<>(selectedFiles);
+
+        if (filesForAction.size() == 0) {
+            MyLog.d("Ignore multichoice actions cause selected files is empty.");
+            return;
+        }
+
 
         switch (action) {
-            case DELETE: break;
-            case SHARE: break;
-            case REPLACE: multiChoiceReplace(selectedFiles); break;
-            case COPY: multiChoiceCopy(selectedFiles); break;
-            case DOWNLOAD: break;
-            case TOGGLE_OFFLINE: break;
+            case DELETE: multiChoiceDelete(filesForAction); break;
+            case SHARE:  break;
+            case REPLACE: multiChoiceReplace(filesForAction); break;
+            case COPY: multiChoiceCopy(filesForAction); break;
+            case DOWNLOAD:  break;
+            case TOGGLE_OFFLINE: multiChoiceToggleOffline(filesForAction); break;
         }
 
         selectedFiles.clear();
+    }
+
+    private void multiChoiceDelete(List<AuroraFile> files) {
+        Stream.of(files)
+                .map(file -> interactor.deleteFile(file)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnComplete(() -> {
+                            MainFileViewModel vm = mapper.get(file);
+                            if (vm != null) {
+                                items.remove(vm);
+                            }
+                        })
+                )
+                .collect(Observables.Collectors.concatCompletable())
+                .compose(subscriber::defaultSchedulers)
+                .compose(new IndeterminateProgressTransformer(
+                        appResources.getString(R.string.prompt_dialog_title_deleting),
+                        appResources.getPlurals(R.plurals.files, files.size(), files.size())
+                ))
+                .subscribe(subscriber.justSubscribe());
+    }
+
+    private void multiChoiceDownload(List<AuroraFile> files) {
+
+    }
+
+    private void multiChoiceShare(List<AuroraFile> files) {
+
+    }
+
+    private void multiChoiceToggleOffline(List<AuroraFile> files) {
+        Stream.of(files)
+                .map(file -> interactor.getOfflineStatus(file).toObservable())
+                .collect(Observables.Collectors.concatObservables())
+                .any(offline -> !offline)
+                .flatMapCompletable(offline ->
+                        Stream.of(files)
+                                .map(file -> interactor.getOfflineStatus(file)
+                                        .filter(currentOffline -> currentOffline != offline)
+                                        .flatMapCompletable(itemOffline -> interactor.setOffline(file, offline))
+                                        .doOnComplete(() -> {
+                                            MainFileViewModel vm = mapper.get(file);
+                                            if (vm != null) {
+                                                vm.isOffline.set(offline);
+                                            }
+                                        })
+                                )
+                                .collect(Observables.Collectors.concatCompletable())
+                )
+                .compose(subscriber::defaultSchedulers)
+                .subscribe(subscriber.justSubscribe());
     }
 
     private void multiChoiceReplace(List<AuroraFile> files) {

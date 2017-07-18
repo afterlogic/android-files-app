@@ -34,6 +34,7 @@ public class MainViewModel extends SearchableFilesRootViewModel<MainFilesListVie
     public final ObservableBoolean multiChoiceMode = new ObservableBoolean();
     public final ObservableInt multiChoiceCount = new ObservableInt(0);
     public final ObservableBoolean multiChoiceHasFolder = new ObservableBoolean(false);
+    public final ObservableBoolean multiChoiceOfflineEnabled = new ObservableBoolean(false);
 
     private final MainInteractor interactor;
     private final Subscriber subscriber;
@@ -66,7 +67,7 @@ public class MainViewModel extends SearchableFilesRootViewModel<MainFilesListVie
                     logoutButtonText.set(text);
                 }));
 
-        viewModelsConnection.getMultiChoiceCount()
+        viewModelsConnection.getMultiChoice()
                 .compose(disposableBag::track)
                 .compose(subscriber::defaultSchedulers)
                 .subscribe(subscriber.subscribe(this::handleMultiChoice));
@@ -138,12 +139,13 @@ public class MainViewModel extends SearchableFilesRootViewModel<MainFilesListVie
         showBackButton.set(show);
     }
 
-    private void handleMultiChoice(RxVariable.Value<List<AuroraFile>> multiChoice) {
-        List<AuroraFile> list = multiChoice.get();
+    private void handleMultiChoice(RxVariable.Value<List<MultiChoiceFile>> multiChoice) {
+        List<MultiChoiceFile> list = multiChoice.get();
         if (list == null) return;
 
         multiChoiceCount.set(list.size());
-        multiChoiceHasFolder.set(Stream.of(list).anyMatch(AuroraFile::isFolder));
+        multiChoiceHasFolder.set(Stream.of(list).map(MultiChoiceFile::getFile).anyMatch(AuroraFile::isFolder));
+        multiChoiceOfflineEnabled.set(Stream.of(list).allMatch(MultiChoiceFile::isOfflineEnabled));
     }
 
     @Override

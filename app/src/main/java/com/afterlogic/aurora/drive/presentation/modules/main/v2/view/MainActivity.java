@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.core.common.util.Optional;
 import com.afterlogic.aurora.drive.databinding.MainActivityBinding;
 import com.afterlogic.aurora.drive.model.events.ActivityResultEvent;
@@ -25,7 +24,6 @@ import com.afterlogic.aurora.drive.presentation.common.modules.v3.di.ForViewInte
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.BindingUtil;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMActivity;
 import com.afterlogic.aurora.drive.presentation.modules.main.v2.viewModel.MainViewModel;
-import com.annimon.stream.Stream;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 import org.greenrobot.eventbus.EventBus;
@@ -172,89 +170,11 @@ public class MainActivity extends InjectableMVVMActivity<MainViewModel> implemen
     private void bindMultiChoice(MainViewModel vm, UnbindableObservable.Bag bag) {
         Optional<ActionMode> optionalMultiChoice = new Optional<>();
 
-        UnbindableObservable selectedCount = UnbindableObservable.bind(vm.multiChoiceCount, bag, count -> {
-
-            ActionMode mode = optionalMultiChoice.get();
-            if (mode == null) return;
-
-            String title = getString(R.string.title_action_selected, count.get());
-            mode.setTitle(title);
-
-        });
-
-        UnbindableObservable hasFolderBindable = UnbindableObservable.bind(vm.multiChoiceHasFolder, bag, hasFolder -> {
-
-            ActionMode mode = optionalMultiChoice.get();
-            if (mode == null) return;
-
-            Menu menu = mode.getMenu();
-            Stream.of(R.id.action_offline, R.id.action_download, R.id.action_share)
-                    .map(menu::findItem)
-                    .filter(ObjectsUtil::nonNull)
-                    .forEach(item -> item.setVisible(!hasFolder.get()));
-        });
-
         UnbindableObservable.bind(vm.multiChoiceMode, bag, mode -> {
             if (!mode.get()) {
                 optionalMultiChoice.ifPresent(ActionMode::finish);
             } else {
-                startSupportActionMode(new ActionMode.Callback() {
-                    @Override
-                    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                        optionalMultiChoice.set(mode);
-                        mode.getMenuInflater().inflate(R.menu.menu_multichoise, menu);
-                        selectedCount.notifyChanged();
-                        hasFolderBindable.notifyChanged();
-                        return true;
-                    }
-
-                    @Override
-                    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                        switch (item.getItemId()) {
-
-                            case R.id.action_delete:
-                                getViewModel().onMultiChoiceDelete();
-                                return true;
-
-
-                            case R.id.action_download:
-                                getViewModel().onMultiChoiceDownload();
-                                return true;
-
-
-                            case R.id.action_share:
-                                getViewModel().onMultiChoiceShare();
-                                return true;
-
-
-                            case R.id.action_replace:
-                                getViewModel().onMultiChoiceReplace();
-                                return true;
-
-
-                            case R.id.action_copy:
-                                getViewModel().onMultiChoiceCopy();
-                                return true;
-
-                            case R.id.action_offline:
-                                getViewModel().onMultiChoiceOffline();
-                                return true;
-
-                        }
-                        return false;
-                    }
-
-                    @Override
-                    public void onDestroyActionMode(ActionMode mode) {
-                        optionalMultiChoice.set(null);
-                        getViewModel().multiChoiceMode.set(false);
-                    }
-                });
+                startSupportActionMode(new MultiChoiceActionMode(optionalMultiChoice, vm, this));
             }
         });
     }
