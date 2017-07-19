@@ -14,6 +14,7 @@ import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.application.navigation.AppRouter;
 import com.afterlogic.aurora.drive.application.navigation.args.ExternalOpenFIleArgs;
 import com.afterlogic.aurora.drive.application.navigation.args.ExternalShareFileArgs;
+import com.afterlogic.aurora.drive.application.navigation.args.ExternalShareFilesArgs;
 import com.afterlogic.aurora.drive.application.navigation.args.ReplaceScreenArgs;
 import com.afterlogic.aurora.drive.core.common.contextWrappers.Toaster;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
@@ -40,6 +41,7 @@ import com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.interact
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
 import com.annimon.stream.Stream;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -280,8 +282,9 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     private void onSelectedFilesChanged(List<AuroraFile> selectedFiles) {
         List<MultiChoiceFile> multiChoiceFiles = Stream.of(selectedFiles)
                 .map(file -> {
+                    // TODO: Maybe get from interactor?
                     MainFileViewModel vm = mapper.get(file);
-                    return new MultiChoiceFile(file, vm.isOffline.get());
+                    return new MultiChoiceFile(file, vm != null && vm.isOffline.get());
                 })
                 .toList();
 
@@ -298,13 +301,12 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
             return;
         }
 
-
         switch (action) {
             case DELETE: multiChoiceDelete(filesForAction); break;
-            case SHARE:  break;
+            case DOWNLOAD: multiChoiceDownload(filesForAction); break;
+            case SHARE: multiChoiceShare(filesForAction); break;
             case REPLACE: multiChoiceReplace(filesForAction); break;
             case COPY: multiChoiceCopy(filesForAction); break;
-            case DOWNLOAD:  break;
             case TOGGLE_OFFLINE: multiChoiceToggleOffline(filesForAction); break;
         }
 
@@ -332,11 +334,37 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     }
 
     private void multiChoiceDownload(List<AuroraFile> files) {
-
+        Stream.of(files)
+                .map(interactor::downloadToDownloads)
+                .collect(Observables.Collectors.concatObservables())
+                .compose(subscriber::defaultSchedulers)
+                .compose(notifyProgress(appResources.getString(R.string.dialog_files_title_dowloading)))
+                .filter(Progressible::isDone)
+                .map(Progressible::getData)
+                .collectInto(new ArrayList<File>(), List::add)
+                .subscribe(subscriber.subscribe(results -> MessageDialogViewModel.set(
+                        messageDialog,
+                        null,
+                        appResources.getPlurals(
+                                R.plurals.dialog_files_success_downloaded,
+                                results.size(), results.size()
+                        )
+                )));
     }
 
     private void multiChoiceShare(List<AuroraFile> files) {
-
+        Stream.of(files)
+                .map(interactor::downloadForOpen)
+                .collect(Observables.Collectors.concatObservables())
+                .compose(subscriber::defaultSchedulers)
+                .compose(notifyProgress(appResources.getString(R.string.dialog_files_title_dowloading)))
+                .filter(Progressible::isDone)
+                .map(Progressible::getData)
+                .collectInto(new ArrayList<File>(), List::add)
+                .subscribe(subscriber.subscribe(results -> {
+                    ExternalShareFilesArgs args = new ExternalShareFilesArgs(results);
+                    router.navigateTo(AppRouter.EXTERNAL_SHARE, args);
+                }));
     }
 
     private void multiChoiceToggleOffline(List<AuroraFile> files) {
