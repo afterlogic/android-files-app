@@ -18,15 +18,11 @@ import android.view.View;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.util.Optional;
 import com.afterlogic.aurora.drive.databinding.MainActivityBinding;
-import com.afterlogic.aurora.drive.model.events.ActivityResultEvent;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.di.ForViewInteractor;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.BindingUtil;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMActivity;
 import com.afterlogic.aurora.drive.presentation.modules.main.v2.viewModel.MainViewModel;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-
-import org.greenrobot.eventbus.EventBus;
 
 import javax.inject.Inject;
 
@@ -47,10 +43,6 @@ public class MainActivity extends InjectableMVVMActivity<MainViewModel> implemen
 
     @Inject
     protected DispatchingAndroidInjector<Fragment> fragmentInjector;
-
-    @Inject
-    @ForViewInteractor
-    protected EventBus eventBus;
 
     private MenuItem logoutMenuItem;
     private ObservableField<SearchView> searchView = new ObservableField<>();
@@ -95,12 +87,6 @@ public class MainActivity extends InjectableMVVMActivity<MainViewModel> implemen
         MenuItem searchMenuItem = menu.findItem(R.id.action_search);
         searchView.set((SearchView) searchMenuItem.getActionView());
         return true;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        eventBus.post(new ActivityResultEvent(requestCode, resultCode, data));
     }
 
     @Override

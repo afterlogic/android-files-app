@@ -14,10 +14,7 @@ import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableO
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.BindingUtil;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMFragment;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileListArgs;
-import com.afterlogic.aurora.drive.presentation.modules.replace.interactor.ReplaceFileTypeViewInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.replace.viewModel.ReplaceFileTypeViewModel;
-
-import javax.inject.Inject;
 
 /**
  * Created by aleksandrcikin on 04.07.17.
@@ -25,9 +22,6 @@ import javax.inject.Inject;
  */
 
 public class ReplaceFileTypeFragment extends InjectableMVVMFragment<ReplaceFileTypeViewModel> {
-
-    @Inject
-    ReplaceFileTypeViewInteractor viewInteractor;
 
     public static ReplaceFileTypeFragment newInstance(String type) {
 
@@ -44,7 +38,6 @@ public class ReplaceFileTypeFragment extends InjectableMVVMFragment<ReplaceFileT
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewInteractor.bindView(this);
         getViewModel().setArgs(new FileListArgs(getArguments()));
     }
 
@@ -62,11 +55,5 @@ public class ReplaceFileTypeFragment extends InjectableMVVMFragment<ReplaceFileT
     protected void bindStarted(ReplaceFileTypeViewModel vm, UnbindableObservable.Bag bag) {
         super.bindStarted(vm, bag);
         BindingUtil.bindProgressDialog(vm.progress, bag, getContext());
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        viewInteractor.clearView();
     }
 }

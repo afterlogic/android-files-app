@@ -2,10 +2,10 @@ package com.afterlogic.aurora.drive.presentation.common.modules.v3.interactor;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -15,17 +15,12 @@ import android.widget.Button;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
-import com.afterlogic.aurora.drive.core.common.rx.ActivityResultEventSource;
-import com.afterlogic.aurora.drive.core.common.rx.PermissionEventSource;
-import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.model.error.ActivityResultError;
 import com.afterlogic.aurora.drive.model.error.PermissionDeniedError;
 import com.afterlogic.aurora.drive.model.error.ViewNotPresentError;
 import com.afterlogic.aurora.drive.model.events.ActivityResultEvent;
 import com.afterlogic.aurora.drive.presentation.common.components.view.SelectionEditText;
 import com.annimon.stream.Stream;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,27 +38,16 @@ import io.reactivex.Single;
 
 public class BaseViewInteractor {
 
-    private final OptWeakRef<Fragment> weakView = OptWeakRef.empty();
-
-    private final EventBus bus;
+    private final ActivityResolver activityResolver;
 
     @Inject
-    public BaseViewInteractor(EventBus bus) {
-        this.bus = bus;
-    }
-
-    public void bindView(Fragment fragment) {
-        weakView.set(fragment);
-    }
-
-    public void clearView() {
-        weakView.clear();
+    public BaseViewInteractor(ActivityResolver activityResolver) {
+        this.activityResolver = activityResolver;
     }
 
     protected Completable requireWritePermission(int requestId, String[] permissions) {
-        return PermissionEventSource.create(bus)
+        return activityResolver.listenPermissionGrantResult(requestId)
                 .startWith(requestPermission(requestId, permissions).toObservable())
-                .filter(event -> event.getRequestId() == requestId)
                 .firstOrError()
                 .flatMapCompletable(event -> {
                     if (event.isAllGranted()) {
@@ -74,8 +58,9 @@ public class BaseViewInteractor {
                 });
     }
 
-    public Single<ActivityResultEvent> listenActivityResult(int requestId) {
-        return ActivityResultEventSource.create(bus, requestId);
+    protected Single<ActivityResultEvent> listenActivityResult(int requestId) {
+        return activityResolver.listenActivityResult(requestId)
+                .firstOrError();
     }
 
     protected Maybe<String> getInputDialog(int title) {
@@ -86,28 +71,26 @@ public class BaseViewInteractor {
         List<Runnable> finalizers = new ArrayList<>();
 
         return Maybe.<String>create(emitter -> {
-            Fragment fragment = weakView.get();
-            if (fragment == null) {
-                emitter.onError(new ViewNotPresentError());
-                return;
-            }
 
-            Activity activity = fragment.getActivity();
+            Activity activity = activityResolver.getActivity();
             if (activity == null) {
                 emitter.onError(new ViewNotPresentError());
                 return;
             }
 
-            FragmentManager.FragmentLifecycleCallbacks lifecycleCallbacks = new FragmentManager.FragmentLifecycleCallbacks() {
+            Application.ActivityLifecycleCallbacks lifecycleCallbacks = new EmptyActivityLifecycleCallbacks() {
                 @Override
-                public void onFragmentStopped(FragmentManager fm, Fragment f) {
-                    super.onFragmentStopped(fm, f);
-                    emitter.onComplete();
+                public void onActivityStopped(Activity stoppedActivity) {
+                    super.onActivityStopped(stoppedActivity);
+                    if (stoppedActivity == activity) {
+                        emitter.onComplete();
+                    }
                 }
             };
-            FragmentManager fm = fragment.getFragmentManager();
-            fm.registerFragmentLifecycleCallbacks(lifecycleCallbacks, false);
-            finalizers.add(() -> fm.unregisterFragmentLifecycleCallbacks(lifecycleCallbacks));
+
+            Application app = activity.getApplication();
+            app.registerActivityLifecycleCallbacks(lifecycleCallbacks);
+            finalizers.add(() -> app.unregisterActivityLifecycleCallbacks(lifecycleCallbacks));
 
             @SuppressLint("InflateParams")
             View inputRootView = LayoutInflater.from(activity)
@@ -173,12 +156,12 @@ public class BaseViewInteractor {
     private Completable requestPermission(int requestId, String[] permissions) {
         return Completable.fromAction(() -> {
 
-            Fragment fragment = weakView.get();
-            if (fragment == null) {
+            Activity activity = activityResolver.getActivity();
+            if (activity == null) {
                 throw new Error("View not present.");
             }
 
-            fragment.requestPermissions(permissions, requestId);
+            ActivityCompat.requestPermissions(activity, permissions, requestId);
         });
     }
 

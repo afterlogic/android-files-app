@@ -4,13 +4,11 @@ import android.net.Uri;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.application.navigation.AppRouter;
-import com.afterlogic.aurora.drive.core.common.annotation.scopes.SubModuleScope;
+import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
 import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.di.ForViewInteractor;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.interactor.ActivityResolver;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.interactor.BaseViewInteractor;
-
-import org.greenrobot.eventbus.EventBus;
 
 import javax.inject.Inject;
 
@@ -25,8 +23,8 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
  * Created by aleksandrcikin on 12.07.17.
  * mail: mail@sunnydaydev.me
  */
-@SubModuleScope
-public class MainFilesListViewInteractor extends BaseViewInteractor {
+@ModuleScope
+public class MainViewInteractor extends BaseViewInteractor {
 
     private static final int STORAGE_PERMISSION_REQUEST = 1;
 
@@ -39,8 +37,8 @@ public class MainFilesListViewInteractor extends BaseViewInteractor {
     private final AppRouter appRouter;
 
     @Inject
-    MainFilesListViewInteractor(@ForViewInteractor EventBus bus, AppRouter appRouter) {
-        super(bus);
+    MainViewInteractor(ActivityResolver activityResolver, AppRouter appRouter) {
+        super(activityResolver);
         this.appRouter = appRouter;
     }
 

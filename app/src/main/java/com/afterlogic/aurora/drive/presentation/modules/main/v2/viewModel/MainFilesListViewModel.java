@@ -53,6 +53,7 @@ import javax.inject.Inject;
 import io.reactivex.Completable;
 import io.reactivex.CompletableSource;
 import io.reactivex.CompletableTransformer;
+import io.reactivex.Maybe;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.Single;
 import io.reactivex.SingleSource;
@@ -416,19 +417,20 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     private void createFolder() {
         interactor.getNewFolderName()
                 .observeOn(Schedulers.io())
-                .flatMapSingle(this::createFolder)
+                .flatMap(this::createFolder)
                 .compose(globalDisposableBag::track)
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber.subscribe(folder -> foldersStack.add(0, folder)));
     }
 
-    private Single<AuroraFile> createFolder(String name) {
+    private Maybe<AuroraFile> createFolder(String name) {
         return interactor.createNewFolder(name, foldersStack.get(0))
                 .compose(new IndeterminateProgressTransformer<>(
                         appResources.getString(R.string.prompt_dialog_title_folder_creation),
                         name
-                ));
+                ))
+                .toMaybe();
     }
 
     private void uploadFile() {

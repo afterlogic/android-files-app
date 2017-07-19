@@ -17,10 +17,10 @@ import io.reactivex.Single;
 public class ReplaceFileTypeInteractor extends SearchableFilesListInteractor {
 
     private final FilesRepository filesRepository;
-    private final ReplaceFileTypeViewInteractor viewInteractor;
+    private final ReplaceViewInteractor viewInteractor;
 
     @Inject
-    ReplaceFileTypeInteractor(FilesRepository filesRepository, ReplaceFileTypeViewInteractor viewInteractor) {
+    ReplaceFileTypeInteractor(FilesRepository filesRepository, ReplaceViewInteractor viewInteractor) {
         super(filesRepository);
         this.filesRepository = filesRepository;
         this.viewInteractor = viewInteractor;

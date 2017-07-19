@@ -1,7 +1,8 @@
 package com.afterlogic.aurora.drive.presentation.modules.replace.interactor;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.core.common.annotation.scopes.SubModuleScope;
+import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.interactor.ActivityResolver;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.interactor.BaseViewInteractor;
 
 import javax.inject.Inject;
@@ -13,12 +14,12 @@ import io.reactivex.Maybe;
  * mail: mail@sunnydaydev.me
  */
 
-@SubModuleScope
-public class ReplaceFileTypeViewInteractor extends BaseViewInteractor {
+@ModuleScope
+public class ReplaceViewInteractor extends BaseViewInteractor {
 
     @Inject
-    ReplaceFileTypeViewInteractor() {
-        super(null);
+    ReplaceViewInteractor(ActivityResolver activityResolver) {
+        super(activityResolver);
     }
 
     Maybe<String> getFolderName() {

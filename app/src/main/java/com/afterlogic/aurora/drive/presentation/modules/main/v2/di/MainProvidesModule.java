@@ -14,7 +14,7 @@ import dagger.Provides;
  */
 
 @Module
-public class MainFilesListProvidesModule {
+public class MainProvidesModule {
 
     @Provides
     @ModuleScope

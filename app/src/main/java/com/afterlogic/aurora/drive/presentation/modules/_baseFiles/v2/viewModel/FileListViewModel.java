@@ -36,7 +36,7 @@ public abstract class FileListViewModel<
         Args extends FileListArgs
 > extends LifecycleViewModel {
 
-    public final ObservableField<ViewModelState> viewModelState = new UiObservableField<>();
+    public final ObservableField<ViewModelState> viewModelState = new UiObservableField<>(ViewModelState.LOADING);
     public final ObservableList<FileVM> items = new ObservableArrayList<>();
     public final ObservableField<ProgressViewModel> progress = new UiObservableField<>(null);
 

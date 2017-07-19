@@ -35,7 +35,7 @@ public class ActivityResultEventSource {
 
     public static Single<ActivityResultEvent> create(EventBus eventBus, int requestCode) {
         return create(eventBus)
-                .filter(result -> result.getRequestId() == requestCode)
+                .filter(result -> result.getRequestCode() == requestCode)
                 .firstOrError();
     }
 

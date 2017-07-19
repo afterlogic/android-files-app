@@ -50,7 +50,7 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
     private final File cacheDir;
     private final File downloadsDir;
 
-    private final MainFilesListViewInteractor viewInteractor;
+    private final MainViewInteractor viewInteractor;
 
     private volatile int syncObservablesCount = 0;
 
@@ -60,7 +60,7 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
                             Context appContext,
                             @Named(CACHE_DIR) File cacheDir,
                             @Named(DOWNLOADS_DIR) File downloadsDir,
-                            MainFilesListViewInteractor viewInteractor) {
+                            MainViewInteractor viewInteractor) {
         super(filesRepository);
         this.filesRepository = filesRepository;
         this.clipboardHelper = clipboardHelper;

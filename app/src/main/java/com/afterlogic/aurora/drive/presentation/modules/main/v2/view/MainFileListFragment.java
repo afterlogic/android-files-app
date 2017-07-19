@@ -18,7 +18,7 @@ import com.afterlogic.aurora.drive.presentation.common.modules.v3.di.ForViewInte
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.BindingUtil;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMFragment;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileListArgs;
-import com.afterlogic.aurora.drive.presentation.modules.main.v2.interactor.MainFilesListViewInteractor;
+import com.afterlogic.aurora.drive.presentation.modules.main.v2.interactor.MainViewInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.main.v2.viewModel.MainFilesListViewModel;
 
 import org.greenrobot.eventbus.EventBus;
@@ -45,7 +45,7 @@ public class MainFileListFragment extends InjectableMVVMFragment<MainFilesListVi
     }
 
     @Inject
-    protected MainFilesListViewInteractor viewInteractor;
+    protected MainViewInteractor viewInteractor;
 
     @Inject
     @ForViewInteractor
@@ -74,18 +74,6 @@ public class MainFileListFragment extends InjectableMVVMFragment<MainFilesListVi
         BindingUtil.bindProgressDialog(vm.progress, bag, getContext());
 
         BindingUtil.bindDialog(vm.messageDialog, bag, getContext());
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        viewInteractor.bindView(this);
-    }
-
-    @Override
-    public void onStop() {
-        viewInteractor.clearView();
-        super.onStop();
     }
 
     @Override

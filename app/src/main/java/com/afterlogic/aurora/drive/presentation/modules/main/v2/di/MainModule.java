@@ -19,7 +19,7 @@ import dagger.multibindings.IntoMap;
  * mail: mail@sunnydaydev.me
  */
 
-@Module(includes = MainFilesListProvidesModule.class)
+@Module(includes = MainProvidesModule.class)
 public abstract class MainModule {
 
     @Binds

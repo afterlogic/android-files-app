@@ -2,7 +2,7 @@ package com.afterlogic.aurora.drive.presentation.modules.main.v2.viewModel;
 
 import android.support.v4.util.Pair;
 
-import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
+import com.afterlogic.aurora.drive.core.common.annotation.scopes.PresentationScope;
 import com.afterlogic.aurora.drive.core.common.rx.RxVariable;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.ViewModelsConnection;
 
@@ -17,7 +17,8 @@ import io.reactivex.subjects.PublishSubject;
  * Created by aleksandrcikin on 13.07.17.
  * mail: mail@sunnydaydev.me
  */
-@ModuleScope
+// TODO: Module scope
+@PresentationScope
 class MainViewModelsConnection extends ViewModelsConnection<MainFilesListViewModel> {
 
     private final RxVariable<Boolean> multiChoiceMode = new RxVariable<>(false);
