@@ -1,5 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.offline.v2.viewModel;
 
+import android.databinding.ObservableField;
+
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
@@ -16,10 +18,12 @@ import javax.inject.Inject;
 
 public class OfflineFileListViewModel extends SearchableFileListViewModel<OfflineFileListViewModel, OfflineFileViewModel, OfflineArgs> {
 
+    public final ObservableField<OfflineHeader> header = new ObservableField<>();
+
     private final FileMapper mapper;
 
     @Inject
-    protected OfflineFileListViewModel(OfflineFileListInteractor interactor,
+    OfflineFileListViewModel(OfflineFileListInteractor interactor,
                                        Subscriber subscriber,
                                        ViewModelsConnection<OfflineFileListViewModel> viewModelsConnection,
                                        FileMapper mapper) {
@@ -30,5 +34,11 @@ public class OfflineFileListViewModel extends SearchableFileListViewModel<Offlin
     @Override
     protected OfflineFileViewModel mapFileItem(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener) {
         return mapper.map(file, onItemClickListener);
+    }
+
+    @Override
+    public void setArgs(OfflineArgs args) {
+        super.setArgs(args);
+        header.set(new OfflineHeader(args.isManual()));
     }
 }

@@ -34,22 +34,30 @@ import dagger.android.support.HasSupportFragmentInjector;
 
 public class OfflineActivity extends InjectableMVVMActivity<OfflineViewModel> implements HasSupportFragmentInjector {
 
-    public static Intent intent(Context context, boolean manual) {
-        return new Intent(context, OfflineActivity.class)
-                .putExtra("manual", manual);
-    }
+    private boolean manual;
 
     @Inject
     protected DispatchingAndroidInjector<Fragment> fragmentAndroidInjector;
 
     private final ObservableField<SearchView> searchView = new ObservableField<>();
 
+
+    public static Intent intent(Context context, boolean manual) {
+        return new Intent(context, OfflineActivity.class)
+                .putExtra("manual", manual);
+    }
+
+    @Override
+    protected void onPrepareCreations() {
+        super.onPrepareCreations();
+
+        manual = getIntent().getBooleanExtra("manual", false);
+    }
+
     @Override
     public ViewDataBinding createBinding() {
         OfflineActivityBinding binding = DataBindingUtil.setContentView(this, R.layout.offline_activity);
         setSupportActionBar(binding.toolbar);
-
-        boolean manual = getIntent().getBooleanExtra("manual", false);
 
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
@@ -72,9 +80,10 @@ public class OfflineActivity extends InjectableMVVMActivity<OfflineViewModel> im
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragmentContainer, OfflineFragment.newInstance())
+                    .add(R.id.fragmentContainer, OfflineFragment.newInstance(manual))
                     .commit();
         }
     }
@@ -87,6 +96,20 @@ public class OfflineActivity extends InjectableMVVMActivity<OfflineViewModel> im
         searchView.set((SearchView) searchMenuItem.getActionView());
 
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+
+            case R.id.action_online_mode:
+                getViewModel().onOnlineModeClicked();
+                return true;
+
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

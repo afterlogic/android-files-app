@@ -19,10 +19,12 @@ import java.util.List;
 
 public class OfflineBindings {
 
-    @BindingAdapter("offline_filesAdapter")
-    public static void bindFilesAdapter(RecyclerView list, List<OfflineFileViewModel> files) {
+    @BindingAdapter({"offline_filesAdapter", "offline_header"})
+    public static void bindFilesAdapter(RecyclerView list, List<OfflineFileViewModel> files, OfflineHeader header) {
         List<Object> items = new ArrayList<>();
-        items.add(new OfflineHeader());
+        if (header != null) {
+            items.add(header);
+        }
         items.addAll(files);
 
         new LastAdapter(items, BR.vm, true)

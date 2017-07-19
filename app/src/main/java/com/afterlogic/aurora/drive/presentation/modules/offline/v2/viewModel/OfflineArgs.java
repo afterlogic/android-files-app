@@ -17,4 +17,12 @@ public class OfflineArgs extends FileListArgs {
 
     public OfflineArgs() {
     }
+
+    public boolean isManual() {
+        return args.getBoolean("manual", false);
+    }
+
+    public void setManual(boolean manual) {
+        args.putBoolean("manual", manual);
+    }
 }

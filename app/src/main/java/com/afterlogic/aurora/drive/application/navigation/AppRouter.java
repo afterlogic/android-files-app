@@ -11,6 +11,7 @@ import ru.terrakok.cicerone.Router;
 
 public class AppRouter extends Router {
 
+    public static final String MAIN = "main";
     public static final String REPLACE = "replace";
     public static final String COPY = "copy";
     public static final String LOGIN = "login";

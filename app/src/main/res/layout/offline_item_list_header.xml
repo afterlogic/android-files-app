@@ -3,6 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="vm"
+            type="com.afterlogic.aurora.drive.presentation.modules.offline.v2.viewModel.OfflineHeader"/>
+    </data>
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -18,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="@{ @string/prompt_manual_offline_mode_title}"
+            android:text="@{vm.isManual ? @string/prompt_manual_offline_mode_title : @string/prompt_network_offline_mode_title}"
             tools:text="@string/prompt_manual_offline_mode_title"
             android:textStyle="bold"/>
 

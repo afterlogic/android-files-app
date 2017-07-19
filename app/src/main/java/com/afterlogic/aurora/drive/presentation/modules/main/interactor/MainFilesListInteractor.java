@@ -2,6 +2,8 @@ package com.afterlogic.aurora.drive.presentation.modules.main.interactor;
 
 import android.app.DownloadManager;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.PowerManager;
 
@@ -174,6 +176,21 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
 
     public Completable deletePublicLink(AuroraFile file) {
         return filesRepository.deletePublicLink(file);
+    }
+
+    public Single<Boolean> getNetworkState() {
+        return Single.fromCallable(() -> {
+
+            ConnectivityManager cm =
+                    (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+            if (cm == null) return false;
+
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+            return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+        });
     }
 
     private <T> Observable<T> prepareLoadTask(Observable<T> upstream) {

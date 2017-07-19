@@ -29,6 +29,7 @@ import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnListChangedCallback;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnPropertyChangedCallback;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ViewModelState;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.MessageDialogViewModel;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.ProgressViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileListArgs;
@@ -140,10 +141,9 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
 
         SimpleOnPropertyChangedCallback.addTo(multiChoiceMode, mode -> onMultiChoiceModeChanged(mode.get()));
 
-        SimpleOnListChangedCallback.addTo(
-                selectedFiles,
-                this::onSelectedFilesChanged
-        );
+        SimpleOnListChangedCallback.addTo(selectedFiles, this::onSelectedFilesChanged);
+
+        SimpleOnPropertyChangedCallback.addTo(viewModelState, this::onViewModelStateChanged);
     }
 
     // region Base
@@ -256,6 +256,17 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
             );
         } else {
             MyLog.majorException(e);
+        }
+    }
+
+    private void onViewModelStateChanged() {
+        if (viewModelState.get() == ViewModelState.ERROR) {
+            interactor.getNetworkState()
+                    .subscribe(subscriber.subscribe(networkEnabled -> {
+                        if (!networkEnabled) {
+                            router.newRootScreen(AppRouter.OFFLINE, false);
+                        }
+                    }));
         }
     }
 

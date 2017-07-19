@@ -25,6 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            app:offline_header="@{vm.header}"
             app:offline_filesAdapter="@{vm.items}"
             tools:listitem="@layout/offline_item_list_file"/>
 

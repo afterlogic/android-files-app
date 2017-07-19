@@ -8,8 +8,19 @@ import com.github.nitrico.lastadapter.StableId;
  */
 
 public class OfflineHeader implements StableId {
+
+    private boolean manual;
+
+    public OfflineHeader(boolean manual) {
+        this.manual = manual;
+    }
+
     @Override
     public long getStableId() {
         return Long.MIN_VALUE;
+    }
+
+    public boolean getIsManual() {
+        return manual;
     }
 }

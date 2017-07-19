@@ -19,6 +19,7 @@ import com.afterlogic.aurora.drive.presentation.modules.about.view.AboutAppActiv
 import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewActivity;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewArgs;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
+import com.afterlogic.aurora.drive.presentation.modules.main.view.MainActivity;
 import com.afterlogic.aurora.drive.presentation.modules.mainFilesAction.view.MainFilesActionBottomSheet;
 import com.afterlogic.aurora.drive.presentation.modules.offline.v2.view.OfflineActivity;
 import com.afterlogic.aurora.drive.presentation.modules.replace.view.ReplaceActivity;
@@ -115,6 +116,8 @@ public class AppNavigator extends SupportAppNavigator {
     protected Intent createActivityIntent(String screenKey, Object data) {
         switch (screenKey) {
 
+            case AppRouter.MAIN: return MainActivity.intent(activity);
+
             case AppRouter.REPLACE: {
                 ReplaceScreenArgs args = (ReplaceScreenArgs) data;
                 return ReplaceActivity.newReplaceIntent(activity, args.getFiles());
@@ -129,7 +132,7 @@ public class AppNavigator extends SupportAppNavigator {
                 return LoginActivity.intent(false, activity);
 
             case AppRouter.OFFLINE:
-                return OfflineActivity.intent(activity, true);
+                return OfflineActivity.intent(activity, data == null || (boolean) data);
 
             case AppRouter.ABOUT:
                 return AboutAppActivity.intent(activity);

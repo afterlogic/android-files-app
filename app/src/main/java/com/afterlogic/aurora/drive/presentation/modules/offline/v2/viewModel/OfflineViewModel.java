@@ -1,5 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.offline.v2.viewModel;
 
+import com.afterlogic.aurora.drive.application.navigation.AppRouter;
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFilesRootViewModel;
@@ -17,11 +18,19 @@ import ru.terrakok.cicerone.Router;
 
 public class OfflineViewModel extends SearchableFilesRootViewModel<OfflineFileListViewModel> {
 
+    private final Router router;
+
     @Inject
     protected OfflineViewModel(OfflineInteractor interactor,
-                               Subscriber subscriber, Router router,
+                               Subscriber subscriber,
+                               Router router,
                                AppResources appResources,
                                ViewModelsConnection<OfflineFileListViewModel> viewModelsConnection) {
         super(interactor, subscriber, router, appResources, viewModelsConnection);
+        this.router = router;
+    }
+
+    public void onOnlineModeClicked() {
+        router.newRootScreen(AppRouter.MAIN);
     }
 }

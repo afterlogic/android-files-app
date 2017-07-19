@@ -12,6 +12,7 @@ import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnPropertyChangedCallback;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ViewModelState;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFilesRootViewModel;
 import com.afterlogic.aurora.drive.presentation.modules.main.interactor.MainInteractor;
 import com.annimon.stream.Stream;
@@ -76,6 +77,19 @@ public class MainViewModel extends SearchableFilesRootViewModel<MainFilesListVie
                 multiChoiceMode,
                 field -> viewModelsConnection.setMultiChoiceMode(field.get())
         );
+
+        SimpleOnPropertyChangedCallback.addTo(viewModelState, this::onViewModelStateChanged);
+    }
+
+    private void onViewModelStateChanged() {
+        if (viewModelState.get() == ViewModelState.ERROR) {
+            interactor.getNetworkState()
+                    .subscribe(subscriber.subscribe(networkEnabled -> {
+                        if (!networkEnabled) {
+                            router.newRootScreen(AppRouter.OFFLINE, false);
+                        }
+                    }));
+        }
     }
 
     public void onLogout() {

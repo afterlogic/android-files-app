@@ -1,6 +1,8 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.interactor;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import com.afterlogic.aurora.drive.core.common.util.AppUtil;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
@@ -47,5 +49,20 @@ public class MainInteractor extends FilesRootInteractor {
         return authRepository.getCurrentSession()
                 .map(AuroraSession::getLogin)
                 .toSingle();
+    }
+
+    public Single<Boolean> getNetworkState() {
+        return Single.fromCallable(() -> {
+
+            ConnectivityManager cm =
+                    (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+            if (cm == null) return false;
+
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+            return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+        });
     }
 }

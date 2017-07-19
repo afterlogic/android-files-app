@@ -20,10 +20,11 @@ import com.afterlogic.aurora.drive.presentation.modules.offline.v2.viewModel.Off
 
 public class OfflineFragment extends InjectableMVVMFragment<OfflineFileListViewModel> {
 
-    public static OfflineFragment newInstance() {
+    public static OfflineFragment newInstance(boolean manual) {
 
         OfflineArgs args = new OfflineArgs();
         args.setType("offline");
+        args.setManual(manual);
 
         OfflineFragment fragment = new OfflineFragment();
         fragment.setArguments(args.getBundle());

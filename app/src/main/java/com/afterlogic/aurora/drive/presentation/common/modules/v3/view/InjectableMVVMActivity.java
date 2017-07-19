@@ -57,6 +57,8 @@ public abstract class InjectableMVVMActivity<VM extends LifecycleViewModel> exte
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        onPrepareCreations();
+
         ViewModelProvider viewModelProvider = ViewModelProviders.of(this, viewModelFactory);
         viewModel = createViewModel(viewModelProvider);
 
@@ -67,6 +69,10 @@ public abstract class InjectableMVVMActivity<VM extends LifecycleViewModel> exte
         binding.executePendingBindings();
 
         bindCreated(viewModel, createdBindingsBag);
+    }
+
+    protected void onPrepareCreations() {
+        //no-op
     }
 
     public abstract ViewDataBinding createBinding();
