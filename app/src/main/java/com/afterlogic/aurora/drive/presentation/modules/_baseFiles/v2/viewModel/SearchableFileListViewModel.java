@@ -39,7 +39,7 @@ public abstract class SearchableFileListViewModel<
         super(interactor, subscriber, viewModelsConnection);
         this.interactor = interactor;
 
-        SimpleOnPropertyChangedCallback.addTo(searchPattern, this::reloadCurrentFolder);
+        SimpleOnPropertyChangedCallback.addTo(searchPattern, this::onSearchPatternChanged);
     }
 
     void onSearchQuery(String query) {
@@ -47,20 +47,7 @@ public abstract class SearchableFileListViewModel<
         String checkedQuery = query == null ? "" : query;
 
         if (!ObjectsUtil.equals(searchPattern.get(), checkedQuery)) {
-
-            if (TextUtils.isEmpty(checkedQuery)) {
-
-                searchPattern.set(checkedQuery);
-
-            } else {
-
-                setSearchQueryDisposable.disposeAndClear();
-
-                Single.timer(500, TimeUnit.MILLISECONDS)
-                        .compose(setSearchQueryDisposable::track)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(tick -> searchPattern.set(checkedQuery));
-            }
+            searchPattern.set(checkedQuery);
         }
     }
 
@@ -69,4 +56,12 @@ public abstract class SearchableFileListViewModel<
         return interactor.getFiles(folder, searchPattern.get());
     }
 
+    private void onSearchPatternChanged() {
+        int delay = TextUtils.isEmpty(searchPattern.get()) ? 0 : 500;
+
+        Single.timer(delay, TimeUnit.MILLISECONDS)
+                .compose(setSearchQueryDisposable::disposeAndTrack)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(tick -> reloadCurrentFolder());
+    }
 }
