@@ -21,7 +21,7 @@ public class OfflineViewModel extends SearchableFilesRootViewModel<OfflineFileLi
     private final Router router;
 
     @Inject
-    protected OfflineViewModel(OfflineInteractor interactor,
+    OfflineViewModel(OfflineInteractor interactor,
                                Subscriber subscriber,
                                Router router,
                                AppResources appResources,

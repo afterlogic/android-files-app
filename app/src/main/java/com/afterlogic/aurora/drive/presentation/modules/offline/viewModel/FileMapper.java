@@ -1,5 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.offline.viewModel;
 
+import android.support.annotation.Nullable;
+
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
@@ -21,6 +23,8 @@ class FileMapper {
     private long lastStableId = 1;
     private final Map<String, Long> stableIds = new HashMap<>();
 
+    private final Map<AuroraFile, OfflineFileViewModel> filesMap = new HashMap<>();
+
     @Inject
     FileMapper(AppResources appResources) {
         this.appResources = appResources;
@@ -35,6 +39,17 @@ class FileMapper {
             id = lastStableId++;
             stableIds.put(pathSpec, id);
         }
-        return new OfflineFileViewModel(auroraFile, onItemClickListener, appResources, id);
+        OfflineFileViewModel vm = new OfflineFileViewModel(auroraFile, onItemClickListener, appResources, id);
+        filesMap.put(auroraFile, vm);
+        return vm;
+    }
+
+    public void clear() {
+        filesMap.clear();
+    }
+
+    @Nullable
+    public OfflineFileViewModel get(AuroraFile file) {
+        return filesMap.get(file);
     }
 }
