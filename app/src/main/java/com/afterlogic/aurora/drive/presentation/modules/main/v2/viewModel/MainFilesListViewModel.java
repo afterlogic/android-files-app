@@ -236,7 +236,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                 }else {
                     interactor.downloadForOpen(file)
                             .compose(subscriber::defaultSchedulers)
-                            .compose(notifyProgress(appResources.getString(R.string.dialog_downloading)))
+                            .compose(cancellableLoadProgress(appResources.getString(R.string.dialog_downloading)))
                             .filter(Progressible::isDone)
                             .map(Progressible::getData)
                             .subscribe(subscriber.subscribe(localFile -> {
@@ -338,7 +338,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                 .map(interactor::downloadToDownloads)
                 .collect(Observables.Collectors.concatObservables())
                 .compose(subscriber::defaultSchedulers)
-                .compose(notifyProgress(appResources.getString(R.string.dialog_files_title_dowloading)))
+                .compose(cancellableLoadProgress(appResources.getString(R.string.dialog_files_title_dowloading)))
                 .filter(Progressible::isDone)
                 .map(Progressible::getData)
                 .collectInto(new ArrayList<File>(), List::add)
@@ -357,7 +357,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                 .map(interactor::downloadForOpen)
                 .collect(Observables.Collectors.concatObservables())
                 .compose(subscriber::defaultSchedulers)
-                .compose(notifyProgress(appResources.getString(R.string.dialog_files_title_dowloading)))
+                .compose(cancellableLoadProgress(appResources.getString(R.string.dialog_files_title_dowloading)))
                 .filter(Progressible::isDone)
                 .map(Progressible::getData)
                 .collectInto(new ArrayList<File>(), List::add)
@@ -444,7 +444,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     private Single<AuroraFile> uploadFile(Uri file) {
         return interactor.uploadFile(foldersStack.get(0), file)
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(notifyProgress(appResources.getString(R.string.dialog_files_title_uploading)))
+                .compose(cancellableLoadProgress(appResources.getString(R.string.dialog_files_title_uploading)))
                 .filter(Progressible::isDone)
                 .map(Progressible::getData)
                 .firstOrError();
@@ -548,7 +548,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     private void downloadFile(AuroraFile file) {
         interactor.downloadToDownloads(file)
                 .compose(subscriber::defaultSchedulers)
-                .compose(notifyProgress(appResources.getString(R.string.dialog_files_title_dowloading)))
+                .compose(cancellableLoadProgress(appResources.getString(R.string.dialog_files_title_dowloading)))
                 .filter(Progressible::isDone)
                 .map(Progressible::getData)
                 .subscribe(subscriber.subscribe(local -> router.navigateTo(
@@ -559,7 +559,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     private void shareFile(AuroraFile file) {
         interactor.downloadForOpen(file)
                 .compose(subscriber::defaultSchedulers)
-                .compose(notifyProgress(appResources.getString(R.string.dialog_files_title_dowloading)))
+                .compose(cancellableLoadProgress(appResources.getString(R.string.dialog_files_title_dowloading)))
                 .filter(Progressible::isDone)
                 .map(Progressible::getData)
                 .subscribe(subscriber.subscribe(local ->router.navigateTo(
@@ -668,23 +668,36 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
         }
     }
 
-    private <T extends Progressible> ObservableTransformer<T, T> notifyProgress(String title) {
+    private <T extends Progressible> ObservableTransformer<T, T> cancellableLoadProgress(String title) {
+        OptionalDisposable disposable = new OptionalDisposable();
         return upstream -> upstream
+                .doOnSubscribe(disposable::set)
                 .doOnNext(progress -> {
-                    float value = progress.getMax() > 0 && progress.getProgress() >= 0 ?
-                            (float) progress.getProgress() / progress.getMax() : -1;
+
+                    float max = progress.getMax();
+                    float prog = progress.getProgress();
+
+                    float value;
+
+                    if (max > 0 && prog > 0) {
+                        value = prog / max;
+                    } else {
+                        value = -1;
+                    }
 
                     if (value == -1) {
                         this.progress.set(ProgressViewModel.Factory.indeterminateProgress(
                                 title,
-                                progress.getName()
+                                progress.getName(),
+                                disposable::disposeAndClear
                         ));
                     } else {
                         this.progress.set(ProgressViewModel.Factory.progress(
                                 title,
                                 progress.getName(),
                                 (int) (100 * value),
-                                100
+                                100,
+                                disposable::disposeAndClear
                         ));
                     }
                 })

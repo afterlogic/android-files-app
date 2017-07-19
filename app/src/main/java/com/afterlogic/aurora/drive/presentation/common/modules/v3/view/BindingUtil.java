@@ -15,6 +15,7 @@ import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dial
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.ProgressViewModel;
 import com.afterlogic.aurora.drive.presentation.common.view.AppProgressDialog;
 
+import java.text.NumberFormat;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -114,17 +115,29 @@ public class BindingUtil {
         boolean viewModelSpinner = progress.getProgressBar() instanceof ProgressViewModel.CircleProgressBar;
         boolean dialogSpinner = currentDialog.getProgressStyle() == ProgressDialog.STYLE_SPINNER;
 
-        return viewModelSpinner != dialogSpinner;
+        boolean currentCancellable = currentDialog.getButton(ProgressDialog.BUTTON_NEGATIVE) != null;
+
+        return viewModelSpinner != dialogSpinner || currentCancellable != progress.isCancellable();
     }
 
     private static AppProgressDialog instantiateNewDialog(ProgressViewModel progress, Context context) {
         AppProgressDialog dialog = new AppProgressDialog(context, R.style.AppTheme_Dialog_CompatBackground);
+
+        dialog.setCancelable(false);
 
         ProgressViewModel.ProgressBar progressBar = progress.getProgressBar();
         if (progressBar instanceof ProgressViewModel.CircleProgressBar) {
             dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         } else {
             dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        }
+
+        if (progress.isCancellable()) {
+            dialog.setButton(
+                    ProgressDialog.BUTTON_NEGATIVE,
+                    context.getString(R.string.dialog_cancel),
+                    (di, which) -> progress.onCancel()
+            );
         }
 
         updateProgressDialog(progress, dialog);
@@ -139,6 +152,14 @@ public class BindingUtil {
         dialog.setIndeterminate(progressBar.isIndeterminate());
         dialog.setMax(progressBar.getMax());
         dialog.setProgress(progressBar.getProgress());
+
+        if (progressBar.isIndeterminate()) {
+            dialog.setProgressPercentFormat(null);
+            dialog.setProgressNumberFormat(null);
+        } else {
+            dialog.setProgressPercentFormat(NumberFormat.getPercentInstance());
+            dialog.setProgressNumberFormat("%1d/%2d");
+        }
     }
 
     // endregion
