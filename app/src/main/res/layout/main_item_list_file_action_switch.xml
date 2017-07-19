@@ -7,7 +7,7 @@
     <data>
         <variable
             name="vm"
-            type="com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.viewModel.CheckableFileActionViewModel"/>
+            type="com.afterlogic.aurora.drive.presentation.modules.mainFilesAction.viewModel.CheckableFileActionViewModel"/>
     </data>
 
     <RelativeLayout

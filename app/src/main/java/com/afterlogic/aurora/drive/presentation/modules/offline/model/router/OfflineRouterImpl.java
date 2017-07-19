@@ -10,7 +10,7 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.modules.model.router.BaseMVVMRouter;
 import com.afterlogic.aurora.drive.presentation.common.util.IntentUtil;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginIntent;
-import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFilesActivity;
+import com.afterlogic.aurora.drive.presentation.modules.main.view.MainActivity;
 import com.afterlogic.aurora.drive.presentation.modules.offline.view.OfflineActivity;
 
 import java.io.File;
@@ -79,7 +79,7 @@ public class OfflineRouterImpl extends BaseMVVMRouter<OfflineActivity> implement
     @Override
     public void goToOnline() {
         ifViewActive(activity -> {
-            Intent intent = MainFilesActivity.intent(activity);
+            Intent intent = MainActivity.intent(activity);
             activity.startActivity(IntentUtil.makeRestartTask(intent));
             activity.overridePendingTransition(0, 0);
         });

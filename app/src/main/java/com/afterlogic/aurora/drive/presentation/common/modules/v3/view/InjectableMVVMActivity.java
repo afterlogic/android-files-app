@@ -64,6 +64,7 @@ public abstract class InjectableMVVMActivity<VM extends LifecycleViewModel> exte
 
         binding = createBinding();
         binding.setVariable(viewModelVariable, viewModel);
+        binding.executePendingBindings();
 
         bindCreated(viewModel, createdBindingsBag);
     }

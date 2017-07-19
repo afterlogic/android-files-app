@@ -10,8 +10,6 @@ import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseActivi
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseFilesFragment;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewActivity;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
-import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFileListFragment;
-import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFilesActivity;
 import com.afterlogic.aurora.drive.presentation.modules.offline.view.OfflineActivity;
 import com.afterlogic.aurora.drive.presentation.modules.start.view.StartActivity;
 import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadActivity;
@@ -45,9 +43,6 @@ public interface InjectorsComponent {
     Injector<LoginActivity> login();
 
     Injector<StartActivity> start();
-
-    Injector<MainFilesActivity> main();
-    Injector<MainFileListFragment> mainFileList();
 
     Injector<UploadActivity> upload();
     Injector<UploadFilesFragment> uploadFileList();

@@ -149,8 +149,8 @@ public class FilesRootViewModel<
     }
 
     private void handleFileTypes(List<FileType> fileTypes) {
-        viewModelState.set(fileTypes.size() > 0 ? ViewModelState.CONTENT : ViewModelState.EMPTY);
         this.fileTypes.addAll(fileTypes);
+        viewModelState.set(this.fileTypes.size() > 0 ? ViewModelState.CONTENT : ViewModelState.EMPTY);
     }
 
     @Override

@@ -117,12 +117,13 @@ public abstract class FileListViewModel<
     }
 
     protected void handleFiles(List<AuroraFile> files) {
-        viewModelState.set(files.size() > 0 ? ViewModelState.CONTENT : ViewModelState.EMPTY);
 
         OnItemClickListener<AuroraFile> onItemClickListener = (p, file) -> onFileClick(file);
         Stream.of(files)
                 .map(file -> mapFileItem(file, onItemClickListener))
                 .collect(StreamCollectors.setListByClearAdd(items));
+
+        viewModelState.set(items.size() > 0 ? ViewModelState.CONTENT : ViewModelState.EMPTY);
     }
 
     protected abstract FileVM mapFileItem(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener);

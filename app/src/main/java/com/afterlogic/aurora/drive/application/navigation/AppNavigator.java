@@ -19,7 +19,7 @@ import com.afterlogic.aurora.drive.presentation.modules.about.view.AboutAppActiv
 import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewActivity;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewArgs;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
-import com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.view.MainFilesActionBottomSheet;
+import com.afterlogic.aurora.drive.presentation.modules.mainFilesAction.view.MainFilesActionBottomSheet;
 import com.afterlogic.aurora.drive.presentation.modules.offline.v2.view.OfflineActivity;
 import com.afterlogic.aurora.drive.presentation.modules.replace.view.ReplaceActivity;
 import com.annimon.stream.Stream;

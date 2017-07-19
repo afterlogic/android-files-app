@@ -7,7 +7,7 @@
     <data>
         <variable
             name="vm"
-            type="com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.viewModel.ButtonFileActionViewModel"/>
+            type="com.afterlogic.aurora.drive.presentation.modules.mainFilesAction.viewModel.ButtonFileActionViewModel"/>
     </data>
 
     <RelativeLayout

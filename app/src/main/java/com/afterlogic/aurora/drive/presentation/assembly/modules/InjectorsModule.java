@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.assembly.modules;
 
-import com.afterlogic.aurora.drive.presentation.assembly.assemblies.ModulesComponentCreator;
 import com.afterlogic.aurora.drive.presentation.assembly.Injector;
+import com.afterlogic.aurora.drive.presentation.assembly.assemblies.ModulesComponentCreator;
 import com.afterlogic.aurora.drive.presentation.modules.accountInfo.assembly.AccountInfoInjector;
 import com.afterlogic.aurora.drive.presentation.modules.accountInfo.view.AccountInfoActivity;
 import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseFilesInjector;
@@ -12,10 +12,6 @@ import com.afterlogic.aurora.drive.presentation.modules.fileView.assembly.FileVi
 import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewActivity;
 import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginInjector;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
-import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFileListInjector;
-import com.afterlogic.aurora.drive.presentation.modules.main.assembly.MainFilesInjector;
-import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFileListFragment;
-import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFilesActivity;
 import com.afterlogic.aurora.drive.presentation.modules.offline.assembly.OfflineInjector;
 import com.afterlogic.aurora.drive.presentation.modules.offline.view.OfflineActivity;
 import com.afterlogic.aurora.drive.presentation.modules.start.assembly.StartInjector;
@@ -66,16 +62,6 @@ public class InjectorsModule {
 
     @Provides
     Injector<StartActivity> start(StartInjector injector){
-        return injector;
-    }
-
-    @Provides
-    Injector<MainFilesActivity> filesMain(MainFilesInjector injector){
-        return injector;
-    }
-
-    @Provides
-    Injector<MainFileListFragment> fileList(MainFileListInjector injector){
         return injector;
     }
 

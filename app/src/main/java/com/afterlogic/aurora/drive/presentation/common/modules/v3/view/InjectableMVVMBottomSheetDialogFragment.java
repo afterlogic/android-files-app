@@ -56,6 +56,7 @@ public abstract class InjectableMVVMBottomSheetDialogFragment<VM extends Lifecyc
 
         binding = createBinding(inflater, container, savedInstanceState);
         binding.setVariable(viewModelVariable, viewModel);
+        binding.executePendingBindings();
 
         bindCreated(viewModel, createdBindingsBag);
 

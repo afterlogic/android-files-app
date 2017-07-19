@@ -55,7 +55,7 @@
             android:label="@string/app_name">
         </activity>
 
-        <activity android:name=".presentation.modules.main.v2.view.MainActivity"
+        <activity android:name="com.afterlogic.aurora.drive.presentation.modules.main.view.MainActivity"
             android:label="@string/app_name"/>
 
         <activity

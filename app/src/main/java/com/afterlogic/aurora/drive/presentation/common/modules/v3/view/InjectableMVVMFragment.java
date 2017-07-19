@@ -56,6 +56,7 @@ public abstract class InjectableMVVMFragment<VM extends LifecycleViewModel> exte
 
         binding = createBinding(inflater, container, savedInstanceState);
         binding.setVariable(viewModelVariable, viewModel);
+        binding.executePendingBindings();
 
         bindCreated(viewModel, createdBindingsBag);
 

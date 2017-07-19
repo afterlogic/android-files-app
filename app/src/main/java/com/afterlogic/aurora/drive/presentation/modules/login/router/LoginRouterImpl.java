@@ -6,7 +6,7 @@ import android.content.Intent;
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.presentation.common.modules.model.router.BaseMVVMRouter;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
-import com.afterlogic.aurora.drive.presentation.modules.main.v2.view.MainActivity;
+import com.afterlogic.aurora.drive.presentation.modules.main.view.MainActivity;
 
 import javax.inject.Inject;
 

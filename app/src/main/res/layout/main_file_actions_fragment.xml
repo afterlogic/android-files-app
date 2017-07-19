@@ -6,11 +6,11 @@
 
     <data>
         
-        <import type="com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.viewModel.MainFilesActionViewModel"/>
+        <import type="com.afterlogic.aurora.drive.presentation.modules.mainFilesAction.viewModel.MainFilesActionViewModel"/>
         
         <variable
             name="vm"
-            type="com.afterlogic.aurora.drive.presentation.modules.mainFIlesAction.viewModel.MainFilesActionViewModel"/>
+            type="com.afterlogic.aurora.drive.presentation.modules.mainFilesAction.viewModel.MainFilesActionViewModel"/>
     </data>
 
     <LinearLayout

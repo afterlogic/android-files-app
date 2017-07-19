@@ -6,7 +6,7 @@
 
     <data>
         <import type="android.view.View"/>
-        <import type="com.afterlogic.aurora.drive.presentation.modules.main.v2.viewModel.MainViewModel"/>
+        <import type="com.afterlogic.aurora.drive.presentation.modules.main.viewModel.MainViewModel"/>
 
 
         <variable
