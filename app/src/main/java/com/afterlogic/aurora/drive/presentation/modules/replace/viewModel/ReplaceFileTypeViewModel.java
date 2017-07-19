@@ -5,9 +5,9 @@ import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ProgressViewModel;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.BaseFileListArgs;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.BaseFileListViewModel;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.ProgressViewModel;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileListArgs;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFileListViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.ViewModelsConnection;
 import com.afterlogic.aurora.drive.presentation.modules.replace.interactor.ReplaceFileTypeInteractor;
 import com.annimon.stream.Stream;
@@ -21,10 +21,10 @@ import javax.inject.Inject;
  * mail: mail@sunnydaydev.me
  */
 
-public class ReplaceFileTypeViewModel extends BaseFileListViewModel<
+public class ReplaceFileTypeViewModel extends SearchableFileListViewModel<
         ReplaceFileTypeViewModel,
         ReplaceFileViewModel,
-        BaseFileListArgs
+        FileListArgs
 > {
 
     private final ReplaceFileTypeInteractor interactor;
@@ -66,8 +66,8 @@ public class ReplaceFileTypeViewModel extends BaseFileListViewModel<
 
     private void createFolder(String name) {
         interactor.createFolder(name, foldersStack.get(0))
-                .doOnSubscribe(disposable -> progress.set(ProgressViewModel.indeterminate(
-                        appResources.getString(R.string.prompt_dialog_title_folder_cration),
+                .doOnSubscribe(disposable -> progress.set(ProgressViewModel.Factory.indeterminateCircle(
+                        appResources.getString(R.string.prompt_dialog_title_folder_creation),
                         name
                 )))
                 .doFinally(() -> progress.set(null))

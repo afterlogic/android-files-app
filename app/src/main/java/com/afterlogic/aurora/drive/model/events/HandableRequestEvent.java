@@ -27,7 +27,7 @@ class HandableRequestEvent implements HandableEvent {
         }
     }
 
-    public int getRequestId() {
+    public int getRequestCode() {
         return mRequestId;
     }
 }

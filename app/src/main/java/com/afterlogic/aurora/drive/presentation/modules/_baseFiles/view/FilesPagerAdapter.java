@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import com.afterlogic.aurora.drive.model.FileType;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ItemsAdapter;
-import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.SimpleOnObservableListChagnedListener;
+import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.SimpleOnObservableListChangedListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ public class FilesPagerAdapter extends FragmentStatePagerAdapter implements Item
 
     private int mDataStateIndex = 0;
 
-    private ObservableList.OnListChangedCallback<ObservableList<FileType>> mOnListChangedCallback = new SimpleOnObservableListChagnedListener<>(
+    private ObservableList.OnListChangedCallback<ObservableList<FileType>> mOnListChangedCallback = new SimpleOnObservableListChangedListener<>(
             this::notifyDataSetChanged
     );
 

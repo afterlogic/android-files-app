@@ -2,9 +2,11 @@ package com.afterlogic.aurora.drive.presentation.assembly.modules;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
 import com.afterlogic.aurora.drive.presentation.modules._util.BackToNullActivity;
-import com.afterlogic.aurora.drive.presentation.modules.main.v2.di.MainModule;
-import com.afterlogic.aurora.drive.presentation.modules.main.v2.view.MainActivity;
-import com.afterlogic.aurora.drive.presentation.modules.replace.assembly.ReplaceModule;
+import com.afterlogic.aurora.drive.presentation.modules.main.di.MainModule;
+import com.afterlogic.aurora.drive.presentation.modules.main.view.MainActivity;
+import com.afterlogic.aurora.drive.presentation.modules.offline.di.OfflineModule;
+import com.afterlogic.aurora.drive.presentation.modules.offline.view.OfflineActivity;
+import com.afterlogic.aurora.drive.presentation.modules.replace.di.ReplaceModule;
 import com.afterlogic.aurora.drive.presentation.modules.replace.view.ReplaceActivity;
 
 import dagger.Module;
@@ -31,4 +33,8 @@ public abstract class AutoInjectPresentationModule {
     @ModuleScope
     @ContributesAndroidInjector(modules = MainModule.class)
     abstract MainActivity contributeMain();
+
+    @ModuleScope
+    @ContributesAndroidInjector(modules = OfflineModule.class)
+    abstract OfflineActivity contributeOffline();
 }

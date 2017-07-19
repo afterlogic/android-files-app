@@ -54,10 +54,12 @@ public abstract class InjectableMVVMFragment<VM extends LifecycleViewModel> exte
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        bindCreated(viewModel, createdBindingsBag);
-
         binding = createBinding(inflater, container, savedInstanceState);
         binding.setVariable(viewModelVariable, viewModel);
+        binding.executePendingBindings();
+
+        bindCreated(viewModel, createdBindingsBag);
+
         return binding.getRoot();
     }
 
@@ -66,7 +68,7 @@ public abstract class InjectableMVVMFragment<VM extends LifecycleViewModel> exte
     @Override
     public void onStart() {
         super.onStart();
-        bindStarted(viewModel, createdBindingsBag);
+        bindStarted(viewModel, startedBindingsBag);
     }
 
     @Override

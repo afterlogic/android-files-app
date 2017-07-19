@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View"/>
+        <import type="com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.OfflineFileViewModel"/>
+
+        <variable
+            name="vm"
+            type="OfflineFileViewModel"/>
+    </data>
+
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:background="@drawable/bg_simple_highlight"
+        android:onClick="@{() -> vm.onClick()}"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:paddingTop="0dp"
+        android:paddingBottom="0dp"
+        style="@style/RootLayout.Item">
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:contentDescription="@string/content_descroption_file_icon"
+            app:imageUri="@{vm.icon}"
+            app:tintColor="@{vm.isFolder ? @color/colorPrimary : -1}"
+            tools:tint="@color/colorPrimary"
+            tools:src="@mipmap/ic_launcher"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintVertical_bias="0.5"/>
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="start"
+            android:lines="1"
+            android:text="@{vm.fileName}"
+            tools:text="asdfasfdasdf.sdf-asdfasdfasdfasdf-sdfasdfasdf"
+            app:layout_constraintTop_toTopOf="@+id/icon"
+            android:layout_marginTop="8dp"
+            app:layout_constraintVertical_chainStyle="spread"
+            app:layout_constraintLeft_toRightOf="@+id/icon"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintRight_toLeftOf="@+id/status_icon"
+            android:layout_marginRight="8dp"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintVertical_bias="0.5"
+            app:layout_constraintBottom_toBottomOf="@+id/icon"
+            android:layout_marginBottom="8dp"/>
+
+        <ProgressBar
+            android:id="@+id/progress"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="0dp"
+            android:layout_height="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="4dp"
+            android:max="100"
+            android:progress="@{vm.syncProgress}"
+            android:visibility="@{vm.syncProgress != -1 ? View.VISIBLE : View.GONE}"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toRightOf="@+id/icon"
+            app:layout_constraintRight_toLeftOf="@+id/status_icon"
+            app:layout_constraintTop_toBottomOf="@+id/text"
+            tools:visibility="visible"/>
+
+        <ImageView
+            android:id="@+id/status_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:visibility="@{vm.statusIcon != null ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"
+            app:imageUri="@{vm.statusIcon}"
+            app:tintColor="@{@color/colorAccent}"
+            tools:ignore="ContentDescription"
+            tools:src="@drawable/ic_sync"
+            tools:tint="@color/colorAccent"
+            tools:visibility="visible"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

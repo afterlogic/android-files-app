@@ -153,7 +153,7 @@ public abstract class BasePresenter<V extends PresentationView> implements Prese
 
     protected Observable<ActivityResultEvent> observeActivityResult(int requestId, boolean checkResult){
         return observeActivityResult()
-                .filter(result -> result.getRequestId() == requestId)
+                .filter(result -> result.getRequestCode() == requestId)
                 .flatMap(result -> {
                     if (!checkResult || result.isSuccess()){
                         return Observable.just(result);
@@ -173,13 +173,13 @@ public abstract class BasePresenter<V extends PresentationView> implements Prese
 
     public Observable<PermissionGrantEvent> observePermissions(int requestId, boolean checkGrant){
         return observePermissions()
-                .filter(grantEvent -> grantEvent.getRequestId() == requestId)
+                .filter(grantEvent -> grantEvent.getRequestCode() == requestId)
                 .flatMap(permissions -> {
                     if (!checkGrant || permissions.isAllGranted()){
                         return Observable.just(permissions);
                     } else {
                         PermissionDeniedError error = new PermissionDeniedError(
-                                permissions.getRequestId(),
+                                permissions.getRequestCode(),
                                 permissions.getPermissions()
                         );
                         error.setHandled(true);

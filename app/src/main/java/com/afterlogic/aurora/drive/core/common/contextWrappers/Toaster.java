@@ -28,10 +28,10 @@ public class Toaster {
 
 
     public void showShort(String text) {
-        Toast.makeText(mContext, text, Toast.LENGTH_LONG).show();
+        Toast.makeText(mContext, text, Toast.LENGTH_SHORT).show();
     }
 
     public void showShort(int textId) {
-        Toast.makeText(mContext, textId, Toast.LENGTH_LONG).show();
+        Toast.makeText(mContext, textId, Toast.LENGTH_SHORT).show();
     }
 }

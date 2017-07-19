@@ -43,13 +43,18 @@ public class ApplicationAssemblyModule {
         return Cicerone.create(new AppRouter());
     }
 
-    @Provides @AppScope
+    @Provides
     NavigatorHolder navigatorHolder(Cicerone<AppRouter> cicerone) {
         return cicerone.getNavigatorHolder();
     }
 
-    @Provides @AppScope
+    @Provides
     Router router(Cicerone<AppRouter> cicerone) {
+        return cicerone.getRouter();
+    }
+
+    @Provides
+    AppRouter appRouter(Cicerone<AppRouter> cicerone) {
         return cicerone.getRouter();
     }
 }

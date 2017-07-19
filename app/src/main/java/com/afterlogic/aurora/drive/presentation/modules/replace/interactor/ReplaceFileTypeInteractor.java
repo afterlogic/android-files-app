@@ -2,7 +2,7 @@ package com.afterlogic.aurora.drive.presentation.modules.replace.interactor;
 
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.BaseFilesListInteractor;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.SearchableFilesListInteractor;
 
 import javax.inject.Inject;
 
@@ -14,13 +14,13 @@ import io.reactivex.Single;
  * mail: mail@sunnydaydev.me
  */
 
-public class ReplaceFileTypeInteractor extends BaseFilesListInteractor{
+public class ReplaceFileTypeInteractor extends SearchableFilesListInteractor {
 
     private final FilesRepository filesRepository;
-    private final ReplaceFileTypeViewInteractor viewInteractor;
+    private final ReplaceViewInteractor viewInteractor;
 
     @Inject
-    ReplaceFileTypeInteractor(FilesRepository filesRepository, ReplaceFileTypeViewInteractor viewInteractor) {
+    ReplaceFileTypeInteractor(FilesRepository filesRepository, ReplaceViewInteractor viewInteractor) {
         super(filesRepository);
         this.filesRepository = filesRepository;
         this.viewInteractor = viewInteractor;

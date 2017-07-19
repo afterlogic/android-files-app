@@ -9,15 +9,11 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.databinding.FragmentReplaceFilesBinding;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.BindingUtil;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMFragment;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.BaseFileListArgs;
-import com.afterlogic.aurora.drive.presentation.modules.replace.interactor.ReplaceFileTypeViewInteractor;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileListArgs;
 import com.afterlogic.aurora.drive.presentation.modules.replace.viewModel.ReplaceFileTypeViewModel;
-
-import javax.inject.Inject;
 
 /**
  * Created by aleksandrcikin on 04.07.17.
@@ -26,14 +22,11 @@ import javax.inject.Inject;
 
 public class ReplaceFileTypeFragment extends InjectableMVVMFragment<ReplaceFileTypeViewModel> {
 
-    @Inject
-    ReplaceFileTypeViewInteractor viewInteractor;
-
     public static ReplaceFileTypeFragment newInstance(String type) {
 
         ReplaceFileTypeFragment fragment = new ReplaceFileTypeFragment();
 
-        BaseFileListArgs args = new BaseFileListArgs();
+        FileListArgs args = new FileListArgs();
         args.setType(type);
 
         fragment.setArguments(args.getBundle());
@@ -44,13 +37,12 @@ public class ReplaceFileTypeFragment extends InjectableMVVMFragment<ReplaceFileT
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewInteractor.bind(this);
-        getViewModel().setArgs(new BaseFileListArgs(getArguments()));
+        getViewModel().setArgs(new FileListArgs(getArguments()));
     }
 
     @Override
     public ViewDataBinding createBinding(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return DataBindingUtil.<FragmentReplaceFilesBinding>inflate(inflater, R.layout.fragment_replace_files, container, false);
+        return DataBindingUtil.inflate(inflater, R.layout.replace_files_fragment, container, false);
     }
 
     @Override

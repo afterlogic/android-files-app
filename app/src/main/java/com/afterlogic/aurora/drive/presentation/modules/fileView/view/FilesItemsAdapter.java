@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.ViewGroup;
 
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ItemsAdapter;
-import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.SimpleOnObservableListChagnedListener;
+import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.SimpleOnObservableListChangedListener;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.WeakObservableListListener;
 import com.afterlogic.aurora.drive.presentation.common.components.view.FragmentRecreatePagerAdapter;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.viewModel.FileViewImageItemViewModel;
@@ -22,7 +22,7 @@ class FilesItemsAdapter extends FragmentRecreatePagerAdapter implements ItemsAda
 
     private List<FileViewImageItemViewModel> mItems;
 
-    private final SimpleOnObservableListChagnedListener<FileViewImageItemViewModel> mObservableListener = new SimpleOnObservableListChagnedListener<>(
+    private final SimpleOnObservableListChangedListener<FileViewImageItemViewModel> mObservableListener = new SimpleOnObservableListChangedListener<>(
             this::notifyDataSetChanged
     );
     private final WeakObservableListListener<FileViewImageItemViewModel> mWeak = new WeakObservableListListener<>(mObservableListener);

@@ -6,9 +6,9 @@ import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ProgressViewModel;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.ProgressViewModel;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.UiObservableField;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.BaseFilesRootViewModel;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFilesRootViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.ViewModelsConnection;
 import com.afterlogic.aurora.drive.presentation.modules.replace.interactor.ReplaceInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.replace.view.ReplaceArgs;
@@ -25,7 +25,7 @@ import ru.terrakok.cicerone.Router;
  * mail: mail@sunnydaydev.me
  */
 
-public class ReplaceViewModel extends BaseFilesRootViewModel<ReplaceFileTypeViewModel> {
+public class ReplaceViewModel extends SearchableFilesRootViewModel<ReplaceFileTypeViewModel> {
 
     public final ObservableField<String> subtitle = new UiObservableField<>();
 
@@ -99,7 +99,7 @@ public class ReplaceViewModel extends BaseFilesRootViewModel<ReplaceFileTypeView
 
     private ProgressViewModel createProgressViewModel() {
         int size = filesForAction.size();
-        return ProgressViewModel.indeterminate(
+        return ProgressViewModel.Factory.indeterminateCircle(
                 isCopyMode ? appResources.getString(R.string.prompt_coping) : appResources.getString(R.string.prompt_replacing),
                 size == 1 ? filesForAction.get(0).getName() : appResources.getPlurals(R.plurals.prompt_files_count, size, size)
         );

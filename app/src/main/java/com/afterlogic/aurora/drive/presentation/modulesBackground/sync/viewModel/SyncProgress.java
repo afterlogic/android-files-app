@@ -18,7 +18,7 @@ public class SyncProgress {
         mIsDone = isDone;
     }
 
-    public String getFile() {
+    public String getFilePathSpec() {
         return mFile;
     }
 

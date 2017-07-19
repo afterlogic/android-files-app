@@ -35,9 +35,34 @@ public class OptionalDisposable extends Optional<Disposable> {
                 .doFinally(() -> this.set(null));
     }
 
-    public void disposeAndClear() {
-        synchronized (this) {
-            ifPresent(Disposable::dispose);
+    public Completable disposeAndTrack(Completable upstream) {
+        return upstream.doOnSubscribe(this::disposeAndSet)
+                .doFinally(() -> this.set(null));
+    }
+
+    public <T> Maybe<T> disposeAndTrack(Maybe<T> upstream) {
+        return upstream.doOnSubscribe(this::disposeAndSet)
+                .doFinally(() -> this.set(null));
+    }
+
+    public <T> Single<T> disposeAndTrack(Single<T> upstream) {
+        return upstream.doOnSubscribe(this::disposeAndSet)
+                .doFinally(() -> this.set(null));
+    }
+
+    public <T> Observable<T> disposeAndTrack(Observable<T> upstream) {
+        return upstream.doOnSubscribe(this::disposeAndSet)
+                .doFinally(() -> this.set(null));
+    }
+
+    private void disposeAndSet(Disposable disposable) {
+        disposeAndClear();
+        set(disposable);
+    }
+
+    public synchronized void disposeAndClear() {
+        ifPresent(Disposable::dispose);
+        if (get() != null) {
             set(null);
         }
     }

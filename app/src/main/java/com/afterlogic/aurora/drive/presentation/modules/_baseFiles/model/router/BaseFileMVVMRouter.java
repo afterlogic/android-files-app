@@ -27,7 +27,7 @@ public class BaseFileMVVMRouter<V extends Activity & StoreableMVVMView> extends 
     @Override
     public void goToOfflineError() {
         ifViewActive(activity -> {
-            Intent offline = OfflineActivity.intent(false, activity);
+            Intent offline = OfflineActivity.intent(activity,false);
             activity.startActivity(IntentUtil.makeRestartTask(offline));
             activity.overridePendingTransition(0, 0);
             activity.finish();

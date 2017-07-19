@@ -3,7 +3,7 @@ package com.afterlogic.aurora.drive.presentation.modules.replace.interactor;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.BaseFilesRootInteractor;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.FilesRootInteractor;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ import io.reactivex.Completable;
  * mail: mail@sunnydaydev.me
  */
 
-public class ReplaceInteractor extends BaseFilesRootInteractor {
+public class ReplaceInteractor extends FilesRootInteractor {
 
     private final FilesRepository filesRepository;
 

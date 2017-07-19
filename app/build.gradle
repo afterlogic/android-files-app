@@ -158,4 +158,7 @@ dependencies {
 
 
     implementation "com.github.nitrico.lastadapter:lastadapter:$rootProject.lastAdapterVersion"
+
+    implementation "org.parceler:parceler-api:$rootProject.parcellerVersion"
+    annotationProcessor "org.parceler:parceler:$rootProject.parcellerVersion"
 }
