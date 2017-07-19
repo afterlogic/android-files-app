@@ -3,6 +3,7 @@ package com.afterlogic.aurora.drive.application.assembly;
 import android.content.Context;
 
 import com.afterlogic.aurora.drive.application.App;
+import com.afterlogic.aurora.drive.application.navigation.AppRouter;
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.AppScope;
 
 import dagger.Module;
@@ -38,17 +39,17 @@ public class ApplicationAssemblyModule {
     }
 
     @Provides @AppScope
-    Cicerone<Router> cicerone() {
-        return Cicerone.create();
+    Cicerone<AppRouter> cicerone() {
+        return Cicerone.create(new AppRouter());
     }
 
     @Provides @AppScope
-    NavigatorHolder navigatorHolder(Cicerone<Router> cicerone) {
+    NavigatorHolder navigatorHolder(Cicerone<AppRouter> cicerone) {
         return cicerone.getNavigatorHolder();
     }
 
     @Provides @AppScope
-    Router router(Cicerone<Router> cicerone) {
+    Router router(Cicerone<AppRouter> cicerone) {
         return cicerone.getRouter();
     }
 }

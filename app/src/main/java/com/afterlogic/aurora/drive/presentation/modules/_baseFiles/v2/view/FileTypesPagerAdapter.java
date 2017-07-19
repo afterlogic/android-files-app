@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.replace.view;
+package com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,7 +14,7 @@ import java.util.List;
  * mail: mail@sunnydaydev.me
  */
 
-class FileTypesPagerAdapter extends FragmentPagerAdapter implements ItemsAdapter<FileType> {
+public abstract class FileTypesPagerAdapter extends FragmentPagerAdapter implements ItemsAdapter<FileType> {
 
     private List<FileType> fileTypes;
 
@@ -34,7 +34,7 @@ class FileTypesPagerAdapter extends FragmentPagerAdapter implements ItemsAdapter
 
     @Override
     public Fragment getItem(int position) {
-        return ReplaceFileTypeFragment.newInstance(fileTypes.get(position).getFilesType());
+        return getFilesListFragment(fileTypes.get(position).getFilesType());
     }
 
     @Override
@@ -46,4 +46,6 @@ class FileTypesPagerAdapter extends FragmentPagerAdapter implements ItemsAdapter
     public int getItemPosition(Object object) {
         return POSITION_NONE;
     }
+
+    protected abstract Fragment getFilesListFragment(String type);
 }

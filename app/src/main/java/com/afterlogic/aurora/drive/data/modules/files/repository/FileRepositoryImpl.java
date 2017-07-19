@@ -91,10 +91,13 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
     @Override
     public Single<List<AuroraFile>> getFiles(AuroraFile folder) {
         return mFileSubRepo.getFiles(folder)
-                .map(files -> {
-                    Collections.sort(files, FileUtil.AURORA_FILE_COMPARATOR);
-                    return files;
-                });
+                .map(this::sortFiles);
+    }
+
+    @Override
+    public Single<List<AuroraFile>> getFiles(AuroraFile folder, String pattern) {
+        return mFileSubRepo.getFiles(folder, pattern)
+                .map(this::sortFiles);
     }
 
     @Override
@@ -401,5 +404,10 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
                 Observable.just(new Progressible<>(null, 0, 0, file.getName(), false)),
                 request
         );
+    }
+
+    private List<AuroraFile> sortFiles(List<AuroraFile> files) {
+        Collections.sort(files, FileUtil.AURORA_FILE_COMPARATOR);
+        return files;
     }
 }

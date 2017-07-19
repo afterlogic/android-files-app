@@ -5,7 +5,7 @@ import android.content.Intent;
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.presentation.common.util.IntentUtil;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router.BaseFileMVVMRouter;
-import com.afterlogic.aurora.drive.presentation.modules.about.view.ActivityAbout;
+import com.afterlogic.aurora.drive.presentation.modules.about.view.AboutAppActivity;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginIntent;
 import com.afterlogic.aurora.drive.presentation.modules.main.view.MainFilesActivity;
 import com.afterlogic.aurora.drive.presentation.modules.offline.view.OfflineActivity;
@@ -44,7 +44,7 @@ public class MainFilesRouterImpl extends BaseFileMVVMRouter<MainFilesActivity> i
     @Override
     public void openAbout() {
         ifViewActive(activity -> {
-            Intent intent = ActivityAbout.intent(activity);
+            Intent intent = AboutAppActivity.intent(activity);
             activity.startActivity(intent);
         });
     }

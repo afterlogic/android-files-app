@@ -6,14 +6,8 @@
 
     <data>
         <import type="android.view.View"/>
-        <import type="com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ItemsAdapter"/>
-        <import type="com.afterlogic.aurora.drive.model.FileType"/>
 
         <import type="com.afterlogic.aurora.drive.presentation.modules.replace.viewModel.ReplaceViewModel"/>
-
-        <variable
-            name="adapter"
-            type="ItemsAdapter&lt;FileType&gt;"/>
 
         <variable
             name="vm"

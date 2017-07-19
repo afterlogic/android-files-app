@@ -46,12 +46,12 @@ public class FilesServiceP7Impl extends AuthorizedServiceP7 implements FilesServ
     }
 
     @Override
-    public Single<ApiResponseP7<AuroraFilesResponse>> getFiles(String path, String type, String filterPatter) {
+    public Single<ApiResponseP7<AuroraFilesResponse>> getFiles(String path, String type, String pattern) {
         return Single.defer(() -> {
             Map<String, Object> fields = getDefaultParams(Api7.Actions.FILES)
                     .put(Api7.Fields.TYPE, type)
                     .put(Api7.Fields.PATH, path)
-                    .put(Api7.Fields.PATTERN, filterPatter)
+                    .put(Api7.Fields.PATTERN, pattern)
                     .create();
             return mApi.getFiles(fields);
         });

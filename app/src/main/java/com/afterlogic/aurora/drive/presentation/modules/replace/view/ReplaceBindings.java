@@ -31,9 +31,9 @@ public class ReplaceBindings {
     @BindingAdapter("replace_fileTypesAdapter")
     public static void bindFileTypesAdapter(ViewPager pager, List<FileType> fileTypes) {
         FragmentManager fm = ((FragmentActivity) pager.getContext()).getSupportFragmentManager();
-        FileTypesPagerAdapter adapter = (FileTypesPagerAdapter) pager.getAdapter();
+        ReplaceFileTypesPagerAdapter adapter = (ReplaceFileTypesPagerAdapter) pager.getAdapter();
         if (adapter == null) {
-            adapter = new FileTypesPagerAdapter(fm);
+            adapter = new ReplaceFileTypesPagerAdapter(fm);
             pager.setAdapter(adapter);
         }
         adapter.setItems(fileTypes);

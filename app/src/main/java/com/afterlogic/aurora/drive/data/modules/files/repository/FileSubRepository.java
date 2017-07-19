@@ -1,6 +1,7 @@
 package com.afterlogic.aurora.drive.data.modules.files.repository;
 
 import android.net.Uri;
+import android.support.annotation.Nullable;
 
 import com.afterlogic.aurora.drive.data.model.UploadResult;
 import com.afterlogic.aurora.drive.model.AuroraFile;
@@ -20,9 +21,12 @@ import okhttp3.ResponseBody;
  */
 
 public interface FileSubRepository {
+
     Single<List<String>> getAvailableFileTypes();
 
     Single<List<AuroraFile>> getFiles(AuroraFile folder);
+
+    Single<List<AuroraFile>> getFiles(AuroraFile folder, @Nullable String pattern);
 
     Completable rename(AuroraFile file, String newName);
 
