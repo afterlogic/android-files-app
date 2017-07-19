@@ -12,8 +12,6 @@ import com.afterlogic.aurora.drive.presentation.modules.fileView.assembly.FileVi
 import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewActivity;
 import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginInjector;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
-import com.afterlogic.aurora.drive.presentation.modules.offline.assembly.OfflineInjector;
-import com.afterlogic.aurora.drive.presentation.modules.offline.view.OfflineActivity;
 import com.afterlogic.aurora.drive.presentation.modules.start.assembly.StartInjector;
 import com.afterlogic.aurora.drive.presentation.modules.start.view.StartActivity;
 import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadFilesInjector;
@@ -97,11 +95,6 @@ public class InjectorsModule {
 
     @Provides
     Injector<FileViewActivity> fileView(FileViewInjector injector){
-        return injector;
-    }
-
-    @Provides
-    Injector<OfflineActivity> offline(OfflineInjector injector){
         return injector;
     }
 

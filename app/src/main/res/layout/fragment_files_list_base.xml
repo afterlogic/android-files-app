@@ -37,7 +37,7 @@
                 bind:layoutManager="@{recyclerBinding.linearLayoutManager()}"
                 bind:adapter="@{bindHelper.filesListAdapter(viewModel)}"
                 bind:items="@{viewModel.items}"
-                tools:listitem="@layout/item_list_file_main"/>
+                tools:listitem="@layout/main_item_list_file"/>
 
         </android.support.v4.widget.SwipeRefreshLayout>
 

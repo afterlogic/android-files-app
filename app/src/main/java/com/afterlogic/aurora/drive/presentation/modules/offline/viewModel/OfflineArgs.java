@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.offline.v2.viewModel;
+package com.afterlogic.aurora.drive.presentation.modules.offline.viewModel;
 
 import android.os.Bundle;
 

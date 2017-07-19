@@ -1,11 +1,11 @@
-package com.afterlogic.aurora.drive.presentation.modules.offline.v2.di;
+package com.afterlogic.aurora.drive.presentation.modules.offline.di;
 
 import android.arch.lifecycle.ViewModel;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.SubModuleScope;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.ViewModelKey;
-import com.afterlogic.aurora.drive.presentation.modules.offline.v2.view.OfflineFragment;
-import com.afterlogic.aurora.drive.presentation.modules.offline.v2.viewModel.OfflineViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.offline.view.OfflineFragment;
+import com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.OfflineViewModel;
 
 import dagger.Binds;
 import dagger.Module;

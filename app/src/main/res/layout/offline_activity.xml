@@ -8,7 +8,7 @@
 
         <variable
             name="vm"
-            type="com.afterlogic.aurora.drive.presentation.modules.offline.v2.viewModel.OfflineViewModel"/>
+            type="com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.OfflineViewModel"/>
     </data>
 
     <android.support.design.widget.CoordinatorLayout

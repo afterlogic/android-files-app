@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.offline.v2.interactor;
+package com.afterlogic.aurora.drive.presentation.modules.offline.interactor;
 
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
@@ -21,7 +21,7 @@ public class OfflineFileListInteractor extends SearchableFilesListInteractor {
     private final FilesRepository filesRepository;
 
     @Inject
-    protected OfflineFileListInteractor(FilesRepository filesRepository) {
+    OfflineFileListInteractor(FilesRepository filesRepository) {
         super(filesRepository);
         this.filesRepository = filesRepository;
     }

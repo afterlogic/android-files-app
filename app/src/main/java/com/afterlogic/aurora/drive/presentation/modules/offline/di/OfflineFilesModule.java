@@ -1,9 +1,9 @@
-package com.afterlogic.aurora.drive.presentation.modules.offline.v2.di;
+package com.afterlogic.aurora.drive.presentation.modules.offline.di;
 
 import android.arch.lifecycle.ViewModel;
 
 import com.afterlogic.aurora.drive.presentation.assembly.modules.ViewModelKey;
-import com.afterlogic.aurora.drive.presentation.modules.offline.v2.viewModel.OfflineFileListViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.OfflineFileListViewModel;
 
 import dagger.Binds;
 import dagger.Module;

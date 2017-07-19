@@ -10,7 +10,6 @@ import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseMo
 import com.afterlogic.aurora.drive.presentation.modules.fileView.assembly.FileViewComponent;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.assembly.FileViewModule;
 import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginComponent;
-import com.afterlogic.aurora.drive.presentation.modules.offline.assembly.OfflineComponent;
 import com.afterlogic.aurora.drive.presentation.modules.start.assembly.StartComponent;
 import com.afterlogic.aurora.drive.presentation.modules.start.assembly.StartModule;
 import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadComponent;
@@ -58,8 +57,6 @@ public interface ModulesComponentCreator {
     FileObserverComponent plus(FileObserverModule module);
 
     FileViewComponent plus(FileViewModule module);
-
-    OfflineComponent offline();
 
     AccountActionComponent accountActionReceiver();
 

@@ -4,8 +4,8 @@ import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
 import com.afterlogic.aurora.drive.presentation.modules._util.BackToNullActivity;
 import com.afterlogic.aurora.drive.presentation.modules.main.di.MainModule;
 import com.afterlogic.aurora.drive.presentation.modules.main.view.MainActivity;
-import com.afterlogic.aurora.drive.presentation.modules.offline.v2.di.OfflineModule;
-import com.afterlogic.aurora.drive.presentation.modules.offline.v2.view.OfflineActivity;
+import com.afterlogic.aurora.drive.presentation.modules.offline.di.OfflineModule;
+import com.afterlogic.aurora.drive.presentation.modules.offline.view.OfflineActivity;
 import com.afterlogic.aurora.drive.presentation.modules.replace.di.ReplaceModule;
 import com.afterlogic.aurora.drive.presentation.modules.replace.view.ReplaceActivity;
 

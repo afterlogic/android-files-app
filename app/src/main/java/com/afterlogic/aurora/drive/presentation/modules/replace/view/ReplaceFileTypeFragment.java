@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.databinding.FragmentReplaceFilesBinding;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.BindingUtil;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMFragment;
@@ -43,7 +42,7 @@ public class ReplaceFileTypeFragment extends InjectableMVVMFragment<ReplaceFileT
 
     @Override
     public ViewDataBinding createBinding(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return DataBindingUtil.<FragmentReplaceFilesBinding>inflate(inflater, R.layout.fragment_replace_files, container, false);
+        return DataBindingUtil.inflate(inflater, R.layout.replace_files_fragment, container, false);
     }
 
     @Override

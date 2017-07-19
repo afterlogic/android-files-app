@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.offline.v2.interactor;
+package com.afterlogic.aurora.drive.presentation.modules.offline.interactor;
 
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;

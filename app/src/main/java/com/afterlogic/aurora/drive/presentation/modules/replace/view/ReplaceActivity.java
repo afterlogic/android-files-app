@@ -15,7 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.databinding.ActivityReplaceBinding;
+import com.afterlogic.aurora.drive.databinding.ReplaceActivityBinding;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.BindingUtil;
@@ -74,7 +74,7 @@ public class ReplaceActivity extends InjectableMVVMActivity<ReplaceViewModel> im
 
     @Override
     public ViewDataBinding createBinding() {
-        ActivityReplaceBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_replace);
+        ReplaceActivityBinding binding = DataBindingUtil.setContentView(this, R.layout.replace_activity);
 
         setSupportActionBar(binding.toolbar);
         ActionBar ab = getSupportActionBar();

@@ -1,156 +1,128 @@
 package com.afterlogic.aurora.drive.presentation.modules.offline.view;
 
+import android.arch.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.databinding.ObservableField;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.databinding.ActivityOfflineBinding;
-import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
-import com.afterlogic.aurora.drive.presentation.common.binding.bindingAdapters.ViewProvider;
-import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ItemsAdapter;
-import com.afterlogic.aurora.drive.presentation.common.modules.view.MVVMActivity;
+import com.afterlogic.aurora.drive.databinding.OfflineActivityBinding;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.FilesViewDialogDelegate;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFileItemViewModel;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.BindingUtil;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMActivity;
 import com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.OfflineViewModel;
 
-import java.util.WeakHashMap;
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.support.HasSupportFragmentInjector;
 
 /**
- * Created by sashka on 19.02.17.<p/>
- * mail: sunnyday.development@gmail.com
+ * Created by aleksandrcikin on 12.07.17.
+ * mail: mail@sunnydaydev.me
  */
 
-public class OfflineActivity extends MVVMActivity<OfflineViewModel> {
+public class OfflineActivity extends InjectableMVVMActivity<OfflineViewModel> implements HasSupportFragmentInjector {
 
-    private static final String MANUAL_MODE = ".MANUAL_MODE";
+    private boolean manual;
 
-    private FilesViewDialogDelegate mFilesViewDelegate = new FilesViewDialogDelegate(this);
+    @Inject
+    protected DispatchingAndroidInjector<Fragment> fragmentAndroidInjector;
 
-    public static Intent intent(boolean manualMode, Context context){
-        Intent intent = new Intent(context, OfflineActivity.class);
-        intent.putExtra(MANUAL_MODE, manualMode);
-        return intent;
-    }
+    private final ObservableField<SearchView> searchView = new ObservableField<>();
 
-    @Nullable
-    private MenuItem mOnlineMenuItem;
 
-    @Override
-    public void assembly(InjectorsComponent injectors) {
-        injectors.offline().inject(this);
+    public static Intent intent(Context context, boolean manual) {
+        return new Intent(context, OfflineActivity.class)
+                .putExtra("manual", manual);
     }
 
     @Override
-    @NonNull
-    protected ViewDataBinding onCreateBinding(@Nullable Bundle savedInstanceState) {
-        return DataBindingUtil.setContentView(this, R.layout.activity_offline);
+    protected void onPrepareCreations() {
+        super.onPrepareCreations();
+
+        manual = getIntent().getBooleanExtra("manual", false);
     }
 
     @Override
-    protected void onBindingCreated(@Nullable Bundle savedInstanceState) {
-        super.onBindingCreated(savedInstanceState);
-        ActivityOfflineBinding binding = getBinding();
+    public ViewDataBinding createBinding() {
+        OfflineActivityBinding binding = DataBindingUtil.setContentView(this, R.layout.offline_activity);
         setSupportActionBar(binding.toolbar);
-    }
 
-    @Override
-    protected void onViewModelCreated(OfflineViewModel viewModel, Bundle savedInstanceState) {
-        super.onViewModelCreated(viewModel, savedInstanceState);
-        if (savedInstanceState == null) {
-            viewModel.viewInitWith(getIntent().getBooleanExtra(MANUAL_MODE, false));
-        }
-    }
-
-    @Override
-    protected void onBindCreatedBindings(OfflineViewModel offlineViewModel, UnbindableObservable.Bag bag) {
-        super.onBindCreatedBindings(offlineViewModel, bag);
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
-            ab.setDisplayHomeAsUpEnabled(offlineViewModel.getManualMode().get());
+            ab.setDisplayHomeAsUpEnabled(manual);
         }
+
+        return binding;
     }
 
     @Override
-    protected void onBindStartedBindings(OfflineViewModel offlineViewModel, UnbindableObservable.Bag bag) {
-        super.onBindStartedBindings(offlineViewModel, bag);
-
-        UnbindableObservable.create(getViewModel().getNetworkState())
-                .addListener(field -> updateOnlineMenuItemVisibility())
-                .addTo(bag)
-                .notifyChanged();
-
-        mFilesViewDelegate.bindProgressField(offlineViewModel.getProgress());
-        mFilesViewDelegate.bindMessageField(offlineViewModel.getMessage());
+    public OfflineViewModel createViewModel(ViewModelProvider provider) {
+        return provider.get(OfflineViewModel.class);
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        mFilesViewDelegate.onStart();
+    public AndroidInjector<Fragment> supportFragmentInjector() {
+        return fragmentAndroidInjector;
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragmentContainer, OfflineFragment.newInstance(manual))
+                    .commit();
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.menu_offline, menu);
-        mOnlineMenuItem = menu.findItem(R.id.action_online_mode);
-        updateOnlineMenuItemVisibility();
+
+        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+        searchView.set((SearchView) searchMenuItem.getActionView());
+
+        MenuItem onlineMode = menu.findItem(R.id.action_online_mode);
+        onlineMode.setVisible(!manual);
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+
+        switch (item.getItemId()) {
+
             case R.id.action_online_mode:
-                getViewModel().onOnline();
+                getViewModel().onOnlineModeClicked();
                 return true;
+
         }
+
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    protected void onUnbindStartedBindings(OfflineViewModel offlineViewModel, UnbindableObservable.Bag bag) {
-        super.onUnbindStartedBindings(offlineViewModel, bag);
-        mFilesViewDelegate.unbind();
+    protected void bindStarted(OfflineViewModel vm, UnbindableObservable.Bag bag) {
+        super.bindStarted(vm, bag);
+        BindingUtil.bindSearchView(searchView, vm.searchQuery, vm.showSearch, bag);
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        mFilesViewDelegate.onStop();
-    }
-
-    private void updateOnlineMenuItemVisibility() {
-        if (mOnlineMenuItem == null) return;
-
-        boolean networkEnabled = getViewModel().getNetworkState().get();
-        boolean manualMode = getViewModel().getManualMode().get();
-        mOnlineMenuItem.setVisible(!manualMode && networkEnabled);
-    }
-
-    public static class OfflineBinder {
-
-        private static final WeakHashMap<RecyclerView, ItemsAdapter<BaseFileItemViewModel>> FILES_ADAPTERS = new WeakHashMap<>();
-
-        public static ViewProvider<ItemsAdapter<BaseFileItemViewModel>, RecyclerView> filesListAdapter(OfflineViewModel viewModel){
-            return list -> {
-                ItemsAdapter<BaseFileItemViewModel> adapter = FILES_ADAPTERS.get(list);
-                if (adapter == null){
-                    adapter = new OfflineAdapter(viewModel);
-                    FILES_ADAPTERS.put(list, adapter);
-                }
-                return adapter;
-            };
-        }
+    public void onBackPressed() {
+        getViewModel().onBackPressed();
     }
 }

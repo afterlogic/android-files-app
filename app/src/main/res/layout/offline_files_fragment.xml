@@ -8,7 +8,7 @@
 
         <variable
             name="vm"
-            type="com.afterlogic.aurora.drive.presentation.modules.offline.v2.viewModel.OfflineFileListViewModel"/>
+            type="com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.OfflineFileListViewModel"/>
     </data>
 
     <!-- SwipeRefresh for refreshing on error and progress indication-->

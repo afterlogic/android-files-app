@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.offline.v2.viewModel;
+package com.afterlogic.aurora.drive.presentation.modules.offline.viewModel;
 
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;

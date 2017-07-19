@@ -1,9 +1,15 @@
 package com.afterlogic.aurora.drive.presentation.modules.offline.view;
 
+import android.databinding.BindingAdapter;
 import android.support.v7.widget.RecyclerView;
 
-import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.BR;
+import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.OfflineHeader;
+import com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.OfflineFileViewModel;
+import com.github.nitrico.lastadapter.LastAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,7 +19,17 @@ import java.util.List;
 
 public class OfflineBindings {
 
-    public static void bindOfflineItems(RecyclerView list, List<AuroraFile> items) {
+    @BindingAdapter({"offline_filesAdapter", "offline_header"})
+    public static void bindFilesAdapter(RecyclerView list, List<OfflineFileViewModel> files, OfflineHeader header) {
+        List<Object> items = new ArrayList<>();
+        if (header != null) {
+            items.add(header);
+        }
+        items.addAll(files);
 
+        new LastAdapter(items, BR.vm, true)
+                .map(OfflineHeader.class, R.layout.offline_item_list_header)
+                .map(OfflineFileViewModel.class, R.layout.offline_item_list_file)
+                .into(list);
     }
 }

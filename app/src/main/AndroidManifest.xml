@@ -102,8 +102,6 @@
             android:theme="@style/Theme.Transparent"
             android:noHistory="true"/>
 
-        <activity android:name=".presentation.modules.offline.v2.view.OfflineActivity" />
-
         <service android:name=".presentation.modulesBackground.authenticator.AuthenticatorService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />

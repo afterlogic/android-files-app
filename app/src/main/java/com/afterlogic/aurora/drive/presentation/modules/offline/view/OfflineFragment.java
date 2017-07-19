@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.offline.v2.view;
+package com.afterlogic.aurora.drive.presentation.modules.offline.view;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.databinding.DataBindingUtil;
@@ -10,8 +10,8 @@ import android.view.ViewGroup;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMFragment;
-import com.afterlogic.aurora.drive.presentation.modules.offline.v2.viewModel.OfflineArgs;
-import com.afterlogic.aurora.drive.presentation.modules.offline.v2.viewModel.OfflineFileListViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.OfflineArgs;
+import com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.OfflineFileListViewModel;
 
 /**
  * Created by aleksandrcikin on 12.07.17.

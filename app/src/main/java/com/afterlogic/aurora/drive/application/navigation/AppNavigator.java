@@ -21,7 +21,7 @@ import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewAr
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
 import com.afterlogic.aurora.drive.presentation.modules.main.view.MainActivity;
 import com.afterlogic.aurora.drive.presentation.modules.mainFilesAction.view.MainFilesActionBottomSheet;
-import com.afterlogic.aurora.drive.presentation.modules.offline.v2.view.OfflineActivity;
+import com.afterlogic.aurora.drive.presentation.modules.offline.view.OfflineActivity;
 import com.afterlogic.aurora.drive.presentation.modules.replace.view.ReplaceActivity;
 import com.annimon.stream.Stream;
 

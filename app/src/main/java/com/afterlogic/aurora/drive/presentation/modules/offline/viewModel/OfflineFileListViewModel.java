@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.offline.v2.viewModel;
+package com.afterlogic.aurora.drive.presentation.modules.offline.viewModel;
 
 import android.databinding.ObservableField;
 
@@ -7,7 +7,7 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFileListViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.ViewModelsConnection;
-import com.afterlogic.aurora.drive.presentation.modules.offline.v2.interactor.OfflineFileListInteractor;
+import com.afterlogic.aurora.drive.presentation.modules.offline.interactor.OfflineFileListInteractor;
 
 import javax.inject.Inject;
 
