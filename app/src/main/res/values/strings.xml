@@ -23,6 +23,7 @@
     <string name="dialog_prompt_processing">Processing…</string>
     <string name="error_connection_to_domain">Connection to server failed.</string>
     <string name="prompt_error_occurred">Error occurred.</string>
+    <string name="prompt_error_occurred_pull_to_refresh">Error occurred.\nPull down to retry.</string>
     <string name="error_default_api_error">Request was failed.</string>
     <string name="error_adding_aurora_account">Adding Aurora account was failed.</string>
     <string name="error_add_more_than_one_account">Only one Aurora account may be signed in at a time. You must remove your current account before adding a new one.</string>

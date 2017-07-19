@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View"/>
         <import type="com.afterlogic.aurora.drive.presentation.modules.main.v2.viewModel.MainFilesListViewModel"/>
 
         <variable
@@ -24,13 +25,31 @@
             app:onRefresh="@{() -> vm.onRefresh()}"
             app:colorSchemeResources="@{@intArray/swipe_refresh_color_scheme}">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/list"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-                app:main_filesAdapter="@{vm.items}"
-                tools:listitem="@layout/main_item_list_file"/>
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    android:text="@string/prompt_error_occurred_pull_to_refresh"
+                    android:padding="32dp"
+                    android:gravity="center_horizontal"
+                    android:visibility="@{vm.viewModelState.isError() ? View.VISIBLE : View.GONE}"
+                    tools:visibility="gone"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                    app:main_filesAdapter="@{vm.items}"
+                    android:visibility="@{!vm.viewModelState.isError() ? View.VISIBLE : View.GONE}"
+                    tools:listitem="@layout/main_item_list_file"/>
+
+            </FrameLayout>
+
 
         </android.support.v4.widget.SwipeRefreshLayout>
 
