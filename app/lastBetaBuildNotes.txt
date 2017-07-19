@@ -1,1 +1,2 @@
 File searching.
++ fixed search query updating.
