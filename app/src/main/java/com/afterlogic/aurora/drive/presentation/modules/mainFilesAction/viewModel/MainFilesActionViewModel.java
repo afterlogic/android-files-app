@@ -101,6 +101,9 @@ public class MainFilesActionViewModel extends LifecycleViewModel {
                     R.string.prompt_send, R.drawable.ic_action_share,
                     () -> postAction(MainFileAction.SHARE)
             ));
+        }
+
+        if (!file.isLink()) {
 
             CheckableFileActionViewModel offline = creator.checkable(
                     R.string.prompt_offline_mode, R.drawable.ic_offline, fileForAction.getOffline().get(),
@@ -112,9 +115,7 @@ public class MainFilesActionViewModel extends LifecycleViewModel {
                     .addListener(field -> offline.setChecked(field.get()))
                     .bind()
                     .notifyChanged();
-        }
 
-        if (!file.isLink()) {
             items.add(creator.checkable(
                     R.string.prompt_action_public_link, R.drawable.ic_action_public_link, file.isShared(),
                     checked -> postAction(MainFileAction.PUBLIC_LINK)
