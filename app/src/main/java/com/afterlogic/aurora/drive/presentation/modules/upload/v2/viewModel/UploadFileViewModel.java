@@ -11,7 +11,7 @@ import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.
 
 public class UploadFileViewModel extends AuroraFileViewModel {
 
-    public UploadFileViewModel(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener) {
+    UploadFileViewModel(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener) {
         super(file, onItemClickListener);
     }
 }

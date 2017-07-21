@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBar;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.databinding.UploadActivityBinding;
+import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMActivity;
 import com.afterlogic.aurora.drive.presentation.modules.upload.v2.viewModel.UploadViewModel;
 
@@ -42,7 +43,6 @@ public class UploadActivity extends InjectableMVVMActivity<UploadViewModel> impl
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
-            ab.setHomeAsUpIndicator(R.drawable.ic_close);
         }
 
         return binding;
@@ -56,5 +56,28 @@ public class UploadActivity extends InjectableMVVMActivity<UploadViewModel> impl
     @Override
     public AndroidInjector<Fragment> supportFragmentInjector() {
         return fragmentInjector;
+    }
+
+    @Override
+    protected void bindCreated(UploadViewModel vm, UnbindableObservable.Bag bag) {
+        super.bindCreated(vm, bag);
+
+        UnbindableObservable.bind(vm.title, bag, field -> setTitle(field.get()));
+
+        UnbindableObservable.bind(vm.fileTypesLocked, bag, field -> {
+            ActionBar ab = getSupportActionBar();
+            if (ab != null) {
+                if (field.get()) {
+                    ab.setHomeAsUpIndicator(null);
+                } else {
+                    ab.setHomeAsUpIndicator(R.drawable.ic_close);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        getViewModel().onBackPressed();
     }
 }

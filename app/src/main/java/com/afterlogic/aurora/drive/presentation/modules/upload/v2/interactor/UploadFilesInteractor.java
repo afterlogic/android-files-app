@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Maybe;
 import io.reactivex.Single;
 
 /**
@@ -18,9 +19,15 @@ import io.reactivex.Single;
 
 public class UploadFilesInteractor extends FilesListInteractor {
 
+    private final FilesRepository filesRepository;
+    private final UploadFilesViewInteractor viewInteractor;
+
     @Inject
-    protected UploadFilesInteractor(FilesRepository filesRepository) {
+    protected UploadFilesInteractor(FilesRepository filesRepository,
+                                    UploadFilesViewInteractor viewInteractor) {
         super(filesRepository);
+        this.filesRepository = filesRepository;
+        this.viewInteractor = viewInteractor;
     }
 
     @Override
@@ -30,5 +37,16 @@ public class UploadFilesInteractor extends FilesListInteractor {
                         .filter(AuroraFile::isFolder)
                         .toList()
                 );
+    }
+
+
+    public Maybe<String> getCreateFolderName() {
+        return viewInteractor.getFolderName();
+    }
+
+    public Single<AuroraFile> createFolder(String name, AuroraFile currentFolder) {
+        AuroraFile newFolder = AuroraFile.create(currentFolder, name, true);
+        return filesRepository.createFolder(newFolder)
+                .andThen(Single.just(newFolder));
     }
 }
