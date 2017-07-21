@@ -24,13 +24,22 @@
             app:onRefresh="@{() -> vm.onRefresh()}"
             app:colorSchemeResources="@{@intArray/swipe_refresh_color_scheme}">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/list"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-                app:replace_filesAdapter="@{vm.items}"
-                tools:listitem="@layout/replace_item_list_file"/>
+                android:layout_height="match_parent">
+
+                <include layout="@layout/filelist_state_layout"
+                    android:id="@+id/filelist_state"
+                    app:vmState="@{vm.viewModelState}"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                    app:replace_filesAdapter="@{vm.items}"
+                    tools:listitem="@layout/replace_item_list_file"/>
+            </FrameLayout>
 
         </android.support.v4.widget.SwipeRefreshLayout>
 
