@@ -253,7 +253,7 @@ public class P7FileSubRepositoryImpl extends AuthorizedRepository implements Fil
 
     @Override
     public Single<String> createPublicLink(AuroraFile file) {
-        return mCloudService.createPublicLink(file.getType(), file.getPath(), file.getName(), file.isFolder())
+        return mCloudService.createPublicLink(file.getType(), file.getPath(), file.getName(), file.getSize(), file.isFolder())
                 .compose(Repository::withNetMapper)
                 .compose(this::withRelogin);
     }
