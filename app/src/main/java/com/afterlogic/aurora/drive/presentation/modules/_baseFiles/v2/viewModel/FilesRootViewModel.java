@@ -68,8 +68,8 @@ public class FilesRootViewModel<
         viewModelsConnection.setListener(this);
 
         viewModelsConnection.fileClickedPublisher
-                .compose(fileClickDisposable::track)
                 .observeOn(AndroidSchedulers.mainThread())
+                .compose(fileClickDisposable::track)
                 .subscribe(this::onFileClicked);
 
         startLoad();
@@ -137,14 +137,13 @@ public class FilesRootViewModel<
     }
 
     private void startLoad() {
-        loadingDisposable.disposeAndClear();
         fileTypes.clear();
 
         interactor.getAvailableFileTypes()
                 .doOnSubscribe(disposable -> viewModelState.set(ViewModelState.LOADING))
                 .doOnError(error -> viewModelState.set(ViewModelState.ERROR))
-                .compose(loadingDisposable::track)
                 .compose(subscriber::defaultSchedulers)
+                .compose(loadingDisposable::disposeAndTrack)
                 .subscribe(subscriber.subscribe(this::handleFileTypes));
     }
 

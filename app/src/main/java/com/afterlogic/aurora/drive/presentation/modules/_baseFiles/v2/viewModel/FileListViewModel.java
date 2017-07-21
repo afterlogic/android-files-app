@@ -31,7 +31,7 @@ import io.reactivex.Single;
  */
 
 public abstract class FileListViewModel<
-        FileListVM extends FileListViewModel,
+        FileListVM extends FileListViewModel<FileListVM, FileVM, Args>,
         FileVM extends AuroraFileViewModel,
         Args extends FileListArgs
 > extends LifecycleViewModel {
@@ -54,7 +54,7 @@ public abstract class FileListViewModel<
 
     private final AtomicBoolean firstSetArgs = new AtomicBoolean(true);
 
-    protected FileListViewModel(FilesListInteractor interactor,
+    FileListViewModel(FilesListInteractor interactor,
                                 Subscriber subscriber,
                                 ViewModelsConnection<FileListVM> viewModelsConnection) {
         this.interactor = interactor;
@@ -68,6 +68,7 @@ public abstract class FileListViewModel<
         fileType = args.getType();
 
         if (firstSetArgs.getAndSet(false)) {
+            //noinspection unchecked
             viewModelsConnection.register(fileType, (FileListVM) this);
         }
 
@@ -98,7 +99,6 @@ public abstract class FileListViewModel<
     }
 
     protected void reloadCurrentFolder() {
-        reloadDisposable.disposeAndClear();
         items.clear();
 
         if (foldersStack.size() == 0) return;
@@ -107,8 +107,8 @@ public abstract class FileListViewModel<
         getFilesSource(foldersStack.get(0))
                 .doOnSubscribe(disposable -> viewModelState.set(ViewModelState.LOADING))
                 .doOnError(error -> viewModelState.set(ViewModelState.ERROR))
-                .compose(reloadDisposable::track)
                 .compose(subscriber::defaultSchedulers)
+                .compose(reloadDisposable::disposeAndTrack)
                 .subscribe(subscriber.subscribe(this::handleFiles));
     }
 

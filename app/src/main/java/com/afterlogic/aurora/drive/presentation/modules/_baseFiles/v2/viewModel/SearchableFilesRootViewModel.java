@@ -1,5 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel;
 
+import android.text.TextUtils;
+
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
@@ -53,19 +55,20 @@ public class SearchableFilesRootViewModel<
     }
 
     private void onSearchQueryChanged() {
-        if (fileTypesLocked.get()) {
-            setSearchQueryForType(getCurrentFileType());
+        String query = searchQuery.get();
+        if (fileTypesLocked.get() && !TextUtils.isEmpty(query)) {
+            setSearchQueryForType(getCurrentFileType(), query);
         } else {
             Stream.of(fileTypes)
                     .map(FileType::getFilesType)
-                    .forEach(this::setSearchQueryForType);
+                    .forEach(type -> setSearchQueryForType(type, query));
         }
     }
 
-    private void setSearchQueryForType(String type) {
+    private void setSearchQueryForType(String type, String query) {
         FileListVM vm = viewModelsConnection.get(type);
         if (vm != null) {
-            vm.onSearchQuery(searchQuery.get());
+            vm.onSearchQuery(query);
         }
     }
 

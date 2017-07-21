@@ -23,7 +23,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
  */
 
 public abstract class SearchableFileListViewModel<
-        FileListVM extends SearchableFileListViewModel,
+        FileListVM extends SearchableFileListViewModel<FileListVM, FileVM, Args>,
         FileVM extends AuroraFileViewModel,
         Args extends FileListArgs
 > extends FileListViewModel<FileListVM, FileVM, Args> {
@@ -60,8 +60,8 @@ public abstract class SearchableFileListViewModel<
         int delay = TextUtils.isEmpty(searchPattern.get()) ? 0 : 500;
 
         Single.timer(delay, TimeUnit.MILLISECONDS)
-                .compose(setSearchQueryDisposable::disposeAndTrack)
                 .observeOn(AndroidSchedulers.mainThread())
+                .compose(setSearchQueryDisposable::disposeAndTrack)
                 .subscribe(tick -> reloadCurrentFolder());
     }
 }

@@ -66,6 +66,7 @@ public interface Api7 {
         String FROM_PATH = "FromPath";
         String TO_PATH = "ToPath";
         String FILES = "Files";
+        String SIZE = "Size";
     }
 
     interface Links{
