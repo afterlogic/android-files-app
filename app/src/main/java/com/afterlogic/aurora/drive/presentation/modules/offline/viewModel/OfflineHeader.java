@@ -11,7 +11,7 @@ public class OfflineHeader implements StableId {
 
     private boolean manual;
 
-    public OfflineHeader(boolean manual) {
+    OfflineHeader(boolean manual) {
         this.manual = manual;
     }
 
