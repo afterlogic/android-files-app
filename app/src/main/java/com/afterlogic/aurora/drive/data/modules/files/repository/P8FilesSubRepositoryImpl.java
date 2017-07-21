@@ -262,7 +262,7 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
 
     @Override
     public Single<String> createPublicLink(AuroraFile file) {
-        return mFilesService.createPublicLink(file.getType(), file.getPath(), file.getName(), file.isFolder())
+        return mFilesService.createPublicLink(file.getType(), file.getPath(), file.getName(), file.getSize(), file.isFolder())
                 .compose(Repository::withNetMapper)
                 .compose(this::withRelogin);
     }

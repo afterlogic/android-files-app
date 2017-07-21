@@ -1,2 +1,9 @@
-File searching.
-+ fixed search query updating.
+Release 89:
+BUG - missing Size param in CreatePublicLink request
+Empty folder indication
+BUG - incorrect files list after search
+BUG - search in offline mode
+BUG - file list is not refreshed with deep nesting
+
+Release 87/88:
+Files and folders searching.

@@ -87,6 +87,7 @@ public interface Api8 {
         String FROM_PATH = "FromPath";
         String TO_PATH = "ToPath";
         String FILES = "Files";
+        String SIZE = "Size";
     }
 
     @POST()
