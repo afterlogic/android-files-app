@@ -1,5 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.upload.v2.viewModel;
 
+import android.os.Bundle;
+
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileListArgs;
 
 /**
@@ -8,4 +10,11 @@ import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileL
  */
 
 public class UploadArgs extends FileListArgs {
+
+    public UploadArgs(Bundle args) {
+        super(args);
+    }
+
+    public UploadArgs() {
+    }
 }

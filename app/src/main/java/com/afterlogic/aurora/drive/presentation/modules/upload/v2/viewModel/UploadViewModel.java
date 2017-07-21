@@ -25,4 +25,8 @@ public class UploadViewModel extends FilesRootViewModel<UploadFileListViewModel>
                               ViewModelsConnection<UploadFileListViewModel> viewModelsConnection) {
         super(interactor, subscriber, router, appResources, viewModelsConnection);
     }
+
+    public void onCreateFolder() {
+
+    }
 }

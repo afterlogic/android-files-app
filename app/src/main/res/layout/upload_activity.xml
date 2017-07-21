@@ -5,7 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <import type="android.view.View"/>
 
         <import type="com.afterlogic.aurora.drive.presentation.modules.upload.v2.viewModel.UploadViewModel"/>
@@ -48,7 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:text="@string/prompt_error_occurred_pull_to_refresh"
+            android:text="@string/prompt_error_occurred"
             android:padding="32dp"
             android:gravity="center_horizontal"
             android:visibility="@{vm.viewModelState.isError() ? View.VISIBLE : View.GONE}"/>
@@ -78,13 +77,7 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:upload_fileTypesAdapter="@{vm.fileTypes}"
             app:currentItem="@{vm.currentFileTypePosition}"
-            app:swipeEnabled="@{vm.fileTypesLocked}"/>
-
-        <View
-            android:id="@+id/fab_collapser"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"/>
+            app:swipeEnabled="@{!vm.fileTypesLocked}"/>
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             style="@style/FabButton"

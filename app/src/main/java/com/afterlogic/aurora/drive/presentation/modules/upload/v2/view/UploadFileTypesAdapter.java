@@ -18,6 +18,6 @@ class UploadFileTypesAdapter extends FileTypesPagerAdapter {
 
     @Override
     protected Fragment getFilesListFragment(String type) {
-        return null;
+        return UploadFilesListFragment.newInstance(type);
     }
 }

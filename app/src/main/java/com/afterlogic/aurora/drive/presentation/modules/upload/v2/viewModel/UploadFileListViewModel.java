@@ -3,10 +3,9 @@ package com.afterlogic.aurora.drive.presentation.modules.upload.v2.viewModel;
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.FilesListInteractor;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.AuroraFileViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.FileListViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.ViewModelsConnection;
+import com.afterlogic.aurora.drive.presentation.modules.upload.v2.interactor.UploadFilesInteractor;
 
 import javax.inject.Inject;
 
@@ -15,17 +14,20 @@ import javax.inject.Inject;
  * mail: mail@sunnydaydev.me
  */
 
-public class UploadFileListViewModel extends FileListViewModel<UploadFileListViewModel, AuroraFileViewModel, UploadArgs> {
+public class UploadFileListViewModel extends FileListViewModel<UploadFileListViewModel, UploadFileViewModel, UploadArgs> {
+
+    private final UploadFilesInteractor interactor;
 
     @Inject
-    public UploadFileListViewModel(FilesListInteractor interactor,
+    public UploadFileListViewModel(UploadFilesInteractor interactor,
                                    Subscriber subscriber,
                                    ViewModelsConnection<UploadFileListViewModel> viewModelsConnection) {
         super(interactor, subscriber, viewModelsConnection);
+        this.interactor = interactor;
     }
 
     @Override
-    protected AuroraFileViewModel mapFileItem(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener) {
-        return new AuroraFileViewModel(file, onItemClickListener);
+    protected UploadFileViewModel mapFileItem(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener) {
+        return new UploadFileViewModel(file, onItemClickListener);
     }
 }
