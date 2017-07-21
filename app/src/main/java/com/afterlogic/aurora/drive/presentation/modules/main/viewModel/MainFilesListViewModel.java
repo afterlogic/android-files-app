@@ -98,6 +98,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
 
     @Nullable
     private List<AuroraFile> files = null;
+
     @Nullable
     private AuroraFile fileForAction = null;
 
@@ -123,20 +124,20 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
         mapper.setOnLongClickListener((position, item) -> onFileLongClick(item));
 
         viewModelsConnection.getMultiChoiceMode()
-                .compose(globalDisposableBag::track)
                 .compose(subscriber::defaultSchedulers)
+                .compose(globalDisposableBag::track)
                 .subscribe(subscriber.subscribe(multiChoiceMode::set));
 
         setFileTypePublisher.firstElement()
                 .flatMapObservable(viewModelsConnection::listenMultiChoiceAction)
-                .compose(globalDisposableBag::track)
                 .compose(subscriber::defaultSchedulers)
+                .compose(globalDisposableBag::track)
                 .subscribe(subscriber.subscribe(this::handleMultiChoiceAction));
 
         setFileTypePublisher.firstElement()
                 .flatMapObservable(viewModelsConnection::listenMainAction)
-                .compose(globalDisposableBag::track)
                 .compose(subscriber::defaultSchedulers)
+                .compose(globalDisposableBag::track)
                 .subscribe(subscriber.subscribe(this::handleMainAction));
 
         SimpleOnPropertyChangedCallback.addTo(multiChoiceMode, mode -> onMultiChoiceModeChanged(mode.get()));
@@ -170,8 +171,8 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
         Stream.of(items).forEach(vm -> vm.syncProgress.set(-1));
 
         interactor.getSyncProgress()
-                .compose(syncProgressDisposable::disposeAndTrack)
                 .compose(subscriber::defaultSchedulers)
+                .compose(syncProgressDisposable::disposeAndTrack)
                 .subscribe(subscriber.subscribe(this::handleSyncProgress));
 
     }
@@ -193,15 +194,15 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                 .filter(AuroraFile::hasThumbnail)
                 .map(this::updateFileThumb)
                 .collect(Observables.Collectors.concatCompletable())
-                .compose(thumbsDisposable::disposeAndTrack)
                 .compose(subscriber::defaultSchedulers)
+                .compose(thumbsDisposable::disposeAndTrack)
                 .subscribe(subscriber.justSubscribe());
 
         Stream.of(files)
                 .map(this::checkOfflineStatus)
                 .collect(Observables.Collectors.concatCompletable())
-                .compose(offlineStatusDisposable::disposeAndTrack)
                 .compose(subscriber::defaultSchedulers)
+                .compose(offlineStatusDisposable::disposeAndTrack)
                 .subscribe(subscriber.justSubscribe());
     }
 
@@ -448,9 +449,9 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
         interactor.getFileForUpload()
                 .observeOn(Schedulers.io())
                 .flatMap(this::uploadFile)
-                .compose(globalDisposableBag::track)
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
+                .compose(globalDisposableBag::track)
                 .subscribe(subscriber.subscribe(this::reloadCurrentFolder));
     }
 
@@ -684,37 +685,37 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     private <T extends Progressible> ObservableTransformer<T, T> cancellableLoadProgress(String title) {
         OptionalDisposable disposable = new OptionalDisposable();
         return upstream -> upstream
-                .doOnSubscribe(disposable::set)
-                .doOnNext(progress -> {
+                .doOnNext(progressible -> {
 
-                    float max = progress.getMax();
-                    float prog = progress.getProgress();
+                    float max = progressible.getMax();
+                    float progress = progressible.getProgress();
 
-                    float value;
+                    float progressRatio;
 
-                    if (max > 0 && prog > 0) {
-                        value = prog / max;
+                    if (max > 0 && progress > 0) {
+                        progressRatio = progress / max;
                     } else {
-                        value = -1;
+                        progressRatio = -1;
                     }
 
-                    if (value == -1) {
+                    if (progressRatio == -1) {
                         this.progress.set(ProgressViewModel.Factory.indeterminateProgress(
                                 title,
-                                progress.getName(),
+                                progressible.getName(),
                                 disposable::disposeAndClear
                         ));
                     } else {
                         this.progress.set(ProgressViewModel.Factory.progress(
                                 title,
-                                progress.getName(),
-                                (int) (100 * value),
+                                progressible.getName(),
+                                (int) (100 * progressRatio),
                                 100,
                                 disposable::disposeAndClear
                         ));
                     }
                 })
-                .doFinally(() -> progress.set(null));
+                .doFinally(() -> progress.set(null))
+                .compose(disposable::track);
     }
 
     // endregion
