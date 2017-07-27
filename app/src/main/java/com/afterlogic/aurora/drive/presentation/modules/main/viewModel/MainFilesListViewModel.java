@@ -31,9 +31,11 @@ import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnPro
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ViewModelState;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.MessageDialogViewModel;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.ProgressViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileListArgs;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFileListViewModel;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.rx.FileProgressTransformer;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.rx.IndeterminateProgressTransformer;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.rx.TrackInMapTransformer;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewArgs;
 import com.afterlogic.aurora.drive.presentation.modules.main.interactor.MainFilesListInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.mainFilesAction.interactor.MainFileAction;
@@ -47,18 +49,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
 
 import io.reactivex.Completable;
-import io.reactivex.CompletableSource;
-import io.reactivex.CompletableTransformer;
 import io.reactivex.Maybe;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.Single;
-import io.reactivex.SingleSource;
-import io.reactivex.SingleTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -124,19 +121,19 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
         mapper.setOnLongClickListener((position, item) -> onFileLongClick(item));
 
         viewModelsConnection.getMultiChoiceMode()
-                .compose(subscriber::defaultSchedulers)
+                .observeOn(AndroidSchedulers.mainThread())
                 .compose(globalDisposableBag::track)
                 .subscribe(subscriber.subscribe(multiChoiceMode::set));
 
         setFileTypePublisher.firstElement()
                 .flatMapObservable(viewModelsConnection::listenMultiChoiceAction)
-                .compose(subscriber::defaultSchedulers)
+                .observeOn(AndroidSchedulers.mainThread())
                 .compose(globalDisposableBag::track)
                 .subscribe(subscriber.subscribe(this::handleMultiChoiceAction));
 
         setFileTypePublisher.firstElement()
                 .flatMapObservable(viewModelsConnection::listenMainAction)
-                .compose(subscriber::defaultSchedulers)
+                .observeOn(AndroidSchedulers.mainThread())
                 .compose(globalDisposableBag::track)
                 .subscribe(subscriber.subscribe(this::handleMainAction));
 
@@ -329,7 +326,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     private void multiChoiceDelete(List<AuroraFile> files) {
         Stream.of(files)
                 .map(file -> interactor.deleteFile(file)
-                        .observeOn(AndroidSchedulers.mainThread())
+                        .compose(subscriber::defaultSchedulers)
                         .doOnComplete(() -> {
                             MainFileViewModel vm = mapper.get(file);
                             if (vm != null) {
@@ -338,8 +335,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                         })
                 )
                 .collect(Observables.Collectors.concatCompletable())
-                .compose(subscriber::defaultSchedulers)
-                .compose(new IndeterminateProgressTransformer(
+                .compose(new IndeterminateProgressTransformer(this,
                         appResources.getString(R.string.prompt_dialog_title_deleting),
                         appResources.getPlurals(R.plurals.files, files.size(), files.size())
                 ))
@@ -438,7 +434,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
 
     private Maybe<AuroraFile> createFolder(String name) {
         return interactor.createNewFolder(name, foldersStack.get(0))
-                .compose(new IndeterminateProgressTransformer<>(
+                .compose(new IndeterminateProgressTransformer<>(this,
                         appResources.getString(R.string.prompt_dialog_title_folder_creation),
                         name
                 ))
@@ -538,7 +534,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
 
     private Single<AuroraFile> renameFile(AuroraFile file, String newName) {
         return interactor.rename(file, newName)
-                .compose(new IndeterminateProgressTransformer<>(
+                .compose(new IndeterminateProgressTransformer<>(this,
                         appResources.getString(R.string.prompt_dialog_title_renaming),
                         file.getName()
                 ));
@@ -547,7 +543,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     private void deleteFile(AuroraFile file) {
         interactor.deleteFile(file)
                 .compose(subscriber::defaultSchedulers)
-                .compose(new IndeterminateProgressTransformer(
+                .compose(new IndeterminateProgressTransformer(this,
                         appResources.getString(R.string.prompt_dialog_title_deleting),
                         file.getName()
                 ))
@@ -683,39 +679,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     }
 
     private <T extends Progressible> ObservableTransformer<T, T> cancellableLoadProgress(String title) {
-        OptionalDisposable disposable = new OptionalDisposable();
-        return upstream -> upstream
-                .doOnNext(progressible -> {
-
-                    float max = progressible.getMax();
-                    float progress = progressible.getProgress();
-
-                    float progressRatio;
-
-                    if (max > 0 && progress > 0) {
-                        progressRatio = progress / max;
-                    } else {
-                        progressRatio = -1;
-                    }
-
-                    if (progressRatio == -1) {
-                        this.progress.set(ProgressViewModel.Factory.indeterminateProgress(
-                                title,
-                                progressible.getName(),
-                                disposable::disposeAndClear
-                        ));
-                    } else {
-                        this.progress.set(ProgressViewModel.Factory.progress(
-                                title,
-                                progressible.getName(),
-                                (int) (100 * progressRatio),
-                                100,
-                                disposable::disposeAndClear
-                        ));
-                    }
-                })
-                .doFinally(() -> progress.set(null))
-                .compose(disposable::track);
+        return new FileProgressTransformer<>(title, progress);
     }
 
     // endregion
@@ -726,72 +690,4 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
         globalDisposableBag.dispose();
     }
 
-    // region Helper classes
-
-    private class IndeterminateProgressTransformer<T> implements SingleTransformer<T,T>, CompletableTransformer {
-
-        private final String title;
-        private final String message;
-
-        private IndeterminateProgressTransformer(String title, String message) {
-            this.title = title;
-            this.message = message;
-        }
-
-        @Override
-        public CompletableSource apply(Completable upstream) {
-            return upstream
-                    .doOnSubscribe(disposable -> progress.set(createProgress()))
-                    .doFinally(() -> progress.set(null));
-        }
-
-        @Override
-        public SingleSource<T> apply(Single<T> upstream) {
-            return upstream
-                .doOnSubscribe(disposable -> progress.set(createProgress()))
-                .doFinally(() -> progress.set(null));
-        }
-
-        private ProgressViewModel createProgress() {
-            return ProgressViewModel.Factory.indeterminateCircle(
-                    title,
-                    message
-            );
-        }
-    }
-
-    private class TrackInMapTransformer<K> implements CompletableTransformer {
-
-        private final K key;
-        private final Map<K, Disposable> map;
-
-        private TrackInMapTransformer(K key, Map<K, Disposable> map) {
-            this.key = key;
-            this.map = map;
-        }
-
-        @Override
-        public CompletableSource apply(Completable upstream) {
-
-            AtomicReference<Disposable> disposableAtomicReference = new AtomicReference<>();
-
-            return upstream
-                    .doOnSubscribe(disposable -> {
-                        Disposable current = map.get(key);
-                        if (current != null) {
-                            current.dispose();
-                        }
-                        map.put(key, disposable);
-                        disposableAtomicReference.set(disposable);
-                    })
-                    .doFinally(() -> {
-                        Disposable current = map.get(key);
-                        if (current != null && disposableAtomicReference.get() == current) {
-                            map.remove(key);
-                        }
-                    });
-        }
-    }
-
-    // endregion
 }

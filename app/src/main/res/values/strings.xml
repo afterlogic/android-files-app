@@ -125,15 +125,18 @@
     <plurals name="dialog_files_success_downloaded">
         <item quantity="one">%d file success downloaded.</item>
         <item quantity="many">%d files success downloaded.</item>
+        <item quantity="other">%d files success downloaded.</item>
     </plurals>
 
     <plurals name="files">
         <item quantity="one">%d file.</item>
         <item quantity="many">%d files.</item>
+        <item quantity="other">%d files.</item>
     </plurals>
 
     <plurals name="prompt_files_count">
         <item quantity="one">%d file</item>
+        <item quantity="many">%d files</item>
         <item quantity="other">%d files</item>
     </plurals>
 </resources>

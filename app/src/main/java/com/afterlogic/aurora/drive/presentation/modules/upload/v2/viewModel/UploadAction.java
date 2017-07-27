@@ -6,5 +6,5 @@ package com.afterlogic.aurora.drive.presentation.modules.upload.v2.viewModel;
  */
 
 public enum  UploadAction {
-    CREATE_FOLDER
+    CREATE_FOLDER, UPLOAD
 }

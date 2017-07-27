@@ -43,51 +43,97 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:text="@string/prompt_error_occurred"
-            android:padding="32dp"
-            android:gravity="center_horizontal"
-            android:visibility="@{vm.viewModelState.isError() ? View.VISIBLE : View.GONE}"/>
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!-- SwipeRefresh for refreshing on error and progress indication-->
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/refresh"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            app:onRefresh="@{() -> vm.onRefresh()}"
-            app:refreshing="@{vm.viewModelState.isLoading()}"
-            app:colorSchemeResources="@{@intArray/swipe_refresh_color_scheme}">
-            <ScrollView
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <View
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="20dp"/>
-            </ScrollView>
-        </android.support.v4.widget.SwipeRefreshLayout>
+                    android:layout_height="match_parent"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    android:text="@string/prompt_error_occurred_pull_to_refresh"
+                    android:padding="32dp"
+                    android:gravity="center_horizontal"
+                    android:visibility="@{vm.viewModelState.isError() ? View.VISIBLE : View.GONE}"/>
 
-        <com.afterlogic.aurora.drive.presentation.common.components.view.DisablableViewPager
-            android:id="@+id/viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            app:upload_fileTypesAdapter="@{vm.fileTypes}"
-            app:currentItem="@{vm.currentFileTypePosition}"
-            app:swipeEnabled="@{!vm.fileTypesLocked}"/>
+                <!-- SwipeRefresh for refreshing on error and progress indication-->
+                <android.support.v4.widget.SwipeRefreshLayout
+                    android:id="@+id/refresh"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    app:onRefresh="@{() -> vm.onRefresh()}"
+                    app:refreshing="@{vm.viewModelState.isLoading()}"
+                    app:colorSchemeResources="@{@intArray/swipe_refresh_color_scheme}">
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="20dp"/>
+                    </ScrollView>
+                </android.support.v4.widget.SwipeRefreshLayout>
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            style="@style/FabButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            app:fab_icon="@drawable/ic_create_new_folder"
-            android:onClick="@{() -> vm.onCreateFolder()}"
-            android:visibility="@{vm.viewModelState.isContent() ? View.VISIBLE : View.GONE}"
-            tools:ignore="RtlHardcoded" />
+                <com.afterlogic.aurora.drive.presentation.common.components.view.DisablableViewPager
+                    android:id="@+id/viewpager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    app:upload_fileTypesAdapter="@{vm.fileTypes}"
+                    app:currentItem="@{vm.currentFileTypePosition}"
+                    app:swipeEnabled="@{!vm.fileTypesLocked}"/>
+
+                <com.getbase.floatingactionbutton.FloatingActionButton
+                    style="@style/FabButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|right"
+                    app:fab_icon="@drawable/ic_create_new_folder"
+                    android:onClick="@{() -> vm.onCreateFolder()}"
+                    android:visibility="@{vm.viewModelState.isContent() ? View.VISIBLE : View.GONE}"
+                    tools:ignore="RtlHardcoded" />
+            </FrameLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorAccent"
+                android:visibility="@{vm.viewModelState.isContent() ? View.VISIBLE : View.GONE}"/>
+
+            <!-- Hardcode rtl because main activity can't be resolved with same fab position-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:gravity="right"
+                android:visibility="@{vm.viewModelState.isContent() ? View.VISIBLE : View.GONE}"
+                tools:ignore="RtlHardcoded">
+
+                <TextView
+                    android:id="@+id/upload"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:text="@string/prompt_send_upload_this_folder"
+                    android:lines="1"
+                    android:gravity="center"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorAccent"
+                    android:background="@drawable/bg_simple_highlight"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="@{() -> vm.onUpload()}"/>
+
+            </LinearLayout>
+        </LinearLayout>
 
     </android.support.design.widget.CoordinatorLayout>
 </layout>

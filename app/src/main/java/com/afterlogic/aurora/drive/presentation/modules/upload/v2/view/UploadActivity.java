@@ -1,24 +1,36 @@
 package com.afterlogic.aurora.drive.presentation.modules.upload.v2.view;
 
 import android.arch.lifecycle.ViewModelProvider;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.databinding.UploadActivityBinding;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMActivity;
 import com.afterlogic.aurora.drive.presentation.modules.upload.v2.viewModel.UploadViewModel;
+import com.annimon.stream.Stream;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
+
+import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.JELLY_BEAN;
 
 /**
  * Created by aleksandrcikin on 19.07.17.
@@ -54,6 +66,12 @@ public class UploadActivity extends InjectableMVVMActivity<UploadViewModel> impl
     }
 
     @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getViewModel().setArgs(parseParams());
+    }
+
+    @Override
     public AndroidInjector<Fragment> supportFragmentInjector() {
         return fragmentInjector;
     }
@@ -79,5 +97,22 @@ public class UploadActivity extends InjectableMVVMActivity<UploadViewModel> impl
     @Override
     public void onBackPressed() {
         getViewModel().onBackPressed();
+    }
+
+    private List<Uri> parseParams(){
+        Intent intent = getIntent();
+        List<Uri> data = new ArrayList<>();
+        if (SDK_INT >= JELLY_BEAN) {
+            ClipData clipData = intent.getClipData();
+            for (int i = 0; i < clipData.getItemCount(); i++){
+                data.add(clipData.getItemAt(i).getUri());
+            }
+        } else {
+            data.add(intent.getData());
+        }
+
+        return Stream.of(data)
+                .filter(ObjectsUtil::nonNull)
+                .toList();
     }
 }

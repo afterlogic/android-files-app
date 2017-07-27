@@ -1,7 +1,10 @@
 package com.afterlogic.aurora.drive.presentation.modules.upload.v2.interactor;
 
+import android.net.Uri;
+
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.FilesListInteractor;
 import com.annimon.stream.Stream;
 
@@ -10,6 +13,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Maybe;
+import io.reactivex.Observable;
 import io.reactivex.Single;
 
 /**
@@ -39,7 +43,6 @@ public class UploadFilesInteractor extends FilesListInteractor {
                 );
     }
 
-
     public Maybe<String> getCreateFolderName() {
         return viewInteractor.getFolderName();
     }
@@ -48,5 +51,9 @@ public class UploadFilesInteractor extends FilesListInteractor {
         AuroraFile newFolder = AuroraFile.create(currentFolder, name, true);
         return filesRepository.createFolder(newFolder)
                 .andThen(Single.just(newFolder));
+    }
+
+    public Observable<Progressible<AuroraFile>> uploadFile(AuroraFile folder, Uri file) {
+        return filesRepository.uploadFile(folder, file);
     }
 }

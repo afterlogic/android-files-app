@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.BindingUtil;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMFragment;
 import com.afterlogic.aurora.drive.presentation.modules.upload.v2.viewModel.UploadArgs;
 import com.afterlogic.aurora.drive.presentation.modules.upload.v2.viewModel.UploadFileListViewModel;
@@ -46,5 +48,12 @@ public class UploadFilesListFragment extends InjectableMVVMFragment<UploadFileLi
     @Override
     public UploadFileListViewModel createViewModel(ViewModelProvider provider) {
         return provider.get(UploadFileListViewModel.class);
+    }
+
+    @Override
+    protected void bindStarted(UploadFileListViewModel vm, UnbindableObservable.Bag bag) {
+        super.bindStarted(vm, bag);
+
+        BindingUtil.bindProgressDialog(vm.progress, bag, getActivity());
     }
 }
