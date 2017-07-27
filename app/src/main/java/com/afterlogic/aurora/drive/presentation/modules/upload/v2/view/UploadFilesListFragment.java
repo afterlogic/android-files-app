@@ -55,5 +55,7 @@ public class UploadFilesListFragment extends InjectableMVVMFragment<UploadFileLi
         super.bindStarted(vm, bag);
 
         BindingUtil.bindProgressDialog(vm.progress, bag, getActivity());
+
+        BindingUtil.bindDialog(vm.message, bag, getActivity());
     }
 }
