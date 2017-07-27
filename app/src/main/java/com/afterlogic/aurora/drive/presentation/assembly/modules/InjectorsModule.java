@@ -14,10 +14,6 @@ import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginInje
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
 import com.afterlogic.aurora.drive.presentation.modules.start.assembly.StartInjector;
 import com.afterlogic.aurora.drive.presentation.modules.start.view.StartActivity;
-import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadFilesInjector;
-import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadInjector;
-import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadActivity;
-import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadFilesFragment;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.accountAction.AccountActionInjector;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.accountAction.AccountActionReceiver;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.assembly.FileObserverInjector;
@@ -60,16 +56,6 @@ public class InjectorsModule {
 
     @Provides
     Injector<StartActivity> start(StartInjector injector){
-        return injector;
-    }
-
-    @Provides
-    Injector<UploadActivity> upload(UploadInjector injector){
-        return injector;
-    }
-
-    @Provides
-    Injector<UploadFilesFragment> uploadFilesList(UploadFilesInjector injector){
         return injector;
     }
 

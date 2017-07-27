@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.upload.v2.viewModel;
+package com.afterlogic.aurora.drive.presentation.modules.upload.viewModel;
 
 /**
  * Created by aleksandrcikin on 21.07.17.

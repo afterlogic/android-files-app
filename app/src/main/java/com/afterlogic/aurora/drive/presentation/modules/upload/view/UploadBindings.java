@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.upload.v2.view;
+package com.afterlogic.aurora.drive.presentation.modules.upload.view;
 
 import android.databinding.BindingAdapter;
 import android.support.v4.app.FragmentActivity;
@@ -8,7 +8,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.model.FileType;
-import com.afterlogic.aurora.drive.presentation.modules.upload.v2.viewModel.UploadFileViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.upload.viewModel.UploadFileViewModel;
 import com.android.databinding.library.baseAdapters.BR;
 import com.github.nitrico.lastadapter.LastAdapter;
 

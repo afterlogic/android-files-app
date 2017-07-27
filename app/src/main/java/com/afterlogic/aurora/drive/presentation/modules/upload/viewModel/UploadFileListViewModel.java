@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.upload.v2.viewModel;
+package com.afterlogic.aurora.drive.presentation.modules.upload.viewModel;
 
 import android.databinding.ObservableField;
 import android.net.Uri;
@@ -18,7 +18,7 @@ import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dial
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.rx.WakeLockTransformer;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.FileListViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.rx.FileProgressTransformer;
-import com.afterlogic.aurora.drive.presentation.modules.upload.v2.interactor.UploadFilesInteractor;
+import com.afterlogic.aurora.drive.presentation.modules.upload.interactor.UploadFilesInteractor;
 import com.annimon.stream.Stream;
 
 import java.util.ArrayList;

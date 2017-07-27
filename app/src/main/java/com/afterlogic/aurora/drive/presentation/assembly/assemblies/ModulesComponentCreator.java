@@ -12,10 +12,6 @@ import com.afterlogic.aurora.drive.presentation.modules.fileView.assembly.FileVi
 import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginComponent;
 import com.afterlogic.aurora.drive.presentation.modules.start.assembly.StartComponent;
 import com.afterlogic.aurora.drive.presentation.modules.start.assembly.StartModule;
-import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadComponent;
-import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadFilesComponent;
-import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadFilesModule;
-import com.afterlogic.aurora.drive.presentation.modules.upload.assembly.UploadModule;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.accountAction.AccountActionComponent;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.assembly.FileObserverComponent;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.assembly.FileObserverModule;
@@ -45,9 +41,6 @@ public interface ModulesComponentCreator {
     LoginComponent login();
 
     StartComponent plus(StartModule module);
-
-    UploadComponent plus(UploadModule module);
-    UploadFilesComponent plus(UploadFilesModule module);
 
     ChoiseComponent plus(ChoiseModule module);
     ChoiseFilesComponent plus(ChoiseFilesModule module);

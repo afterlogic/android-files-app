@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.upload.v2.viewModel;
+package com.afterlogic.aurora.drive.presentation.modules.upload.viewModel;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;

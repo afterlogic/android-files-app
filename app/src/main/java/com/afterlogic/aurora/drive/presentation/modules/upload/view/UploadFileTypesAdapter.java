@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.upload.v2.view;
+package com.afterlogic.aurora.drive.presentation.modules.upload.view;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

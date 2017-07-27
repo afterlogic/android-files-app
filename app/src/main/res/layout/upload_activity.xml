@@ -7,7 +7,7 @@
     <data>
         <import type="android.view.View"/>
 
-        <import type="com.afterlogic.aurora.drive.presentation.modules.upload.v2.viewModel.UploadViewModel"/>
+        <import type="com.afterlogic.aurora.drive.presentation.modules.upload.viewModel.UploadViewModel"/>
 
         <variable
             name="vm"

@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.upload.v2.view;
+package com.afterlogic.aurora.drive.presentation.modules.upload.view;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.databinding.DataBindingUtil;
@@ -12,8 +12,8 @@ import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.BindingUtil;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMFragment;
-import com.afterlogic.aurora.drive.presentation.modules.upload.v2.viewModel.UploadArgs;
-import com.afterlogic.aurora.drive.presentation.modules.upload.v2.viewModel.UploadFileListViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.upload.viewModel.UploadArgs;
+import com.afterlogic.aurora.drive.presentation.modules.upload.viewModel.UploadFileListViewModel;
 
 /**
  * Created by aleksandrcikin on 19.07.17.

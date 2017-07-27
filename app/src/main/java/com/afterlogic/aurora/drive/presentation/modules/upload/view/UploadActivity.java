@@ -1,90 +1,105 @@
 package com.afterlogic.aurora.drive.presentation.modules.upload.view;
 
+import android.arch.lifecycle.ViewModelProvider;
 import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
-import com.afterlogic.aurora.drive.core.common.streams.ExtCollectors;
 import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
-import com.afterlogic.aurora.drive.databinding.ActivityUploadBinding;
-import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
-import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesActivity;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesListFragment;
-import com.afterlogic.aurora.drive.presentation.modules.upload.model.presenter.UploadPresenter;
+import com.afterlogic.aurora.drive.databinding.UploadActivityBinding;
+import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMActivity;
 import com.afterlogic.aurora.drive.presentation.modules.upload.viewModel.UploadViewModel;
 import com.annimon.stream.Stream;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.support.HasSupportFragmentInjector;
+
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.JELLY_BEAN;
 
 /**
- * Created by sashka on 10.02.17.<p/>
- * mail: sunnyday.development@gmail.com
+ * Created by aleksandrcikin on 19.07.17.
+ * mail: mail@sunnydaydev.me
  */
 
-public class UploadActivity extends BaseFilesActivity<UploadViewModel, UploadPresenter> implements UploadView{
+public class UploadActivity extends InjectableMVVMActivity<UploadViewModel> implements HasSupportFragmentInjector {
 
-    private List<Uri> mIntentParams = new ArrayList<>();
+    @Inject
+    protected DispatchingAndroidInjector<Fragment> fragmentInjector;
 
-    private SimpleListener mLockedListener = new SimpleListener(this::updateActionBar);
+    public static Intent intent(Context context) {
+        return new Intent(context, UploadActivity.class);
+    }
 
     @Override
-    protected void assembly(InjectorsComponent modulesFactory) {
-        modulesFactory.upload().inject(this);
+    public ViewDataBinding createBinding() {
+        UploadActivityBinding binding =  DataBindingUtil.setContentView(this, R.layout.upload_activity);
+
+        setSupportActionBar(binding.toolbar);
+
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
+
+        return binding;
+    }
+
+    @Override
+    public UploadViewModel createViewModel(ViewModelProvider provider) {
+        return provider.get(UploadViewModel.class);
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!parseParams()){
-            //TODO error toast
-            finish();
-        }
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        updateActionBar();
-
-        mViewModel.getLocked().addOnPropertyChangedCallback(mLockedListener);
+        getViewModel().setArgs(parseParams());
     }
 
     @Override
-    public BaseFilesListFragment getFilesContent(String type) {
-        return new UploadFilesFragment();
+    public AndroidInjector<Fragment> supportFragmentInjector() {
+        return fragmentInjector;
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mViewModel.getLocked().removeOnPropertyChangedCallback(mLockedListener);
+    protected void bindCreated(UploadViewModel vm, UnbindableObservable.Bag bag) {
+        super.bindCreated(vm, bag);
+
+        UnbindableObservable.bind(vm.title, bag, field -> setTitle(field.get()));
+
+        UnbindableObservable.bind(vm.fileTypesLocked, bag, field -> {
+            ActionBar ab = getSupportActionBar();
+            if (ab != null) {
+                if (field.get()) {
+                    ab.setHomeAsUpIndicator(null);
+                } else {
+                    ab.setHomeAsUpIndicator(R.drawable.ic_close);
+                }
+            }
+        });
     }
 
     @Override
-    public ViewDataBinding onCreateBind() {
-        ActivityUploadBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_upload);
-        binding.createFolder.setOnClickListener(view -> ifFragment(UploadFilesFragment::createFolder));
-        binding.upload.setOnClickListener(view -> ifFragment(current -> current.upload(mIntentParams)));
-        return binding;
+    public void onBackPressed() {
+        getViewModel().onBackPressed();
     }
 
-    private void ifFragment(Consumer<UploadFilesFragment> consumer){
-        UploadFilesFragment fragment = (UploadFilesFragment) mAdapter.getPrimaryFragment();
-        if (fragment != null){
-            consumer.consume(fragment);
-        }
-    }
-
-    private boolean parseParams(){
+    private List<Uri> parseParams(){
         Intent intent = getIntent();
         List<Uri> data = new ArrayList<>();
         if (SDK_INT >= JELLY_BEAN) {
@@ -96,26 +111,8 @@ public class UploadActivity extends BaseFilesActivity<UploadViewModel, UploadPre
             data.add(intent.getData());
         }
 
-        mIntentParams.clear();
-        Stream.of(data)
+        return Stream.of(data)
                 .filter(ObjectsUtil::nonNull)
-                .collect(ExtCollectors.to(mIntentParams));
-        return mIntentParams.size() > 0;
-    }
-
-    private void updateActionBar(){
-        ActionBar ab = getSupportActionBar();
-        if (ab == null) return;
-
-        if (!mViewModel.getLocked().get()){
-            ab.setHomeAsUpIndicator(R.drawable.ic_close);
-        }else{
-            ab.setHomeAsUpIndicator(null);
-        }
-    }
-
-    @Override
-    protected void updateHomeButtonByViewModel() {
-        //no-op
+                .toList();
     }
 }

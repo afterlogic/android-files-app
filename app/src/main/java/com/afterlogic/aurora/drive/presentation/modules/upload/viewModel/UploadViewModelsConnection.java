@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.upload.v2.viewModel;
+package com.afterlogic.aurora.drive.presentation.modules.upload.viewModel;
 
 import android.net.Uri;
 import android.support.v4.util.Pair;

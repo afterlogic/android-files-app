@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.modules.upload.v2.interactor;
+package com.afterlogic.aurora.drive.presentation.modules.upload.interactor;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.interactor.ActivityResolver;

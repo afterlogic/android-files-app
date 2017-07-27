@@ -11,8 +11,6 @@ import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseFilesF
 import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewActivity;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
 import com.afterlogic.aurora.drive.presentation.modules.start.view.StartActivity;
-import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadActivity;
-import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadFilesFragment;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.accountAction.AccountActionReceiver;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.view.FileObserverService;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.session.SessionChangedReceiver;
@@ -42,9 +40,6 @@ public interface InjectorsComponent {
     Injector<LoginActivity> login();
 
     Injector<StartActivity> start();
-
-    Injector<UploadActivity> upload();
-    Injector<UploadFilesFragment> uploadFileList();
 
     Injector<ChoiseActivity> choise();
     Injector<ChoiseFilesFragment> choiseFileList();

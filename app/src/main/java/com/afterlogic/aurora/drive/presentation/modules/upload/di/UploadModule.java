@@ -1,11 +1,11 @@
-package com.afterlogic.aurora.drive.presentation.modules.upload.v2.di;
+package com.afterlogic.aurora.drive.presentation.modules.upload.di;
 
 import android.arch.lifecycle.ViewModel;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.SubModuleScope;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.ViewModelKey;
-import com.afterlogic.aurora.drive.presentation.modules.upload.v2.view.UploadFilesListFragment;
-import com.afterlogic.aurora.drive.presentation.modules.upload.v2.viewModel.UploadViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadFilesListFragment;
+import com.afterlogic.aurora.drive.presentation.modules.upload.viewModel.UploadViewModel;
 
 import dagger.Binds;
 import dagger.Module;

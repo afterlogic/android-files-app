@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="com.afterlogic.aurora.drive.presentation.modules.upload.v2.viewModel.UploadFileListViewModel"/>
+        <import type="com.afterlogic.aurora.drive.presentation.modules.upload.viewModel.UploadFileListViewModel"/>
 
         <variable
             name="vm"

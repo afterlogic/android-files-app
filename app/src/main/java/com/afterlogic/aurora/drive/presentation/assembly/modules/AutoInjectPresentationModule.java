@@ -8,8 +8,8 @@ import com.afterlogic.aurora.drive.presentation.modules.offline.di.OfflineModule
 import com.afterlogic.aurora.drive.presentation.modules.offline.view.OfflineActivity;
 import com.afterlogic.aurora.drive.presentation.modules.replace.di.ReplaceModule;
 import com.afterlogic.aurora.drive.presentation.modules.replace.view.ReplaceActivity;
-import com.afterlogic.aurora.drive.presentation.modules.upload.v2.di.UploadModule;
-import com.afterlogic.aurora.drive.presentation.modules.upload.v2.view.UploadActivity;
+import com.afterlogic.aurora.drive.presentation.modules.upload.di.UploadModule;
+import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadActivity;
 
 import dagger.Module;
 import dagger.android.AndroidInjectionModule;
