@@ -372,7 +372,12 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                 .collectInto(new ArrayList<File>(), List::add)
                 .subscribe(subscriber.subscribe(results -> {
                     ExternalShareFilesArgs args = new ExternalShareFilesArgs(results);
-                    router.navigateTo(AppRouter.EXTERNAL_SHARE, args);
+                    router.navigateTo(AppRouter.EXTERNAL_SHARE, args, error -> {
+                        MessageDialogViewModel.set(
+                                messageDialog, null,
+                                appResources.getString(R.string.prompt_cant_open_file
+                                ));
+                    });
                 }));
     }
 
@@ -562,7 +567,12 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                 .filter(Progressible::isDone)
                 .map(Progressible::getData)
                 .subscribe(subscriber.subscribe(local -> router.navigateTo(
-                        AppRouter.EXTERNAL_OPEN_FILE, new ExternalOpenFIleArgs(file, local)
+                        AppRouter.EXTERNAL_OPEN_FILE, new ExternalOpenFIleArgs(file, local), error -> {
+                            MessageDialogViewModel.set(
+                                    messageDialog, null,
+                                    appResources.getString(R.string.prompt_cant_open_file
+                                    ));
+                        }
                 )));
     }
 
@@ -573,7 +583,12 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                 .filter(Progressible::isDone)
                 .map(Progressible::getData)
                 .subscribe(subscriber.subscribe(local ->router.navigateTo(
-                        AppRouter.EXTERNAL_SHARE, new ExternalShareFileArgs(file, local)
+                        AppRouter.EXTERNAL_SHARE, new ExternalShareFileArgs(file, local), error -> {
+                            MessageDialogViewModel.set(
+                                    messageDialog, null,
+                                    appResources.getString(R.string.prompt_cant_open_file
+                                    ));
+                        }
                 )));
     }
 
