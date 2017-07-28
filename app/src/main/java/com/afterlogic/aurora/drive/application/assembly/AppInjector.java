@@ -56,13 +56,6 @@ public class AppInjector {
 
         modulesComponent.inject(app);
 
-        // New injection style
-//        AutoInjectPresentationComponent component = DaggerAutoInjectPresentationComponent.builder()
-//                .dataAssemblyComponent(dataComponent)
-//                .build();
-//
-//        component.inject(app);
-
         app.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {

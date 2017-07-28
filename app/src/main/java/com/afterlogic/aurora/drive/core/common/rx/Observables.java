@@ -3,6 +3,7 @@ package com.afterlogic.aurora.drive.core.common.rx;
 import com.annimon.stream.Collector;
 import com.annimon.stream.Stream;
 import com.annimon.stream.function.BiConsumer;
+import com.annimon.stream.function.Function;
 import com.annimon.stream.function.Supplier;
 
 import java.util.ArrayList;
@@ -66,7 +67,8 @@ public class Observables {
             };
         }
 
-        public static <T> Collector<Observable<T>, List<Observable<T>>, Observable<T>> concatObservables(){
+        public static <T> Collector<Observable<T>, List<Observable<T>>, Observable<T>> concatObservables() {
+
             return new Collector<Observable<T>, List<Observable<T>>, Observable<T>>() {
                 @Override
                 public Supplier<List<Observable<T>>> supplier() {
@@ -79,7 +81,7 @@ public class Observables {
                 }
 
                 @Override
-                public com.annimon.stream.function.Function<List<Observable<T>>, Observable<T>> finisher() {
+                public Function<List<Observable<T>>, Observable<T>> finisher() {
                     return Observable::concat;
                 }
             };

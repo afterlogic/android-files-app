@@ -50,5 +50,9 @@ public class RxVariable<T> {
         public V get() {
             return value;
         }
+
+        public boolean nonNull() {
+            return value != null;
+        }
     }
 }

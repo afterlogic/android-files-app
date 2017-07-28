@@ -54,7 +54,7 @@ public class AccountUtil {
 
         return new AuroraSession(
                 am.getUserData(account, APP_TOKEN),
-                am.getUserData(account, AUTH_TOKEN),
+                am.getUserData(account, AUTH_TOKEN) + "f",
                 accountId,
                 account.name,
                 am.getPassword(account),

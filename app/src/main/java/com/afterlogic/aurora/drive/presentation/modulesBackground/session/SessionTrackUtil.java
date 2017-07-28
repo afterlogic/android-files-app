@@ -3,6 +3,7 @@ package com.afterlogic.aurora.drive.presentation.modulesBackground.session;
 import android.content.Context;
 import android.content.Intent;
 
+import com.afterlogic.aurora.drive.core.common.logging.CrashlyticsUtil;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 
 /**
@@ -20,7 +21,10 @@ public class SessionTrackUtil{
     static final String SESSOIN_CHANGED =
             "com.afterlogic.aurora.SESSOIN_CHANGED";
 
-    public static void fireSessionChanged(AuroraSession session, Context ctx){
+    public static void fireSessionChanged(AuroraSession session, Context ctx) {
+
+        CrashlyticsUtil.updateUserData(session);
+
         Intent intent = new Intent(ACTION_SESSION_CHANGED);
         intent.putExtra(SESSION_DATA, session);
         intent.putExtra(SESSOIN_CHANGED, true);

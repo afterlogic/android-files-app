@@ -8,6 +8,8 @@ import com.afterlogic.aurora.drive.presentation.modules.offline.di.OfflineModule
 import com.afterlogic.aurora.drive.presentation.modules.offline.view.OfflineActivity;
 import com.afterlogic.aurora.drive.presentation.modules.replace.di.ReplaceModule;
 import com.afterlogic.aurora.drive.presentation.modules.replace.view.ReplaceActivity;
+import com.afterlogic.aurora.drive.presentation.modules.upload.di.UploadModule;
+import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadActivity;
 
 import dagger.Module;
 import dagger.android.AndroidInjectionModule;
@@ -37,4 +39,8 @@ public abstract class AutoInjectPresentationModule {
     @ModuleScope
     @ContributesAndroidInjector(modules = OfflineModule.class)
     abstract OfflineActivity contributeOffline();
+
+    @ModuleScope
+    @ContributesAndroidInjector(modules = UploadModule.class)
+    abstract UploadActivity contributeUpload();
 }

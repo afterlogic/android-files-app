@@ -5,22 +5,20 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.PowerManager;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.contextWrappers.ClipboardHelper;
 import com.afterlogic.aurora.drive.core.common.util.FileUtil;
-import com.afterlogic.aurora.drive.core.common.util.Holder;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.SearchableFilesListInteractor;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.rx.WakeLockTransformer;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncListener;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncService;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
 
 import java.io.File;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -42,11 +40,10 @@ import static com.afterlogic.aurora.drive.data.modules.files.FilesDataModule.DOW
 
 public class MainFilesListInteractor extends SearchableFilesListInteractor {
 
-    private static int sWakeLockId = 0;
-
     private final FilesRepository filesRepository;
     private final SyncListener syncListener;
     private final ClipboardHelper clipboardHelper;
+    private final WakeLockTransformer.Factory wakeLockFactory;
 
     private final Context appContext;
     private final File cacheDir;
@@ -59,6 +56,7 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
     @Inject
     MainFilesListInteractor(FilesRepository filesRepository,
                             ClipboardHelper clipboardHelper,
+                            WakeLockTransformer.Factory wakeLockFactory,
                             Context appContext,
                             @Named(CACHE_DIR) File cacheDir,
                             @Named(DOWNLOADS_DIR) File downloadsDir,
@@ -66,6 +64,7 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
         super(filesRepository);
         this.filesRepository = filesRepository;
         this.clipboardHelper = clipboardHelper;
+        this.wakeLockFactory = wakeLockFactory;
         this.syncListener = new SyncListener(appContext);
         this.appContext = appContext;
         this.cacheDir = cacheDir;
@@ -199,19 +198,6 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
                         .observeOn(Schedulers.io())
                         .toObservable()
         )//-----|
-                .compose(this::wakeLock);
-
-    }
-
-    private   <T> Observable<T> wakeLock(Observable<T> observable){
-        Holder<PowerManager.WakeLock> wakeLockHolder = new Holder<>();
-        return observable
-                .doOnSubscribe(disposable -> {
-                    PowerManager pm = (PowerManager) appContext.getSystemService(Context.POWER_SERVICE);
-                    PowerManager.WakeLock wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "loadTask:" + sWakeLockId++);
-                    wakeLockHolder.set(wakeLock);
-                    wakeLock.acquire(TimeUnit.MINUTES.toMillis(30));
-                })
-                .doFinally(() -> wakeLockHolder.get().release());
+                .compose(wakeLockFactory.create());
     }
 }

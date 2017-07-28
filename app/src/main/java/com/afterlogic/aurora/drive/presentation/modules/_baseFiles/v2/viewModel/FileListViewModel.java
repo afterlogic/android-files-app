@@ -54,7 +54,7 @@ public abstract class FileListViewModel<
 
     private final AtomicBoolean firstSetArgs = new AtomicBoolean(true);
 
-    FileListViewModel(FilesListInteractor interactor,
+    protected FileListViewModel(FilesListInteractor interactor,
                                 Subscriber subscriber,
                                 ViewModelsConnection<FileListVM> viewModelsConnection) {
         this.interactor = interactor;

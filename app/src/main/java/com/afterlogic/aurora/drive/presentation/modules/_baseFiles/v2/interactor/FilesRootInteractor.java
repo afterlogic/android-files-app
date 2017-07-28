@@ -31,6 +31,7 @@ public class FilesRootInteractor {
 
     public Single<List<FileType>> getAvailableFileTypes() {
         return filesRepository.getAvailableFileTypes()
-                .map(availableTypes -> MapperUtil.listOrEmpty(availableTypes, typesMapper));
+                .map(availableTypes -> MapperUtil.listOrEmpty(availableTypes, typesMapper))
+                .retry(3);
     }
 }

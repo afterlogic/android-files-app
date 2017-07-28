@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import ru.terrakok.cicerone.Router;
 
 /**
@@ -69,8 +70,8 @@ public class MainViewModel extends SearchableFilesRootViewModel<MainFilesListVie
                 }));
 
         viewModelsConnection.getMultiChoice()
+                .observeOn(AndroidSchedulers.mainThread())
                 .compose(disposableBag::track)
-                .compose(subscriber::defaultSchedulers)
                 .subscribe(subscriber.subscribe(this::handleMultiChoice));
 
         SimpleOnPropertyChangedCallback.addTo(

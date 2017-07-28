@@ -135,7 +135,8 @@ public class FilesServiceP8Impl extends CloudServiceP8 implements FilesServiceP8
                     .put(Api8.Param.NAME, name)
                     .put(Api8.Param.SHARED_HASH, publicHash)
                     .create();
-            Map<String, Object> fields = getDefaultFields(Api8.Method.DOWNLOAD_FILE, params);
+            // TODO: Return to DOWNLOAD_FILE ?
+            Map<String, Object> fields = getDefaultFields(Api8.Method.VIEW_FILE, params);
             return mApi.getFile(fields);
         });
     }
