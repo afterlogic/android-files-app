@@ -6,6 +6,7 @@ import android.accounts.AccountManager;
 import android.content.Context;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.DataScope;
+import com.afterlogic.aurora.drive.core.common.logging.CrashlyticsUtil;
 import com.afterlogic.aurora.drive.core.common.util.AccountUtil;
 import com.afterlogic.aurora.drive.core.consts.Const;
 import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
@@ -55,6 +56,7 @@ public class DataModule {
             if (account != null) {
                 AccountManager am = AccountManager.get(context);
                 AuroraSession session = AccountUtil.fromAccount(account, am);
+                CrashlyticsUtil.updateUserData(session);
                 mSessionManager.setSession(session);
             }
         }

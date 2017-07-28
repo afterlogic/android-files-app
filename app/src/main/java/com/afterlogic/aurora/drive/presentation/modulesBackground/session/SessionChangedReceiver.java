@@ -29,7 +29,11 @@ public class SessionChangedReceiver extends BroadcastReceiver {
             ((App) context.getApplicationContext()).getInjectors().inject(this);
 
             AuroraSession session = intent.getParcelableExtra(SESSION_DATA);
-            mSessionManager.setSession(session);
+            onSessionChanged(session);
         }
+    }
+
+    protected void onSessionChanged(AuroraSession session) {
+        mSessionManager.setSession(session);
     }
 }
