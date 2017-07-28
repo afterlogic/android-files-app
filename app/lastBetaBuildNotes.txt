@@ -1,3 +1,7 @@
+Release 90:
+BUG - App can't connect to server on cold start
+BUG - Fix file downloading on P8 (use ViewFile method)
+
 Release 89:
 BUG - missing Size param in CreatePublicLink request
 Empty folder indication
