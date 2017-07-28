@@ -22,6 +22,7 @@ public class SearchableFilesListInteractor extends FilesListInteractor {
     }
 
     public Single<List<AuroraFile>> getFiles(AuroraFile folder, String pattern) {
-        return filesRepository.getFiles(folder, pattern);
+        return filesRepository.getFiles(folder, pattern)
+                .retry(3);
     }
 }

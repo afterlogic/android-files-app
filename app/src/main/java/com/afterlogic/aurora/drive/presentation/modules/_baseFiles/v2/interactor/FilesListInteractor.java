@@ -24,7 +24,8 @@ public class FilesListInteractor {
     }
 
     public Single<List<AuroraFile>> getFiles(AuroraFile folder) {
-        return filesRepository.getFiles(folder);
+        return filesRepository.getFiles(folder)
+                .retry(3);
     }
 
 }
