@@ -171,8 +171,10 @@ public class P8FilesSubRepositoryImpl extends AuthorizedRepository implements Fi
     @Override
     public final Single<Uri> getFileThumbnail(AuroraFile file) {
         return Single.defer(() -> {
-            // TODO load by uri in glide
-            if (!TextUtils.isEmpty(file.getThumbnailUrl()) && false) {
+
+            // TODO: add Authorization Bearer header to Glide and use thumbnail url every where
+
+            if (file.isLink() && !TextUtils.isEmpty(file.getThumbnailUrl())) {
                 String thumbUrl = file.getThumbnailUrl();
                 if (thumbUrl.startsWith("?")) {
                     AuroraSession session = mAuthRepository.getCurrentSession().blockingGet();

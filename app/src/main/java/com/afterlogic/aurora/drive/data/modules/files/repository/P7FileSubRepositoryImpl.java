@@ -191,11 +191,17 @@ public class P7FileSubRepositoryImpl extends AuthorizedRepository implements Fil
     @Override
     public Single<Uri> getFileThumbnail(AuroraFile file) {
         return Single.defer(() -> {
-            AuroraSession session = mSessionManager.getSession();
-            String url = getCompleteUrl(
-                    String.format(Locale.US, Api7.Links.THUMBNAIL_URL, session.getAccountId(), file.getHash(), session.getAuthToken())
-            );
-            return Single.just(Uri.parse(url));
+            Uri thumbUri;
+            if (TextUtils.isEmpty(file.getThumbnailUrl())) {
+                AuroraSession session = mSessionManager.getSession();
+                String url = getCompleteUrl(
+                        String.format(Locale.US, Api7.Links.THUMBNAIL_URL, session.getAccountId(), file.getHash(), session.getAuthToken())
+                );
+                thumbUri = Uri.parse(url);
+            } else {
+                thumbUri = Uri.parse(file.getThumbnailUrl());
+            }
+            return Single.just(thumbUri);
         });
     }
 
