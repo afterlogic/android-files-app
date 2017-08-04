@@ -16,6 +16,7 @@ import com.afterlogic.aurora.drive.application.navigation.args.ExternalOpenFIleA
 import com.afterlogic.aurora.drive.application.navigation.args.ExternalShareFileArgs;
 import com.afterlogic.aurora.drive.application.navigation.args.ExternalShareFilesArgs;
 import com.afterlogic.aurora.drive.application.navigation.args.ReplaceScreenArgs;
+import com.afterlogic.aurora.drive.core.common.contextWrappers.Notificator;
 import com.afterlogic.aurora.drive.core.common.contextWrappers.Toaster;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.rx.DisposableBag;
@@ -80,6 +81,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     private final AppRouter router;
     private final AppResources appResources;
     private final Toaster toaster;
+    private final Notificator notificator;
     private final MainViewModelsConnection viewModelsConnection;
 
     private boolean reloadAtStart = false;
@@ -107,7 +109,8 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                            FilesMapper mapper,
                            AppRouter router,
                            AppResources appResources,
-                           Toaster toaster) {
+                           Toaster toaster,
+                           Notificator notificator) {
         super(interactor, subscriber, viewModelsConnection);
         this.interactor = interactor;
         this.filesActionsInteractor = filesActionsInteractor;
@@ -117,6 +120,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
         this.appResources = appResources;
         this.toaster = toaster;
         this.viewModelsConnection = viewModelsConnection;
+        this.notificator = notificator;
 
         mapper.setOnLongClickListener((position, item) -> onFileLongClick(item));
 
@@ -351,8 +355,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                 .filter(Progressible::isDone)
                 .map(Progressible::getData)
                 .collectInto(new ArrayList<File>(), List::add)
-                .subscribe(subscriber.subscribe(results -> MessageDialogViewModel.set(
-                        messageDialog,
+                .subscribe(subscriber.subscribe(results -> notificator.makeDownloadsNotification(
                         null,
                         appResources.getPlurals(
                                 R.plurals.dialog_files_success_downloaded,
@@ -566,14 +569,11 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                 .compose(cancellableLoadProgress(appResources.getString(R.string.dialog_files_title_dowloading)))
                 .filter(Progressible::isDone)
                 .map(Progressible::getData)
-                .subscribe(subscriber.subscribe(local -> router.navigateTo(
-                        AppRouter.EXTERNAL_OPEN_FILE, new ExternalOpenFIleArgs(file, local), error -> {
-                            MessageDialogViewModel.set(
-                                    messageDialog, null,
-                                    appResources.getString(R.string.prompt_cant_open_file
-                                    ));
-                        }
-                )));
+                .subscribe(subscriber.subscribe(local -> {
+                    notificator.makeDownloadsNotification(
+                            null, file.getName()
+                    );
+                }));
     }
 
     private void shareFile(AuroraFile file) {
