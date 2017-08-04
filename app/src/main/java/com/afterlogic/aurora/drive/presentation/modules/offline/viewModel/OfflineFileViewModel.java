@@ -24,6 +24,7 @@ public class OfflineFileViewModel extends AuroraFileViewModel implements StableI
 
     public final ObservableField<Uri> icon = new ObservableField<>();
     public final ObservableField<Uri> statusIcon = new ObservableField<>();
+    public final ObservableField<Uri> defaultIcon = new ObservableField<>();
     public final ObservableBoolean isFolder = new ObservableBoolean();
     public final ObservableInt syncProgress = new ObservableInt(-1);
 
@@ -46,6 +47,9 @@ public class OfflineFileViewModel extends AuroraFileViewModel implements StableI
 
         isFolder.set(file.isFolder());
         setThumbnail(null);
+
+        int fileIconRes = FileUtil.getFileIconRes(file);
+        defaultIcon.set(appResources.getResourceUri(fileIconRes));
     }
 
     void setThumbnail(Uri thumb) {

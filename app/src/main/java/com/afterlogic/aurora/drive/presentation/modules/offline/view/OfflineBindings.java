@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.afterlogic.aurora.drive.BR;
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ViewModelState;
 import com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.OfflineHeader;
 import com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.OfflineFileViewModel;
 import com.github.nitrico.lastadapter.LastAdapter;
@@ -19,11 +20,12 @@ import java.util.List;
 
 public class OfflineBindings {
 
-    @BindingAdapter({"offline_filesAdapter", "offline_header"})
-    public static void bindFilesAdapter(RecyclerView list, List<OfflineFileViewModel> files, OfflineHeader header) {
+    @BindingAdapter({"offline_filesAdapter", "offline_header", "offline_viewModelState"})
+    public static void bindFilesAdapter(RecyclerView list, List<OfflineFileViewModel> files,
+                                        OfflineHeader header, ViewModelState state) {
         List<Object> items = new ArrayList<>();
 
-        if (files.isEmpty()) {
+        if (files.isEmpty() && state.isContent()) {
             items.add(new OfflineEmptyListItem());
         }
 

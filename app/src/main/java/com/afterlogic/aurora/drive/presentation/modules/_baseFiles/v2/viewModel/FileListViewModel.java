@@ -13,8 +13,9 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnListChangedCallback;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.LifecycleViewModel;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.SynchronizedUiObservableField;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.ProgressViewModel;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.UiObservableField;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.AsyncUiObservableField;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ViewModelState;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.FilesListInteractor;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileListArgs;
@@ -36,9 +37,9 @@ public abstract class FileListViewModel<
         Args extends FileListArgs
 > extends LifecycleViewModel {
 
-    public final ObservableField<ViewModelState> viewModelState = new UiObservableField<>(ViewModelState.LOADING);
+    public final ObservableField<ViewModelState> viewModelState = new SynchronizedUiObservableField<>(ViewModelState.LOADING);
     public final ObservableList<FileVM> items = new ObservableArrayList<>();
-    public final ObservableField<ProgressViewModel> progress = new UiObservableField<>(null);
+    public final ObservableField<ProgressViewModel> progress = new AsyncUiObservableField<>(null);
 
     private final FilesListInteractor interactor;
     private final Subscriber subscriber;
@@ -99,13 +100,12 @@ public abstract class FileListViewModel<
     }
 
     protected void reloadCurrentFolder() {
+        viewModelState.set(ViewModelState.LOADING);
         items.clear();
 
         if (foldersStack.size() == 0) return;
 
-
         getFilesSource(foldersStack.get(0))
-                .doOnSubscribe(disposable -> viewModelState.set(ViewModelState.LOADING))
                 .doOnError(error -> viewModelState.set(ViewModelState.ERROR))
                 .compose(subscriber::defaultSchedulers)
                 .compose(reloadDisposable::disposeAndTrack)

@@ -32,6 +32,7 @@
             android:layout_height="32dp"
             android:contentDescription="@string/content_descroption_file_icon"
             app:imageUri="@{vm.icon}"
+            app:defaultImageUri="@{vm.defaultIcon}"
             app:tintColor="@{vm.isFolder ? @color/colorPrimary : -1}"
             tools:tint="@color/colorPrimary"
             tools:src="@mipmap/ic_launcher"

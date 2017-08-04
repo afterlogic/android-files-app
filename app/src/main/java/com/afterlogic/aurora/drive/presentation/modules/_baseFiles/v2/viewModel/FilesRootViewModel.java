@@ -13,10 +13,11 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileType;
 import com.afterlogic.aurora.drive.presentation.common.binding.binder.Bindable;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnListChangedCallback;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.AsyncUiObservableField;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.LifecycleViewModel;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.ProgressViewModel;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.UiObservableField;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.SynchronizedUiObservableField;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ViewModelState;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.ProgressViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.FilesRootInteractor;
 
 import java.util.List;
@@ -38,8 +39,8 @@ public class FilesRootViewModel<
     public final ObservableList<FileType> fileTypes = new ObservableArrayList<>();
     public final Bindable<Integer> currentFileTypePosition = Bindable.create(0);
 
-    public final ObservableField<ViewModelState> viewModelState = new UiObservableField<>(ViewModelState.LOADING);
-    public final ObservableField<ProgressViewModel> progress = new UiObservableField<>(null);
+    public final ObservableField<ViewModelState> viewModelState = new SynchronizedUiObservableField<>(ViewModelState.LOADING);
+    public final ObservableField<ProgressViewModel> progress = new AsyncUiObservableField<>(null);
 
     private boolean hasFixedTitle = false;
 
@@ -72,7 +73,7 @@ public class FilesRootViewModel<
                 .compose(fileClickDisposable::track)
                 .subscribe(this::onFileClicked);
 
-        startLoad();
+        reloadFileTypes();
 
         title.set(getRootTitle());
     }
@@ -100,8 +101,7 @@ public class FilesRootViewModel<
     }
 
     public void onRefresh() {
-        fileTypes.clear();
-        startLoad();
+        reloadFileTypes();
     }
 
     protected void setHasFixedTitle(boolean hasFixedTitle) {
@@ -136,11 +136,12 @@ public class FilesRootViewModel<
        //no-op
     }
 
-    private void startLoad() {
+    private void reloadFileTypes() {
+        viewModelState.set(ViewModelState.LOADING);
+
         fileTypes.clear();
 
         interactor.getAvailableFileTypes()
-                .doOnSubscribe(disposable -> viewModelState.set(ViewModelState.LOADING))
                 .doOnError(error -> viewModelState.set(ViewModelState.ERROR))
                 .compose(subscriber::defaultSchedulers)
                 .compose(loadingDisposable::disposeAndTrack)
