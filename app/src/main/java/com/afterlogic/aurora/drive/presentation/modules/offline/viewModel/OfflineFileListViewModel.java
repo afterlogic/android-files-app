@@ -1,18 +1,27 @@
 package com.afterlogic.aurora.drive.presentation.modules.offline.viewModel;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.OnLifecycleEvent;
 import android.databinding.ObservableField;
+import android.support.v4.util.Pair;
 
+import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.application.navigation.AppRouter;
-import com.afterlogic.aurora.drive.application.navigation.args.ExternalOpenFIleArgs;
+import com.afterlogic.aurora.drive.application.navigation.args.ExternalOpenFileArgs;
+import com.afterlogic.aurora.drive.core.common.logging.MyLog;
+import com.afterlogic.aurora.drive.core.common.rx.DisposableBag;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.core.common.rx.OptionalDisposable;
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
+import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.MessageDialogViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFileListViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.ViewModelsConnection;
 import com.afterlogic.aurora.drive.presentation.modules.offline.interactor.OfflineFileListInteractor;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
 import com.annimon.stream.Stream;
 
 import java.util.List;
@@ -29,25 +38,32 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 public class OfflineFileListViewModel extends SearchableFileListViewModel<OfflineFileListViewModel, OfflineFileViewModel, OfflineArgs> {
 
     public final ObservableField<OfflineHeader> header = new ObservableField<>();
+    public final ObservableField<MessageDialogViewModel> message = new ObservableField<>();
 
     private final OfflineFileListInteractor interactor;
     private final Subscriber subscriber;
     private final FileMapper mapper;
     private final AppRouter router;
+    private final AppResources appResources;
 
     private final OptionalDisposable thumbnailsDisposable = new OptionalDisposable();
+    private final OptionalDisposable syncListenerDisposable = new OptionalDisposable();
+    private final OptionalDisposable offlineStatusDisposable = new OptionalDisposable();
+    private final DisposableBag globalDisposableBag = new DisposableBag();
 
     @Inject
     OfflineFileListViewModel(OfflineFileListInteractor interactor,
                              Subscriber subscriber,
                              ViewModelsConnection<OfflineFileListViewModel> viewModelsConnection,
                              FileMapper mapper,
-                             AppRouter router) {
+                             AppRouter router,
+                             AppResources appResources) {
         super(interactor, subscriber, viewModelsConnection);
         this.mapper = mapper;
         this.subscriber = subscriber;
         this.interactor = interactor;
         this.router = router;
+        this.appResources = appResources;
     }
 
     @Override
@@ -60,6 +76,7 @@ public class OfflineFileListViewModel extends SearchableFileListViewModel<Offlin
     protected void handleFiles(List<AuroraFile> files) {
         mapper.clear();
         super.handleFiles(files);
+        updateOfflineStatuses(files);
         updateThumbnails(files);
     }
 
@@ -70,13 +87,86 @@ public class OfflineFileListViewModel extends SearchableFileListViewModel<Offlin
 
     @Override
     protected void onFileClick(AuroraFile file) {
-        interactor.downloadForOpen(file)
+
+        OfflineFileViewModel vm = mapper.get(file);
+        if (vm == null) {
+            return;
+        }
+
+        if (vm.syncProgress.get() == -1) {
+
+            interactor.downloadForOpen(file)
+                    .compose(subscriber::defaultSchedulers)
+                    .filter(Progressible::isDone)
+                    .map(Progressible::getData)
+                    .subscribe(subscriber.subscribe(localFile -> {
+                        ExternalOpenFileArgs args = new ExternalOpenFileArgs(file, localFile);
+                        router.navigateTo(
+                                AppRouter.EXTERNAL_OPEN_FILE, args,
+                                error -> MessageDialogViewModel.set(
+                                        message, null,
+                                        appResources.getString(R.string.prompt_cant_open_file)
+                                )
+                        );
+                    }));
+
+        } else {
+
+            MessageDialogViewModel.set(
+                    message, null,
+                    appResources.getString(R.string.prompt_offline_file_in_sync)
+            );
+
+        }
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        globalDisposableBag.dispose();
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    protected void startListenSync() {
+        interactor.listenSyncProgress()
                 .compose(subscriber::defaultSchedulers)
-                .filter(Progressible::isDone)
-                .map(Progressible::getData)
-                .subscribe(subscriber.subscribe(localFile -> {
-                    ExternalOpenFIleArgs args = new ExternalOpenFIleArgs(file, localFile);
-                    router.navigateTo(AppRouter.EXTERNAL_OPEN_FILE, args);
+                .compose(syncListenerDisposable::disposeAndTrack)
+                .compose(globalDisposableBag::track)
+                .subscribe(subscriber.subscribe(this::handleSyncProgress));
+
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    protected void stopListenSync() {
+        syncListenerDisposable.disposeAndClear();
+    }
+
+    private void handleSyncProgress(SyncProgress progress) {
+        OfflineFileViewModel vm = mapper.get(progress.getFilePathSpec());
+
+        MyLog.d("Status: " + progress);
+
+        if (vm != null) {
+            vm.syncProgress.set(progress.isDone() ? -1 : Math.max(0, progress.getProgress()));
+        }
+    }
+
+    private void updateOfflineStatuses(List<AuroraFile> files) {
+        Stream.of(files)
+                .map(file -> interactor.checkIsSynced(file)
+                        .filter(status -> !status) // handle only not synced
+                        .map(status -> new Pair<>(file, status))
+                        .toObservable()
+                )
+                .collect(Observables.Collectors.concatObservables())
+                .compose(subscriber::defaultSchedulers)
+                .compose(offlineStatusDisposable::disposeAndTrack)
+                .compose(globalDisposableBag::track)
+                .subscribe(subscriber.subscribe(statusPair -> {
+                    OfflineFileViewModel vm = mapper.get(statusPair.first);
+                    if (vm != null) {
+                        vm.syncProgress.set(-2);
+                    }
                 }));
     }
 
@@ -94,8 +184,9 @@ public class OfflineFileListViewModel extends SearchableFileListViewModel<Offlin
                         .onErrorComplete()
                 )
                 .collect(Observables.Collectors.concatCompletable())
-                .compose(thumbnailsDisposable::disposeAndTrack)
                 .compose(subscriber::defaultSchedulers)
+                .compose(thumbnailsDisposable::disposeAndTrack)
+                .compose(globalDisposableBag::track)
                 .subscribe(subscriber.justSubscribe());
     }
 }

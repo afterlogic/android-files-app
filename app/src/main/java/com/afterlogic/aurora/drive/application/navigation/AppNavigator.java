@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 
-import com.afterlogic.aurora.drive.application.navigation.args.ExternalOpenFIleArgs;
+import com.afterlogic.aurora.drive.application.navigation.args.ExternalOpenFileArgs;
 import com.afterlogic.aurora.drive.application.navigation.args.ExternalShareFileArgs;
 import com.afterlogic.aurora.drive.application.navigation.args.ExternalShareFilesArgs;
 import com.afterlogic.aurora.drive.application.navigation.args.ReplaceScreenArgs;
@@ -194,7 +194,7 @@ public class AppNavigator extends SupportAppNavigator {
 
             case AppRouter.EXTERNAL_OPEN_FILE:
 
-                ExternalOpenFIleArgs openArgs = (ExternalOpenFIleArgs) data;
+                ExternalOpenFileArgs openArgs = (ExternalOpenFileArgs) data;
 
                 Uri fileUri = FileProvider.getUriForFile(
                         activity, activity.getPackageName() + ".fileProvider", openArgs.getLocal()

@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.BindingUtil;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMFragment;
 import com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.OfflineArgs;
 import com.afterlogic.aurora.drive.presentation.modules.offline.viewModel.OfflineFileListViewModel;
@@ -45,5 +47,11 @@ public class OfflineFragment extends InjectableMVVMFragment<OfflineFileListViewM
     @Override
     public OfflineFileListViewModel createViewModel(ViewModelProvider provider) {
         return provider.get(OfflineFileListViewModel.class);
+    }
+
+    @Override
+    protected void bindStarted(OfflineFileListViewModel vm, UnbindableObservable.Bag bag) {
+        super.bindStarted(vm, bag);
+        BindingUtil.bindDialog(vm.message, bag, getContext());
     }
 }

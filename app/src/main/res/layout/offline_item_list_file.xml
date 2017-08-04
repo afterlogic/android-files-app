@@ -76,7 +76,7 @@
             android:layout_marginTop="4dp"
             android:max="100"
             android:progress="@{vm.syncProgress}"
-            android:visibility="@{vm.syncProgress != -1 ? View.VISIBLE : View.GONE}"
+            android:visibility="@{vm.syncProgress >= 0 ? View.VISIBLE : View.GONE}"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toRightOf="@+id/icon"
             app:layout_constraintRight_toLeftOf="@+id/status_icon"

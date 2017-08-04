@@ -93,7 +93,7 @@
     <string name="prompt_offline_folder_is_empty">У вас нет оффлайн файлов.</string>
     <string name="prompt_offline_mode">Оффлайн режим</string>
     <string name="prompt_online_mode">Онлайн режим</string>
-    <string name="prompt_offline_file_not_exist">Файл отсутствует. Возможно он еще не синхронизирован.</string>
+    <string name="prompt_offline_file_in_sync">Файл сейчас синхронизируется.</string>
     <string name="content_descroption_file_icon">Иконка файла</string>
     <string name="prompt_syncing">Синхронизация</string>
     <string name="prompt_dialog_title_deleting">Удаление:</string>

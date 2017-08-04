@@ -9,12 +9,12 @@ import java.io.File;
  * mail: mail@sunnydaydev.me
  */
 
-public class ExternalOpenFIleArgs {
+public class ExternalOpenFileArgs {
 
     private final AuroraFile remote;
     private final File local;
 
-    public ExternalOpenFIleArgs(AuroraFile remote, File local) {
+    public ExternalOpenFileArgs(AuroraFile remote, File local) {
         this.remote = remote;
         this.local = local;
     }

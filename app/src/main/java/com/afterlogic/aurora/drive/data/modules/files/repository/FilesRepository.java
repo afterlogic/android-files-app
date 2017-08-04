@@ -51,6 +51,7 @@ public interface FilesRepository {
     Maybe<AuroraFile> getOfflineFile(String pathSpec);
     Single<List<AuroraFile>> getOfflineFiles();
 
+    // TODO: return more complex status (synced, offline, and more)
     Single<Boolean> getOfflineStatus(AuroraFile file);
 
     Completable clearOfflineData();

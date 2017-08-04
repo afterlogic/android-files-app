@@ -260,7 +260,11 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
     @Override
     public Single<List<AuroraFile>> getOfflineFiles() {
         return mLocalService.getOffline()
-                .map(offline -> MapperUtil.listOrEmpty(offline, mOfflineToBlMapper));
+                .map(offline -> {
+                    List<AuroraFile> files = MapperUtil.listOrEmpty(offline, mOfflineToBlMapper);
+                    Collections.sort(files, FileUtil.AURORA_FILE_COMPARATOR);
+                    return files;
+                });
     }
 
     @Override

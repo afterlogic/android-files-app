@@ -12,7 +12,7 @@ import android.support.annotation.Nullable;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.application.navigation.AppRouter;
-import com.afterlogic.aurora.drive.application.navigation.args.ExternalOpenFIleArgs;
+import com.afterlogic.aurora.drive.application.navigation.args.ExternalOpenFileArgs;
 import com.afterlogic.aurora.drive.application.navigation.args.ExternalShareFileArgs;
 import com.afterlogic.aurora.drive.application.navigation.args.ExternalShareFilesArgs;
 import com.afterlogic.aurora.drive.application.navigation.args.ReplaceScreenArgs;
@@ -243,7 +243,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                             .filter(Progressible::isDone)
                             .map(Progressible::getData)
                             .subscribe(subscriber.subscribe(localFile -> {
-                                ExternalOpenFIleArgs args = new ExternalOpenFIleArgs(file, localFile);
+                                ExternalOpenFileArgs args = new ExternalOpenFileArgs(file, localFile);
                                 router.navigateTo(AppRouter.EXTERNAL_OPEN_FILE, args, this::onOpenFileError);
                             }));
                 }

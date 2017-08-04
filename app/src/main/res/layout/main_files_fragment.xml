@@ -37,6 +37,8 @@
                     android:id="@+id/list"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:paddingBottom="72dp"
+                    android:clipToPadding="false"
                     app:layoutManager="android.support.v7.widget.LinearLayoutManager"
                     app:main_filesAdapter="@{vm.items}"
                     android:visibility="@{!vm.viewModelState.isError() ? View.VISIBLE : View.GONE}"

@@ -100,7 +100,7 @@
     <string name="prompt_offline_mode">Offline mode</string>
     <string name="prompt_manual_offline_mode_title">These files available in offline mode:</string>
     <string name="prompt_online_mode">Online mode</string>
-    <string name="prompt_offline_file_not_exist">Offline file not exists. Maybe it not synced yet.</string>
+    <string name="prompt_offline_file_in_sync">Offline file is in sync now.</string>
     <string name="content_descroption_file_icon">File icon</string>
     <string name="prompt_syncing">Syncing</string>
     <string name="prompt_dialog_title_deleting">Deleting:</string>
