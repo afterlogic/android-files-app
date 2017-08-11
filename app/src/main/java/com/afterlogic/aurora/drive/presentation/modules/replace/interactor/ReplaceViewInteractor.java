@@ -2,8 +2,8 @@ package com.afterlogic.aurora.drive.presentation.modules.replace.interactor;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.interactor.ActivityResolver;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.interactor.BaseViewInteractor;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.core.CurrentActivityTracker;
 
 import javax.inject.Inject;
 
@@ -18,8 +18,8 @@ import io.reactivex.Maybe;
 public class ReplaceViewInteractor extends BaseViewInteractor {
 
     @Inject
-    ReplaceViewInteractor(ActivityResolver activityResolver) {
-        super(activityResolver);
+    ReplaceViewInteractor(CurrentActivityTracker tracker) {
+        super(tracker);
     }
 
     Maybe<String> getFolderName() {

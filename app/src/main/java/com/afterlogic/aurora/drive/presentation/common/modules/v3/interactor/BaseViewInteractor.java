@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -16,10 +15,10 @@ import android.widget.Button;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.model.error.ActivityResultError;
-import com.afterlogic.aurora.drive.model.error.PermissionDeniedError;
 import com.afterlogic.aurora.drive.model.error.ViewNotPresentError;
 import com.afterlogic.aurora.drive.model.events.ActivityResultEvent;
 import com.afterlogic.aurora.drive.presentation.common.components.view.SelectionEditText;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.core.CurrentActivityTracker;
 import com.annimon.stream.Stream;
 
 import java.util.ArrayList;
@@ -27,7 +26,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 
@@ -38,29 +36,11 @@ import io.reactivex.Single;
 
 public class BaseViewInteractor {
 
-    private final ActivityResolver activityResolver;
+    private final CurrentActivityTracker currentActivityTracker;
 
     @Inject
-    public BaseViewInteractor(ActivityResolver activityResolver) {
-        this.activityResolver = activityResolver;
-    }
-
-    protected Completable requireWritePermission(int requestId, String[] permissions) {
-        return activityResolver.listenPermissionGrantResult(requestId)
-                .startWith(requestPermission(requestId, permissions).toObservable())
-                .firstOrError()
-                .flatMapCompletable(event -> {
-                    if (event.isAllGranted()) {
-                        return Completable.complete();
-                    } else {
-                        return Completable.error(new PermissionDeniedError(requestId, permissions));
-                    }
-                });
-    }
-
-    protected Single<ActivityResultEvent> listenActivityResult(int requestId) {
-        return activityResolver.listenActivityResult(requestId)
-                .firstOrError();
+    public BaseViewInteractor(CurrentActivityTracker currentActivityTracker) {
+        this.currentActivityTracker = currentActivityTracker;
     }
 
     protected Maybe<String> getInputDialog(int title) {
@@ -72,7 +52,7 @@ public class BaseViewInteractor {
 
         return Maybe.<String>create(emitter -> {
 
-            Activity activity = activityResolver.getActivity();
+            Activity activity = currentActivityTracker.getCurrentActivity();
             if (activity == null) {
                 emitter.onError(new ViewNotPresentError());
                 return;
@@ -95,7 +75,7 @@ public class BaseViewInteractor {
             @SuppressLint("InflateParams")
             View inputRootView = LayoutInflater.from(activity)
                     .inflate(R.layout.item_layout_dialog_input, null);
-            SelectionEditText input = (SelectionEditText) inputRootView.findViewById(R.id.input);
+            SelectionEditText input = inputRootView.findViewById(R.id.input);
 
             if (initializer != null) {
                 initializer.consume(input);
@@ -151,18 +131,6 @@ public class BaseViewInteractor {
             dialog.show();
         })//----|
                 .doFinally(() -> Stream.of(finalizers).forEach(Runnable::run));
-    }
-
-    private Completable requestPermission(int requestId, String[] permissions) {
-        return Completable.fromAction(() -> {
-
-            Activity activity = activityResolver.getActivity();
-            if (activity == null) {
-                throw new Error("View not present.");
-            }
-
-            ActivityCompat.requestPermissions(activity, permissions, requestId);
-        });
     }
 
     protected Single<ActivityResultEvent> checkSuccess(Single<ActivityResultEvent> upstream) {

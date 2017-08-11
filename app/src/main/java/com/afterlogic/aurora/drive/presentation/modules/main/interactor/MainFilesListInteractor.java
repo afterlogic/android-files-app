@@ -12,6 +12,8 @@ import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.core.PermissionRequest;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.core.PermissionsInteractor;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.SearchableFilesListInteractor;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.rx.WakeLockTransformer;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncListener;
@@ -50,6 +52,7 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
     private final File downloadsDir;
 
     private final MainViewInteractor viewInteractor;
+    private final PermissionsInteractor permissionsInteractor;
 
     private volatile int syncObservablesCount = 0;
 
@@ -60,7 +63,8 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
                             Context appContext,
                             @Named(CACHE_DIR) File cacheDir,
                             @Named(DOWNLOADS_DIR) File downloadsDir,
-                            MainViewInteractor viewInteractor) {
+                            MainViewInteractor viewInteractor,
+                            PermissionsInteractor permissionsInteractor) {
         super(filesRepository);
         this.filesRepository = filesRepository;
         this.clipboardHelper = clipboardHelper;
@@ -70,6 +74,7 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
         this.cacheDir = cacheDir;
         this.downloadsDir = downloadsDir;
         this.viewInteractor = viewInteractor;
+        this.permissionsInteractor = permissionsInteractor;
     }
 
     public Single<Uri> getThumbnail(AuroraFile file) {
@@ -194,8 +199,9 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
 
     private <T> Observable<T> prepareLoadTask(Observable<T> upstream) {
         return upstream.startWith(
-                viewInteractor.requireWritePermission()
+                permissionsInteractor.requirePermission(PermissionRequest.READ_AND_WRITE_STORAGE)
                         .observeOn(Schedulers.io())
+                        .toCompletable()
                         .toObservable()
         )//-----|
                 .compose(wakeLockFactory.create());

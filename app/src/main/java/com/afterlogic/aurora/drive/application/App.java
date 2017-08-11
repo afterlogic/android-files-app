@@ -13,6 +13,7 @@ import com.afterlogic.aurora.drive.core.common.logging.ToCrashlyticsLogger;
 import com.afterlogic.aurora.drive.data.modules.prefs.AppPrefs;
 import com.afterlogic.aurora.drive.data.modules.prefs.Pref;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.core.CurrentActivityTracker;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.view.FileObserverService;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
@@ -42,6 +43,9 @@ public class App extends Application implements HasActivityInjector {
     @Inject
     DispatchingAndroidInjector<Activity> dispatchingAndroidInjector;
 
+    @Inject
+    CurrentActivityTracker.ActivityLifecycleCallbacks currentActivityLifecycleCallbacks;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -53,6 +57,8 @@ public class App extends Application implements HasActivityInjector {
         checkAppVersion();
 
         startService(new Intent(this, FileObserverService.class));
+
+        registerActivityLifecycleCallbacks(currentActivityLifecycleCallbacks);
     }
 
     /**

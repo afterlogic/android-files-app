@@ -43,10 +43,10 @@ public class MainFilesActionViewModel extends LifecycleViewModel {
     private UnbindableObservable offlineUnbindable;
 
     @Inject
-    public MainFilesActionViewModel(MainFilesActionsInteractor interactor,
-                                    Subscriber subscriber,
-                                    FileActionCreator creator,
-                                    Router router) {
+    MainFilesActionViewModel(MainFilesActionsInteractor interactor,
+                             Subscriber subscriber,
+                             FileActionCreator creator,
+                             Router router) {
         this.interactor = interactor;
         this.subscriber = subscriber;
         this.creator = creator;

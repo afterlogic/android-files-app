@@ -17,12 +17,12 @@ import io.reactivex.subjects.PublishSubject;
 @ModuleScope
 public class MainFilesActionsInteractor {
 
-   private RxVariable<MainFileActionsFile> file = new RxVariable<>();
-   private OptionalDisposable requestDisposable = new OptionalDisposable();
-   private PublishSubject<MainFileAction> actionPublishSubject = PublishSubject.create();
+    private RxVariable<MainFileActionsFile> file = new RxVariable<>();
+    private OptionalDisposable requestDisposable = new OptionalDisposable();
+    private PublishSubject<MainFileAction> actionPublishSubject = PublishSubject.create();
 
     @Inject
-    public MainFilesActionsInteractor() {
+    MainFilesActionsInteractor() {
     }
 
     public void finishCurrentRequest() {

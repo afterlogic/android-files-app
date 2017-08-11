@@ -7,17 +7,14 @@ import com.afterlogic.aurora.drive.application.navigation.AppRouter;
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
 import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.interactor.ActivityResolver;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.interactor.BaseViewInteractor;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.core.ActivityResultInteractor;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.core.CurrentActivityTracker;
 
 import javax.inject.Inject;
 
-import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
-
-import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 /**
  * Created by aleksandrcikin on 12.07.17.
@@ -26,28 +23,22 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 @ModuleScope
 public class MainViewInteractor extends BaseViewInteractor {
 
-    private static final int STORAGE_PERMISSION_REQUEST = 1;
-
-    private static final String[] STORAGE_PERMISSIONS = new String[]{
-            WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
-    };
-
     private static final int UPLOAD_ACTIVITY_REQUEST = 1;
 
+    private final ActivityResultInteractor activityResultInteractor;
     private final AppRouter appRouter;
 
     @Inject
-    MainViewInteractor(ActivityResolver activityResolver, AppRouter appRouter) {
-        super(activityResolver);
+    MainViewInteractor(CurrentActivityTracker tracker,
+                       ActivityResultInteractor activityResultInteractor,
+                       AppRouter appRouter) {
+        super(tracker);
+        this.activityResultInteractor = activityResultInteractor;
         this.appRouter = appRouter;
     }
 
-    Completable requireWritePermission() {
-        return requireWritePermission(STORAGE_PERMISSION_REQUEST, STORAGE_PERMISSIONS);
-    }
-
     Single<Uri> getFileForUpload() {
-        return this.listenActivityResult(UPLOAD_ACTIVITY_REQUEST)
+        return this.activityResultInteractor.waitResult(UPLOAD_ACTIVITY_REQUEST)
                 .doOnSubscribe(disposable -> appRouter.navigateToWithResult(AppRouter.EXTERNAL_CHOOSE_FILE_FOR_UPLOAD, UPLOAD_ACTIVITY_REQUEST))
                 .compose(this::checkSuccess)
                 .map(event -> event.getResult().getData());
