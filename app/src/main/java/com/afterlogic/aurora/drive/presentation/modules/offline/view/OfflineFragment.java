@@ -52,6 +52,10 @@ public class OfflineFragment extends InjectableMVVMFragment<OfflineFileListViewM
     @Override
     protected void bindStarted(OfflineFileListViewModel vm, UnbindableObservable.Bag bag) {
         super.bindStarted(vm, bag);
+
         BindingUtil.bindDialog(vm.message, bag, getContext());
+
+        BindingUtil.bindContextMenu(vm.fileContextCommand, bag);
+
     }
 }

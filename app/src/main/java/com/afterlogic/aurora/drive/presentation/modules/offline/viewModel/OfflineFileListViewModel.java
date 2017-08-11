@@ -4,6 +4,7 @@ import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.databinding.ObservableField;
 import android.support.v4.util.Pair;
+import android.view.View;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.application.navigation.AppRouter;
@@ -18,6 +19,7 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.MessageDialogViewModel;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.commands.ContextMenuCommand;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFileListViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.ViewModelsConnection;
 import com.afterlogic.aurora.drive.presentation.modules.offline.interactor.OfflineFileListInteractor;
@@ -39,6 +41,7 @@ public class OfflineFileListViewModel extends SearchableFileListViewModel<Offlin
 
     public final ObservableField<OfflineHeader> header = new ObservableField<>();
     public final ObservableField<MessageDialogViewModel> message = new ObservableField<>();
+    public final ContextMenuCommand fileContextCommand = new ContextMenuCommand();
 
     private final OfflineFileListInteractor interactor;
     private final Subscriber subscriber;
@@ -64,6 +67,8 @@ public class OfflineFileListViewModel extends SearchableFileListViewModel<Offlin
         this.interactor = interactor;
         this.router = router;
         this.appResources = appResources;
+
+        mapper.setOnLongClickListener(this::onFileLongClick);
     }
 
     @Override
@@ -120,6 +125,15 @@ public class OfflineFileListViewModel extends SearchableFileListViewModel<Offlin
         }
     }
 
+    private void onFileLongClick(View view, AuroraFile file) {
+        fileContextCommand.fireFor(view)
+                .addAction(
+                        appResources.getString(R.string.prompt_offline_disable_offline),
+                        () -> onDeleteFromOffline(file)
+                )
+                .buildAndSet();
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();
@@ -139,6 +153,17 @@ public class OfflineFileListViewModel extends SearchableFileListViewModel<Offlin
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     protected void stopListenSync() {
         syncListenerDisposable.disposeAndClear();
+    }
+
+    private void onDeleteFromOffline(AuroraFile file) {
+        interactor.disableOffline(file)
+                .compose(subscriber::defaultSchedulers)
+                .subscribe(subscriber.subscribe(() -> {
+                    OfflineFileViewModel vm = mapper.get(file);
+                    if (vm != null) {
+                        items.remove(vm);
+                    }
+                }));
     }
 
     private void handleSyncProgress(SyncProgress progress) {

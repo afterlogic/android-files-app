@@ -121,6 +121,7 @@
     <string name="action_paste">Paste</string>
     <string name="prompt_coping">Coping</string>
     <string name="prompt_replacing">Replacing</string>
+    <string name="prompt_offline_disable_offline">Disable offline</string>
 
     <plurals name="dialog_files_success_downloaded">
         <item quantity="one">%d file success downloaded.</item>

@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
@@ -80,6 +81,10 @@ public class OfflineFileListInteractor extends SearchableFilesListInteractor {
     public Single<Boolean> checkIsSynced(AuroraFile file) {
         // TODO: check by repository
         return Single.fromCallable(() -> FileUtil.getFile(offlineDir, file).exists());
+    }
+
+    public Completable disableOffline(AuroraFile file) {
+        return filesRepository.setOffline(file, false);
     }
 
     public Single<Uri> getThumbnail(AuroraFile file){

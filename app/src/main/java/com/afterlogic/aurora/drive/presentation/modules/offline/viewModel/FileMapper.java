@@ -2,6 +2,7 @@ package com.afterlogic.aurora.drive.presentation.modules.offline.viewModel;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.View;
 
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
@@ -26,12 +27,14 @@ class FileMapper {
 
     private final Map<String, OfflineFileViewModel> filesMap = new HashMap<>();
 
+    private OnFileViewLongClickListener onLongClickListener;
+
     @Inject
     FileMapper(AppResources appResources) {
         this.appResources = appResources;
     }
 
-    public OfflineFileViewModel map(AuroraFile auroraFile, OnItemClickListener<AuroraFile> onItemClickListener) {
+    OfflineFileViewModel map(AuroraFile auroraFile, OnItemClickListener<AuroraFile> onItemClickListener) {
         String pathSpec = auroraFile.getPathSpec();
         long id;
         if (stableIds.containsKey(pathSpec)) {
@@ -40,22 +43,32 @@ class FileMapper {
             id = lastStableId++;
             stableIds.put(pathSpec, id);
         }
-        OfflineFileViewModel vm = new OfflineFileViewModel(auroraFile, onItemClickListener, appResources, id);
+        OfflineFileViewModel vm = new OfflineFileViewModel(auroraFile, onItemClickListener, this::onFileLongClick, appResources, id);
         filesMap.put(auroraFile.getPathSpec(), vm);
         return vm;
     }
 
-    public void clear() {
+    void clear() {
         filesMap.clear();
     }
 
     @Nullable
-    public OfflineFileViewModel get(@NonNull AuroraFile file) {
+    OfflineFileViewModel get(@NonNull AuroraFile file) {
         return filesMap.get(file.getPathSpec());
     }
 
     @Nullable
-    public OfflineFileViewModel get(String pathSpec) {
+    OfflineFileViewModel get(String pathSpec) {
         return filesMap.get(pathSpec);
+    }
+
+    void setOnLongClickListener(OnFileViewLongClickListener onLongClickListener) {
+        this.onLongClickListener = onLongClickListener;
+    }
+
+    private void onFileLongClick(View view, AuroraFile file) {
+        if (onLongClickListener != null) {
+            onLongClickListener.onFileLongLick(view, file);
+        }
     }
 }

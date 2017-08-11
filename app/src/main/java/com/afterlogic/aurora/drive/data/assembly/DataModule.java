@@ -51,7 +51,7 @@ public class DataModule {
     @Provides @DataScope
     SessionManager sessionManager(Context context){
         if (mSessionManager.getSession() == null) {
-            //If current session loosed get it from account
+            //If current session loosed getAndClear it from account
             Account account = AccountUtil.getCurrentAccount(context);
             if (account != null) {
                 AccountManager am = AccountManager.get(context);

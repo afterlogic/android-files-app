@@ -29,7 +29,9 @@ import ru.terrakok.cicerone.NavigatorHolder;
  * mail: mail@sunnydaydev.me
  */
 
-public abstract class InjectableMVVMActivity<VM extends LifecycleViewModel> extends AppCompatActivity implements LifecycleRegistryOwner, Injectable {
+public abstract class InjectableMVVMActivity<VM extends LifecycleViewModel>
+        extends AppCompatActivity
+        implements LifecycleRegistryOwner, Injectable {
 
     private LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
 

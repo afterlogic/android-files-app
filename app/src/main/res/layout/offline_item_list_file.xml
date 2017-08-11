@@ -20,6 +20,7 @@
         android:minHeight="48dp"
         android:background="@drawable/bg_simple_highlight"
         android:onClick="@{() -> vm.onClick()}"
+        android:onLongClick="@{vm::onLongClick}"
         android:paddingLeft="0dp"
         android:paddingRight="0dp"
         android:paddingTop="0dp"

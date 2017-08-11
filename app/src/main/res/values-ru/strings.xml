@@ -113,6 +113,7 @@
     <string name="action_paste">Вставить</string>
     <string name="prompt_coping">Копирование</string>
     <string name="prompt_replacing">Перемещение</string>
+    <string name="prompt_offline_disable_offline">Убрать из оффлайна</string>
 
     <plurals name="dialog_files_success_downloaded">
         <item quantity="zero">%d файлов успешно загружено.</item>

@@ -183,6 +183,16 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
         syncProgressDisposable.disposeAndClear();
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    protected void checkFilesOfflineStatus() {
+        Stream.of(mapper.getKeys())
+                .map(this::checkOfflineStatus)
+                .collect(Observables.Collectors.concatCompletable())
+                .compose(subscriber::defaultSchedulers)
+                .compose(offlineStatusDisposable::disposeAndTrack)
+                .subscribe(subscriber.justSubscribe());
+    }
+
     @Override
     protected void handleFiles(List<AuroraFile> files) {
         mapper.clear();
@@ -199,12 +209,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                 .compose(thumbsDisposable::disposeAndTrack)
                 .subscribe(subscriber.justSubscribe());
 
-        Stream.of(files)
-                .map(this::checkOfflineStatus)
-                .collect(Observables.Collectors.concatCompletable())
-                .compose(subscriber::defaultSchedulers)
-                .compose(offlineStatusDisposable::disposeAndTrack)
-                .subscribe(subscriber.justSubscribe());
+        checkFilesOfflineStatus();
     }
 
     @Override
@@ -296,7 +301,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     private void onSelectedFilesChanged(List<AuroraFile> selectedFiles) {
         List<MultiChoiceFile> multiChoiceFiles = Stream.of(selectedFiles)
                 .map(file -> {
-                    // TODO: Maybe get from interactor?
+                    // TODO: Maybe getAndClear from interactor?
                     MainFileViewModel vm = mapper.get(file);
                     return new MultiChoiceFile(file, vm != null && vm.isOffline.get());
                 })
