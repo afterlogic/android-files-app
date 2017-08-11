@@ -173,7 +173,8 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
                         return checkCacheAndDownload(checked, target);
                     }
 
-                });
+                })
+                .startWith(new Progressible<>(null, -1, -1, file.getName(), false));
     }
 
     @Override
@@ -330,13 +331,15 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
         }
     }
 
+    // TODO: Replace checking is to downloads folder to interactors
     private Observable<Progressible<File>> checkOfflineAndDownload(AuroraFile checked, File target) throws IOException{
 
         boolean toDownloads = target.getPath().startsWith(mDownloadsDir.getPath());
 
         File offlineFile = new File(mOfflineDir, checked.getPathSpec());
+        boolean actual = offlineFile.exists() && offlineFile.lastModified() >= checked.getLastModified();
 
-        if (offlineFile.exists() && offlineFile.lastModified() >= checked.getLastModified()){
+        if (!toDownloads && actual){
 
             return Observable.just(new Progressible<>(offlineFile, 0, 0, checked.getName(), true));
 
@@ -359,13 +362,14 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
                     });
 
             return Observable.concat(
-                    download,
+                    actual ? Observable.empty() : download,
                     toDownloads ? copyFile : Observable.empty()
             );
 
         }
     }
 
+    // TODO: Copy file from cache to target dir
     private Observable<Progressible<File>> checkCacheAndDownload(AuroraFile file, File target) throws IOException{
 
         boolean toDownloads = target.getPath().startsWith(mDownloadsDir.getPath());
