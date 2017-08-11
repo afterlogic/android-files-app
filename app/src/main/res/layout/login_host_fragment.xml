@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View"/>
+
+        <variable
+            name="vm"
+            type="com.afterlogic.aurora.drive.presentation.modules.login.v2.viewModel.LoginViewModel"/>
+
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/domain_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <AutoCompleteTextView
+                android:id="@+id/domain"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/prompt_domain"
+                android:inputType="textEmailAddress"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:enabled="@{!vm.isInProgress}"
+                app:bindableText="@{vm.host}"
+                app:error="@{vm.hostError}"
+                tools:text="http://aurora.com"
+                tools:hint="@null"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:id="@+id/email_sign_in_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pass_wraper"
+            android:layout_marginTop="16dp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:text='@{vm.isInProgress ? "" : @string/action_sign_in}'
+            android:onClick="@{() -> vm.onHostWritten()}"
+            android:enabled="@{!vm.isInProgress}"
+            tools:text="@string/action_sign_in"
+            style="?android:textAppearanceSmall"/>
+
+        <ProgressBar
+            android:id="@+id/login_progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_alignTop="@id/email_sign_in_button"
+            android:layout_alignBottom="@id/email_sign_in_button"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:visibility="@{vm.isInProgress ? View.VISIBLE : View.GONE}"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

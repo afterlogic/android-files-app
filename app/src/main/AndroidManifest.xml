@@ -102,6 +102,15 @@
             android:theme="@style/Theme.Transparent"
             android:noHistory="true"/>
 
+        <activity
+            android:name=".presentation.modules.login.v2.view.LoginActivity"
+            android:icon="@drawable/ic_folder">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <service android:name=".presentation.modulesBackground.authenticator.AuthenticatorService">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />

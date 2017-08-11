@@ -44,7 +44,7 @@ public abstract class InjectableMVVMFragment<VM extends LifecycleViewModel> exte
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ViewModelProvider viewModelProvider = ViewModelProviders.of(this, viewModelFactory);
+        ViewModelProvider viewModelProvider = createViewModelProvider();
         viewModel = createViewModel(viewModelProvider);
 
         getLifecycle().addObserver(viewModel);
@@ -90,6 +90,10 @@ public abstract class InjectableMVVMFragment<VM extends LifecycleViewModel> exte
     }
 
     public abstract VM createViewModel(ViewModelProvider provider);
+
+    protected ViewModelProvider createViewModelProvider() {
+        return ViewModelProviders.of(this);
+    }
 
     protected void bindCreated(VM vm, UnbindableObservable.Bag bag) {
         // no-op

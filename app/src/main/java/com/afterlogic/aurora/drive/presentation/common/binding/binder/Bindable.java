@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.core.common.interfaces.Provider;
-import com.afterlogic.aurora.drive.core.common.util.Holder;
 import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -23,6 +22,10 @@ public class Bindable<T> extends BaseObservable {
     @NonNull
     private final Consumer<T> mSet;
 
+    public static <T> Bindable<T> create(@NonNull Provider<T> get, @NonNull Consumer<T> set) {
+        return new Bindable<>(get, set);
+    }
+
     public static <T> Bindable<T> create(T initialValue) {
         AtomicReference<T> holder = new AtomicReference<>();
         holder.set(initialValue);
@@ -33,13 +36,7 @@ public class Bindable<T> extends BaseObservable {
         return create(null);
     }
 
-    public Bindable(){
-        Holder<T> value = new Holder<>();
-        mGet = value::get;
-        mSet = value::set;
-    }
-
-    public Bindable(@NonNull Provider<T> get, @NonNull Consumer<T> set) {
+    private Bindable(@NonNull Provider<T> get, @NonNull Consumer<T> set) {
         mGet = get;
         mSet = set;
     }

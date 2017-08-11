@@ -64,7 +64,7 @@
                             android:maxLines="1"
                             android:singleLine="true"
                             android:enabled="@{!viewModel.isInProgress}"
-                            bind:binder="@{viewModel.host}"
+                            bind:bindableText="@{viewModel.host}"
                             bind:error="@{viewModel.hostError}"
                             tools:text="http://aurora.com"
                             tools:hint="@null"/>
@@ -86,7 +86,7 @@
                             android:maxLines="1"
                             android:singleLine="true"
                             android:enabled="@{!viewModel.isInProgress}"
-                            bind:binder="@{viewModel.login}"
+                            bind:bindableText="@{viewModel.login}"
                             bind:error="@{viewModel.loginError}"
                             tools:text="mail@mail.ru"
                             tools:hint="@null"/>
@@ -111,7 +111,7 @@
                             android:maxLines="1"
                             android:singleLine="true"
                             android:enabled="@{!viewModel.isInProgress}"
-                            bind:binder="@{viewModel.password}"
+                            bind:bindableText="@{viewModel.password}"
                             bind:error="@{viewModel.passwordError}"
                             tools:text="Kekelme"
                             tools:hint="@null"/>

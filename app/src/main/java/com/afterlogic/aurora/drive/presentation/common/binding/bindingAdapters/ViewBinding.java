@@ -106,4 +106,17 @@ public class ViewBinding {
         adapter.onAttach(container);
         container.setTag(R.id.bind_view_child_adapter, adapter);
     }
+
+    @BindingAdapter("visibility")
+    public static void bindViewVisibility(View view, boolean visible){
+        bindViewVisibility(view, visible, false);
+    }
+
+    @BindingAdapter({"visibilityBoolean", "inverseVisibility"})
+    public static void bindViewVisibility(View view, boolean visible, boolean inverse) {
+        if (inverse) {
+            visible = !visible;
+        }
+        view.setVisibility(visible? View.VISIBLE : View.GONE);
+    }
 }

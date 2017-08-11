@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <item name="bindable_stringBindingWatcher" type="id"/>
+    <item name="bindable_compoundListener" type="id"/>
+    <item name="bindable_selectedByClick" type="id"/>
+
     <item name="bind_text_adapter" type="id"/>
     <item name="bind_check_adapter" type="id"/>
     <item name="bind_spinner_adapter" type="id"/>
