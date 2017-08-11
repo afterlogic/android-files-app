@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
+import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -18,25 +19,30 @@ import io.reactivex.disposables.Disposable;
 
 public class DisposableBag {
 
-
     private final Set<Disposable> disposables = new HashSet<>();
 
-    public <T> Maybe<T> track(Maybe<T> maybe) {
+    public Completable track(Completable upsteam) {
         AtomicReference<Disposable> reference = new AtomicReference<>();
-        return maybe.doOnSubscribe(disposable -> trackDisposable(reference, disposable))
-                .doOnDispose(() -> disposables.remove(reference.get()));
+        return upsteam.doOnSubscribe(disposable -> trackDisposable(reference, disposable))
+                .doFinally(() -> disposables.remove(reference.get()));
     }
 
-    public <T> Single<T> track(Single<T> single) {
+    public <T> Maybe<T> track(Maybe<T> upsteam) {
         AtomicReference<Disposable> reference = new AtomicReference<>();
-        return single.doOnSubscribe(disposable -> trackDisposable(reference, disposable))
-                .doOnDispose(() -> disposables.remove(reference.get()));
+        return upsteam.doOnSubscribe(disposable -> trackDisposable(reference, disposable))
+                .doFinally(() -> disposables.remove(reference.get()));
     }
 
-    public <T> Observable<T> track(Observable<T> observable) {
+    public <T> Single<T> track(Single<T> upsteam) {
         AtomicReference<Disposable> reference = new AtomicReference<>();
-        return observable.doOnSubscribe(disposable -> trackDisposable(reference, disposable))
-                .doOnDispose(() -> disposables.remove(reference.get()));
+        return upsteam.doOnSubscribe(disposable -> trackDisposable(reference, disposable))
+                .doFinally(() -> disposables.remove(reference.get()));
+    }
+
+    public <T> Observable<T> track(Observable<T> upsteam) {
+        AtomicReference<Disposable> reference = new AtomicReference<>();
+        return upsteam.doOnSubscribe(disposable -> trackDisposable(reference, disposable))
+                .doFinally(() -> disposables.remove(reference.get()));
     }
 
     synchronized public void dispose() {

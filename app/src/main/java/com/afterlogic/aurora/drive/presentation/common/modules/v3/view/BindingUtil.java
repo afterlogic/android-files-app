@@ -6,14 +6,18 @@ import android.content.Context;
 import android.databinding.ObservableField;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
+import android.view.ContextMenu;
+import android.view.View;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.util.Optional;
 import com.afterlogic.aurora.drive.presentation.common.binding.binder.Bindable;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.commands.ContextMenuCommand;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.MessageDialogViewModel;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.ProgressViewModel;
 import com.afterlogic.aurora.drive.presentation.common.view.AppProgressDialog;
+import com.annimon.stream.Stream;
 
 import java.text.NumberFormat;
 import java.util.concurrent.atomic.AtomicReference;
@@ -196,4 +200,41 @@ public class BindingUtil {
     }
 
     // endregion
+
+    public static void bindContextMenu(ContextMenuCommand commandField, UnbindableObservable.Bag bag) {
+        Optional<ContextMenu> contextMenuReference = new Optional<>();
+
+        Runnable clearReference = () -> {
+            contextMenuReference.ifPresent(ContextMenu::close);
+            contextMenuReference.clear();
+        };
+
+        UnbindableObservable.bind(commandField, bag, field -> {
+
+            clearReference.run();
+
+            ContextMenuCommand.ContextMenuRequest command = field.getAndClear();
+
+            if (command == null) return;
+
+            View view = command.getView();
+
+            if (view == null) return;
+
+            view.setOnCreateContextMenuListener((contextMenu, v, contextMenuInfo) -> {
+                contextMenuReference.set(contextMenu);
+
+                Stream.of(command.getActions())
+                        .forEach(action -> contextMenu.add(action.getTitle())
+                                .setOnMenuItemClickListener(menuItem -> {
+                                    action.onClick();
+                                    return true;
+                                })
+                        );
+            });
+
+            view.showContextMenu();
+        })
+                .addOnUnbindListener(field -> clearReference.run());
+    }
 }

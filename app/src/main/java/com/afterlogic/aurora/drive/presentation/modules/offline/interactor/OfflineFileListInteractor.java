@@ -7,6 +7,8 @@ import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.SearchableFilesListInteractor;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncListener;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
 import com.annimon.stream.Stream;
 
 import java.io.File;
@@ -15,7 +17,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
@@ -30,13 +34,16 @@ public class OfflineFileListInteractor extends SearchableFilesListInteractor {
 
     private final FilesRepository filesRepository;
     private final File offlineDir;
+    private final Provider<SyncListener> syncListener;
 
     @Inject
     OfflineFileListInteractor(FilesRepository filesRepository,
-                              @Named(OFFLINE_DIR) File offlineDir) {
+                              @Named(OFFLINE_DIR) File offlineDir,
+                              Provider<SyncListener> syncListener) {
         super(filesRepository);
         this.filesRepository = filesRepository;
         this.offlineDir = offlineDir;
+        this.syncListener = syncListener;
     }
 
     @Override
@@ -71,10 +78,26 @@ public class OfflineFileListInteractor extends SearchableFilesListInteractor {
         });
     }
 
+    public Single<Boolean> checkIsSynced(AuroraFile file) {
+        // TODO: check by repository
+        return Single.fromCallable(() -> FileUtil.getFile(offlineDir, file).exists());
+    }
+
+    public Completable disableOffline(AuroraFile file) {
+        return filesRepository.setOffline(file, false);
+    }
+
     public Single<Uri> getThumbnail(AuroraFile file){
         return Single.fromCallable(() -> {
             File localFile = new File(offlineDir, file.getPathSpec());
             return Uri.fromFile(localFile);
         });
+    }
+
+    public Observable<SyncProgress> listenSyncProgress() {
+        SyncListener syncListener = this.syncListener.get();
+        return Observable.defer(syncListener::getProgressSource)
+                .doOnSubscribe(disposable -> syncListener.onStart())
+                .doFinally(syncListener::onStop);
     }
 }

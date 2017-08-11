@@ -7,7 +7,7 @@ import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.ProgressViewModel;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.UiObservableField;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.AsyncUiObservableField;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFilesRootViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.ViewModelsConnection;
 import com.afterlogic.aurora.drive.presentation.modules.replace.interactor.ReplaceInteractor;
@@ -27,7 +27,7 @@ import ru.terrakok.cicerone.Router;
 
 public class ReplaceViewModel extends SearchableFilesRootViewModel<ReplaceFileTypeViewModel> {
 
-    public final ObservableField<String> subtitle = new UiObservableField<>();
+    public final ObservableField<String> subtitle = new AsyncUiObservableField<>();
 
     private final ReplaceInteractor interactor;
     private final Subscriber subscriber;

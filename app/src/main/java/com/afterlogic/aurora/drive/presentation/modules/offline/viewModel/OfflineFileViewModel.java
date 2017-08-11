@@ -4,6 +4,7 @@ import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 import android.net.Uri;
+import android.view.View;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.util.FileUtil;
@@ -20,24 +21,28 @@ import com.github.nitrico.lastadapter.StableId;
  * mail: mail@sunnydaydev.me
  */
 
-public class OfflineFileViewModel extends AuroraFileViewModel implements StableId {
+public class OfflineFileViewModel extends AuroraFileViewModel implements View.OnLongClickListener, StableId {
 
     public final ObservableField<Uri> icon = new ObservableField<>();
     public final ObservableField<Uri> statusIcon = new ObservableField<>();
+    public final ObservableField<Uri> defaultIcon = new ObservableField<>();
     public final ObservableBoolean isFolder = new ObservableBoolean();
     public final ObservableInt syncProgress = new ObservableInt(-1);
 
     private final AuroraFile file;
+    private final OnFileViewLongClickListener onLongClickListener;
     private final AppResources appResources;
 
     private final long stableId;
 
     OfflineFileViewModel(AuroraFile file,
                          OnItemClickListener<AuroraFile> onItemClickListener,
+                         OnFileViewLongClickListener onLongClickListener,
                          AppResources appResources,
                          long stableId) {
         super(file, onItemClickListener);
         this.file = file;
+        this.onLongClickListener = onLongClickListener;
         this.appResources = appResources;
         this.stableId = stableId;
 
@@ -46,6 +51,14 @@ public class OfflineFileViewModel extends AuroraFileViewModel implements StableI
 
         isFolder.set(file.isFolder());
         setThumbnail(null);
+
+        int fileIconRes = FileUtil.getFileIconRes(file);
+        defaultIcon.set(appResources.getResourceUri(fileIconRes));
+    }
+
+    public boolean onLongClick(View view) {
+        onLongClickListener.onFileLongLick(view, file);
+        return true;
     }
 
     void setThumbnail(Uri thumb) {

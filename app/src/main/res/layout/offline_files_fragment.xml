@@ -27,6 +27,7 @@
             app:layoutManager="android.support.v7.widget.LinearLayoutManager"
             app:offline_header="@{vm.header}"
             app:offline_filesAdapter="@{vm.items}"
+            app:offline_viewModelState="@{vm.viewModelState}"
             tools:listitem="@layout/offline_item_list_file"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>

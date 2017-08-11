@@ -1,13 +1,3 @@
-Release 90:
-BUG - App can't connect to server on cold start
-BUG - Fix file downloading on P8 (use ViewFile method)
-
-Release 89:
-BUG - missing Size param in CreatePublicLink request
-Empty folder indication
-BUG - incorrect files list after search
-BUG - search in offline mode
-BUG - file list is not refreshed with deep nesting
-
-Release 87/88:
-Files and folders searching.
+Release 91:
+Fix thumbnails for links.
+Don't open file when it downloaded, show notify.

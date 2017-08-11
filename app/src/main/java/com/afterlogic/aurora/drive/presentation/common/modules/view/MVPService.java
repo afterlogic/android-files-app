@@ -106,7 +106,7 @@ public abstract class MVPService extends Service implements PresentationView {
                 NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(this);
 
                 Notification notification = notifyBuilder.setAutoCancel(true)
-                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setSmallIcon(R.drawable.ic_notify)
                         .setTicker(message)
                         .setContentText(message)
                         .setContentTitle(getString(R.string.app_name))
