@@ -147,11 +147,9 @@ public class BaseViewInteractor {
         String onHandleInput(String input) throws EditTextInputError;
     }
 
-    protected class EditTextInputError extends Throwable {
-
-        public EditTextInputError(String message) {
+    class EditTextInputError extends Throwable {
+        EditTextInputError(String message) {
             super(message);
         }
-
     }
 }

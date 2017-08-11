@@ -16,7 +16,7 @@ import io.reactivex.Maybe;
 class UploadFilesViewInteractor extends BaseViewInteractor {
 
     @Inject
-    public UploadFilesViewInteractor(CurrentActivityTracker activityTracker) {
+    UploadFilesViewInteractor(CurrentActivityTracker activityTracker) {
         super(activityTracker);
     }
 

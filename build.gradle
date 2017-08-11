@@ -28,7 +28,7 @@ allprojects {
 
 ext{
     //Dependencies
-    compatVersion = '26.0.0'
+    compatVersion = '26.0.1'
     daggerVersion = '2.11'
     rxJavaVersion = '2.1.1'
     rxJavaAndroidVersion = '2.0.1'
