@@ -46,7 +46,7 @@ public abstract class InjectableMVVMActivity<VM extends LifecycleViewModel>
 
         onPrepareCreations();
 
-        ViewModelProvider viewModelProvider = ViewModelProviders.of(this, viewModelFactory);
+        ViewModelProvider viewModelProvider = createViewModelProvider();
         viewModel = createViewModel(viewModelProvider);
 
         getLifecycle().addObserver(viewModel);
@@ -100,6 +100,10 @@ public abstract class InjectableMVVMActivity<VM extends LifecycleViewModel>
     }
 
     public abstract VM createViewModel(ViewModelProvider provider);
+
+    protected ViewModelProvider createViewModelProvider() {
+        return ViewModelProviders.of(this, viewModelFactory);
+    }
 
     protected void bindCreated(VM vm, UnbindableObservable.Bag bag) {
         // no-op

@@ -92,7 +92,7 @@ public abstract class InjectableMVVMFragment<VM extends LifecycleViewModel> exte
     public abstract VM createViewModel(ViewModelProvider provider);
 
     protected ViewModelProvider createViewModelProvider() {
-        return ViewModelProviders.of(this);
+        return ViewModelProviders.of(this, viewModelFactory);
     }
 
     protected void bindCreated(VM vm, UnbindableObservable.Bag bag) {

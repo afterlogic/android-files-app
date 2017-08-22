@@ -45,7 +45,7 @@ ext{
     trayPrefsVersion = '0.12.0'
     crashlyticsVersion = '2.6.8@aar'
 
-    architectureComponentsVersion = '1.0.0-alpha8'
+    architectureComponentsVersion = '1.0.0-alpha9'
     ciceroneVersion = '1.2.1'
 
     lastAdapterVersion = '2.2.2'
