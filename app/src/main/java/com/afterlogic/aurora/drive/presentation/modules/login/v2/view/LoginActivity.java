@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.application.assembly.Injectable;
 import com.afterlogic.aurora.drive.databinding.GeneralContentContainerBinding;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.core.AppCoreActivity;
 
@@ -21,16 +22,18 @@ import dagger.android.support.HasSupportFragmentInjector;
  * mail: mail@sunnydaydev.me
  */
 
-public class LoginActivity extends AppCoreActivity implements HasSupportFragmentInjector {
+public class LoginActivity extends AppCoreActivity implements Injectable, HasSupportFragmentInjector {
 
     @Inject
     protected DispatchingAndroidInjector<Fragment> fragmentDispatchingAndroidInjector;
+
+    private GeneralContentContainerBinding binding;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        GeneralContentContainerBinding binding = DataBindingUtil.setContentView(
+        binding = DataBindingUtil.setContentView(
                 this, R.layout.general_content_container
         );
 
@@ -49,5 +52,17 @@ public class LoginActivity extends AppCoreActivity implements HasSupportFragment
     @Override
     public AndroidInjector<Fragment> supportFragmentInjector() {
         return fragmentDispatchingAndroidInjector;
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        FragmentManager fm = getSupportFragmentManager();
+
+        LoginFragment fragment = (LoginFragment) fm.findFragmentById(binding.contentContainer.getId());
+
+        if (fragment != null) {
+            fragment.onBackPressed();
+        }
     }
 }

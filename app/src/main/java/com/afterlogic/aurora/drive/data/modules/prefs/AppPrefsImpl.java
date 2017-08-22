@@ -12,20 +12,25 @@ import javax.inject.Inject;
  */
 public class AppPrefsImpl implements AppPrefs {
 
-    private AppPreferences mAppPreferences;
+    private AppPreferences appPreferences;
 
     @Inject
-    public AppPrefsImpl(Context ctx) {
-        mAppPreferences = new AppPreferences(ctx);
+    AppPrefsImpl(Context ctx) {
+        appPreferences = new AppPreferences(ctx);
     }
 
     @Override
     public Pref<Integer> appConfigVersion() {
-        return new IntPref(mAppPreferences, "appConfigVersion");
+        return new IntPref(appPreferences, "appConfigVersion");
     }
 
     @Override
     public Pref<Boolean> loggedIn() {
-        return new BooleanPref(mAppPreferences, "loggedIn", false);
+        return new BooleanPref(appPreferences, "loggedIn", false);
+    }
+
+    @Override
+    public Pref<String> lastInputedHost() {
+        return new StringPref(appPreferences, "lastInputedHost");
     }
 }

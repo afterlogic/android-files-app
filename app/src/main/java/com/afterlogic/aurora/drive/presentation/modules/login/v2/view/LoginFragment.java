@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.databinding.GeneralContentContainerBinding;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
+import com.afterlogic.aurora.drive.presentation.common.interfaces.OnBackPressedListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMFragment;
 import com.afterlogic.aurora.drive.presentation.modules.login.v2.viewModel.LoginViewModel;
 
@@ -27,7 +28,9 @@ import dagger.android.support.HasSupportFragmentInjector;
  * mail: mail@sunnydaydev.me
  */
 
-public class LoginFragment extends InjectableMVVMFragment<LoginViewModel> implements HasSupportFragmentInjector {
+public class LoginFragment
+        extends InjectableMVVMFragment<LoginViewModel>
+        implements HasSupportFragmentInjector, OnBackPressedListener {
 
     public static LoginFragment newInstance() {
 
@@ -84,5 +87,11 @@ public class LoginFragment extends InjectableMVVMFragment<LoginViewModel> implem
                     break;
             }
         });
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        getViewModel().onBackPressed();
+        return true;
     }
 }

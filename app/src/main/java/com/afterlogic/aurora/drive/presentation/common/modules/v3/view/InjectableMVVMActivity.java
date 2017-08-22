@@ -99,6 +99,10 @@ public abstract class InjectableMVVMActivity<VM extends LifecycleViewModel>
         return lifecycleRegistry;
     }
 
+    public <T extends ViewDataBinding> T getBinding() {
+        return (T) binding;
+    }
+
     public abstract VM createViewModel(ViewModelProvider provider);
 
     protected ViewModelProvider createViewModelProvider() {
