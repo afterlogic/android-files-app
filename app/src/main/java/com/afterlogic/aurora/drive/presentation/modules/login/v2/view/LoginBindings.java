@@ -3,7 +3,6 @@ package com.afterlogic.aurora.drive.presentation.modules.login.v2.view;
 import android.annotation.SuppressLint;
 import android.databinding.BindingAdapter;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -26,7 +25,6 @@ public class LoginBindings {
                 super.onPageStarted(view, url, favicon);
                 vm.onPageLoadingStarted(url);
             }
-
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
@@ -46,19 +44,15 @@ public class LoginBindings {
 
     @SuppressLint("SetJavaScriptEnabled")
     @BindingAdapter("login_webViewConfig")
-    public static void bindWebViewConfig(WebView view, boolean useConfig) {
+    public static void bindWebViewConfig(WebView webView, boolean useConfig) {
         if (!useConfig) return;
 
-        WebSettings settings = view.getSettings();
+        WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
         settings.setUseWideViewPort(true);
         settings.setSupportZoom(false);
 
-        String userAgent = "Mozilla/5.0 (Linux; Android "
-                + Build.VERSION.RELEASE
-                + "; " + Build.MODEL +") "
-                + " AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19";
-        settings.setUserAgentString(userAgent);
+        settings.setUserAgentString(settings.getUserAgentString().replace(" Mobile ", ""));
     }
 }
