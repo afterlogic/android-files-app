@@ -3,15 +3,20 @@ package com.afterlogic.aurora.drive.presentation.modules.login.v2.viewModel;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.text.TextUtils;
+import android.webkit.CookieManager;
 
 import com.afterlogic.aurora.drive.application.navigation.AppRouter;
+import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.presentation.common.binding.binder.Bindable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.AsyncUiObservableField;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.LifecycleViewModel;
 import com.afterlogic.aurora.drive.presentation.modules.login.v2.interactor.LoginInteractor;
+import com.annimon.stream.Stream;
 
 import javax.inject.Inject;
+
+import okhttp3.HttpUrl;
 
 /**
  * Created by aleksandrcikin on 11.08.17.
@@ -31,6 +36,8 @@ public class LoginViewModel extends LifecycleViewModel {
     private final LoginInteractor interactor;
     private final Subscriber subscriber;
     private final AppRouter router;
+
+    private HttpUrl checkedHost;
 
     @Inject
     public LoginViewModel(LoginInteractor interactor,
@@ -56,24 +63,34 @@ public class LoginViewModel extends LifecycleViewModel {
                 .doFinally(() -> isInProgress.set(false))
                 .subscribe(subscriber.subscribe(checkedHost -> {
 
+                    this.checkedHost = checkedHost;
+
                     interactor.storeLastInputedHost(host.get())
                             .onErrorResumeNext(error -> interactor.storeLastInputedHost(null))
                             .onErrorComplete()
                             .compose(subscriber::defaultSchedulers)
                             .subscribe(subscriber.justSubscribe());
 
-                    loginUrl.set(checkedHost + "?external-clients-login-form");
+                    loginUrl.set(this.checkedHost + "?external-clients-login-form");
                     loginState.set(LoginViewModelState.LOGIN);
                 }));
     }
 
     public void onPageLoadingStarted(String url) {
+        MyLog.d("Start load url: " + url);
+
+        if (url.equals(checkedHost.toString())) {
+            String cookie = CookieManager.getInstance().getCookie(url);
+            parseAuthorizedCookie(cookie);
+        }
+
         if (loginState.get() == LoginViewModelState.LOGIN) {
             isInProgress.set(true);
         }
     }
 
     public void onPageLoadingFinished(String url) {
+        MyLog.d("Loaded url: " + url);
         if (loginState.get() == LoginViewModelState.LOGIN) {
             isInProgress.set(false);
         }
@@ -84,6 +101,23 @@ public class LoginViewModel extends LifecycleViewModel {
             loginState.set(LoginViewModelState.HOST);
         } else {
             router.exit();
+        }
+    }
+
+    private void parseAuthorizedCookie(String cookie) {
+
+        String authToken = Stream.of(cookie.split(";"))
+                .map(String::trim)
+                .map(item -> item.split("="))
+                .filter(pair -> pair[0].equals("AuthToken"))
+                .findFirst()
+                .map(pair -> pair[1])
+                .orElse(null);
+
+        if (authToken != null) {
+            interactor.handleAuth(authToken, checkedHost)
+                    .compose(subscriber::defaultSchedulers)
+                    .subscribe(subscriber.subscribe(() -> router.replaceScreen(AppRouter.MAIN)));
         }
     }
 }

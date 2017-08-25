@@ -20,5 +20,7 @@ public interface AuthRepository {
 
     Maybe<AuroraSession> getCurrentSession();
 
+    Completable setCurrentSession(AuroraSession session);
+
     Completable logoutAndClearData();
 }

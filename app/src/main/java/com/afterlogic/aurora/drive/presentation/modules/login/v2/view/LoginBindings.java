@@ -1,7 +1,9 @@
 package com.afterlogic.aurora.drive.presentation.modules.login.v2.view;
 
+import android.annotation.SuppressLint;
 import android.databinding.BindingAdapter;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -42,6 +44,7 @@ public class LoginBindings {
         }
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     @BindingAdapter("login_webViewConfig")
     public static void bindWebViewConfig(WebView view, boolean useConfig) {
         if (!useConfig) return;
@@ -51,5 +54,11 @@ public class LoginBindings {
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
         settings.setUseWideViewPort(true);
         settings.setSupportZoom(false);
+
+        String userAgent = "Mozilla/5.0 (Linux; Android "
+                + Build.VERSION.RELEASE
+                + "; " + Build.MODEL +") "
+                + " AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19";
+        settings.setUserAgentString(userAgent);
     }
 }

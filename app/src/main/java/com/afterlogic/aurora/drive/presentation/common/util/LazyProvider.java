@@ -15,7 +15,8 @@ public class LazyProvider<T> {
     private T mValue;
     private final Provider<T> mProvider;
 
-    @Inject public LazyProvider(Provider<T> provider) {
+    @Inject
+    public LazyProvider(Provider<T> provider) {
         mProvider = provider;
     }
 

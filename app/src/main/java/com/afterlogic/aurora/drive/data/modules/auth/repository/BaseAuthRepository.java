@@ -27,9 +27,9 @@ import static android.content.Context.ACCOUNT_SERVICE;
 @SuppressWarnings("WeakerAccess")
 abstract class BaseAuthRepository extends Repository implements AuthRepository {
 
-    private final Context mContext;
-    private final SessionManager mSessionManager;
-    private final DataCleaner mDataCleaner;
+    private final Context context;
+    private final SessionManager sessionManager;
+    private final DataCleaner dataCleaner;
 
     public BaseAuthRepository(SharedObservableStore cache,
                               String repositoryId,
@@ -37,20 +37,20 @@ abstract class BaseAuthRepository extends Repository implements AuthRepository {
                               SessionManager sessionManager,
                               DataCleaner dataCleaner) {
         super(cache, repositoryId);
-        mContext = context;
-        mSessionManager = sessionManager;
-        mDataCleaner = dataCleaner;
+        this.context = context;
+        this.sessionManager = sessionManager;
+        this.dataCleaner = dataCleaner;
     }
 
     @Override
     public Completable logoutAndClearData() {
-        return mDataCleaner.cleanAllUserData();
+        return dataCleaner.cleanAllUserData();
     }
 
     @Override
     public Maybe<AuroraSession> getCurrentSession() {
         return Maybe.defer(() -> {
-            AuroraSession session = mSessionManager.getSession();
+            AuroraSession session = sessionManager.getSession();
             if (session != null){
                 return Maybe.just(session);
             } else {
@@ -59,12 +59,22 @@ abstract class BaseAuthRepository extends Repository implements AuthRepository {
         });
     }
 
+    @Override
+    public Completable setCurrentSession(AuroraSession session) {
+        return storeAuthData()
+                .startWith(Completable.fromAction(() -> sessionManager.setSession(session)));
+    }
+
     protected Completable storeAuthData(){
         return Completable.fromAction(() -> {
-            AccountManager am = (AccountManager) mContext.getSystemService(ACCOUNT_SERVICE);
-            AuroraSession session = mSessionManager.getSession();
+            AuroraSession session = sessionManager.getSession();
 
-            Account account = AccountUtil.getCurrentAccount(mContext);
+            AccountManager am = (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
+            if (am == null) {
+                throw new AccountManagerError();
+            }
+
+            Account account = AccountUtil.getCurrentAccount(context);
             if (account == null) {
                 account = new Account(session.getLogin(), AccountUtil.ACCOUNT_TYPE);
                 if (!am.addAccountExplicitly(account, session.getPassword(), null)) {
@@ -73,7 +83,7 @@ abstract class BaseAuthRepository extends Repository implements AuthRepository {
             }
 
             AccountUtil.updateAccountCredentials(account, session, am);
-            SessionTrackUtil.fireSessionChanged(session, mContext);
+            SessionTrackUtil.fireSessionChanged(session, context);
         });
     }
 }
