@@ -3,6 +3,7 @@ package com.afterlogic.aurora.drive.data.modules.auth.repository;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
+import android.webkit.CookieManager;
 
 import com.afterlogic.aurora.drive.core.common.util.AccountUtil;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
@@ -44,7 +45,8 @@ abstract class BaseAuthRepository extends Repository implements AuthRepository {
 
     @Override
     public Completable logoutAndClearData() {
-        return dataCleaner.cleanAllUserData();
+        return dataCleaner.cleanAllUserData()
+                .doOnComplete(() -> CookieManager.getInstance().removeAllCookie());
     }
 
     @Override

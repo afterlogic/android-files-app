@@ -79,6 +79,10 @@ public interface Api7 {
     @POST()
     Single<ApiResponseP7<SystemAppData>> getSystemAppData(@Url String url, @FieldMap Map<String, Object> fields);
 
+    @FormUrlEncoded
+    @POST(AJAX)
+    Single<ApiResponseP7<AuthToken>> login(@Url String url, @FieldMap Map<String, Object> fields);
+
     @FormUrlEncoded()
     @POST(AJAX)
     Single<ApiResponseP7<SystemAppData>> getSystemAppData(@FieldMap Map<String, Object> fields);

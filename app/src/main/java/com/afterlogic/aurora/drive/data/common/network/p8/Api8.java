@@ -92,8 +92,11 @@ public interface Api8 {
 
     @POST()
     @FormUrlEncoded
-    @Headers(Header.AUTHORISATION)
     Single<ApiResponseP8<String>> ping(@Url String url, @FieldMap Map<String, Object> fields);
+
+    @POST()
+    @FormUrlEncoded
+    Single<ApiResponseP8<AuthToken>> login(@Url String url, @FieldMap Map<String, Object> fields);
 
     @POST(API)
     @FormUrlEncoded

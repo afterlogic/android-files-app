@@ -3,6 +3,7 @@ package com.afterlogic.aurora.drive.data.modules.auth.repository;
 import android.content.Context;
 
 import com.afterlogic.aurora.drive.data.common.repository.Repository;
+import com.afterlogic.aurora.drive.data.model.ApiResponse;
 import com.afterlogic.aurora.drive.data.modules.cleaner.DataCleaner;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.session.SessionTrackUtil;
 import com.afterlogic.aurora.drive.data.common.annotations.RepositoryCache;
@@ -69,7 +70,13 @@ public class AuthRepositoryP7Impl extends BaseAuthRepository implements AuthRepo
 
     @Override
     public Single<SystemAppData> getSystemAppData() {
-        return withNetMapper(mAuthService.getSystemAppData())
+
+        return mAuthService.getSystemAppData()
+                .compose(Repository::withRawNetMapper)
+                .doOnSuccess(response -> {
+                    response.getAccountId();
+                })
+                .map(ApiResponse::getResult)
                 .map(result -> {
                     mSessionManager.getSession().setAppToken(result.getToken());
                     return result;

@@ -53,6 +53,11 @@ public class LoginBindings {
         settings.setUseWideViewPort(true);
         settings.setSupportZoom(false);
 
-        settings.setUserAgentString(settings.getUserAgentString().replace(" Mobile ", ""));
+        settings.setUserAgentString(
+                settings.getUserAgentString()
+                        //.replace(" Mobile ", "")
+                        .replace("; wv)", ")")
+
+        );
     }
 }
