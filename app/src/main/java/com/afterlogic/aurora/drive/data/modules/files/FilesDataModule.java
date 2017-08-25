@@ -60,17 +60,29 @@ public class FilesDataModule{
 
     @Provides @Named(CACHE_DIR)
     File cacheDir(Context appContext){
-        return new File(appContext.getExternalCacheDir(), "files/");
+        if (Environment.isExternalStorageEmulated()) {
+            return new File(appContext.getExternalCacheDir(), "files/");
+        } else {
+            return new File(appContext.getCacheDir(), "files/");
+        }
     }
 
     @Provides @Named(THUMB_DIR)
     File thumbDir(Context appContext){
-        return new File(appContext.getExternalCacheDir(), "thumb/");
+        if (Environment.isExternalStorageEmulated()) {
+            return new File(appContext.getExternalCacheDir(), "thumb/");
+        } else {
+            return new File(appContext.getCacheDir(), "thumb/");
+        }
     }
 
     @Provides @Named(OFFLINE_DIR)
     File offlineDir(Context appContext){
-        return appContext.getExternalFilesDir("offline");
+        if (Environment.isExternalStorageEmulated()) {
+            return appContext.getExternalFilesDir("offline");
+        } else {
+            return new File(appContext.getFilesDir(), "offline/");
+        }
     }
 
     @Provides @Named(DOWNLOADS_DIR)
