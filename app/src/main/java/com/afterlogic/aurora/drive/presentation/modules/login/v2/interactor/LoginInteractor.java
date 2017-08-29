@@ -1,16 +1,8 @@
 package com.afterlogic.aurora.drive.presentation.modules.login.v2.interactor;
 
-import android.support.v4.util.Pair;
-
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
-import com.afterlogic.aurora.drive.core.common.util.Lazy;
-import com.afterlogic.aurora.drive.core.consts.Const;
-import com.afterlogic.aurora.drive.data.common.network.SessionManager;
-import com.afterlogic.aurora.drive.data.modules.apiChecker.checker.ApiChecker;
-import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
+import com.afterlogic.aurora.drive.data.modules.auth.AuthenticatorService;
 import com.afterlogic.aurora.drive.data.modules.prefs.AppPrefs;
-import com.afterlogic.aurora.drive.model.AuroraSession;
-import com.afterlogic.aurora.drive.model.SystemAppData;
 import com.afterlogic.aurora.drive.model.error.UnknownApiVersionError;
 import com.annimon.stream.Stream;
 
@@ -18,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
@@ -32,21 +23,15 @@ import okhttp3.HttpUrl;
 
 public class LoginInteractor {
 
-    private final ApiChecker apiChecker;
-    private final Provider<AuthRepository> authRepositoryProvider;
-    private final SessionManager sessionManager;
     private final AppPrefs prefs;
+    private final AuthenticatorService authenticatorService;
 
     @Inject
-    public LoginInteractor(ApiChecker apiChecker,
-                           Provider<AuthRepository> authRepositoryProvider,
-                           SessionManager sessionManager,
-                           AppPrefs prefs) {
+    public LoginInteractor(AppPrefs prefs,
+                           AuthenticatorService authenticatorService) {
 
-        this.apiChecker = apiChecker;
-        this.authRepositoryProvider = authRepositoryProvider;
-        this.sessionManager = sessionManager;
         this.prefs = prefs;
+        this.authenticatorService = authenticatorService;
     }
 
     public Maybe<String> getLastInputedHost() {
@@ -92,44 +77,19 @@ public class LoginInteractor {
             }
 
             return Stream.of(domains)
-                    .map(domainItem -> apiChecker.getApiVersion(domainItem)
-                            .map(version -> new Pair<>(domainItem, version))
-                            .toObservable()
+                    .map(domainItem ->
+                            authenticatorService.getApiVersion(domainItem.toString())
+                                    .toObservable()
+                                    .map(version -> domain)
                     )
                     .collect(Observables.Collectors.concatObservables())
-                    .filter(versionPair -> versionPair.second != Const.ApiVersion.API_NONE)
                     .firstElement()
-                    .map(versionPair -> versionPair.first)
                     .switchIfEmpty(Maybe.error(new UnknownApiVersionError()))
                     .toSingle();
         });
     }
 
     public Completable handleAuth(String authToken, HttpUrl host) {
-
-        AuroraSession session = new AuroraSession(
-                null,
-                authToken,
-                -1,
-                "unknown",
-                null,
-                host,
-                Const.ApiVersion.API_NONE
-        );
-
-        Lazy<AuthRepository> lazyAuth = new Lazy<>(authRepositoryProvider::get);
-
-        return apiChecker.getApiVersion(host)
-                .flatMap(version -> {
-                    session.setApiType(version);
-                    sessionManager.setSession(session);
-
-                    return lazyAuth.get().getSystemAppData();
-                })
-                .map(SystemAppData::getToken)
-                .flatMapCompletable(appToken -> {
-                    session.setAppToken(appToken);
-                    return lazyAuth.get().setCurrentSession(session);
-                });
+        return authenticatorService.updateSessionByToken(host.toString(), authToken);
     }
 }

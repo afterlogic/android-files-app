@@ -2,6 +2,7 @@ package com.afterlogic.aurora.drive.data.modules.auth;
 
 import com.afterlogic.aurora.drive.core.consts.Const;
 import com.afterlogic.aurora.drive.model.AuroraSession;
+import com.google.gson.stream.MalformedJsonException;
 
 import javax.inject.Inject;
 
@@ -14,12 +15,12 @@ import okhttp3.HttpUrl;
  * mail: mail@sunnydaydev.me
  */
 
-class P8AuthenticatorService implements AuthenticatorService{
+class P8AuthenticatorSubService implements AuthenticatorSubService {
 
     private final P8AuthenticatorNetworkService service;
 
     @Inject
-    P8AuthenticatorService(P8AuthenticatorNetworkService service) {
+    P8AuthenticatorSubService(P8AuthenticatorNetworkService service) {
         this.service = service;
     }
 
@@ -56,8 +57,10 @@ class P8AuthenticatorService implements AuthenticatorService{
     public Maybe<Integer> getApiVersion(String host) {
         return service.ping(host)
                 .toMaybe()
-                .onErrorComplete() // TODO: complete only another api version else throw error
-                .map(systemAppData -> Const.ApiVersion.API_P7);
+                .onErrorResumeNext(error -> error instanceof MalformedJsonException
+                        ? Maybe.empty() : Maybe.error(error)
+                )
+                .map(systemAppData -> Const.ApiVersion.API_P8);
     }
 
 }

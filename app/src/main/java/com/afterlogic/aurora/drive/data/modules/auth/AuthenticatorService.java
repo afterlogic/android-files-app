@@ -1,8 +1,14 @@
 package com.afterlogic.aurora.drive.data.modules.auth;
 
-import com.afterlogic.aurora.drive.model.AuroraSession;
+import com.afterlogic.aurora.drive.core.common.annotation.scopes.DataScope;
+import com.afterlogic.aurora.drive.core.consts.Const;
+import com.afterlogic.aurora.drive.data.common.network.SessionManager;
+import com.afterlogic.aurora.drive.model.error.UnknownApiVersionError;
 
-import io.reactivex.Maybe;
+import javax.inject.Inject;
+
+import io.reactivex.Completable;
+import io.reactivex.Observable;
 import io.reactivex.Single;
 
 /**
@@ -10,11 +16,51 @@ import io.reactivex.Single;
  * mail: mail@sunnydaydev.me
  */
 
-interface AuthenticatorService {
+@DataScope
+public class AuthenticatorService {
 
-    Single<AuroraSession> login(String host, String login, String pass);
+    private final SessionManager sessionManager;
+    private final AuthenticatorSubService p7AuthenticatorSubService;
+    private final AuthenticatorSubService p8AuthenticatorSubService;
 
-    Single<AuroraSession> byToken(String host, String token);
+    @Inject
+    AuthenticatorService(SessionManager sessionManager,
+                         P7AuthenticatorSubService p7AuthenticatorService,
+                         P8AuthenticatorSubService p8AuthenticatorService) {
 
-    Maybe<Integer> getApiVersion(String host);
+        this.sessionManager = sessionManager;
+        this.p7AuthenticatorSubService = p7AuthenticatorService;
+        this.p8AuthenticatorSubService = p8AuthenticatorService;
+    }
+
+    public Completable login(String host, String login, String pass) {
+        return getAuthenticatorService(host)
+                .flatMap(service -> service.login(host, login, pass))
+                .doOnSuccess(sessionManager::setSession)
+                .toCompletable();
+    }
+
+    public Completable updateSessionByToken(String host, String token) {
+        return getAuthenticatorService(host)
+                .flatMap(service -> service.byToken(host, token))
+                .doOnSuccess(sessionManager::setSession)
+                .toCompletable();
+    }
+
+    public Single<Integer> getApiVersion(String host) {
+        return Observable.concat(
+                p8AuthenticatorSubService.getApiVersion(host)
+                        .toObservable(),
+                p7AuthenticatorSubService.getApiVersion(host)
+                        .toObservable()
+        )//--->
+                .switchIfEmpty(Observable.error(new UnknownApiVersionError()))
+                .firstOrError();
+    }
+
+    private Single<AuthenticatorSubService> getAuthenticatorService(String host) {
+        return getApiVersion(host)
+                .map(version -> version == Const.ApiVersion.API_P7
+                        ? p7AuthenticatorSubService : p8AuthenticatorSubService);
+    }
 }

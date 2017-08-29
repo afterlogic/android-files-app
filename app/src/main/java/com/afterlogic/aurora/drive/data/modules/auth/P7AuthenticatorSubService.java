@@ -15,12 +15,12 @@ import okhttp3.HttpUrl;
  * mail: mail@sunnydaydev.me
  */
 
-class P7AuthenticatorService implements AuthenticatorService{
+class P7AuthenticatorSubService implements AuthenticatorSubService {
 
     private final P7AuthenticatorNetworkService service;
 
     @Inject
-    P7AuthenticatorService(P7AuthenticatorNetworkService service) {
+    P7AuthenticatorSubService(P7AuthenticatorNetworkService service) {
         this.service = service;
     }
 
