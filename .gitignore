@@ -52,3 +52,5 @@ captures/
 
 gradle/
 fabric.properties
+
+\.DS_Store
