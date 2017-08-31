@@ -5,6 +5,7 @@ import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.support.annotation.Nullable;
 
 import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
 import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
@@ -17,6 +18,7 @@ import static android.content.pm.PackageManager.DONT_KILL_APP;
 
 public class AppUtil {
 
+    @Nullable
     public static String getCurrentProcessName(Context context) {
         String processName = "";
         int pid = android.os.Process.myPid();

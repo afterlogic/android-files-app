@@ -40,17 +40,16 @@ class P8AuthenticatorSubService implements AuthenticatorSubService {
 
     @Override
     public Single<AuroraSession> byToken(String host, String token) {
-        return service.ping(host)
-                .toCompletable()
-                .andThen(Single.fromCallable(() -> new AuroraSession(
+        return service.getUser(host, token)
+                .map(userData -> new AuroraSession(
                         "APP_TOKEN_STUB",
                         token,
-                        -1,
-                        null,
+                        userData.first,
+                        userData.second.getPublicId(),
                         null,
                         HttpUrl.parse(host),
                         Const.ApiVersion.API_P8
-                )));
+                ));
     }
 
     @Override

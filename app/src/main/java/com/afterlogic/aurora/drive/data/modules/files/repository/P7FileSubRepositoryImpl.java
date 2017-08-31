@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.core.AuthorizationResolver;
 import com.afterlogic.aurora.drive.core.common.rx.SimpleObservableSource;
 import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
@@ -13,14 +14,12 @@ import com.afterlogic.aurora.drive.data.common.mapper.MapperUtil;
 import com.afterlogic.aurora.drive.data.common.network.DynamicDomainProvider;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.common.network.p7.Api7;
-import com.afterlogic.aurora.drive.data.common.repository.AuthorizedRepository;
 import com.afterlogic.aurora.drive.data.common.repository.Repository;
 import com.afterlogic.aurora.drive.data.model.AuroraFilesResponse;
 import com.afterlogic.aurora.drive.data.model.UploadResult;
 import com.afterlogic.aurora.drive.data.model.project7.AuroraFileP7;
 import com.afterlogic.aurora.drive.data.model.project7.UploadResultP7;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
-import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
 import com.afterlogic.aurora.drive.data.modules.files.mapper.p7.file.factory.AuroraFileP7MapperFactory;
 import com.afterlogic.aurora.drive.data.modules.files.mapper.p7.uploadResult.factory.UploadResultP7MapperFactory;
 import com.afterlogic.aurora.drive.data.modules.files.model.dto.ReplaceFileDto;
@@ -52,7 +51,7 @@ import static com.afterlogic.aurora.drive.data.modules.files.repository.FileRepo
  * Created by sashka on 19.10.16.<p/>
  * mail: sunnyday.development@gmail.com
  */
-public class P7FileSubRepositoryImpl extends AuthorizedRepository implements FileSubRepository {
+public class P7FileSubRepositoryImpl extends Repository implements FileSubRepository {
 
     private static final String FILES_P_7 = "filesP7";
 
@@ -63,6 +62,7 @@ public class P7FileSubRepositoryImpl extends AuthorizedRepository implements Fil
     private final FilesServiceP7 mCloudService;
     private final DynamicDomainProvider mDynamicDomainProvider;
     private final SessionManager mSessionManager;
+    private final AuthorizationResolver authorizationResolver;
 
     private final AppResources mAppResources;
 
@@ -75,8 +75,8 @@ public class P7FileSubRepositoryImpl extends AuthorizedRepository implements Fil
                             SessionManager sessionManager,
                             UploadResultP7MapperFactory uploadResultP7MapperFactory,
                             AppResources appResources,
-                            AuthRepository authRepository) {
-        super(cache, FILES_P_7, authRepository);
+                            AuthorizationResolver authorizationResolver) {
+        super(cache, FILES_P_7);
         mFileNetToBlMapper = mapperFactory.netToBl();
         mFileBlToNetMapper = mapperFactory.blToNet();
         mCloudService = cloudService;
@@ -84,6 +84,7 @@ public class P7FileSubRepositoryImpl extends AuthorizedRepository implements Fil
         mSessionManager = sessionManager;
         mUploadResultToBlMapper = uploadResultP7MapperFactory.p7toBl();
         mAppResources = appResources;
+        this.authorizationResolver = authorizationResolver;
     }
 
     @Override
@@ -128,7 +129,7 @@ public class P7FileSubRepositoryImpl extends AuthorizedRepository implements Fil
             } else {
                 return mCloudService.getFiles(folder.getFullPath(), folder.getType(), pattern)
                         .compose(Repository::withNetMapper)
-                        .compose(this::withRelogin)
+                        .compose(authorizationResolver::checkAuth)
                         .map(this::mapFilesResponse);
             }
         });
@@ -144,7 +145,7 @@ public class P7FileSubRepositoryImpl extends AuthorizedRepository implements Fil
                 file.getType(), file.getPath(), file.getName(), newName, file.isLink()
         )//-----|
                 .compose(Repository::withNetMapper)
-                .compose(this::withRelogin)
+                .compose(authorizationResolver::checkAuth)
                 .toCompletable();
     }
 
@@ -162,7 +163,7 @@ public class P7FileSubRepositoryImpl extends AuthorizedRepository implements Fil
                 ))
         )//-----|
                 .compose(Repository::withNetMapper)
-                .compose(this::withRelogin)
+                .compose(authorizationResolver::checkAuth)
                 .doOnEvent((uploadResult, throwable) -> progressSource.complete())
                 .doOnDispose(progressSource::clear)
                 .map(result -> {
@@ -183,7 +184,7 @@ public class P7FileSubRepositoryImpl extends AuthorizedRepository implements Fil
             List<AuroraFileP7> mapped = MapperUtil.listOrEmpty(files, mFileBlToNetMapper);
             return mCloudService.deleteFiles(type, mapped)
                     .compose(Repository::withNetMapper)
-                    .compose(this::withRelogin)
+                    .compose(authorizationResolver::checkAuth)
                     .toCompletable();
         });
     }
@@ -220,7 +221,7 @@ public class P7FileSubRepositoryImpl extends AuthorizedRepository implements Fil
     public Completable createFolder(AuroraFile file) {
         return mCloudService.createFolder(file.getType(), file.getPath(), file.getName())
                 .compose(Repository::withNetMapper)
-                .compose(this::withRelogin)
+                .compose(authorizationResolver::checkAuth)
                 .toCompletable();
     }
 
@@ -229,7 +230,7 @@ public class P7FileSubRepositoryImpl extends AuthorizedRepository implements Fil
     public Completable checkFileExisting(AuroraFile file) {
         return mCloudService.checkFile(file.getType(), file.getPath(), file.getName()).map(response -> response)
                 .compose(Repository::withNetMapper)
-                .compose(this::withRelogin)
+                .compose(authorizationResolver::checkAuth)
                 .map(mFileNetToBlMapper::map)
                 .toCompletable()
                 .onErrorResumeNext(error -> {
@@ -261,14 +262,14 @@ public class P7FileSubRepositoryImpl extends AuthorizedRepository implements Fil
     public Single<String> createPublicLink(AuroraFile file) {
         return mCloudService.createPublicLink(file.getType(), file.getPath(), file.getName(), file.getSize(), file.isFolder())
                 .compose(Repository::withNetMapper)
-                .compose(this::withRelogin);
+                .compose(authorizationResolver::checkAuth);
     }
 
     @Override
     public Completable deletePublicLink(AuroraFile file) {
         return mCloudService.deletePublicLink(file.getType(), file.getPath(), file.getName())
                 .compose(Repository::withNetMapper)
-                .compose(this::withRelogin)
+                .compose(authorizationResolver::checkAuth)
                 .toCompletable();
     }
 

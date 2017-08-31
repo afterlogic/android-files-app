@@ -129,7 +129,7 @@ public class AppNavigator extends SupportAppNavigator {
             }
 
             case AppRouter.LOGIN:
-                return LoginActivity.intent(false, activity);
+                return LoginActivity.intent(data != null && (Boolean) data);
 
             case AppRouter.OFFLINE:
                 return OfflineActivity.intent(activity, data == null || (boolean) data);

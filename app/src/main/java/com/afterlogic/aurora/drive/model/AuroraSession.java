@@ -1,11 +1,10 @@
 package com.afterlogic.aurora.drive.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.text.TextUtils;
+import com.afterlogic.aurora.drive.core.common.parceller.HttpUrlParcelConverter;
 
-import com.afterlogic.aurora.drive.core.consts.Const;
+import org.parceler.Parcel;
+import org.parceler.ParcelConstructor;
+import org.parceler.ParcelPropertyConverter;
 
 import okhttp3.HttpUrl;
 
@@ -13,133 +12,97 @@ import okhttp3.HttpUrl;
  * Aurora session.
  * Handle account id, app token, auth token.
  */
-public class AuroraSession implements Parcelable{
 
-    private String mAppToken;
-    private String mAuthToken;
-    private long mAccountId;
+@Parcel
+public class AuroraSession {
 
-    private String mLogin;
-    private String mPassword;
-    private HttpUrl mDomain;
+    protected String appToken;
+    protected String authToken;
+    protected long accountId;
 
-    private int mApiType;
+    protected String login;
+    protected String password;
 
-    public AuroraSession(HttpUrl domain, String login, String password, int apiType) {
-        mDomain = domain;
-        mLogin = login;
-        mPassword = password;
-        mApiType = apiType;
+    @ParcelPropertyConverter(HttpUrlParcelConverter.class)
+    protected HttpUrl domain;
+
+    protected int apiVersion;
+
+    @ParcelConstructor
+    protected AuroraSession() {
     }
 
-    public AuroraSession(String appToken, String authToken, long accountId, String login, String password, HttpUrl domain, int apiType) {
-        mAppToken = appToken;
-        mAuthToken = authToken;
-        mAccountId = accountId;
-        mLogin = login;
-        mPassword = password;
-        mDomain = domain;
-        mApiType = apiType;
+    public AuroraSession(HttpUrl domain, String login, String password, int apiVersion) {
+        this.domain = domain;
+        this.login = login;
+        this.password = password;
+        this.apiVersion = apiVersion;
     }
 
-    protected AuroraSession(Parcel in) {
-        mAppToken = in.readString();
-        mAuthToken = in.readString();
-        mAccountId = in.readLong();
-        mLogin = in.readString();
-        mPassword = in.readString();
-        mApiType = in.readInt();
-        mDomain = HttpUrl.parse(in.readString());
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mAppToken);
-        dest.writeString(mAuthToken);
-        dest.writeLong(mAccountId);
-        dest.writeString(mLogin);
-        dest.writeString(mPassword);
-        dest.writeInt(mApiType);
-        dest.writeString(mDomain.toString());
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    public static final Creator<AuroraSession> CREATOR = new Creator<AuroraSession>() {
-        @Override
-        public AuroraSession createFromParcel(Parcel in) {
-            return new AuroraSession(in);
-        }
-
-        @Override
-        public AuroraSession[] newArray(int size) {
-            return new AuroraSession[size];
-        }
-    };
-
-    public String getLogin() {
-        return mLogin;
-    }
-
-    public String getPassword() {
-        return mPassword;
+    public AuroraSession(String appToken, String authToken, long accountId, String login, String password, HttpUrl domain, int apiVersion) {
+        this.appToken = appToken;
+        this.authToken = authToken;
+        this.accountId = accountId;
+        this.login = login;
+        this.password = password;
+        this.domain = domain;
+        this.apiVersion = apiVersion;
     }
 
     public String getAppToken() {
-        return mAppToken;
+        return appToken;
     }
 
     public void setAppToken(String appToken) {
-        mAppToken = appToken;
+        this.appToken = appToken;
     }
 
     public String getAuthToken() {
-        return mAuthToken;
+        return authToken;
     }
 
     public void setAuthToken(String authToken) {
-        mAuthToken = authToken;
+        this.authToken = authToken;
     }
 
     public long getAccountId() {
-        return mAccountId;
+        return accountId;
     }
 
     public void setAccountId(long accountId) {
-        mAccountId = accountId;
+        this.accountId = accountId;
     }
 
-    public void setDomain(@NonNull HttpUrl domain){
-        mDomain = domain;
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public HttpUrl getDomain() {
-        return mDomain;
+        return domain;
+    }
+
+    public void setDomain(HttpUrl domain) {
+        this.domain = domain;
     }
 
     public int getApiVersion() {
-        return mApiType;
+        return apiVersion;
     }
 
-    public void setApiType(int apiType) {
-        mApiType = apiType;
-    }
-
-    public boolean isComplete(){
-        return mApiType != Const.ApiVersion.API_NONE && mAccountId != 0 && mDomain != null &&
-                !hasEmpty(mAuthToken, mDomain.toString(), mLogin, mPassword, mAppToken);
-    }
-
-    private boolean hasEmpty(String... strings){
-        for (String s:strings){
-            if (TextUtils.isEmpty(s)){
-                return true;
-            }
-        }
-        return false;
+    public void setApiVersion(int apiVersion) {
+        this.apiVersion = apiVersion;
     }
 
 }

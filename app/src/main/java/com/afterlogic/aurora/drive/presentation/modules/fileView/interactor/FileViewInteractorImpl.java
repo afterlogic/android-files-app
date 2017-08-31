@@ -112,6 +112,6 @@ public class FileViewInteractorImpl extends BaseFilesListInteractor implements F
 
     @Override
     public Single<Boolean> getAuthStatus() {
-        return Single.fromCallable(() -> mSessionManager.getSession() != null && mSessionManager.getSession().isComplete());
+        return Single.fromCallable(() -> mSessionManager.getSession() != null);
     }
 }

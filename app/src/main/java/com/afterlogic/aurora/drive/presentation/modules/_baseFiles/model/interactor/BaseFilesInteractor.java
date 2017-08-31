@@ -68,6 +68,6 @@ public class BaseFilesInteractor extends BaseInteractor implements FilesInteract
 
     @Override
     public Single<Boolean> getAuthStatus() {
-        return Single.fromCallable(() -> mSessionManager.getSession() != null && mSessionManager.getSession().isComplete());
+        return Single.fromCallable(() -> mSessionManager.getSession() != null);
     }
 }

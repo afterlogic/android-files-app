@@ -15,7 +15,6 @@ import android.widget.Toast;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.util.AccountUtil;
 import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
-import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginIntent;
 
 /**
  * Created by sashka on 05.04.16.
@@ -56,9 +55,7 @@ class Authenticator extends AbstractAccountAuthenticator {
                     Toast.LENGTH_LONG).show());
             result.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, false);
         }else{
-            Intent intent = LoginIntent.loginAndReturn(
-                                    new Intent(mContext, LoginActivity.class)
-                            );
+            Intent intent = LoginActivity.intent(false);
 
             intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, r);
 

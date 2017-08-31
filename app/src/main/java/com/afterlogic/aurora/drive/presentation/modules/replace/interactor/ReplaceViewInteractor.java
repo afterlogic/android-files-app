@@ -3,7 +3,7 @@ package com.afterlogic.aurora.drive.presentation.modules.replace.interactor;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.interactor.BaseViewInteractor;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.core.CurrentActivityTracker;
+import com.afterlogic.aurora.drive.application.ActivityTracker;
 
 import javax.inject.Inject;
 
@@ -18,7 +18,7 @@ import io.reactivex.Maybe;
 public class ReplaceViewInteractor extends BaseViewInteractor {
 
     @Inject
-    ReplaceViewInteractor(CurrentActivityTracker tracker) {
+    ReplaceViewInteractor(ActivityTracker tracker) {
         super(tracker);
     }
 

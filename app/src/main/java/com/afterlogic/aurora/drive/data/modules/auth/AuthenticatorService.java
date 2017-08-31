@@ -2,7 +2,7 @@ package com.afterlogic.aurora.drive.data.modules.auth;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.DataScope;
 import com.afterlogic.aurora.drive.core.consts.Const;
-import com.afterlogic.aurora.drive.data.common.network.SessionManager;
+import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.error.UnknownApiVersionError;
 
 import javax.inject.Inject;
@@ -19,32 +19,24 @@ import io.reactivex.Single;
 @DataScope
 public class AuthenticatorService {
 
-    private final SessionManager sessionManager;
     private final AuthenticatorSubService p7AuthenticatorSubService;
     private final AuthenticatorSubService p8AuthenticatorSubService;
 
     @Inject
-    AuthenticatorService(SessionManager sessionManager,
-                         P7AuthenticatorSubService p7AuthenticatorService,
+    AuthenticatorService(P7AuthenticatorSubService p7AuthenticatorService,
                          P8AuthenticatorSubService p8AuthenticatorService) {
 
-        this.sessionManager = sessionManager;
         this.p7AuthenticatorSubService = p7AuthenticatorService;
         this.p8AuthenticatorSubService = p8AuthenticatorService;
     }
 
-    public Completable login(String host, String login, String pass) {
-        return getAuthenticatorService(host)
-                .flatMap(service -> service.login(host, login, pass))
-                .doOnSuccess(sessionManager::setSession)
-                .toCompletable();
+    public Completable logout() {
+        return Completable.complete();
     }
 
-    public Completable updateSessionByToken(String host, String token) {
+    public Single<AuroraSession> createSession(String host, String token) {
         return getAuthenticatorService(host)
-                .flatMap(service -> service.byToken(host, token))
-                .doOnSuccess(sessionManager::setSession)
-                .toCompletable();
+                .flatMap(service -> service.byToken(host, token));
     }
 
     public Single<Integer> getApiVersion(String host) {
@@ -63,4 +55,6 @@ public class AuthenticatorService {
                 .map(version -> version == Const.ApiVersion.API_P7
                         ? p7AuthenticatorSubService : p8AuthenticatorSubService);
     }
+
+
 }

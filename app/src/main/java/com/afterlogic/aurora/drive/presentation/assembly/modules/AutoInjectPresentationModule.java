@@ -2,9 +2,9 @@ package com.afterlogic.aurora.drive.presentation.assembly.modules;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
 import com.afterlogic.aurora.drive.presentation.modules._util.BackToNullActivity;
-import com.afterlogic.aurora.drive.presentation.modules.login.v2.di.LoginModule;
-import com.afterlogic.aurora.drive.presentation.modules.login.v2.view.LoginActivity;
-import com.afterlogic.aurora.drive.presentation.modules.login.v2.view.LoginFragment;
+import com.afterlogic.aurora.drive.presentation.modules.login.di.LoginModule;
+import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
+import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginFragment;
 import com.afterlogic.aurora.drive.presentation.modules.main.di.MainModule;
 import com.afterlogic.aurora.drive.presentation.modules.main.view.MainActivity;
 import com.afterlogic.aurora.drive.presentation.modules.offline.di.OfflineModule;

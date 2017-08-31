@@ -28,7 +28,7 @@ public class StartInteractorImpl extends BaseInteractor implements StartInteract
     public Single<Boolean> getAuthStatus() {
         return Single.fromCallable(() -> {
             AuroraSession session = mSessionManager.getSession();
-            return session != null && session.isComplete();
+            return session != null;
         });
     }
 }

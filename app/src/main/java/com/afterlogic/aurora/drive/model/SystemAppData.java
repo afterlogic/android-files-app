@@ -13,7 +13,7 @@ public class SystemAppData {
 
     /**
      * Auth : true
-     * User : {"IdUser":22,"MailsPerPage":20,"ContactsPerPage":20,"AutoCheckMailInterval":1,"DefaultEditor":1,"Layout":0,"LoginsCount":697,"CanLoginWithPassword":true,"DefaultTheme":"Default","DefaultLanguage":"English","DefaultLanguageShort":"en","DefaultDateFormat":"MM/DD/YYYY","DefaultTimeFormat":0,"DefaultTimeZone":"Europe/Moscow","AllowCompose":true,"AllowReply":true,"AllowForward":true,"AllowFetcher":true,"SaveMail":0,"ThreadsEnabled":true,"UseThreads":true,"SaveRepliedMessagesToCurrentFolder":true,"DesktopNotifications":false,"AllowChangeInputDirection":false,"EnableOpenPgp":false,"AllowAutosaveInDrafts":true,"AutosignOutgoingEmails":false,"EmailNotification":"test@afterlogic.com","OutlookSyncEnable":true,"MobileSyncEnable":true,"ShowPersonalContacts":true,"ShowGlobalContacts":true,"IsCollaborationSupported":true,"AllowFilesSharing":false,"IsFilesSupported":true,"IsHelpdeskSupported":true,"IsHelpdeskAgent":true,"AllowHelpdeskNotifications":false,"HelpdeskSignature":"","HelpdeskSignatureEnable":false,"LastLogin":0,"AllowVoice":true,"VoiceProvider":"twilio","SipRealm":"","SipWebsocketProxyUrl":"","SipOutboundProxyUrl":"","SipCallerID":"","TwilioNumber":"","TwilioEnable":true,"SipEnable":true,"SipImpi":"","SipPassword":"","FilesEnable":true,"AllowCalendar":true,"Calendar":{"ShowWeekEnds":false,"ShowWorkDay":true,"WorkDayStarts":9,"WorkDayEnds":18,"WeekStartsOn":1,"DefaultTab":3,"SyncLogin":"test@afterlogic.com","DavServerUrl":"https://p7-dav.afterlogic.com","DavPrincipalUrl":"https://p7-dav.afterlogic.com/principals/test@afterlogic.com","AllowReminders":true},"CalendarSharing":true,"CalendarAppointments":true,"IsDemo":false}
+     * UserP8 : {"IdUser":22,"MailsPerPage":20,"ContactsPerPage":20,"AutoCheckMailInterval":1,"DefaultEditor":1,"Layout":0,"LoginsCount":697,"CanLoginWithPassword":true,"DefaultTheme":"Default","DefaultLanguage":"English","DefaultLanguageShort":"en","DefaultDateFormat":"MM/DD/YYYY","DefaultTimeFormat":0,"DefaultTimeZone":"Europe/Moscow","AllowCompose":true,"AllowReply":true,"AllowForward":true,"AllowFetcher":true,"SaveMail":0,"ThreadsEnabled":true,"UseThreads":true,"SaveRepliedMessagesToCurrentFolder":true,"DesktopNotifications":false,"AllowChangeInputDirection":false,"EnableOpenPgp":false,"AllowAutosaveInDrafts":true,"AutosignOutgoingEmails":false,"EmailNotification":"test@afterlogic.com","OutlookSyncEnable":true,"MobileSyncEnable":true,"ShowPersonalContacts":true,"ShowGlobalContacts":true,"IsCollaborationSupported":true,"AllowFilesSharing":false,"IsFilesSupported":true,"IsHelpdeskSupported":true,"IsHelpdeskAgent":true,"AllowHelpdeskNotifications":false,"HelpdeskSignature":"","HelpdeskSignatureEnable":false,"LastLoggedHost":0,"AllowVoice":true,"VoiceProvider":"twilio","SipRealm":"","SipWebsocketProxyUrl":"","SipOutboundProxyUrl":"","SipCallerID":"","TwilioNumber":"","TwilioEnable":true,"SipEnable":true,"SipImpi":"","SipPassword":"","FilesEnable":true,"AllowCalendar":true,"Calendar":{"ShowWeekEnds":false,"ShowWorkDay":true,"WorkDayStarts":9,"WorkDayEnds":18,"WeekStartsOn":1,"DefaultTab":3,"SyncLogin":"test@afterlogic.com","DavServerUrl":"https://p7-dav.afterlogic.com","DavPrincipalUrl":"https://p7-dav.afterlogic.com/principals/test@afterlogic.com","AllowReminders":true},"CalendarSharing":true,"CalendarAppointments":true,"IsDemo":false}
      * TenantHash :
      * IsMobile : -1
      * AllowMobile : true
@@ -102,7 +102,7 @@ public class SystemAppData {
      * AllowHelpdeskNotifications : false
      * HelpdeskSignature :
      * HelpdeskSignatureEnable : false
-     * LastLogin : 0
+     * LastLoggedHost : 0
      * AllowVoice : true
      * VoiceProvider : twilio
      * SipRealm :
@@ -122,7 +122,7 @@ public class SystemAppData {
      * IsDemo : false
      */
 
-    @SerializedName("User")
+    @SerializedName("UserP8")
     private User mUser;
     @SerializedName("TenantHash")
     private String mTenantHash;
@@ -283,7 +283,7 @@ public class SystemAppData {
      */
 
     @SerializedName("Accounts")
-    private List<Accounts> mAccounts;
+    private List<Account> mAccounts;
 
     public SystemAppData() {
     }
@@ -644,11 +644,11 @@ public class SystemAppData {
         mApp = app;
     }
 
-    public List<Accounts> getAccounts() {
+    public List<Account> getAccounts() {
         return mAccounts;
     }
 
-    public void setAccounts(List<Accounts> accounts) {
+    public void setAccounts(List<Account> accounts) {
         mAccounts = accounts;
     }
 
@@ -734,7 +734,7 @@ public class SystemAppData {
         private String mHelpdeskSignature;
         @SerializedName("HelpdeskSignatureEnable")
         private boolean mHelpdeskSignatureEnable;
-        @SerializedName("LastLogin")
+        @SerializedName("LastLoggedHost")
         private int mLastLogin;
         @SerializedName("AllowVoice")
         private boolean mAllowVoice;
@@ -2004,7 +2004,7 @@ public class SystemAppData {
         }
     }
 
-    public static class Accounts {
+    public static class Account {
         @SerializedName("AccountID")
         private int mAccountID;
         @SerializedName("Email")

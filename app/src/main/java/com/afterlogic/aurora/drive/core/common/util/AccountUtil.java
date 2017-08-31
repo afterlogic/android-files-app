@@ -28,7 +28,7 @@ public class AccountUtil {
 
     private static final int ACTUAL_CREDENTIAL_VERSION = 2;
 
-    public static AuroraSession fromAccount(Account account, AccountManager am){
+    public static AuroraSession getSessionFromAccount(Account account, AccountManager am){
 
         //Check current credential version
         int credentialVersion = NumberUtil.parseInt(
@@ -36,7 +36,7 @@ public class AccountUtil {
                 0
         );
         if (ACTUAL_CREDENTIAL_VERSION != credentialVersion) {
-            onCredentialsUpdate(credentialVersion, ACTUAL_CREDENTIAL_VERSION, account, am);
+            onCredentialsUpdate(credentialVersion, account, am);
             am.setUserData(account, CREDENTIALS_VERSION, String.valueOf(ACTUAL_CREDENTIAL_VERSION));
         }
 
@@ -54,7 +54,7 @@ public class AccountUtil {
 
         return new AuroraSession(
                 am.getUserData(account, APP_TOKEN),
-                am.getUserData(account, AUTH_TOKEN) + "f",
+                am.getUserData(account, AUTH_TOKEN),
                 accountId,
                 account.name,
                 am.getPassword(account),
@@ -66,7 +66,7 @@ public class AccountUtil {
     /**
      * Handle update credentials.
      */
-    private static void onCredentialsUpdate(int from, int to, Account account, AccountManager am){
+    private static void onCredentialsUpdate(int from, Account account, AccountManager am){
         if (from < 2){
             int apiVersion = NumberUtil.parseInt(
                     am.getUserData(account, API_VERSION),
@@ -103,10 +103,5 @@ public class AccountUtil {
         AccountManager am = AccountManager.get(ctx);
         Account[] accounts = am.getAccountsByType(ACCOUNT_TYPE);
         return accounts.length > 0 ? accounts[0] : null;
-    }
-
-    //TODO move to user repository
-    public static void logout(Context ctx){
-
     }
 }

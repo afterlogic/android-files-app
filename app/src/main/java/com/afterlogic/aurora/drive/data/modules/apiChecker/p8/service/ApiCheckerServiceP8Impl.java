@@ -8,9 +8,6 @@ import com.afterlogic.aurora.drive.data.common.network.p8.CloudServiceP8;
 import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
 import com.google.gson.Gson;
 
-import java.util.Collections;
-import java.util.Map;
-
 import javax.inject.Inject;
 
 import io.reactivex.Single;
@@ -31,8 +28,7 @@ public class ApiCheckerServiceP8Impl extends CloudServiceP8 implements ApiChecke
     }
 
     @Override
-    public Single<ApiResponseP8<String>> ping(HttpUrl url){
-        Map<String, Object> fields = getDefaultFields(Api8.Method.PING, Collections.emptyMap());
-        return mApi.ping(url.toString() + Api8.API, fields);
+    public Single<ApiResponseP8<String>> ping(HttpUrl url) {
+        return mApi.ping(Api8.completeUrl(url.toString()));
     }
 }

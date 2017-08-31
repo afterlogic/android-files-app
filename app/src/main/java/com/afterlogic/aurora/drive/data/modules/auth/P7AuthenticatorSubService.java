@@ -3,6 +3,7 @@ package com.afterlogic.aurora.drive.data.modules.auth;
 import com.afterlogic.aurora.drive.core.consts.Const;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.SystemAppData;
+import com.annimon.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -50,11 +51,18 @@ class P7AuthenticatorSubService implements AuthenticatorSubService {
                         throw new Error("Not authorized!");
                     }
 
+                    SystemAppData.User authenticatedUser = systemAppData.getUser();
+
+                    SystemAppData.Account account = Stream.of(systemAppData.getAccounts())
+                            .filter(item -> item.getAccountID() == authenticatedUser.getIdUser())
+                            .findFirst()
+                            .get();
+
                     return new AuroraSession(
                             systemAppData.getToken(),
                             token,
-                            systemAppData.getUser().getIdUser(),
-                            null,
+                            account.getAccountID(),
+                            account.getEmail(),
                             null,
                             HttpUrl.parse(host),
                             Const.ApiVersion.API_P7

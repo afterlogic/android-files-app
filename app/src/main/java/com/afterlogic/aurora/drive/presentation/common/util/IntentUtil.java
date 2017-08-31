@@ -1,11 +1,14 @@
 package com.afterlogic.aurora.drive.presentation.common.util;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
 import android.support.v4.content.IntentCompat;
+
+import com.afterlogic.aurora.drive.BuildConfig;
 
 import java.util.List;
 
@@ -14,6 +17,11 @@ import java.util.List;
  * mail: sunnyday.development@gmail.com
  */
 public class IntentUtil {
+
+    public static Intent intent(Class target) {
+        return new Intent()
+                .setComponent(new ComponentName(BuildConfig.APPLICATION_ID, target.getName()));
+    }
 
     public static Intent makeRestartTask(Intent intent){
         Intent result = IntentCompat.makeRestartActivityTask(intent.getComponent());

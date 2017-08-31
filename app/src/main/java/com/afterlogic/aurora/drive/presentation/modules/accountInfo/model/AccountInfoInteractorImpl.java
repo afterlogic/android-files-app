@@ -1,6 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.accountInfo.model;
 
-import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
+import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
+import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 
 import javax.inject.Inject;
@@ -14,23 +15,39 @@ import io.reactivex.Single;
 
 public class AccountInfoInteractorImpl implements AccountInfoInteractor{
 
-    private final AuthRepository mAuthRepository;
+    private final SessionManager sessionManager;
 
-    @Inject AccountInfoInteractorImpl(AuthRepository authRepository) {
-        mAuthRepository = authRepository;
+    @Inject AccountInfoInteractorImpl(SessionManager authRepository) {
+        sessionManager = authRepository;
     }
 
     @Override
     public Single<String> getLogin() {
-        return mAuthRepository.getCurrentSession()
-                .toSingle()
-                .map(AuroraSession::getLogin);
+
+        return mapSession(AuroraSession::getLogin);
+
     }
 
     @Override
     public Single<String> getHost() {
-        return mAuthRepository.getCurrentSession()
-                .toSingle()
-                .map(session -> session.getDomain().toString());
+
+        return mapSession(session -> session.getDomain().toString());
+
+    }
+
+    private <T> Single<T> mapSession(Mapper<T, AuroraSession> mapper) {
+
+        return Single.fromCallable(() -> {
+
+            AuroraSession session = sessionManager.getSession();
+
+            if (session == null) {
+                throw new IllegalStateException("Not authorized.");
+            }
+
+            return mapper.map(session);
+
+        });
+
     }
 }

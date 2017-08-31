@@ -2,30 +2,172 @@ package com.afterlogic.aurora.drive.presentation.modules.login.viewModel;
 
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
+import android.text.TextUtils;
+import android.webkit.CookieManager;
 
+import com.afterlogic.aurora.drive.application.navigation.AppRouter;
+import com.afterlogic.aurora.drive.core.AuthorizationResolver;
+import com.afterlogic.aurora.drive.core.common.logging.MyLog;
+import com.afterlogic.aurora.drive.core.common.rx.DisposableBag;
+import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.presentation.common.binding.binder.Bindable;
-import com.afterlogic.aurora.drive.presentation.common.modules.viewModel.ViewModel;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.AsyncUiObservableField;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.LifecycleViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.login.interactor.LoginInteractor;
+import com.annimon.stream.Stream;
+
+import javax.inject.Inject;
+
+import io.reactivex.Single;
+import io.reactivex.subjects.PublishSubject;
+import okhttp3.HttpUrl;
 
 /**
- * Created by aleksandrcikin on 29.04.17.
+ * Created by aleksandrcikin on 11.08.17.
+ * mail: mail@sunnydaydev.me
  */
 
-public interface LoginViewModel extends ViewModel {
-    Bindable<String> getLogin();
+public class LoginViewModel extends LifecycleViewModel {
 
-    Bindable<String> getPassword();
+    public ObservableField<LoginViewModelState> loginState = new AsyncUiObservableField<>(LoginViewModelState.HOST);
 
-    Bindable<String> getHost();
+    public Bindable<String> host = Bindable.create();
+    public ObservableField<String> hostError = new ObservableField<>();
+    public ObservableBoolean isInProgress = new ObservableBoolean();
 
-    ObservableField<String> getPasswordError();
+    public ObservableField<String> loginUrl = new ObservableField<>();
 
-    ObservableField<String> getLoginError();
+    private final LoginInteractor interactor;
+    private final Subscriber subscriber;
+    private final AppRouter router;
+    private final AuthorizationResolver authorizationResolver;
 
-    ObservableField<String> getHostError();
+    private HttpUrl checkedHost;
 
-    ObservableBoolean getIsInProgress();
+    private PublishSubject<Boolean> reloginPublisher = PublishSubject.create();
+    private boolean relogin;
 
-    void onLogin();
+    private final DisposableBag globalBag = new DisposableBag();
 
-    void onViewResumed();
+    @Inject
+    public LoginViewModel(LoginInteractor interactor,
+                          Subscriber subscriber,
+                          AppRouter router,
+                          AuthorizationResolver resolver) {
+        this.interactor = interactor;
+        this.subscriber = subscriber;
+        this.router = router;
+        this.authorizationResolver = resolver;
+
+        Single.zip(
+                reloginPublisher
+                        .firstOrError(),
+                interactor.getLastInputedHost()
+                        .toSingle("")
+                        .compose(subscriber::defaultSchedulers),
+                LastLoggedHost::new
+        )//--->
+                .subscribe(subscriber.subscribe(this::handleLastCheckedHostUrl));
+    }
+
+    public void setArgs(boolean relogin) {
+        this.relogin = relogin;
+        reloginPublisher.onNext(relogin);
+    }
+
+    public void onHostWritten() {
+        interactor.checkHost(host.get())
+                .compose(subscriber::defaultSchedulers)
+                .doOnSubscribe(disposable -> isInProgress.set(true))
+                .doFinally(() -> isInProgress.set(false))
+                .compose(globalBag::track)
+                .subscribe(subscriber.subscribe(checkedHost -> {
+
+                    this.checkedHost = checkedHost;
+
+                    interactor.storeLastInputedHost(checkedHost.toString())
+                            .onErrorResumeNext(error -> interactor.storeLastInputedHost(null))
+                            .onErrorComplete()
+                            .compose(subscriber::defaultSchedulers)
+                            .subscribe(subscriber.justSubscribe());
+
+                    loginUrl.set(this.checkedHost + "?external-clients-login-form");
+                    loginState.set(LoginViewModelState.LOGIN);
+                }));
+    }
+
+    public void onPageLoadingStarted(String url) {
+        MyLog.d("Start load url: " + url);
+
+        if (url.equals(checkedHost.toString())) {
+            String cookie = CookieManager.getInstance().getCookie(url);
+            parseAuthorizedCookie(cookie);
+        }
+
+        if (loginState.get() == LoginViewModelState.LOGIN) {
+            isInProgress.set(true);
+        }
+    }
+
+    public void onPageLoadingFinished(String url) {
+        MyLog.d("Loaded url: " + url);
+        if (loginState.get() == LoginViewModelState.LOGIN) {
+            isInProgress.set(false);
+        }
+    }
+
+    public void onBackPressed() {
+        if (loginState.get() == LoginViewModelState.LOGIN && !relogin) {
+            loginState.set(LoginViewModelState.HOST);
+        } else {
+            authorizationResolver.onAuthorizationFailed();
+            router.finishChain();
+        }
+    }
+
+    @Override
+    protected void onCleared() {
+        globalBag.dispose();
+        super.onCleared();
+    }
+
+    private void handleLastCheckedHostUrl(LastLoggedHost lastHost) {
+
+        if (!TextUtils.isEmpty(lastHost.host)) {
+
+            host.set(lastHost.host);
+            checkedHost = HttpUrl.parse(lastHost.host);
+            loginUrl.set(this.checkedHost + "?external-clients-login-form");
+
+            if (lastHost.relogin) {
+                loginState.set(LoginViewModelState.LOGIN);
+            }
+        }
+
+    }
+
+    private void parseAuthorizedCookie(String cookie) {
+
+        String authToken = Stream.of(cookie.split(";"))
+                .map(String::trim)
+                .map(item -> item.split("="))
+                .filter(pair -> pair[0].equals("AuthToken"))
+                .findFirst()
+                .map(pair -> pair[1])
+                .orElse(null);
+
+        if (authToken != null) {
+            interactor.handleAuth(authToken, checkedHost)
+                    .compose(subscriber::defaultSchedulers)
+                    .compose(globalBag::track)
+                    .subscribe(subscriber.subscribe(() -> {
+                        authorizationResolver.onAuthorized();
+                        if (relogin) {
+                            router.exit();
+                        } else {
+                            router.newRootScreen(AppRouter.MAIN);
+                        }
+                    }));
+        }
+    }
 }

@@ -1,8 +1,12 @@
 package com.afterlogic.aurora.drive.data.common.network.p8;
 
+import com.afterlogic.aurora.drive.data.common.network.p8.apiAnnotations.FormatHeader;
+import com.afterlogic.aurora.drive.data.common.network.p8.apiAnnotations.JsonField;
 import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
 import com.afterlogic.aurora.drive.data.model.project8.FilesResponseP8;
+import com.afterlogic.aurora.drive.data.model.project8.GetUserParametersDto;
 import com.afterlogic.aurora.drive.data.model.project8.UploadResultP8;
+import com.afterlogic.aurora.drive.data.model.project8.UserP8;
 import com.afterlogic.aurora.drive.model.AuthToken;
 
 import java.util.List;
@@ -11,8 +15,10 @@ import java.util.Map;
 import io.reactivex.Single;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
+import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -28,7 +34,9 @@ public interface Api8 {
 
     String API = "?/Api/";
 
-    interface Field{
+    String DEFAULT_FIELD_CRUNCH = "X-Api8-";
+
+    interface ApiField {
 
         String MODULE = "Module";
         String METHOD = "Method";
@@ -36,20 +44,27 @@ public interface Api8 {
         String JUA_UPLOADER = "jua-uploader";
     }
 
-    interface Header {
+    interface ApiHeader {
         String AUTH_TOKEN = "{AuthToken}";
         String NAME_AUTHORISATION = "Authorization";
         String VALUE_AUTHORISATION = "Bearer " + AUTH_TOKEN;
         String AUTHORISATION = NAME_AUTHORISATION + ": " + VALUE_AUTHORISATION;
     }
 
-    interface Module{
+    interface Module {
+
+        String HEADER = DEFAULT_FIELD_CRUNCH + "Module: ";
 
         String CORE = "Core";
         String FILES = "Files";
+        String STANDARD_AUTH = "StandardAuth";
+
+        String HEADER_CORE = HEADER + "Core";
     }
 
-    interface Method{
+    interface Method {
+
+        String HEADER = DEFAULT_FIELD_CRUNCH + "Method: ";
 
         String PING = "Ping";
         String LOGIN = "Login";
@@ -65,9 +80,16 @@ public interface Api8 {
         String DELETE_PUBLIC_LINK = "DeletePublicLink";
         String COPY = "Copy";
         String MOVE = "Move";
+        String GET_USER ="GetUser";
+
+        String HEADER_PING= HEADER + PING;
+        String HEADER_LOGIN= HEADER + LOGIN;
+        String HEADER_GET_USER = HEADER + GET_USER;
     }
 
-    interface Param{
+    interface Param {
+
+        String HEADER = DEFAULT_FIELD_CRUNCH + "Parameters: ";
 
         String LOGIN = "Login";
         String PASSWORD = "Password";
@@ -90,64 +112,90 @@ public interface Api8 {
         String SIZE = "Size";
     }
 
-    @POST()
-    @FormUrlEncoded
-    Single<ApiResponseP8<String>> ping(@Url String url, @FieldMap Map<String, Object> fields);
+    static String completeUrl(String host) {
+        return host + API;
+    }
 
-    @POST()
+    @POST
+    @Headers({
+            Module.HEADER_CORE,
+            Method.HEADER_PING
+    })
+    Single<ApiResponseP8<String>> ping(@Url String url);
+
+    @POST
     @FormUrlEncoded
-    Single<ApiResponseP8<AuthToken>> login(@Url String url, @FieldMap Map<String, Object> fields);
+    @Headers({
+            Module.HEADER_CORE,
+            Method.HEADER_LOGIN
+    })
+    Single<ApiResponseP8<AuthToken>> login(@Url String url,
+                                           @Field(Param.LOGIN) String login,
+                                           @Field(Param.PASSWORD) String password,
+                                           @Field(Param.SIGN_ME) boolean signMe);
 
     @POST(API)
     @FormUrlEncoded
     Single<ApiResponseP8<AuthToken>> login(@FieldMap Map<String, Object> fields);
 
+    @POST
+    @FormUrlEncoded
+    @Headers({
+            Module.HEADER_CORE,
+            Method.HEADER_GET_USER
+    })
+    Single<ApiResponseP8<UserP8>> getUser(
+            @Url String host,
+            @Header(ApiHeader.NAME_AUTHORISATION) @FormatHeader("Bearer %s") String token,
+            @Field("Parameters") @JsonField GetUserParametersDto params
+    );
+
     @POST(API)
     @FormUrlEncoded
-    @Headers(Header.AUTHORISATION)
+    @Headers(ApiHeader.AUTHORISATION)
     Single<ApiResponseP8<FilesResponseP8>> getFiles(@FieldMap Map<String, Object> fields);
 
 
     @POST(API)
     @FormUrlEncoded
-    @Headers(Header.AUTHORISATION)
+    @Headers(ApiHeader.AUTHORISATION)
     Single<ResponseBody> getFileThumbnail(@FieldMap Map<String, Object> fields);
 
     @POST(API)
     @FormUrlEncoded
-    @Headers(Header.AUTHORISATION)
+    @Headers(ApiHeader.AUTHORISATION)
     Single<ResponseBody> getFile(@FieldMap Map<String, Object> fields);
 
 
     @POST(API)
     @FormUrlEncoded
-    @Headers(Header.AUTHORISATION)
+    @Headers(ApiHeader.AUTHORISATION)
     Single<ApiResponseP8<Boolean>> createFolder(@FieldMap Map<String, Object> fields);
 
     @POST(API)
     @FormUrlEncoded
-    @Headers(Header.AUTHORISATION)
+    @Headers(ApiHeader.AUTHORISATION)
     Single<ApiResponseP8<Boolean>> rename(@FieldMap Map<String, Object> fields);
 
     @POST(API)
     @FormUrlEncoded
-    @Headers(Header.AUTHORISATION)
+    @Headers(ApiHeader.AUTHORISATION)
     Single<ApiResponseP8<Boolean>> delete(@FieldMap Map<String, Object> fields);
 
     @POST(API)
     @FormUrlEncoded
-    @Headers(Header.AUTHORISATION)
+    @Headers(ApiHeader.AUTHORISATION)
     Single<ApiResponseP8<String>> createPublicLink(@FieldMap Map<String, Object> fields);
 
     @POST(API)
     @FormUrlEncoded
-    @Headers(Header.AUTHORISATION)
+    @Headers(ApiHeader.AUTHORISATION)
     Single<ApiResponseP8<Boolean>> deletePublicLink(@FieldMap Map<String, Object> fields);
 
 
     @POST(API)
     @Multipart
-    @Headers(Header.AUTHORISATION)
+    @Headers(ApiHeader.AUTHORISATION)
     Single<ApiResponseP8<UploadResultP8>> upload(
             @Part List<MultipartBody.Part> fields,
             @Part MultipartBody.Part file
@@ -155,12 +203,12 @@ public interface Api8 {
 
     @POST(API)
     @FormUrlEncoded
-    @Headers(Header.AUTHORISATION)
+    @Headers(ApiHeader.AUTHORISATION)
     Single<ApiResponseP8<Boolean>> replaceFiles(@FieldMap Map<String, Object> fields);
 
 
     @POST(API)
     @FormUrlEncoded
-    @Headers(Header.AUTHORISATION)
+    @Headers(ApiHeader.AUTHORISATION)
     Single<ApiResponseP8<Boolean>> copyFiles(@FieldMap Map<String, Object> fields);
 }

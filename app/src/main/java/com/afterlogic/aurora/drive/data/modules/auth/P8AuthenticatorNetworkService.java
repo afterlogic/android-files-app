@@ -1,17 +1,12 @@
 package com.afterlogic.aurora.drive.data.modules.auth;
 
-import android.support.annotation.NonNull;
+import android.support.v4.util.Pair;
 
-import com.afterlogic.aurora.drive.data.common.annotations.P8;
-import com.afterlogic.aurora.drive.data.common.network.ParamsBuilder;
 import com.afterlogic.aurora.drive.data.common.network.p8.Api8;
-import com.afterlogic.aurora.drive.data.common.network.p8.CloudServiceP8;
 import com.afterlogic.aurora.drive.data.common.network.util.ApiUtil;
+import com.afterlogic.aurora.drive.data.model.project8.GetUserParametersDto;
+import com.afterlogic.aurora.drive.data.model.project8.UserP8;
 import com.afterlogic.aurora.drive.model.AuthToken;
-import com.google.gson.Gson;
-
-import java.util.Collections;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -22,41 +17,29 @@ import io.reactivex.Single;
  * mail: mail@sunnydaydev.me
  */
 
-class P8AuthenticatorNetworkService extends CloudServiceP8 {
+class P8AuthenticatorNetworkService {
 
     private final Api8 api;
 
     @Inject
-    P8AuthenticatorNetworkService(@P8 @NonNull Gson gson, Api8 api) {
-        super(Api8.Module.CORE, gson);
+    P8AuthenticatorNetworkService(Api8 api) {
         this.api = api;
     }
 
     public Single<String> ping(String host){
-        return Single.defer(() -> {
-
-            Map<String, Object> fields = getDefaultFields(Api8.Method.PING, Collections.emptyMap());
-            return api.ping(completeUrl(host), fields);
-
-        })//--->
+        return api.ping(Api8.completeUrl(host))
                 .compose(ApiUtil::checkResponseAndGetData);
+    }
+
+    public Single<Pair<Long, UserP8>> getUser(String host, String token) {
+        return api.getUser(Api8.completeUrl(host), token, new GetUserParametersDto(token))
+                .compose(ApiUtil::checkResponse)
+                .map(response -> new Pair<>(response.getAccountId(), response.getResult()));
     }
 
     public Single<AuthToken> login(String host, String login, String password) {
-        return Single.defer(() -> {
-            Map<String, Object> params = new ParamsBuilder()
-                    .put(Api8.Param.LOGIN, login)
-                    .put(Api8.Param.PASSWORD, password)
-                    .put(Api8.Param.SIGN_ME, false)
-                    .create();
-
-            Map<String, Object> fields = getDefaultFields(Api8.Method.LOGIN, params);
-            return api.login(host, fields);
-        })//--->
+        return api.login(host, login, password, false)
                 .compose(ApiUtil::checkResponseAndGetData);
     }
 
-    private String completeUrl(String base) {
-        return base + Api8.API;
-    }
 }
