@@ -2,6 +2,7 @@ package com.afterlogic.aurora.drive.application;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.util.Log;
 
@@ -23,6 +24,7 @@ import javax.inject.Inject;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
+import dagger.android.HasBroadcastReceiverInjector;
 import io.fabric.sdk.android.Fabric;
 
 
@@ -30,7 +32,7 @@ import io.fabric.sdk.android.Fabric;
  * Created by sashka on 31.08.16.<p/>
  * mail: sunnyday.development@gmail.com
  */
-public class App extends Application implements HasActivityInjector {
+public class App extends Application implements HasActivityInjector, HasBroadcastReceiverInjector {
 
     private static final int APP_UPDATER_VERSION = 1;
 
@@ -41,7 +43,10 @@ public class App extends Application implements HasActivityInjector {
     AppPrefs appPrefs;
 
     @Inject
-    DispatchingAndroidInjector<Activity> dispatchingAndroidInjector;
+    DispatchingAndroidInjector<Activity> activityInjector;
+
+    @Inject
+    DispatchingAndroidInjector<BroadcastReceiver> receiverInjector;
 
     @Inject
     ActivityTracker activityTracker;
@@ -115,6 +120,11 @@ public class App extends Application implements HasActivityInjector {
 
     @Override
     public AndroidInjector<Activity> activityInjector() {
-        return dispatchingAndroidInjector;
+        return activityInjector;
+    }
+
+    @Override
+    public AndroidInjector<BroadcastReceiver> broadcastReceiverInjector() {
+        return receiverInjector;
     }
 }

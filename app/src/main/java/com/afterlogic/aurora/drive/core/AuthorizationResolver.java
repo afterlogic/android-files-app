@@ -10,10 +10,7 @@ import com.afterlogic.aurora.drive.core.common.util.AppUtil;
 import com.afterlogic.aurora.drive.model.error.ApiResponseError;
 import com.afterlogic.aurora.drive.model.error.AuthError;
 
-import org.reactivestreams.Subscription;
-
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
 
@@ -26,6 +23,7 @@ import io.reactivex.subjects.PublishSubject;
 
 /**
  * Created by sunny on 29.08.17.
+ *
  */
 @CoreScope
 public class AuthorizationResolver {
@@ -61,27 +59,37 @@ public class AuthorizationResolver {
 
         AtomicBoolean relogged = new AtomicBoolean(false);
 
-        return upstream.retryWhen(errorsFlow -> errorsFlow.flatMap(error -> {
+        return upstream
+                .retryWhen(errorsFlow ->
+                        errorsFlow.flatMap(error ->
+                                handleError(error, relogged, observeOn)
+                        )
+                );
 
-            if (isAuthError(error) && !relogged.getAndSet(true)) {
+    }
 
-                if (canRelogin()) {
+    private Flowable<Object> handleError(Throwable error,
+                                         AtomicBoolean relogged,
+                                         Scheduler observeOn) {
 
-                    return relogin(observeOn);
+        if (isAuthError(error) && !relogged.getAndSet(true)) {
 
-                } else {
+            if (canRelogin()) {
 
-                    notificator.notifyAuthRequired();
-                    return Flowable.error(new AuthError());
+                return relogin(observeOn);
 
-                }
+            } else {
+
+                notificator.notifyAuthRequired();
+
+                // TODO: Maybe another error?
+                return Flowable.error(new AuthError());
 
             }
 
-            return Flowable.error(error);
+        }
 
-        }));
-
+        return Flowable.error(error);
     }
 
     private boolean canRelogin() {
@@ -90,13 +98,8 @@ public class AuthorizationResolver {
 
     private Flowable<Object> relogin(Scheduler observeOn) {
 
-        AtomicReference<Subscription> subscriptionRef = new AtomicReference<>();
-
         return authPublisher.toFlowable(BackpressureStrategy.LATEST)
-                .doOnSubscribe(subscription -> {
-                    subscriptionRef.set(subscription);
-                    router.navigateTo(AppRouter.LOGIN, true);
-                })
+                .doOnSubscribe(subscription -> router.navigateTo(AppRouter.LOGIN, true))
                 .flatMap(event -> {
                     switch (event) {
 
@@ -104,8 +107,9 @@ public class AuthorizationResolver {
                             return Flowable.just(RETRY);
 
                         case ACCOUNT_CHANGED:
-                            subscriptionRef.get().cancel();
-                            return Flowable.empty();
+
+                            // TODO: Maybe another error?
+                            return Flowable.error(new AuthError());
 
                         case FAILED:
                             return Flowable.error(new AuthError());

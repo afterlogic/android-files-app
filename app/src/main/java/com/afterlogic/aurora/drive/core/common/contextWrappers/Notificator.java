@@ -16,6 +16,7 @@ import android.support.v4.app.NotificationManagerCompat;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.AppScope;
 import com.afterlogic.aurora.drive.core.consts.NotificationConst;
+import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
 
 import java.util.UUID;
@@ -34,8 +35,11 @@ public class Notificator {
 
     private static final int PENDING_DOWNLOADS = 1;
 
+    private static final int PENDING_RELOGIN = 2;
+
     private static final int ID_DOWNLOADS = 200001;
     private static final int ID_SYNC_PROGRESS = 200002;
+    private static final int ID_AUTH_REQUIRED = 200003;
 
     private final Context appContext;
 
@@ -99,6 +103,20 @@ public class Notificator {
     }
 
     public void notifyAuthRequired() {
+
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                appContext, PENDING_RELOGIN, LoginActivity.intent(true), 0
+        );
+
+        NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(appContext, CHANEL_MAIN)
+                .setContentTitle(appContext.getString(R.string.app_name))
+                .setContentText(appContext.getString(R.string.prompt_relogin_notification))
+                .setSmallIcon(R.drawable.ic_notify)
+                .setAutoCancel(true)
+                .setContentIntent(contentIntent)
+                .setOngoing(true);
+
+        notificationManagerCompat.notify(ID_AUTH_REQUIRED, notifyBuilder.build());
 
     }
 

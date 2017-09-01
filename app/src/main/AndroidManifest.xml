@@ -132,6 +132,12 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".presentation.modulesBackground.receivers.NotificationActionReceiver">
+            <intent-filter>
+                <action android:name="com.afterlogic.aurora.files.NOTIFICATION_ACTION"/>
+            </intent-filter>
+        </receiver>
+
         <!-- endregion -->
 
         <!-- region [ Providers ] -->
