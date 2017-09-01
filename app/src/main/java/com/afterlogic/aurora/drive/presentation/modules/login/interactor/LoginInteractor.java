@@ -6,7 +6,9 @@ import com.afterlogic.aurora.drive.core.common.contextWrappers.AccountHelper;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthenticatorService;
+import com.afterlogic.aurora.drive.data.modules.cleaner.DataCleaner;
 import com.afterlogic.aurora.drive.data.modules.prefs.AppPrefs;
+import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.error.UnknownApiVersionError;
 import com.annimon.stream.Stream;
 
@@ -31,17 +33,23 @@ public class LoginInteractor {
     private final AuthenticatorService authenticatorService;
     private final SessionManager sessionManager;
     private final AccountHelper accountHelper;
+    private final LoginViewInteractor viewInteractor;
+    private final DataCleaner dataCleaner;
 
     @Inject
-    public LoginInteractor(AppPrefs prefs,
-                           AuthenticatorService authenticatorService,
-                           SessionManager sessionManager,
-                           AccountHelper accountHelper) {
+    LoginInteractor(AppPrefs prefs,
+                    AuthenticatorService authenticatorService,
+                    SessionManager sessionManager,
+                    AccountHelper accountHelper,
+                    LoginViewInteractor viewInteractor,
+                    DataCleaner dataCleaner) {
 
         this.prefs = prefs;
         this.authenticatorService = authenticatorService;
         this.sessionManager = sessionManager;
         this.accountHelper = accountHelper;
+        this.viewInteractor = viewInteractor;
+        this.dataCleaner = dataCleaner;
     }
 
     public Maybe<String> getLastInputedHost() {
@@ -99,30 +107,49 @@ public class LoginInteractor {
         });
     }
 
-    public Completable handleAuth(String authToken, HttpUrl host) {
+    public Single<AuthResult> handleAuth(String authToken, HttpUrl host) {
+
         return authenticatorService.createSession(host.toString(), authToken)
-                .flatMap(session -> {
+                .flatMap(this::handleSession);
 
-                    Account currentAccount = accountHelper.getCurrentAccount();
+    }
 
-                    if (currentAccount == null) {
+    private Single<AuthResult> handleSession(AuroraSession session) {
+        Account currentAccount = accountHelper.getCurrentAccount();
 
+        if (currentAccount == null) {
+
+            accountHelper.createAccount(session.getLogin());
+            sessionManager.setSession(session);
+            return Single.just(AuthResult.DONE);
+
+        } else if (currentAccount.name.equals(session.getLogin())){
+
+            sessionManager.setSession(session);
+            return Single.just(AuthResult.DONE);
+
+        } else {
+
+            return viewInteractor
+                    .confirmLoginChanging(currentAccount.name, session.getLogin())
+                    .flatMap(confirm -> handleChangeLoginConfirmation(confirm, session));
+
+        }
+    }
+
+    private Single<AuthResult> handleChangeLoginConfirmation(boolean confirm, AuroraSession session) {
+
+        if (!confirm) {
+            return Single.just(AuthResult.CANCELLED);
+        } else {
+            return authenticatorService.logout()
+                    .andThen(dataCleaner.cleanAllUserData())
+                    .andThen(Completable.fromAction(() -> {
                         accountHelper.createAccount(session.getLogin());
-                        return Single.just(session);
-
-                    } else if (currentAccount.name.equals(session.getLogin())){
-
-                        return Single.just(session);
-
-                    } else {
-
-                        return Single.error(new Error("TODO: Handle login changing"));
-
-                    }
-
-                })
-                .doOnSuccess(sessionManager::setSession)
-                .toCompletable();
+                        sessionManager.setSession(session);
+                    }))
+                    .andThen(Single.just(AuthResult.ACCOUNT_CHANGED));
+        }
 
     }
 }

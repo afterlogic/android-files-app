@@ -27,6 +27,7 @@ import dagger.android.support.HasSupportFragmentInjector;
 public class LoginActivity extends AppCoreActivity implements Injectable, HasSupportFragmentInjector {
 
     public static final String KEY_RELOGIN = "relogin";
+
     @Inject
     protected DispatchingAndroidInjector<Fragment> fragmentDispatchingAndroidInjector;
 

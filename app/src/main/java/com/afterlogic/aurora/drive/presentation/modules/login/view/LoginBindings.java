@@ -1,8 +1,11 @@
 package com.afterlogic.aurora.drive.presentation.modules.login.view;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.databinding.BindingAdapter;
 import android.graphics.Bitmap;
+import android.os.Build;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -29,6 +32,19 @@ public class LoginBindings {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 vm.onPageLoadingFinished(url);
+            }
+
+            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                return vm.shouldOverrideUrlLoading(request.getUrl().toString())
+                        || super.shouldOverrideUrlLoading(view, request);
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                return vm.shouldOverrideUrlLoading(url)
+                        || super.shouldOverrideUrlLoading(view, url);
             }
 
         });

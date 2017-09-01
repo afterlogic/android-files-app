@@ -7,6 +7,7 @@ import android.util.Log;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.contextWrappers.Toaster;
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
+import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.streams.StreamCollectors;
 import com.annimon.stream.Stream;
 
@@ -144,12 +145,16 @@ public class Subscriber {
         }
 
         if (errorHandler == null || !errorHandler.handleError(e)) {
-            toaster.showShort(R.string.prompt_error_occurred);
+            if (!(e instanceof SilentError)) {
+                toaster.showShort(R.string.prompt_error_occurred);
+            }
             logError(e, subscribeError);
         }
     }
 
     private void logError(Throwable e, @Nullable SubscriberHandledError subscribeError) {
+        if (e instanceof UnloggableError) return;
+
         Throwable errorForLog;
         if (subscribeError != null) {
             subscribeError.initCause(e);
@@ -158,7 +163,7 @@ public class Subscriber {
             errorForLog = e;
         }
 
-        Log.e(TAG, "Error caught:", errorForLog);
+        MyLog.majorException(errorForLog);
     }
 
     private Subscriber copyAndEdit(Consumer<Subscriber> editor) {

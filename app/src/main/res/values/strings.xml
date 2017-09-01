@@ -123,6 +123,9 @@
     <string name="prompt_replacing">Replacing</string>
     <string name="prompt_offline_disable_offline">Disable offline</string>
 
+    <string name="prompt_relogin_dialog_change_account">Are you sure you wish to login as a different user? All app data stored locally will be lost.\nCurrent username: %1$s\nNew username: %2$s</string>
+    <string name="prompt_relogin_notification">The session is expired. You need to relogin.</string>
+
     <plurals name="dialog_files_success_downloaded">
         <item quantity="one">%d file success downloaded.</item>
         <item quantity="many">%d files success downloaded.</item>

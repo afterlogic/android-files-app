@@ -1,12 +1,19 @@
 package com.afterlogic.aurora.drive.core;
 
+import android.content.Context;
+
 import com.afterlogic.aurora.drive.application.ActivityTracker;
 import com.afterlogic.aurora.drive.application.navigation.AppRouter;
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.CoreScope;
+import com.afterlogic.aurora.drive.core.common.contextWrappers.Notificator;
+import com.afterlogic.aurora.drive.core.common.util.AppUtil;
 import com.afterlogic.aurora.drive.model.error.ApiResponseError;
 import com.afterlogic.aurora.drive.model.error.AuthError;
 
+import org.reactivestreams.Subscription;
+
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
 
@@ -23,15 +30,27 @@ import io.reactivex.subjects.PublishSubject;
 @CoreScope
 public class AuthorizationResolver {
 
+    private static final Object RETRY = new Object();
+
+    private enum AuthEvent { FAILED, DONE, ACCOUNT_CHANGED }
+
     private final AppRouter router;
     private final ActivityTracker activityTracker;
+    private final Context appContext;
+    private final Notificator notificator;
 
-    private final PublishSubject<Boolean> authPublisher = PublishSubject.create();
+    private final PublishSubject<AuthEvent> authPublisher = PublishSubject.create();
 
     @Inject
-    AuthorizationResolver(AppRouter router, ActivityTracker activityTracker) {
+    AuthorizationResolver(AppRouter router,
+                          ActivityTracker activityTracker,
+                          Context appContext,
+                          Notificator notificator) {
+
         this.router = router;
         this.activityTracker = activityTracker;
+        this.appContext = appContext;
+        this.notificator = notificator;
     }
 
     public <T> Single<T> checkAuth(Single<T> upstream) {
@@ -40,38 +59,75 @@ public class AuthorizationResolver {
 
     public <T> Single<T> checkAuth(Single<T> upstream, Scheduler observeOn) {
 
-        AtomicBoolean reloginHandled = new AtomicBoolean(false);
+        AtomicBoolean relogged = new AtomicBoolean(false);
 
         return upstream.retryWhen(errorsFlow -> errorsFlow.flatMap(error -> {
 
-            if (activityTracker.hasStartedActivity()
-                    && !reloginHandled.getAndSet(true)
-                    && isAuthError(error)) {
+            if (isAuthError(error) && !relogged.getAndSet(true)) {
 
-                return authPublisher.toFlowable(BackpressureStrategy.LATEST)
-                        .doOnSubscribe(disposable -> router.navigateTo(AppRouter.LOGIN, true))
-                        .flatMap(authorized -> {
-                            if (authorized) {
-                                return Flowable.just(true);
-                            } else {
-                                return Flowable.error(new AuthError());
-                            }
-                        })
-                        .observeOn(observeOn);
+                if (canRelogin()) {
+
+                    return relogin(observeOn);
+
+                } else {
+
+                    notificator.notifyAuthRequired();
+                    return Flowable.error(new AuthError());
+
+                }
 
             }
 
-            return Flowable.<Boolean>error(error);
+            return Flowable.error(error);
+
         }));
 
     }
 
+    private boolean canRelogin() {
+        return AppUtil.isProcess(null, appContext) && activityTracker.hasStartedActivity();
+    }
+
+    private Flowable<Object> relogin(Scheduler observeOn) {
+
+        AtomicReference<Subscription> subscriptionRef = new AtomicReference<>();
+
+        return authPublisher.toFlowable(BackpressureStrategy.LATEST)
+                .doOnSubscribe(subscription -> {
+                    subscriptionRef.set(subscription);
+                    router.navigateTo(AppRouter.LOGIN, true);
+                })
+                .flatMap(event -> {
+                    switch (event) {
+
+                        case DONE:
+                            return Flowable.just(RETRY);
+
+                        case ACCOUNT_CHANGED:
+                            subscriptionRef.get().cancel();
+                            return Flowable.empty();
+
+                        case FAILED:
+                            return Flowable.error(new AuthError());
+
+                        default:
+                            throw new IllegalArgumentException("Unknown type.");
+                    }
+                })
+                .observeOn(observeOn);
+
+    }
+
     public void onAuthorized() {
-        authPublisher.onNext(true);
+        authPublisher.onNext(AuthEvent.DONE);
     }
 
     public void onAuthorizationFailed() {
-        authPublisher.onNext(false);
+        authPublisher.onNext(AuthEvent.FAILED);
+    }
+
+    public void onAccountChanged() {
+        authPublisher.onNext(AuthEvent.ACCOUNT_CHANGED);
     }
 
     private boolean isAuthError(Throwable error) {

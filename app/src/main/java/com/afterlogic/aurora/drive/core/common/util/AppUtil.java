@@ -6,6 +6,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
+
+import com.afterlogic.aurora.drive.BuildConfig;
 
 import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
 import static android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
@@ -30,6 +33,14 @@ public class AppUtil {
             }
         }
         return processName;
+    }
+
+    public static boolean isProcess(@Nullable String name, Context context) {
+
+        String fullName = TextUtils.isEmpty(name)
+                ? BuildConfig.APPLICATION_ID : BuildConfig.APPLICATION_ID + ":" + name;
+
+        return fullName.equals(getCurrentProcessName(context));
     }
 
     public static void setComponentEnabled(Class<? extends Context> componentClass, boolean enabled, Context context){

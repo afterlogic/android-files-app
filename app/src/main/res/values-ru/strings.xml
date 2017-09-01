@@ -115,6 +115,9 @@
     <string name="prompt_replacing">Перемещение</string>
     <string name="prompt_offline_disable_offline">Убрать из оффлайна</string>
 
+    <string name="prompt_relogin_dialog_change_account">Вы уверены что хотите авторизоваться как другой пользователь? Все данные приложения хранимые локально будут потеряны.\nТекущий пользователь: %1$s\nНовый пользователь: %2$s</string>
+    <string name="prompt_relogin_notification">Сессия истекла. Для продолжения требуется авторизоваться повторно.</string>
+
     <plurals name="dialog_files_success_downloaded">
         <item quantity="zero">%d файлов успешно загружено.</item>
         <item quantity="one">%d файл успешно загружен.</item>

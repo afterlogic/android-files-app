@@ -13,6 +13,7 @@ import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.presentation.common.binding.binder.Bindable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.AsyncUiObservableField;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.LifecycleViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.login.interactor.AuthResult;
 import com.afterlogic.aurora.drive.presentation.modules.login.interactor.LoginInteractor;
 import com.annimon.stream.Stream;
 
@@ -98,12 +99,6 @@ public class LoginViewModel extends LifecycleViewModel {
 
     public void onPageLoadingStarted(String url) {
         MyLog.d("Start load url: " + url);
-
-        if (url.equals(checkedHost.toString())) {
-            String cookie = CookieManager.getInstance().getCookie(url);
-            parseAuthorizedCookie(cookie);
-        }
-
         if (loginState.get() == LoginViewModelState.LOGIN) {
             isInProgress.set(true);
         }
@@ -114,6 +109,17 @@ public class LoginViewModel extends LifecycleViewModel {
         if (loginState.get() == LoginViewModelState.LOGIN) {
             isInProgress.set(false);
         }
+    }
+
+    public boolean shouldOverrideUrlLoading(String url) {
+
+        if (!url.equals(checkedHost.toString())) return false;
+
+        String cookie = CookieManager.getInstance().getCookie(url);
+        parseAuthorizedCookie(cookie);
+
+        return true;
+
     }
 
     public void onBackPressed() {
@@ -160,14 +166,36 @@ public class LoginViewModel extends LifecycleViewModel {
             interactor.handleAuth(authToken, checkedHost)
                     .compose(subscriber::defaultSchedulers)
                     .compose(globalBag::track)
-                    .subscribe(subscriber.subscribe(() -> {
-                        authorizationResolver.onAuthorized();
-                        if (relogin) {
-                            router.exit();
-                        } else {
-                            router.newRootScreen(AppRouter.MAIN);
-                        }
-                    }));
+                    .subscribe(subscriber.subscribe(this::handleAuthResult));
+        }
+    }
+
+    private void handleAuthResult(AuthResult result) {
+
+        switch (result) {
+
+            case DONE:
+
+                authorizationResolver.onAuthorized();
+
+                if (relogin) {
+                    router.exit();
+                } else {
+                    router.newRootScreen(AppRouter.MAIN);
+                }
+                break;
+
+            case ACCOUNT_CHANGED:
+
+                authorizationResolver.onAccountChanged();
+
+                router.newRootScreen(AppRouter.MAIN);
+                break;
+
+            case CANCELLED:
+                loginUrl.set(this.checkedHost + "?external-clients-login-form");
+                break;
+
         }
     }
 }
