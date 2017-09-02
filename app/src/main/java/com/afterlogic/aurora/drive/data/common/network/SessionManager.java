@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.DataScope;
-import com.afterlogic.aurora.drive.core.common.contextWrappers.AccountHelper;
+import com.afterlogic.aurora.drive.core.common.contextWrappers.account.AccountHelper;
 import com.afterlogic.aurora.drive.core.common.util.AccountUtil;
 import com.afterlogic.aurora.drive.core.common.util.AppUtil;
 import com.afterlogic.aurora.drive.model.AuroraSession;

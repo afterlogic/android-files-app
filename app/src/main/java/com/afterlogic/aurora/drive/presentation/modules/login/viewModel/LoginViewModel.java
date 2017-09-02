@@ -5,14 +5,19 @@ import android.databinding.ObservableField;
 import android.text.TextUtils;
 import android.webkit.CookieManager;
 
+import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.application.navigation.AppRouter;
 import com.afterlogic.aurora.drive.core.AuthorizationResolver;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.rx.DisposableBag;
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
+import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
+import com.afterlogic.aurora.drive.model.error.AuthError;
 import com.afterlogic.aurora.drive.presentation.common.binding.binder.Bindable;
+import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnPropertyChangedCallback;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.AsyncUiObservableField;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.LifecycleViewModel;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.commands.FocusCommand;
 import com.afterlogic.aurora.drive.presentation.modules.login.interactor.AuthResult;
 import com.afterlogic.aurora.drive.presentation.modules.login.interactor.LoginInteractor;
 import com.annimon.stream.Stream;
@@ -33,7 +38,15 @@ public class LoginViewModel extends LifecycleViewModel {
     public ObservableField<LoginViewModelState> loginState = new AsyncUiObservableField<>(LoginViewModelState.HOST);
 
     public Bindable<String> host = Bindable.create();
+    public Bindable<String> login = Bindable.create();
+    public Bindable<String> password = Bindable.create();
+
     public ObservableField<String> hostError = new ObservableField<>();
+    public ObservableField<String> loginError = new ObservableField<>();
+    public ObservableField<String> passwordError = new ObservableField<>();
+
+    public FocusCommand focus = new FocusCommand();
+
     public ObservableBoolean isInProgress = new ObservableBoolean();
 
     public ObservableField<String> loginUrl = new ObservableField<>();
@@ -42,6 +55,7 @@ public class LoginViewModel extends LifecycleViewModel {
     private final Subscriber subscriber;
     private final AppRouter router;
     private final AuthorizationResolver authorizationResolver;
+    private final AppResources appResources;
 
     private HttpUrl checkedHost;
 
@@ -54,11 +68,27 @@ public class LoginViewModel extends LifecycleViewModel {
     public LoginViewModel(LoginInteractor interactor,
                           Subscriber subscriber,
                           AppRouter router,
-                          AuthorizationResolver resolver) {
+                          AuthorizationResolver resolver,
+                          AppResources appResources) {
         this.interactor = interactor;
         this.subscriber = subscriber;
         this.router = router;
         this.authorizationResolver = resolver;
+        this.appResources = appResources;
+
+        SimpleOnPropertyChangedCallback.addTo(host, () -> hostError.set(null));
+        SimpleOnPropertyChangedCallback.addTo(login, () -> {
+            loginError.set(null);
+            if (!TextUtils.isEmpty(login.get())) {
+                passwordError.set(null);
+            }
+        });
+        SimpleOnPropertyChangedCallback.addTo(password, () -> {
+            passwordError.set(null);
+            if (!TextUtils.isEmpty(password.get())) {
+                loginError.set(null);
+            }
+        });
 
         Single.zip(
                 reloginPublisher
@@ -77,10 +107,21 @@ public class LoginViewModel extends LifecycleViewModel {
     }
 
     public void onHostWritten() {
+
+        if (TextUtils.isEmpty(host.get())) {
+            hostError.set(appResources.getString(R.string.error_field_required));
+            focus.focus("host");
+            return;
+        }
+
         interactor.checkHost(host.get())
                 .compose(subscriber::defaultSchedulers)
                 .doOnSubscribe(disposable -> isInProgress.set(true))
                 .doFinally(() -> isInProgress.set(false))
+                .doOnError(error -> {
+                    hostError.set(appResources.getString(R.string.error_unrechable_host));
+                    focus.focus("host");
+                })
                 .compose(globalBag::track)
                 .subscribe(subscriber.subscribe(checkedHost -> {
 
@@ -95,6 +136,33 @@ public class LoginViewModel extends LifecycleViewModel {
                     loginUrl.set(this.checkedHost + "?external-clients-login-form");
                     loginState.set(LoginViewModelState.LOGIN);
                 }));
+    }
+
+    public void onLogin() {
+
+        if (TextUtils.isEmpty(login.get())) {
+            loginError.set(appResources.getString(R.string.error_field_required));
+            focus.focus("login");
+            return;
+        }
+
+        if (TextUtils.isEmpty(password.get())) {
+            passwordError.set(appResources.getString(R.string.error_field_required));
+            focus.focus("password");
+            return;
+        }
+
+        interactor.login(checkedHost.toString(), login.get(), password.get())
+                .compose(subscriber::defaultSchedulers)
+                .doOnError(error -> {
+                    if (error instanceof AuthError) {
+                        loginError.set(appResources.getString(R.string.error_pass_or_login));
+                        passwordError.set(appResources.getString(R.string.error_pass_or_login));
+                        focus.focus("password");
+                    }
+                })
+                .compose(globalBag::track)
+                .subscribe(subscriber.subscribe(this::handleAuthResult));
     }
 
     public void onPageLoadingStarted(String url) {

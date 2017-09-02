@@ -35,7 +35,11 @@
             <android.support.design.widget.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/prompt_email" />
+                android:hint="@string/prompt_email"
+                app:bindableText="@{vm.login}"
+                app:error="@{vm.loginError}"
+                app:focusCommand="@{vm.focus}"
+                app:focusTag="@{'login'}" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -54,7 +58,11 @@
             <android.support.design.widget.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/prompt_password" />
+                android:hint="@string/prompt_password"
+                app:bindableText="@{vm.password}"
+                app:error="@{vm.passwordError}"
+                app:focusCommand="@{vm.focus}"
+                app:focusTag="@{'password'}" />
         </android.support.design.widget.TextInputLayout>
 
         <Button
@@ -68,6 +76,7 @@
             android:text="@string/action_sign_in"
             android:textColor="@color/white"
             android:textStyle="bold"
+            android:onClick="@{() -> vm.onLogin()}"
             app:layout_constraintBottom_toTopOf="@+id/inputGuideLine"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

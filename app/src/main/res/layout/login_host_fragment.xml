@@ -41,6 +41,8 @@
                 android:singleLine="true"
                 app:bindableText="@{vm.host}"
                 app:error="@{vm.hostError}"
+                app:focusCommand="@{vm.focus}"
+                app:focusTag="@{'host'}"
                 tools:hint="@null"
                 tools:text="http://aurora.com" />
 

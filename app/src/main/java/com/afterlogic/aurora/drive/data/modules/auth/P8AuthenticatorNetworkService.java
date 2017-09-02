@@ -5,6 +5,7 @@ import android.support.v4.util.Pair;
 import com.afterlogic.aurora.drive.data.common.network.p8.Api8;
 import com.afterlogic.aurora.drive.data.common.network.util.ApiUtil;
 import com.afterlogic.aurora.drive.data.model.project8.GetUserParametersDto;
+import com.afterlogic.aurora.drive.data.model.project8.LoginParametersDto;
 import com.afterlogic.aurora.drive.data.model.project8.UserP8;
 import com.afterlogic.aurora.drive.model.AuthToken;
 
@@ -38,7 +39,7 @@ class P8AuthenticatorNetworkService {
     }
 
     public Single<AuthToken> login(String host, String login, String password) {
-        return api.login(host, login, password, false)
+        return api.login(host, new LoginParametersDto(login, password))
                 .compose(ApiUtil::checkResponseAndGetData);
     }
 

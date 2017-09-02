@@ -14,8 +14,6 @@ public class EditTextBinding {
     @BindingAdapter("error")
     public static void bindError(EditText editText, @Nullable String error){
         editText.setError(error);
-        if (error != null){
-            editText.requestFocus();
-        }
     }
+
 }

@@ -1,7 +1,11 @@
 package com.afterlogic.aurora.drive.data.modules.auth;
 
+import android.support.v4.util.Pair;
+
 import com.afterlogic.aurora.drive.core.consts.Const;
+import com.afterlogic.aurora.drive.data.model.project8.UserP8;
 import com.afterlogic.aurora.drive.model.AuroraSession;
+import com.afterlogic.aurora.drive.model.AuthToken;
 import com.google.gson.stream.MalformedJsonException;
 
 import javax.inject.Inject;
@@ -27,11 +31,14 @@ class P8AuthenticatorSubService implements AuthenticatorSubService {
     @Override
     public Single<AuroraSession> login(String host, String login, String pass) {
         return service.login(host, login, pass)
-                .map(authToken -> new AuroraSession(
+                .flatMap(authToken -> service.getUser(host, authToken.token)
+                        .map(userInfo -> new AuthorizedData(authToken, userInfo))
+                )
+                .map(auth -> new AuroraSession(
                         "APP_TOKEN_STUB",
-                        authToken.token,
-                        -1,
-                        login,
+                        auth.getToken(),
+                        auth.getAccountId(),
+                        auth.getUser().getPublicId(),
                         pass,
                         HttpUrl.parse(host),
                         Const.ApiVersion.API_P8
@@ -60,6 +67,31 @@ class P8AuthenticatorSubService implements AuthenticatorSubService {
                         ? Maybe.empty() : Maybe.error(error)
                 )
                 .map(systemAppData -> Const.ApiVersion.API_P8);
+    }
+
+    private class AuthorizedData {
+
+        private final String token;
+        private final UserP8 user;
+        private final Long accountId;
+
+        public AuthorizedData(AuthToken authToken, Pair<Long, UserP8> user) {
+            this.token = authToken.token;
+            this.user = user.second;
+            this.accountId = user.first;
+        }
+
+        public String getToken() {
+            return token;
+        }
+
+        public UserP8 getUser() {
+            return user;
+        }
+
+        public Long getAccountId() {
+            return accountId;
+        }
     }
 
 }

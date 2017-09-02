@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.data.modules.cleaner;
 
-import com.afterlogic.aurora.drive.core.common.contextWrappers.AccountHelper;
+import com.afterlogic.aurora.drive.core.common.contextWrappers.account.AccountHelper;
 import com.afterlogic.aurora.drive.data.common.db.DataBaseProvider;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.modules.files.service.FilesLocalService;

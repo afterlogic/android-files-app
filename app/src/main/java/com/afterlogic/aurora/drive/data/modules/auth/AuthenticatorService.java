@@ -34,6 +34,11 @@ public class AuthenticatorService {
         return Completable.complete();
     }
 
+    public Single<AuroraSession> login(String host, String login, String password) {
+        return getAuthenticatorService(host)
+                .flatMap(service -> service.login(host, login, password));
+    }
+
     public Single<AuroraSession> createSession(String host, String token) {
         return getAuthenticatorService(host)
                 .flatMap(service -> service.byToken(host, token));

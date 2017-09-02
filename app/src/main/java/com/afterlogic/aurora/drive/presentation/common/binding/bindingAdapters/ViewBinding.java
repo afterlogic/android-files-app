@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ViewsViewModelBindAdapter;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.commands.FocusCommand;
 
 import java.util.List;
 
@@ -118,5 +119,12 @@ public class ViewBinding {
             visible = !visible;
         }
         view.setVisibility(visible? View.VISIBLE : View.GONE);
+    }
+
+    @BindingAdapter({"focusCommand", "focusTag"})
+    public static void bindFocus(View view, FocusCommand command, String tag) {
+        if (command.isFor(tag)) {
+            view.requestFocus();
+        }
     }
 }

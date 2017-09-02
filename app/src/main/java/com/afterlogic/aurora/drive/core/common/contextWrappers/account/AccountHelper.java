@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.core.common.contextWrappers;
+package com.afterlogic.aurora.drive.core.common.contextWrappers.account;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -26,12 +26,12 @@ public class AccountHelper {
     public static final String ACCOUNT_TYPE = "com.afterlogic.aurora";
     public static final String FILE_SYNC_AUTHORITY = "com.afterlogic.aurora.filesync.provider";
 
-    private static final String ACCOUNT_ID = "account_id";
-    private static final String APP_TOKEN = "app_token";
-    private static final String AUTH_TOKEN = "auth_token";
-    private static final String DOMAIN = "domain";
-    private static final String API_VERSION = "apiVersion";
-    private static final String HAS_SESSION = "hasSession";
+    static final String ACCOUNT_ID = "account_id";
+    static final String APP_TOKEN = "app_token";
+    static final String AUTH_TOKEN = "auth_token";
+    static final String DOMAIN = "domain";
+    static final String API_VERSION = "apiVersion";
+    static final String HAS_SESSION = "hasSession";
 
     private final AccountManager accountManager;
 
@@ -42,7 +42,7 @@ public class AccountHelper {
 
     public void createAccount(String login) {
 
-        Account account = getCurrentAccount();
+        Account account = getCurrentAccountData();
 
         if (account == null) {
             account = new Account(login, AccountUtil.ACCOUNT_TYPE);
@@ -56,7 +56,7 @@ public class AccountHelper {
     }
 
     public void removeCurrentAccount() {
-        Account account = getCurrentAccount();
+        Account account = getCurrentAccountData();
 
         if (account != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
@@ -70,7 +70,7 @@ public class AccountHelper {
     @Nullable
     public AuroraSession getCurrentAccountSessionData() {
 
-        Account account = getCurrentAccount();
+        Account account = getCurrentAccountData();
 
         if (account == null) return null;
 
@@ -100,7 +100,7 @@ public class AccountHelper {
     }
 
     public void updateCurrentAccountSessionData(@Nullable AuroraSession session){
-        Account account = getCurrentAccount();
+        Account account = getCurrentAccountData();
 
         if (account == null) {
             throw new IllegalStateException("Doesn't have account.");
@@ -132,7 +132,13 @@ public class AccountHelper {
 
     }
 
-    public Account getCurrentAccount(){
+    @Nullable
+    public AuroraAccount getCurrentAccount() {
+        Account account = getCurrentAccountData();
+        return account == null ? null : new AuroraAccount(accountManager, account);
+    }
+
+    private Account getCurrentAccountData(){
         Account[] accounts = accountManager.getAccountsByType(ACCOUNT_TYPE);
         return accounts.length > 0 ? accounts[0] : null;
     }

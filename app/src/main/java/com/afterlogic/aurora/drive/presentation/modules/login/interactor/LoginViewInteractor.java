@@ -47,4 +47,5 @@ class LoginViewInteractor {
         })//--->
                 .subscribeOn(AndroidSchedulers.mainThread());
     }
+
 }

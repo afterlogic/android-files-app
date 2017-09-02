@@ -1,8 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.login.interactor;
 
-import android.accounts.Account;
-
-import com.afterlogic.aurora.drive.core.common.contextWrappers.AccountHelper;
+import com.afterlogic.aurora.drive.core.common.contextWrappers.account.AccountHelper;
+import com.afterlogic.aurora.drive.core.common.contextWrappers.account.AuroraAccount;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthenticatorService;
@@ -114,16 +113,25 @@ public class LoginInteractor {
 
     }
 
+    public Single<AuthResult> login(String host, String email, String password) {
+
+        return authenticatorService.login(host, email, password)
+                .flatMap(this::handleSession);
+
+    }
+
     private Single<AuthResult> handleSession(AuroraSession session) {
-        Account currentAccount = accountHelper.getCurrentAccount();
+
+        AuroraAccount currentAccount = accountHelper.getCurrentAccount();
 
         if (currentAccount == null) {
 
             accountHelper.createAccount(session.getLogin());
             sessionManager.setSession(session);
+
             return Single.just(AuthResult.DONE);
 
-        } else if (currentAccount.name.equals(session.getLogin())){
+        } else if (currentAccount.getName().equals(session.getLogin())){
 
             sessionManager.setSession(session);
             return Single.just(AuthResult.DONE);
@@ -131,10 +139,11 @@ public class LoginInteractor {
         } else {
 
             return viewInteractor
-                    .confirmLoginChanging(currentAccount.name, session.getLogin())
+                    .confirmLoginChanging(currentAccount.getName(), session.getLogin())
                     .flatMap(confirm -> handleChangeLoginConfirmation(confirm, session));
 
         }
+
     }
 
     private Single<AuthResult> handleChangeLoginConfirmation(boolean confirm, AuroraSession session) {

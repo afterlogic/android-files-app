@@ -5,6 +5,7 @@ import com.afterlogic.aurora.drive.data.common.network.p8.apiAnnotations.JsonFie
 import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
 import com.afterlogic.aurora.drive.data.model.project8.FilesResponseP8;
 import com.afterlogic.aurora.drive.data.model.project8.GetUserParametersDto;
+import com.afterlogic.aurora.drive.data.model.project8.LoginParametersDto;
 import com.afterlogic.aurora.drive.data.model.project8.UploadResultP8;
 import com.afterlogic.aurora.drive.data.model.project8.UserP8;
 import com.afterlogic.aurora.drive.model.AuthToken;
@@ -130,13 +131,7 @@ public interface Api8 {
             Method.HEADER_LOGIN
     })
     Single<ApiResponseP8<AuthToken>> login(@Url String url,
-                                           @Field(Param.LOGIN) String login,
-                                           @Field(Param.PASSWORD) String password,
-                                           @Field(Param.SIGN_ME) boolean signMe);
-
-    @POST(API)
-    @FormUrlEncoded
-    Single<ApiResponseP8<AuthToken>> login(@FieldMap Map<String, Object> fields);
+                                           @Field(ApiField.PARAMS) LoginParametersDto params);
 
     @POST
     @FormUrlEncoded
