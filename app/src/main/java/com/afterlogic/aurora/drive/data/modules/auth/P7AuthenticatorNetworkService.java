@@ -1,5 +1,7 @@
 package com.afterlogic.aurora.drive.data.modules.auth;
 
+import android.support.v4.util.Pair;
+
 import com.afterlogic.aurora.drive.data.common.network.p7.Api7;
 import com.afterlogic.aurora.drive.data.common.network.util.ApiUtil;
 import com.afterlogic.aurora.drive.model.AuthToken;
@@ -25,11 +27,11 @@ class P7AuthenticatorNetworkService {
         this.api = api;
     }
 
-    public Single<SystemAppData> getSystemAppData(String host) {
+    public Single<Pair<Long, SystemAppData>> getSystemAppData(String host) {
         return getSystemAppData(host, null);
     }
 
-    public Single<SystemAppData> getSystemAppData(String host, String authToken) {
+    public Single<Pair<Long, SystemAppData>> getSystemAppData(String host, String authToken) {
         return Single.defer(() -> {
 
             HashMap<String, Object> fields = new HashMap<>();
@@ -39,10 +41,11 @@ class P7AuthenticatorNetworkService {
                 fields.put(Api7.Fields.AUTH_TOKEN, authToken);
             }
 
-            return api.getSystemAppData(completeUrl(host), fields);
+            return api.getSystemAppData(Api7.completeUrl(host), fields);
 
         })//--->
-                .compose(ApiUtil::checkResponseAndGetData);
+                .compose(ApiUtil::checkResponse)
+                .map(response -> new Pair<>(response.getAccountId(), response.getData()));
     }
 
     public Single<AuthToken> login(String host, String login, String pass) {
@@ -54,7 +57,7 @@ class P7AuthenticatorNetworkService {
             fields.put(Api7.Fields.EMAIL, login);
             fields.put(Api7.Fields.INC_PASSWORD, pass);
 
-            return api.login(completeUrl(host), fields);
+            return api.login(Api7.completeUrl(host), fields);
 
         })//--->
                 .compose(ApiUtil::checkResponse)
@@ -65,7 +68,4 @@ class P7AuthenticatorNetworkService {
                 });
     }
 
-    private String completeUrl(String base) {
-        return base + Api7.AJAX;
-    }
 }

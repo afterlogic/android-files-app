@@ -7,24 +7,29 @@ import android.webkit.CookieManager;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.application.navigation.AppRouter;
-import com.afterlogic.aurora.drive.core.AuthorizationResolver;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.rx.DisposableBag;
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
+import com.afterlogic.aurora.drive.data.modules.AuthorizationResolver;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.error.AuthError;
 import com.afterlogic.aurora.drive.presentation.common.binding.binder.Bindable;
+import com.afterlogic.aurora.drive.presentation.common.binding.commands.FocusCommand;
+import com.afterlogic.aurora.drive.presentation.common.binding.commands.WebViewGoBackCommand;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnPropertyChangedCallback;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.AsyncUiObservableField;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.LifecycleViewModel;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.commands.FocusCommand;
 import com.afterlogic.aurora.drive.presentation.modules.login.interactor.AuthResult;
 import com.afterlogic.aurora.drive.presentation.modules.login.interactor.LoginInteractor;
 import com.annimon.stream.Stream;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
 
+import io.reactivex.Completable;
 import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.subjects.PublishSubject;
 import okhttp3.HttpUrl;
 
@@ -45,9 +50,13 @@ public class LoginViewModel extends LifecycleViewModel {
     public ObservableField<String> loginError = new ObservableField<>();
     public ObservableField<String> passwordError = new ObservableField<>();
 
+    public ObservableBoolean loginWebViewFullscreen = new ObservableBoolean(false);
+    public WebViewGoBackCommand webViewGoBackCommand = new WebViewGoBackCommand();
+
     public FocusCommand focus = new FocusCommand();
 
     public ObservableBoolean isInProgress = new ObservableBoolean();
+    public ObservableBoolean isWebViewInProgress = new ObservableBoolean();
 
     public ObservableField<String> loginUrl = new ObservableField<>();
 
@@ -108,6 +117,8 @@ public class LoginViewModel extends LifecycleViewModel {
 
     public void onHostWritten() {
 
+        if (isInProgress.get()) return;
+
         if (TextUtils.isEmpty(host.get())) {
             hostError.set(appResources.getString(R.string.error_field_required));
             focus.focus("host");
@@ -140,6 +151,8 @@ public class LoginViewModel extends LifecycleViewModel {
 
     public void onLogin() {
 
+        if (isInProgress.get()) return;
+
         if (TextUtils.isEmpty(login.get())) {
             loginError.set(appResources.getString(R.string.error_field_required));
             focus.focus("login");
@@ -154,6 +167,8 @@ public class LoginViewModel extends LifecycleViewModel {
 
         interactor.login(checkedHost.toString(), login.get(), password.get())
                 .compose(subscriber::defaultSchedulers)
+                .doOnSubscribe(dis -> isInProgress.set(true))
+                .doFinally(() -> isInProgress.set(false))
                 .doOnError(error -> {
                     if (error instanceof AuthError) {
                         loginError.set(appResources.getString(R.string.error_pass_or_login));
@@ -165,17 +180,31 @@ public class LoginViewModel extends LifecycleViewModel {
                 .subscribe(subscriber.subscribe(this::handleAuthResult));
     }
 
+    public boolean onWebViewTouch() {
+
+        if (isInProgress.get()) {
+            return true;
+        }
+
+        // Do small delay for correct touch event handling
+        Completable.timer(100, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> loginWebViewFullscreen.set(true));
+
+        return false;
+    }
+
     public void onPageLoadingStarted(String url) {
         MyLog.d("Start load url: " + url);
         if (loginState.get() == LoginViewModelState.LOGIN) {
-            isInProgress.set(true);
+            isWebViewInProgress.set(true);
         }
     }
 
     public void onPageLoadingFinished(String url) {
         MyLog.d("Loaded url: " + url);
         if (loginState.get() == LoginViewModelState.LOGIN) {
-            isInProgress.set(false);
+            isWebViewInProgress.set(false);
         }
     }
 
@@ -191,12 +220,34 @@ public class LoginViewModel extends LifecycleViewModel {
     }
 
     public void onBackPressed() {
-        if (loginState.get() == LoginViewModelState.LOGIN && !relogin) {
-            loginState.set(LoginViewModelState.HOST);
+
+        if (loginState.get() == LoginViewModelState.LOGIN) {
+
+            if (loginWebViewFullscreen.get()) {
+
+                webViewGoBackCommand.goBack(success -> {
+
+                    if (!success) {
+                        loginWebViewFullscreen.set(false);
+                    }
+
+                });
+
+            } else {
+
+                if (!relogin) {
+                    loginState.set(LoginViewModelState.HOST);
+                }
+
+            }
+
         } else {
+
             authorizationResolver.onAuthorizationFailed();
             router.finishChain();
+
         }
+
     }
 
     @Override

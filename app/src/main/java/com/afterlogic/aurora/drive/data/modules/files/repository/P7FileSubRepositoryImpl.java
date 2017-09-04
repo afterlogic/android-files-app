@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.core.AuthorizationResolver;
+import com.afterlogic.aurora.drive.data.modules.AuthorizationResolver;
 import com.afterlogic.aurora.drive.core.common.rx.SimpleObservableSource;
 import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;

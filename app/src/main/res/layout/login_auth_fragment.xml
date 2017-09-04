@@ -36,10 +36,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/prompt_email"
+                android:inputType="textEmailAddress"
                 app:bindableText="@{vm.login}"
                 app:error="@{vm.loginError}"
                 app:focusCommand="@{vm.focus}"
-                app:focusTag="@{'login'}" />
+                app:focusTag='@{"login"}'
+                android:enabled="@{!vm.isInProgress}" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -59,10 +61,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/prompt_password"
+                android:inputType="textPassword"
                 app:bindableText="@{vm.password}"
                 app:error="@{vm.passwordError}"
                 app:focusCommand="@{vm.focus}"
-                app:focusTag="@{'password'}" />
+                app:focusTag='@{"password"}'
+                android:enabled="@{!vm.isInProgress}" />
         </android.support.design.widget.TextInputLayout>
 
         <Button
@@ -73,16 +77,35 @@
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:text="@string/action_sign_in"
             android:textColor="@color/white"
             android:textStyle="bold"
             android:onClick="@{() -> vm.onLogin()}"
+            android:text='@{vm.isInProgress ? "" : @string/action_sign_in}'
             app:layout_constraintBottom_toTopOf="@+id/inputGuideLine"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
-            tools:layout_editor_absoluteY="208dp" />
+            tools:text="@string/action_sign_in"/>
+
+        <ProgressBar
+            android:id="@+id/login_progress"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_alignBottom="@id/email_sign_in_button"
+            android:layout_alignTop="@id/email_sign_in_button"
+            android:layout_margin="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:elevation="2dp"
+            android:visibility="@{vm.isInProgress ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@+id/button"
+            app:layout_constraintTop_toTopOf="@+id/button"
+            app:layout_constraintEnd_toEndOf="@+id/button"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintStart_toStartOf="@+id/button"
+            android:layout_marginStart="8dp"
+            tools:ignore="UnusedAttribute" />
 
 
         <android.support.constraint.Guideline
@@ -105,6 +128,8 @@
             app:login_url="@{vm.loginUrl}"
             app:login_webClient="@{vm}"
             app:login_webViewConfig="@{true}"
+            app:onTouch="@{() -> vm.onWebViewTouch}"
+            app:goBackCommand="@{vm.webViewGoBackCommand}"
             tools:ignore="UnusedAttribute" />
 
         <FrameLayout
@@ -112,7 +137,7 @@
             android:layout_height="0dp"
             android:background="@color/white_semi_50"
             android:elevation="8dp"
-            android:visibility="@{vm.isInProgress ? View.VISIBLE : View.GONE}"
+            android:visibility="@{vm.isWebViewInProgress ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/webView"
             app:layout_constraintStart_toStartOf="parent"
@@ -120,7 +145,6 @@
             tools:ignore="UnusedAttribute">
 
             <ProgressBar
-                android:id="@+id/login_progress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center" />

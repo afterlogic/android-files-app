@@ -1,13 +1,16 @@
 package com.afterlogic.aurora.drive.application;
 
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
 
 import com.afterlogic.aurora.drive.BuildConfig;
 import com.afterlogic.aurora.drive.application.assembly.AppInjector;
+import com.afterlogic.aurora.drive.core.common.contextWrappers.account.AccountHelper;
 import com.afterlogic.aurora.drive.core.common.logging.CrashlyticsLogger;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.logging.ToCrashlyticsLogger;
@@ -15,6 +18,7 @@ import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.modules.prefs.AppPrefs;
 import com.afterlogic.aurora.drive.data.modules.prefs.Pref;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.accountAction.AccountActionReceiver;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.view.FileObserverService;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
@@ -69,6 +73,17 @@ public class App extends Application implements HasActivityInjector, HasBroadcas
         activityTracker.register(this);
 
         sessionManager.start();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            AccountManager.get(this).addOnAccountsUpdatedListener(
+                    accounts -> AccountActionReceiver.notifyAccountsChanged(App.this),
+                    null,
+                    true,
+                    new String[]{ AccountHelper.ACCOUNT_TYPE }
+            );
+
+        }
     }
 
     /**

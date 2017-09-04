@@ -9,7 +9,6 @@ import com.afterlogic.aurora.drive.data.common.db.DataBaseModule;
 import com.afterlogic.aurora.drive.data.common.network.DynamicDomainProvider;
 import com.afterlogic.aurora.drive.data.common.network.NetworkDataModule;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
-import com.afterlogic.aurora.drive.data.modules.apiChecker.ApiCheckerDataModule;
 import com.afterlogic.aurora.drive.data.modules.cleaner.DataCleanerModule;
 import com.afterlogic.aurora.drive.data.modules.files.FilesDataModule;
 import com.afterlogic.aurora.drive.data.modules.prefs.AppPrefs;
@@ -28,7 +27,6 @@ import dagger.Provides;
 @Module(includes = {
         DataBaseModule.class,
         NetworkDataModule.class,
-        ApiCheckerDataModule.class,
         FilesDataModule.class,
         DataCleanerModule.class
 })

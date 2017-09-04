@@ -24,7 +24,7 @@ public class AccountInfoInteractorImpl implements AccountInfoInteractor{
     @Override
     public Single<String> getLogin() {
 
-        return mapSession(AuroraSession::getLogin);
+        return mapSession(AuroraSession::getEmail);
 
     }
 

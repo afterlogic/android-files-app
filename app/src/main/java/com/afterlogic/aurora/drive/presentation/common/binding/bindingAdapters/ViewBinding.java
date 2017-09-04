@@ -8,9 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.core.common.interfaces.Provider;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ViewsViewModelBindAdapter;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.commands.FocusCommand;
+import com.afterlogic.aurora.drive.presentation.common.binding.commands.FocusCommand;
 
 import java.util.List;
 
@@ -49,6 +50,11 @@ public class ViewBinding {
             action.run();
             return true;
         });
+    }
+
+    @BindingAdapter("onTouch")
+    public static void setOnTouchListener(View view, Provider<Boolean> action) {
+        view.setOnTouchListener((v, motionEvent) -> action.get());
     }
 
     @BindingAdapter("alpha")

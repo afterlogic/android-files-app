@@ -1,5 +1,7 @@
 package com.afterlogic.aurora.drive.data.modules.cleaner;
 
+import android.webkit.CookieManager;
+
 import com.afterlogic.aurora.drive.core.common.contextWrappers.account.AccountHelper;
 import com.afterlogic.aurora.drive.data.common.db.DataBaseProvider;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
@@ -36,14 +38,15 @@ public class DataCleanerImpl implements DataCleaner {
     public Completable cleanAllUserData(){
         return cleanUserAccountAndSession()
                 .andThen(mFilesLocalService.clear())
-                .andThen(Completable.fromAction(mDataBaseProvider::reset));
+                .andThen(Completable.fromAction(mDataBaseProvider::reset))
+                .andThen(Completable.fromAction(() -> CookieManager.getInstance().removeAllCookie()));
     }
 
     @Override
     public Completable cleanUserAccountAndSession(){
         return Completable.fromAction(() -> {
-            mSessionManager.setSession(null);
             accountHelper.removeCurrentAccount();
+            mSessionManager.notifySessionChanged();
         });
     }
 }

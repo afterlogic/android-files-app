@@ -1,13 +1,14 @@
 package com.afterlogic.aurora.drive.presentation.modules.login.interactor;
 
+import android.accounts.Account;
+
 import com.afterlogic.aurora.drive.core.common.contextWrappers.account.AccountHelper;
-import com.afterlogic.aurora.drive.core.common.contextWrappers.account.AuroraAccount;
 import com.afterlogic.aurora.drive.core.common.rx.Observables;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthenticatorService;
 import com.afterlogic.aurora.drive.data.modules.cleaner.DataCleaner;
 import com.afterlogic.aurora.drive.data.modules.prefs.AppPrefs;
-import com.afterlogic.aurora.drive.model.AuroraSession;
+import com.afterlogic.aurora.drive.model.AuthorizedAuroraSession;
 import com.afterlogic.aurora.drive.model.error.UnknownApiVersionError;
 import com.annimon.stream.Stream;
 
@@ -120,33 +121,37 @@ public class LoginInteractor {
 
     }
 
-    private Single<AuthResult> handleSession(AuroraSession session) {
+    private Single<AuthResult> handleSession(AuthorizedAuroraSession session) {
 
-        AuroraAccount currentAccount = accountHelper.getCurrentAccount();
+        Account currentAccount = accountHelper.getCurrentAccount();
 
         if (currentAccount == null) {
 
-            accountHelper.createAccount(session.getLogin());
-            sessionManager.setSession(session);
+            accountHelper.createAccount(session.getUser());
+            accountHelper.updateCurrentAccountSessionData(session);
+            sessionManager.notifySessionChanged();
 
             return Single.just(AuthResult.DONE);
 
-        } else if (currentAccount.getName().equals(session.getLogin())){
+        } else if (currentAccount.name.equals(session.getUser())){
 
-            sessionManager.setSession(session);
+            accountHelper.updateCurrentAccountSessionData(session);
+            sessionManager.notifySessionChanged();
+
             return Single.just(AuthResult.DONE);
 
         } else {
 
             return viewInteractor
-                    .confirmLoginChanging(currentAccount.getName(), session.getLogin())
+                    .confirmLoginChanging(currentAccount.name, session.getUser())
                     .flatMap(confirm -> handleChangeLoginConfirmation(confirm, session));
 
         }
 
     }
 
-    private Single<AuthResult> handleChangeLoginConfirmation(boolean confirm, AuroraSession session) {
+    private Single<AuthResult> handleChangeLoginConfirmation(boolean confirm,
+                                                             AuthorizedAuroraSession session) {
 
         if (!confirm) {
             return Single.just(AuthResult.CANCELLED);
@@ -154,11 +159,15 @@ public class LoginInteractor {
             return authenticatorService.logout()
                     .andThen(dataCleaner.cleanAllUserData())
                     .andThen(Completable.fromAction(() -> {
-                        accountHelper.createAccount(session.getLogin());
-                        sessionManager.setSession(session);
+
+                        accountHelper.createAccount(session.getUser());
+                        accountHelper.updateCurrentAccountSessionData(session);
+                        sessionManager.notifySessionChanged();
+
                     }))
                     .andThen(Single.just(AuthResult.ACCOUNT_CHANGED));
         }
 
     }
+
 }

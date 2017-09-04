@@ -12,7 +12,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.afterlogic.aurora.drive.core.common.contextWrappers.Notificator;
-import com.afterlogic.aurora.drive.core.common.util.AccountUtil;
+import com.afterlogic.aurora.drive.core.common.contextWrappers.account.AccountHelper;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
@@ -63,10 +63,10 @@ public class SyncService extends MVPService implements SyncView {
         extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
 
-        Account account = AccountUtil.getCurrentAccount(context);
+        Account account = AccountHelper.getCurrentAccount(context);
         ContentResolver.requestSync(
                 account,
-                AccountUtil.FILE_SYNC_AUTHORITY,
+                AccountHelper.FILE_SYNC_AUTHORITY,
                 extras
         );
     }

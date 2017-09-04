@@ -1,6 +1,5 @@
 package com.afterlogic.aurora.drive.data.common.network;
 
-import android.accounts.Account;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +7,6 @@ import android.content.IntentFilter;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.DataScope;
 import com.afterlogic.aurora.drive.core.common.contextWrappers.account.AccountHelper;
-import com.afterlogic.aurora.drive.core.common.util.AccountUtil;
 import com.afterlogic.aurora.drive.core.common.util.AppUtil;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 
@@ -48,16 +46,6 @@ public class SessionManager {
         return session;
     }
 
-    public void setSession(@Nullable AuroraSession session) {
-        if (session == this.session) return;
-
-        this.session = session;
-
-        accountHelper.updateCurrentAccountSessionData(session);
-
-        notifySessionChanged();
-    }
-
     public void start() {
 
         updateSessionByAccount();
@@ -79,7 +67,9 @@ public class SessionManager {
         context.registerReceiver(sessionChangedReceiver, sessionChangedIntentFilter);
     }
 
-    private void notifySessionChanged() {
+    public void notifySessionChanged() {
+
+        session = accountHelper.getCurrentAccountSession();
 
         Intent intent = new Intent(ACTION_SESSION_CHANGED);
         intent.setPackage(context.getPackageName());
@@ -92,16 +82,7 @@ public class SessionManager {
 
     private void updateSessionByAccount() {
 
-        Account account = AccountUtil.getCurrentAccount(context);
+        session = accountHelper.getCurrentAccountSession();
 
-        if (account == null) {
-
-            session = null;
-
-        } else {
-
-            session = accountHelper.getCurrentAccountSessionData();
-
-        }
     }
 }

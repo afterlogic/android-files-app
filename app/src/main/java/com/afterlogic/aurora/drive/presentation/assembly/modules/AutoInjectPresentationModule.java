@@ -13,6 +13,7 @@ import com.afterlogic.aurora.drive.presentation.modules.replace.di.ReplaceModule
 import com.afterlogic.aurora.drive.presentation.modules.replace.view.ReplaceActivity;
 import com.afterlogic.aurora.drive.presentation.modules.upload.di.UploadModule;
 import com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadActivity;
+import com.afterlogic.aurora.drive.presentation.modulesBackground.accountAction.AccountActionReceiver;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.receivers.NotificationActionReceiver;
 
 import dagger.Module;
@@ -62,4 +63,8 @@ public abstract class AutoInjectPresentationModule {
     @ModuleScope
     @ContributesAndroidInjector
     abstract NotificationActionReceiver contributeNotificationActionReceiver();
+
+    @ModuleScope
+    @ContributesAndroidInjector
+    abstract AccountActionReceiver contributeAccountActionReceiver();
 }

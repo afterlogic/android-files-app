@@ -110,4 +110,8 @@ public abstract class InjectableMVVMFragment<VM extends LifecycleViewModel> exte
     protected VM getViewModel() {
         return viewModel;
     }
+
+    protected <B extends ViewDataBinding> B getBinding() {
+        return (B) binding;
+    }
 }

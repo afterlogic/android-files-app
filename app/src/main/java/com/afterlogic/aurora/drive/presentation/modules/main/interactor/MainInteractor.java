@@ -64,7 +64,7 @@ public class MainInteractor extends FilesRootInteractor {
                 throw new IllegalStateException("Not authorized.");
             }
 
-            return session.getLogin();
+            return session.getUser();
 
         });
 

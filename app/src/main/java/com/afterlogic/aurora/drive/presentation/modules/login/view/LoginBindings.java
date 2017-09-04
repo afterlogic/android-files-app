@@ -28,6 +28,7 @@ public class LoginBindings {
                 super.onPageStarted(view, url, favicon);
                 vm.onPageLoadingStarted(url);
             }
+
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);

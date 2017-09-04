@@ -2,7 +2,7 @@ package com.afterlogic.aurora.drive.data.modules.auth;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.DataScope;
 import com.afterlogic.aurora.drive.core.consts.Const;
-import com.afterlogic.aurora.drive.model.AuroraSession;
+import com.afterlogic.aurora.drive.model.AuthorizedAuroraSession;
 import com.afterlogic.aurora.drive.model.error.UnknownApiVersionError;
 
 import javax.inject.Inject;
@@ -34,12 +34,12 @@ public class AuthenticatorService {
         return Completable.complete();
     }
 
-    public Single<AuroraSession> login(String host, String login, String password) {
+    public Single<AuthorizedAuroraSession> login(String host, String login, String password) {
         return getAuthenticatorService(host)
                 .flatMap(service -> service.login(host, login, password));
     }
 
-    public Single<AuroraSession> createSession(String host, String token) {
+    public Single<AuthorizedAuroraSession> createSession(String host, String token) {
         return getAuthenticatorService(host)
                 .flatMap(service -> service.byToken(host, token));
     }
@@ -47,8 +47,10 @@ public class AuthenticatorService {
     public Single<Integer> getApiVersion(String host) {
         return Observable.concat(
                 p8AuthenticatorSubService.getApiVersion(host)
+                        .onErrorComplete() // TODO: more effective check
                         .toObservable(),
                 p7AuthenticatorSubService.getApiVersion(host)
+                        .onErrorComplete() // TODO: more effective check
                         .toObservable()
         )//--->
                 .switchIfEmpty(Observable.error(new UnknownApiVersionError()))

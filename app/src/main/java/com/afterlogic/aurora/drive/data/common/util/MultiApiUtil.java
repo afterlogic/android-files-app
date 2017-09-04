@@ -13,8 +13,8 @@ import javax.inject.Provider;
 
 public class MultiApiUtil {
 
-    public static <T> T chooseByApiVersion(SessionManager configurator, Provider<T> p7, Provider<T> p8){
-        AuroraSession session = configurator.getSession();
+    public static <T> T chooseByApiVersion(SessionManager sessionManager, Provider<T> p7, Provider<T> p8){
+        AuroraSession session = sessionManager.getSession();
 
         if (session == null) {
             throw new IllegalStateException("Not authorized. So can't provide any.");

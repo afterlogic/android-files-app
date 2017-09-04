@@ -1,8 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.start.interactor;
 
+import com.afterlogic.aurora.drive.core.common.contextWrappers.account.AccountHelper;
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
-import com.afterlogic.aurora.drive.data.common.network.SessionManager;
-import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.presentation.common.modules.model.interactor.BaseInteractor;
 
 import javax.inject.Inject;
@@ -16,19 +15,16 @@ import io.reactivex.Single;
 
 public class StartInteractorImpl extends BaseInteractor implements StartInteractor {
 
-    private final SessionManager mSessionManager;
+    private final AccountHelper accountHelper;
 
     @Inject
-    StartInteractorImpl(ObservableScheduler scheduler, SessionManager sessionManager) {
+    StartInteractorImpl(ObservableScheduler scheduler, AccountHelper accountHelper) {
         super(scheduler);
-        mSessionManager = sessionManager;
+        this.accountHelper = accountHelper;
     }
 
     @Override
     public Single<Boolean> getAuthStatus() {
-        return Single.fromCallable(() -> {
-            AuroraSession session = mSessionManager.getSession();
-            return session != null;
-        });
+        return Single.fromCallable(accountHelper::hasCurrentAccount);
     }
 }

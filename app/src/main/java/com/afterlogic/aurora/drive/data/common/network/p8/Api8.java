@@ -130,8 +130,10 @@ public interface Api8 {
             Module.HEADER_CORE,
             Method.HEADER_LOGIN
     })
-    Single<ApiResponseP8<AuthToken>> login(@Url String url,
-                                           @Field(ApiField.PARAMS) LoginParametersDto params);
+    Single<ApiResponseP8<AuthToken>> login(
+            @Url String url,
+            @Field(ApiField.PARAMS) @JsonField LoginParametersDto params
+    );
 
     @POST
     @FormUrlEncoded

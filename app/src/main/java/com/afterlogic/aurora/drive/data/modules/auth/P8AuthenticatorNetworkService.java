@@ -39,7 +39,7 @@ class P8AuthenticatorNetworkService {
     }
 
     public Single<AuthToken> login(String host, String login, String password) {
-        return api.login(host, new LoginParametersDto(login, password))
+        return api.login(Api8.completeUrl(host), new LoginParametersDto(login, password))
                 .compose(ApiUtil::checkResponseAndGetData);
     }
 

@@ -75,17 +75,18 @@ public interface Api7 {
         String THUMBNAIL_URL = "?/Raw/FilesThumbnail/%d/%s/0/hash/%s"; //accountId/fileHash/authToken
     }
 
+
+    static String completeUrl(String base) {
+        return base + Api7.AJAX;
+    }
+
     @FormUrlEncoded()
     @POST()
     Single<ApiResponseP7<SystemAppData>> getSystemAppData(@Url String url, @FieldMap Map<String, Object> fields);
 
     @FormUrlEncoded
-    @POST(AJAX)
+    @POST
     Single<ApiResponseP7<AuthToken>> login(@Url String url, @FieldMap Map<String, Object> fields);
-
-    @FormUrlEncoded
-    @POST(AJAX)
-    Single<ApiResponseP7<AuthToken>> login(@FieldMap Map<String, Object> fields);
 
     @FormUrlEncoded
     @POST(AJAX)

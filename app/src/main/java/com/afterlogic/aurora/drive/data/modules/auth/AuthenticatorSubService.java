@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.data.modules.auth;
 
-import com.afterlogic.aurora.drive.model.AuroraSession;
+import com.afterlogic.aurora.drive.model.AuthorizedAuroraSession;
 
 import io.reactivex.Maybe;
 import io.reactivex.Single;
@@ -12,9 +12,9 @@ import io.reactivex.Single;
 
 interface AuthenticatorSubService {
 
-    Single<AuroraSession> login(String host, String login, String pass);
+    Single<AuthorizedAuroraSession> login(String host, String email, String pass);
 
-    Single<AuroraSession> byToken(String host, String token);
+    Single<AuthorizedAuroraSession> byToken(String host, String token);
 
     Maybe<Integer> getApiVersion(String host);
 }

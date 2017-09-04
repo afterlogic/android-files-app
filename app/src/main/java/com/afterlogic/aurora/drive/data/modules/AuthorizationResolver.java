@@ -1,12 +1,17 @@
-package com.afterlogic.aurora.drive.core;
+package com.afterlogic.aurora.drive.data.modules;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.afterlogic.aurora.drive.application.ActivityTracker;
 import com.afterlogic.aurora.drive.application.navigation.AppRouter;
-import com.afterlogic.aurora.drive.core.common.annotation.scopes.CoreScope;
+import com.afterlogic.aurora.drive.core.common.annotation.scopes.DataScope;
 import com.afterlogic.aurora.drive.core.common.contextWrappers.Notificator;
+import com.afterlogic.aurora.drive.core.common.contextWrappers.account.AccountHelper;
 import com.afterlogic.aurora.drive.core.common.util.AppUtil;
+import com.afterlogic.aurora.drive.data.common.network.SessionManager;
+import com.afterlogic.aurora.drive.data.modules.auth.AuthenticatorService;
+import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.error.ApiResponseError;
 import com.afterlogic.aurora.drive.model.error.AuthError;
 
@@ -25,7 +30,7 @@ import io.reactivex.subjects.PublishSubject;
  * Created by sunny on 29.08.17.
  *
  */
-@CoreScope
+@DataScope
 public class AuthorizationResolver {
 
     private static final Object RETRY = new Object();
@@ -36,6 +41,9 @@ public class AuthorizationResolver {
     private final ActivityTracker activityTracker;
     private final Context appContext;
     private final Notificator notificator;
+    private final SessionManager sessionManager;
+    private final AccountHelper accountHelper;
+    private final AuthenticatorService authenticatorService;
 
     private final PublishSubject<AuthEvent> authPublisher = PublishSubject.create();
 
@@ -43,12 +51,18 @@ public class AuthorizationResolver {
     AuthorizationResolver(AppRouter router,
                           ActivityTracker activityTracker,
                           Context appContext,
-                          Notificator notificator) {
+                          Notificator notificator,
+                          SessionManager sessionManager,
+                          AuthenticatorService authenticatorService,
+                          AccountHelper accountHelper) {
 
         this.router = router;
         this.activityTracker = activityTracker;
         this.appContext = appContext;
         this.notificator = notificator;
+        this.sessionManager = sessionManager;
+        this.authenticatorService = authenticatorService;
+        this.accountHelper = accountHelper;
     }
 
     public <T> Single<T> checkAuth(Single<T> upstream) {
@@ -60,6 +74,11 @@ public class AuthorizationResolver {
         AtomicBoolean relogged = new AtomicBoolean(false);
 
         return upstream
+                .doOnSubscribe(dis -> {
+                    if (sessionManager.getSession() == null) {
+                        throw new AuthError();
+                    }
+                })
                 .retryWhen(errorsFlow ->
                         errorsFlow.flatMap(error ->
                                 handleError(error, relogged, observeOn)
@@ -74,16 +93,20 @@ public class AuthorizationResolver {
 
         if (isAuthError(error) && !relogged.getAndSet(true)) {
 
-            if (canRelogin()) {
 
-                return relogin(observeOn);
+            AuroraSession session = sessionManager.getSession();
+
+            if (session != null && !TextUtils.isEmpty(session.getPassword())) {
+
+                return reloginByPass(session, observeOn)
+                        .onErrorResumeNext(loginError -> isAuthError(error)
+                                ? reloginByUi(observeOn)
+                                : Flowable.error(error)
+                        );
 
             } else {
 
-                notificator.notifyAuthRequired();
-
-                // TODO: Maybe another error?
-                return Flowable.error(new AuthError());
+                return reloginByUi(observeOn);
 
             }
 
@@ -92,23 +115,60 @@ public class AuthorizationResolver {
         return Flowable.error(error);
     }
 
-    private boolean canRelogin() {
+    private Flowable<Object> reloginByPass(AuroraSession session, Scheduler observeOn) {
+        return authenticatorService.login(
+                session.getDomain().toString(),
+                session.getEmail(),
+                session.getPassword()
+        )//--->
+                .map(loggedSession -> {
+
+                    if (session.getUser().equals(loggedSession.getUser())) {
+                        throw new AuthError();
+                    }
+
+                    accountHelper.updateCurrentAccountSessionData(loggedSession);
+                    sessionManager.notifySessionChanged();
+
+                    return RETRY;
+
+                })
+                .toFlowable()
+                .observeOn(observeOn);
+    }
+
+    private Flowable<Object> reloginByUi(Scheduler observeOn) {
+
+        if (canReloginByUI()) {
+
+            return startReloginByUi(observeOn);
+
+        } else {
+
+            notificator.notifyAuthRequired();
+
+            return Flowable.error(new AuthError());
+
+        }
+
+    }
+
+    private boolean canReloginByUI() {
         return AppUtil.isProcess(null, appContext) && activityTracker.hasStartedActivity();
     }
 
-    private Flowable<Object> relogin(Scheduler observeOn) {
+    private Flowable<Object> startReloginByUi(Scheduler observeOn) {
 
         return authPublisher.toFlowable(BackpressureStrategy.LATEST)
                 .doOnSubscribe(subscription -> router.navigateTo(AppRouter.LOGIN, true))
                 .flatMap(event -> {
+
                     switch (event) {
 
                         case DONE:
                             return Flowable.just(RETRY);
 
                         case ACCOUNT_CHANGED:
-
-                            // TODO: Maybe another error?
                             return Flowable.error(new AuthError());
 
                         case FAILED:
@@ -116,6 +176,7 @@ public class AuthorizationResolver {
 
                         default:
                             throw new IllegalArgumentException("Unknown type.");
+
                     }
                 })
                 .observeOn(observeOn);
@@ -135,6 +196,7 @@ public class AuthorizationResolver {
     }
 
     private boolean isAuthError(Throwable error) {
+        if (error instanceof AuthError) return true;
         if (!(error instanceof ApiResponseError)) return false;
 
         ApiResponseError apiError = (ApiResponseError) error;

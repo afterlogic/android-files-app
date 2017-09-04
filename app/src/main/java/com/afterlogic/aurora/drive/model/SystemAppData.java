@@ -122,7 +122,7 @@ public class SystemAppData {
      * IsDemo : false
      */
 
-    @SerializedName("UserP8")
+    @SerializedName("User")
     private User mUser;
     @SerializedName("TenantHash")
     private String mTenantHash;

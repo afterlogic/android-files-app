@@ -1,4 +1,4 @@
-package com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.commands;
+package com.afterlogic.aurora.drive.presentation.common.binding.commands;
 
 import android.databinding.BaseObservable;
 import android.support.annotation.NonNull;
