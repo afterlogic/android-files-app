@@ -191,7 +191,13 @@ private static boolean checkVersionChanges(Properties properties) {
 
 private boolean isNeedIncrement() {
 
-    def autoIncrementTasks = project.ext.get("autoIncrementTasks")
+    String autoIncrementTasks = null
+
+    try {
+        autoIncrementTasks = project.ext.get("autoIncrementTasks")
+    } catch (Exception e) {
+        // no-op
+    }
 
     if (autoIncrementTasks != null) {
 

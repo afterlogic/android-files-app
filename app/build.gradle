@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'org.greenrobot.greendao'
 
-project.ext.set("autoIncrementTasks", "assembleReleaseBeta")
 apply from: '../artifacts.gradle'
 
 project.ext.set("signingFolder", file("../signing").toString())
@@ -40,6 +39,7 @@ android {
 
     dexOptions {
         javaMaxHeapSize "2g"
+        jumboMode true
     }
 
     buildTypes {
