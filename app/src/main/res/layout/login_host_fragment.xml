@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="vm"
+            type="com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginViewModel" />
+
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/domain_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/email_sign_in_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed">
+
+            <AutoCompleteTextView
+                android:id="@+id/domain"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="@{!vm.isInProgress}"
+                android:hint="@string/prompt_domain"
+                android:inputType="textEmailAddress"
+                android:maxLines="1"
+                android:singleLine="true"
+                app:bindableText="@{vm.host}"
+                app:error="@{vm.hostError}"
+                app:focusCommand="@{vm.focus}"
+                app:focusTag='@{"host"}'
+                tools:hint="@null"
+                tools:text="http://aurora.com" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:id="@+id/email_sign_in_button"
+            style="?android:textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:enabled="@{!vm.isInProgress}"
+            android:onClick="@{() -> vm.onHostWritten()}"
+            android:text='@{vm.isInProgress ? "" : @string/action_sign_in}'
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/domain_wrapper"
+            tools:text="@string/action_sign_in" />
+
+        <ProgressBar
+            android:id="@+id/login_progress"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_alignBottom="@id/email_sign_in_button"
+            android:layout_alignTop="@id/email_sign_in_button"
+            android:layout_margin="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:visibility="@{vm.isInProgress ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@+id/email_sign_in_button"
+            app:layout_constraintTop_toTopOf="@+id/email_sign_in_button"
+            app:layout_constraintEnd_toEndOf="@+id/email_sign_in_button"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintStart_toStartOf="@+id/email_sign_in_button"
+            android:layout_marginStart="8dp" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@mipmap/ic_launcher"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/domain_wrapper"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

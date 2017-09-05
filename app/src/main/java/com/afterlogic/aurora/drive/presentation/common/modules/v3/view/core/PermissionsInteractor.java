@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 
+import com.afterlogic.aurora.drive.application.ActivityTracker;
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.PresentationScope;
 import com.afterlogic.aurora.drive.model.error.PermissionDeniedError;
 import com.afterlogic.aurora.drive.model.events.PermissionGrantEvent;
@@ -21,19 +22,19 @@ import io.reactivex.subjects.PublishSubject;
 @PresentationScope
 public class PermissionsInteractor {
 
-    private final CurrentActivityTracker currentActivityTracker;
+    private final ActivityTracker activityTracker;
 
     private PublishSubject<PermissionGrantEvent> grantEventPublishSubject = PublishSubject.create();
 
     @Inject
-    public PermissionsInteractor(CurrentActivityTracker currentActivityTracker) {
-        this.currentActivityTracker = currentActivityTracker;
+    public PermissionsInteractor(ActivityTracker activityTracker) {
+        this.activityTracker = activityTracker;
     }
 
     public Single<PermissionGrantEvent> requirePermission(PermissionRequest request) {
         return grantEventPublishSubject
                 .doOnSubscribe(disposable -> {
-                    Activity currentActivity = currentActivityTracker.getCurrentActivity();
+                    Activity currentActivity = activityTracker.getLastActiveActivity();
                     if (currentActivity == null) {
                         throw new Error("Activity not present");
                     }

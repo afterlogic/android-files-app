@@ -13,7 +13,7 @@ import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.util.Optional;
 import com.afterlogic.aurora.drive.presentation.common.binding.binder.Bindable;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.commands.ContextMenuCommand;
+import com.afterlogic.aurora.drive.presentation.common.binding.commands.ContextMenuCommand;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.MessageDialogViewModel;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.ProgressViewModel;
 import com.afterlogic.aurora.drive.presentation.common.view.AppProgressDialog;

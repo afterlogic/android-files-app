@@ -18,7 +18,7 @@ import com.afterlogic.aurora.drive.model.error.ActivityResultError;
 import com.afterlogic.aurora.drive.model.error.ViewNotPresentError;
 import com.afterlogic.aurora.drive.model.events.ActivityResultEvent;
 import com.afterlogic.aurora.drive.presentation.common.components.view.SelectionEditText;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.core.CurrentActivityTracker;
+import com.afterlogic.aurora.drive.application.ActivityTracker;
 import com.annimon.stream.Stream;
 
 import java.util.ArrayList;
@@ -36,11 +36,11 @@ import io.reactivex.Single;
 
 public class BaseViewInteractor {
 
-    private final CurrentActivityTracker currentActivityTracker;
+    private final ActivityTracker activityTracker;
 
     @Inject
-    public BaseViewInteractor(CurrentActivityTracker currentActivityTracker) {
-        this.currentActivityTracker = currentActivityTracker;
+    public BaseViewInteractor(ActivityTracker activityTracker) {
+        this.activityTracker = activityTracker;
     }
 
     protected Maybe<String> getInputDialog(int title) {
@@ -52,7 +52,7 @@ public class BaseViewInteractor {
 
         return Maybe.<String>create(emitter -> {
 
-            Activity activity = currentActivityTracker.getCurrentActivity();
+            Activity activity = activityTracker.getLastActiveActivity();
             if (activity == null) {
                 emitter.onError(new ViewNotPresentError());
                 return;

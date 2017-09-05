@@ -9,7 +9,7 @@ import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.interactor.BaseViewInteractor;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.core.ActivityResultInteractor;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.core.CurrentActivityTracker;
+import com.afterlogic.aurora.drive.application.ActivityTracker;
 
 import javax.inject.Inject;
 
@@ -29,7 +29,7 @@ public class MainViewInteractor extends BaseViewInteractor {
     private final AppRouter appRouter;
 
     @Inject
-    MainViewInteractor(CurrentActivityTracker tracker,
+    MainViewInteractor(ActivityTracker tracker,
                        ActivityResultInteractor activityResultInteractor,
                        AppRouter appRouter) {
         super(tracker);

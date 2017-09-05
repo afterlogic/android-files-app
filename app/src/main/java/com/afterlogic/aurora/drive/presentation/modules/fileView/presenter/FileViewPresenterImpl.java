@@ -67,7 +67,7 @@ public class FileViewPresenterImpl extends BaseLoadPresenter<FileViewPresentatio
                 .compose(progressibleLoadTask(true))
                 .subscribe(
                         localFile -> notificator
-                                .makeDownloadsNotification(null, file.getName()),
+                                .notifyDownloadedToDownloads(null, file.getName()),
                         this::onErrorObtained
                 );
     }

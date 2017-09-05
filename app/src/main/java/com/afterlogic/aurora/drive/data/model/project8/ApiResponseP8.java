@@ -23,7 +23,7 @@ public class ApiResponseP8<T> implements ApiResponse<T>{
      * Result : {"AuthToken":"token_value"}
      */
 
-    @SerializedName("AuthentificatedAccountID")
+    @SerializedName("AuthenticatedUserId")
     private long mAccountId;
 
     @SerializedName("Module")

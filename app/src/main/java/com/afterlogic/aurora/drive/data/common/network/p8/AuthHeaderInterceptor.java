@@ -1,5 +1,7 @@
 package com.afterlogic.aurora.drive.data.common.network.p8;
 
+import android.support.annotation.NonNull;
+
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 
@@ -21,28 +23,29 @@ class AuthHeaderInterceptor implements Interceptor {
     private final SessionManager mSessionManager;
 
     @Inject
-    public AuthHeaderInterceptor(SessionManager sessionManager) {
+    AuthHeaderInterceptor(SessionManager sessionManager) {
         mSessionManager = sessionManager;
     }
 
     @Override
-    public Response intercept(Chain chain) throws IOException {
+    public Response intercept(@NonNull Chain chain) throws IOException {
         AuroraSession session = mSessionManager.getSession();
 
         Request originalRequest = chain.request();
 
-        if (originalRequest.headers().get(Api8.Header.NAME_AUTHORISATION) != null) {
+        String authHeader = originalRequest.headers().get(Api8.ApiHeader.NAME_AUTHORISATION);
+        if (authHeader != null && authHeader.equals(Api8.ApiHeader.VALUE_AUTHORISATION)) {
 
             Request.Builder request = chain.request().newBuilder();
 
-            request.removeHeader(Api8.Header.NAME_AUTHORISATION);
+            request.removeHeader(Api8.ApiHeader.NAME_AUTHORISATION);
 
             if (session != null) {
                 String token = session.getAuthToken();
                 if (token != null) {
                     request.addHeader(
-                            Api8.Header.NAME_AUTHORISATION,
-                            Api8.Header.VALUE_AUTHORISATION.replace(Api8.Header.AUTH_TOKEN, token)
+                            Api8.ApiHeader.NAME_AUTHORISATION,
+                            Api8.ApiHeader.VALUE_AUTHORISATION.replace(Api8.ApiHeader.AUTH_TOKEN, token)
                     );
                 }
             }

@@ -360,7 +360,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                 .filter(Progressible::isDone)
                 .map(Progressible::getData)
                 .collectInto(new ArrayList<File>(), List::add)
-                .subscribe(subscriber.subscribe(results -> notificator.makeDownloadsNotification(
+                .subscribe(subscriber.subscribe(results -> notificator.notifyDownloadedToDownloads(
                         null,
                         appResources.getPlurals(
                                 R.plurals.dialog_files_success_downloaded,
@@ -575,7 +575,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                 .filter(Progressible::isDone)
                 .map(Progressible::getData)
                 .subscribe(subscriber.subscribe(local -> {
-                    notificator.makeDownloadsNotification(
+                    notificator.notifyDownloadedToDownloads(
                             null, file.getName()
                     );
                 }));

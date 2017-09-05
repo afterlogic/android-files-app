@@ -13,7 +13,7 @@ public class CrashlyticsUtil {
     public static void updateUserData(AuroraSession session) {
         if (session == null) return;
 
-        CrashlyticsCore.getInstance().setUserEmail(session.getLogin());
+        CrashlyticsCore.getInstance().setUserEmail(session.getEmail());
         CrashlyticsCore.getInstance().setInt("Api version", session.getApiVersion());
         CrashlyticsCore.getInstance().setString("Domain", session.getDomain().toString());
     }

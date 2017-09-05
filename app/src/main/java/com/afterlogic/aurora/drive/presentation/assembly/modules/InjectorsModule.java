@@ -10,8 +10,6 @@ import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseActivi
 import com.afterlogic.aurora.drive.presentation.modules.choise.view.ChoiseFilesFragment;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.assembly.FileViewInjector;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewActivity;
-import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginInjector;
-import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
 import com.afterlogic.aurora.drive.presentation.modules.start.assembly.StartInjector;
 import com.afterlogic.aurora.drive.presentation.modules.start.view.StartActivity;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.accountAction.AccountActionInjector;
@@ -47,11 +45,6 @@ public class InjectorsModule {
     @Provides
     ModulesComponentCreator provideAssemblies(){
         return mPresentationAssemblyComponent;
-    }
-
-    @Provides
-    Injector<LoginActivity> login(LoginInjector injector){
-        return injector;
     }
 
     @Provides

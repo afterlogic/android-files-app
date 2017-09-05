@@ -11,13 +11,14 @@ import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
 import com.afterlogic.aurora.drive.data.common.mapper.BiMapper;
 import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
 import com.afterlogic.aurora.drive.data.common.mapper.MapperUtil;
-import com.afterlogic.aurora.drive.data.common.repository.AuthorizedRepository;
-import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
+import com.afterlogic.aurora.drive.data.common.network.SessionManager;
+import com.afterlogic.aurora.drive.data.common.repository.Repository;
 import com.afterlogic.aurora.drive.data.modules.files.FilesDataModule;
 import com.afterlogic.aurora.drive.data.modules.files.mapper.general.FilesMapperFactory;
 import com.afterlogic.aurora.drive.data.modules.files.model.db.OfflineFileInfoEntity;
 import com.afterlogic.aurora.drive.data.modules.files.service.FilesLocalService;
 import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.FileInfo;
 import com.afterlogic.aurora.drive.model.OfflineType;
 import com.afterlogic.aurora.drive.model.Progressible;
@@ -44,15 +45,14 @@ import io.reactivex.Single;
  * Created by sashka on 19.10.16.<p/>
  * mail: sunnyday.development@gmail.com
  */
-public class FileRepositoryImpl extends AuthorizedRepository implements FilesRepository {
+public class FileRepositoryImpl extends Repository implements FilesRepository {
 
     private final static String FILES = "files";
 
     private final Context mAppContext;
     private final FileSubRepository mFileSubRepo;
     private final FilesLocalService mLocalService;
-
-    private final AuthRepository mAuthRepository;
+    private final SessionManager sessionManager;
 
     private final File mCacheDir;
     private final File mOfflineDir;
@@ -62,16 +62,16 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
 
     @Inject
     FileRepositoryImpl(SharedObservableStore cache,
-                       AuthRepository authRepository,
                        Context appContext,
                        FileSubRepository fileSubRepo,
                        FilesLocalService localService,
                        @Named(FilesDataModule.CACHE_DIR) File cacheDir,
                        @Named(FilesDataModule.OFFLINE_DIR) File offlineDir,
                        @Named(FilesDataModule.DOWNLOADS_DIR) File downloadsDir,
-                       FilesMapperFactory mapperFactory) {
-        super(cache, FILES, authRepository);
-        mAuthRepository = authRepository;
+                       FilesMapperFactory mapperFactory,
+                       SessionManager sessionManager) {
+        super(cache, FILES);
+        this.sessionManager = sessionManager;
         mAppContext = appContext;
         mFileSubRepo = fileSubRepo;
         mLocalService = localService;
@@ -286,6 +286,12 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
         return mFileSubRepo.createPublicLink(file)
                 .map(link -> {
 
+                    AuroraSession session = sessionManager.getSession();
+
+                    if (session == null) {
+                        throw new IllegalStateException("Not authorized.");
+                    }
+
                     if (link.startsWith("http://localhost")){
                         link = link.substring(16);
                     } else if (link.startsWith("https://localhost")){
@@ -294,10 +300,7 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
 
                     if (!link.startsWith("http")) {
 
-                        String domain = mAuthRepository.getCurrentSession()
-                                .blockingGet()
-                                .getDomain()
-                                .toString();
+                        String domain = session.getDomain().toString();
 
                         link = domain + link;
                     }

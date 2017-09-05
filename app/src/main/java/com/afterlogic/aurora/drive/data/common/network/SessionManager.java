@@ -1,34 +1,88 @@
 package com.afterlogic.aurora.drive.data.common.network;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+
+import com.afterlogic.aurora.drive.core.common.annotation.scopes.DataScope;
+import com.afterlogic.aurora.drive.core.common.contextWrappers.account.AccountHelper;
+import com.afterlogic.aurora.drive.core.common.util.AppUtil;
 import com.afterlogic.aurora.drive.model.AuroraSession;
-import com.afterlogic.aurora.drive.core.consts.Const;
+
+import javax.annotation.Nullable;
+import javax.inject.Inject;
 
 /**
  * Created by sashka on 17.10.16.<p/>
  * mail: sunnyday.development@gmail.com
  */
+
+@DataScope
 public class SessionManager {
 
-    private AuroraSession mAuroraSession;
+    private static final String ACTION_SESSION_CHANGED = "ACTION_SESSION_CHANGED";
+    private static final String KEY_SENDER = "KEY_SENDER";
 
-    private ApiConfigurator mApiConfigurator;
+    private final Context context;
+    private final AccountHelper accountHelper;
 
-    public SessionManager(ApiConfigurator apiConfigurator) {
-        mApiConfigurator = apiConfigurator;
+    @Nullable
+    private AuroraSession session;
+
+    private String senderName;
+
+    @Inject
+    public SessionManager(Context context,
+                          AccountHelper accountHelper) {
+        this.context = context;
+        this.accountHelper = accountHelper;
+
+        senderName = AppUtil.getCurrentProcessName(context) + ":" + this;
     }
 
+    @Nullable
     public AuroraSession getSession() {
-        return mAuroraSession;
+        return session;
     }
 
-    public void setSession(AuroraSession auroraSession) {
-        if (auroraSession == mAuroraSession) return;
+    public void start() {
 
-        mAuroraSession = auroraSession;
-        if (auroraSession != null) {
-            mApiConfigurator.setDomain(auroraSession.getDomain(), auroraSession.getApiVersion());
-        } else {
-            mApiConfigurator.setDomain(null, Const.ApiVersion.API_NONE);
-        }
+        updateSessionByAccount();
+
+        IntentFilter sessionChangedIntentFilter = new IntentFilter(ACTION_SESSION_CHANGED);
+
+        BroadcastReceiver sessionChangedReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                if (!intent.hasExtra(KEY_SENDER)
+                        || senderName.equals(intent.getStringExtra(KEY_SENDER))) return;
+
+                updateSessionByAccount();
+
+            }
+        };
+
+        context.registerReceiver(sessionChangedReceiver, sessionChangedIntentFilter);
+    }
+
+    public void notifySessionChanged() {
+
+        session = accountHelper.getCurrentAccountSession();
+
+        Intent intent = new Intent(ACTION_SESSION_CHANGED);
+        intent.setPackage(context.getPackageName());
+
+        intent.putExtra(KEY_SENDER, senderName);
+
+        context.sendBroadcast(intent);
+
+    }
+
+    private void updateSessionByAccount() {
+
+        session = accountHelper.getCurrentAccountSession();
+
     }
 }

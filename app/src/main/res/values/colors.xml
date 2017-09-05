@@ -10,6 +10,7 @@
     <color name="transparent">#00000000</color>
 
     <color name="white">#FFFFFF</color>
+    <color name="white_semi_50">#7effffff</color>
 
     <color name="highlight">#9fa8da</color>
 

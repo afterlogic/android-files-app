@@ -9,7 +9,6 @@ import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseFi
 import com.afterlogic.aurora.drive.presentation.modules.choise.assembly.ChoiseModule;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.assembly.FileViewComponent;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.assembly.FileViewModule;
-import com.afterlogic.aurora.drive.presentation.modules.login.assembly.LoginComponent;
 import com.afterlogic.aurora.drive.presentation.modules.start.assembly.StartComponent;
 import com.afterlogic.aurora.drive.presentation.modules.start.assembly.StartModule;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.accountAction.AccountActionComponent;
@@ -37,8 +36,6 @@ public interface ModulesComponentCreator {
     PresentationModulesStore store();
 
     MVVMComponentsStore mvvmStore();
-
-    LoginComponent login();
 
     StartComponent plus(StartModule module);
 

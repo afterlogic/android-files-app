@@ -159,7 +159,7 @@ public class FilesServiceP8Impl extends CloudServiceP8 implements FilesServiceP8
                 uploadBody.setProgressListener(progressUpdater);
             }
             MultipartBody.Part filePart = MultipartBody.Part.createFormData(
-                    Api8.Field.JUA_UPLOADER, fileInfo.getName(), uploadBody
+                    Api8.ApiField.JUA_UPLOADER, fileInfo.getName(), uploadBody
             );
 
             return mApi.upload(fields, filePart);

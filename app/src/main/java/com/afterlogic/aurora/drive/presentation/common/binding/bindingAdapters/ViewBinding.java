@@ -8,8 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.core.common.interfaces.Provider;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ViewsViewModelBindAdapter;
+import com.afterlogic.aurora.drive.presentation.common.binding.commands.FocusCommand;
 
 import java.util.List;
 
@@ -48,6 +50,11 @@ public class ViewBinding {
             action.run();
             return true;
         });
+    }
+
+    @BindingAdapter("onTouch")
+    public static void setOnTouchListener(View view, Provider<Boolean> action) {
+        view.setOnTouchListener((v, motionEvent) -> action.get());
     }
 
     @BindingAdapter("alpha")
@@ -105,5 +112,25 @@ public class ViewBinding {
         adapter.setItems(list);
         adapter.onAttach(container);
         container.setTag(R.id.bind_view_child_adapter, adapter);
+    }
+
+    @BindingAdapter("visibility")
+    public static void bindViewVisibility(View view, boolean visible){
+        bindViewVisibility(view, visible, false);
+    }
+
+    @BindingAdapter({"visibilityBoolean", "inverseVisibility"})
+    public static void bindViewVisibility(View view, boolean visible, boolean inverse) {
+        if (inverse) {
+            visible = !visible;
+        }
+        view.setVisibility(visible? View.VISIBLE : View.GONE);
+    }
+
+    @BindingAdapter({"focusCommand", "focusTag"})
+    public static void bindFocus(View view, FocusCommand command, String tag) {
+        if (command.isFor(tag)) {
+            view.requestFocus();
+        }
     }
 }

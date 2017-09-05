@@ -1,0 +1,125 @@
+package com.afterlogic.aurora.drive.presentation.modules.login.view;
+
+import android.animation.ValueAnimator;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
+import android.os.Bundle;
+import android.support.annotation.FloatRange;
+import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+
+import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.databinding.LoginAuthFragmentBinding;
+import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMFragment;
+import com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginViewModel;
+
+/**
+ * Created by aleksandrcikin on 11.08.17.
+ * mail: mail@sunnydaydev.me
+ */
+
+public class AuthFragment extends InjectableMVVMFragment<LoginViewModel> {
+
+    private boolean isFirstWebViewSizeAction = true;
+
+    private ValueAnimator webViewAnimator;
+
+    public static AuthFragment newInstance() {
+        
+        Bundle args = new Bundle();
+        
+        AuthFragment fragment = new AuthFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public ViewDataBinding createBinding(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return DataBindingUtil.inflate(inflater, R.layout.login_auth_fragment, container, false);
+    }
+
+    @Override
+    protected ViewModelProvider createViewModelProvider() {
+        return ViewModelProviders.of(getParentFragment());
+    }
+
+    @Override
+    public LoginViewModel createViewModel(ViewModelProvider provider) {
+        return provider.get(LoginViewModel.class);
+    }
+
+    @Override
+    protected void bindCreated(LoginViewModel vm, UnbindableObservable.Bag bag) {
+        super.bindCreated(vm, bag);
+
+        UnbindableObservable.bind(vm.loginWebViewFullscreen, bag, field ->
+                updateWebViewPercentSize(field.get() ? 1f : 0.5f)
+        );
+
+    }
+
+    private void updateWebViewPercentSize(@FloatRange(from = 0, to = 1) float value) {
+        value = 1 - value;
+
+        if (isFirstWebViewSizeAction) {
+
+            isFirstWebViewSizeAction = false;
+
+            setWebViewGuideLinePercent(value);
+
+        } else {
+
+            animateWebViewGuideLine(value);
+
+        }
+
+    }
+
+    private void setWebViewGuideLinePercent(float value) {
+
+        LoginAuthFragmentBinding binding = getBinding();
+        ConstraintLayout.LayoutParams guideLineLp = (ConstraintLayout.LayoutParams)
+                binding.webViewGuideLine.getLayoutParams();
+
+        guideLineLp.guidePercent = value;
+        binding.webViewGuideLine.requestLayout();
+
+    }
+
+    private void animateWebViewGuideLine(float targetValue) {
+
+        if (webViewAnimator != null) {
+            webViewAnimator.cancel();
+            webViewAnimator = null;
+        }
+
+        LoginAuthFragmentBinding binding = getBinding();
+        ConstraintLayout.LayoutParams guideLineLp = (ConstraintLayout.LayoutParams)
+                binding.webViewGuideLine.getLayoutParams();
+
+        float currentValue = guideLineLp.guidePercent;
+
+        if (currentValue == targetValue) return;
+
+        webViewAnimator = ValueAnimator.ofFloat(currentValue, targetValue);
+        webViewAnimator.addUpdateListener(valueAnimator -> {
+
+            guideLineLp.guidePercent = ((float) valueAnimator.getAnimatedValue());
+            binding.webViewGuideLine.requestLayout();
+
+        });
+
+        long duration = (long) (
+                (Math.max(currentValue, targetValue) - Math.min(currentValue, targetValue)) * 500
+        );
+
+        webViewAnimator.setDuration(duration);
+        webViewAnimator.start();
+
+    }
+}
