@@ -1,11 +1,14 @@
 package com.afterlogic.aurora.drive.data.modules.auth;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
 
 import com.afterlogic.aurora.drive.core.consts.Const;
 import com.afterlogic.aurora.drive.model.AuthorizedAuroraSession;
 import com.afterlogic.aurora.drive.model.SystemAppData;
 import com.afterlogic.aurora.drive.model.error.ApiResponseError;
+import com.annimon.stream.Stream;
 import com.google.gson.JsonSyntaxException;
 
 import javax.inject.Inject;
@@ -34,42 +37,14 @@ class P7AuthenticatorSubService implements AuthenticatorSubService {
                 .flatMap(authToken -> service.getSystemAppData(host, authToken.token)
                         .map(systemAppData -> new LoginResult(authToken.token, systemAppData))
                 )
-                .map(loginResult -> new AuthorizedAuroraSession(
-                        String.valueOf(loginResult.getSystemAppData().getUser().getIdUser()),
-                        loginResult.getSystemAppData().getToken(),
-                        loginResult.getToken(),
-                        0, // TODO: Check is really need it
-                        email,
-                        pass,
-                        HttpUrl.parse(host),
-                        Const.ApiVersion.API_P7
-                ));
+                .map(loginResult -> handleLoginResult(loginResult, host, email, pass));
     }
 
     @Override
     public Single<AuthorizedAuroraSession> byToken(String host, String token) {
         return service.getSystemAppData(host, token)
-                .map(authPair -> {
-
-                    SystemAppData systemAppData = authPair.second;
-
-                    if (systemAppData.isAuthorized()) {
-                        throw new Error("Not authorized!");
-                    }
-
-                    SystemAppData.User authenticatedUser = systemAppData.getUser();
-
-                    return new AuthorizedAuroraSession(
-                            String.valueOf(authenticatedUser.getIdUser()),
-                            systemAppData.getToken(),
-                            token,
-                            authPair.first, // TODO: Check is really need it
-                            null,
-                            null,
-                            HttpUrl.parse(host),
-                            Const.ApiVersion.API_P7
-                    );
-                });
+                .map(authPair -> new LoginResult(token, authPair))
+                .map(loginResult -> handleLoginResult(loginResult, host, null, null));
     }
 
     @Override
@@ -82,6 +57,38 @@ class P7AuthenticatorSubService implements AuthenticatorSubService {
                 .map(systemAppData -> Const.ApiVersion.API_P7);
     }
 
+    private AuthorizedAuroraSession handleLoginResult(@NonNull LoginResult loginResult,
+                                                      @NonNull String host,
+                                                      @Nullable String email,
+                                                      @Nullable String pass) {
+
+        SystemAppData systemAppData = loginResult.getSystemAppData();
+
+        if (systemAppData.isAuthorized()) {
+            throw new Error("Not authorized!");
+        }
+
+        long defaultAccountId = systemAppData.getDefault();
+
+        SystemAppData.Account defaultAccount = Stream.of(systemAppData.getAccounts())
+                .filter(acc -> acc.getAccountID() == defaultAccountId)
+                .findFirst()
+                .get();
+
+        return new AuthorizedAuroraSession(
+                defaultAccount.getEmail(),
+                loginResult.getSystemAppData().getToken(),
+                loginResult.getToken(),
+                loginResult.getAccountId(), // TODO: Check is really need it
+                email,
+                pass,
+                HttpUrl.parse(host),
+                Const.ApiVersion.API_P7
+        );
+
+    }
+
+    @SuppressWarnings("WeakerAccess")
     private class LoginResult {
 
         private long accountId;
@@ -108,9 +115,7 @@ class P7AuthenticatorSubService implements AuthenticatorSubService {
     }
 
     private boolean isIncorrectApiVersionError(Throwable error) {
-        if (error instanceof JsonSyntaxException) return true;
-        if (error instanceof ApiResponseError) return true;
+        return error instanceof JsonSyntaxException || error instanceof ApiResponseError;
 
-        return false;
     }
 }

@@ -218,7 +218,7 @@ public class SystemAppData {
     @SerializedName("HelpdeskThreadAction")
     private String mHelpdeskThreadAction;
     @SerializedName("Default")
-    private int mDefault;
+    private long mDefault;
     /**
      * AllowUsersChangeInterfaceSettings : true
      * AllowUsersChangeEmailSettings : true
@@ -628,7 +628,7 @@ public class SystemAppData {
         mHelpdeskThreadAction = helpdeskThreadAction;
     }
 
-    public int getDefault() {
+    public long getDefault() {
         return mDefault;
     }
 
@@ -655,7 +655,7 @@ public class SystemAppData {
 
     public static class User {
         @SerializedName("IdUser")
-        private int mIdUser;
+        private long mIdUser;
         @SerializedName("MailsPerPage")
         private int mMailsPerPage;
         @SerializedName("ContactsPerPage")
@@ -784,7 +784,7 @@ public class SystemAppData {
         @SerializedName("IsDemo")
         private boolean mIsDemo;
 
-        public int getIdUser() {
+        public long getIdUser() {
             return mIdUser;
         }
 
@@ -2006,7 +2006,7 @@ public class SystemAppData {
 
     public static class Account {
         @SerializedName("AccountID")
-        private int mAccountID;
+        private long mAccountID;
         @SerializedName("Email")
         private String mEmail;
         @SerializedName("FriendlyName")
@@ -2024,7 +2024,7 @@ public class SystemAppData {
         @SerializedName("AllowMail")
         private boolean mAllowMail;
 
-        public int getAccountID() {
+        public long getAccountID() {
             return mAccountID;
         }
 
