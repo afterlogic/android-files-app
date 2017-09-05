@@ -15,6 +15,7 @@ import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.error.AuthError;
 import com.afterlogic.aurora.drive.presentation.common.binding.binder.Bindable;
 import com.afterlogic.aurora.drive.presentation.common.binding.commands.FocusCommand;
+import com.afterlogic.aurora.drive.presentation.common.binding.commands.SimpleCommand;
 import com.afterlogic.aurora.drive.presentation.common.binding.commands.WebViewGoBackCommand;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnPropertyChangedCallback;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.AsyncUiObservableField;
@@ -33,6 +34,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.subjects.PublishSubject;
 import okhttp3.HttpUrl;
 
+import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginViewModelState.HOST;
+import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginViewModelState.LOGIN;
+import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewModelState.ERROR;
+import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewModelState.NORMAL;
+import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewModelState.PROGRESS;
+
 /**
  * Created by aleksandrcikin on 11.08.17.
  * mail: mail@sunnydaydev.me
@@ -40,7 +47,7 @@ import okhttp3.HttpUrl;
 
 public class LoginViewModel extends LifecycleViewModel {
 
-    public ObservableField<LoginViewModelState> loginState = new AsyncUiObservableField<>(LoginViewModelState.HOST);
+    public ObservableField<LoginViewModelState> loginState = new AsyncUiObservableField<>(HOST);
 
     public Bindable<String> host = Bindable.create();
     public Bindable<String> login = Bindable.create();
@@ -52,11 +59,14 @@ public class LoginViewModel extends LifecycleViewModel {
 
     public ObservableBoolean loginWebViewFullscreen = new ObservableBoolean(false);
     public WebViewGoBackCommand webViewGoBackCommand = new WebViewGoBackCommand();
+    public SimpleCommand reloadWebViewCommand = new SimpleCommand();
+
+    public ObservableBoolean pageReloading = new ObservableBoolean(false);
+    public ObservableField<LoginWebViewModelState> webViewState = new ObservableField<>(NORMAL);
 
     public FocusCommand focus = new FocusCommand();
 
     public ObservableBoolean isInProgress = new ObservableBoolean();
-    public ObservableBoolean isWebViewInProgress = new ObservableBoolean();
 
     public ObservableField<String> loginUrl = new ObservableField<>();
 
@@ -70,6 +80,8 @@ public class LoginViewModel extends LifecycleViewModel {
 
     private PublishSubject<Boolean> reloginPublisher = PublishSubject.create();
     private boolean relogin;
+
+    private boolean networkAvailable = true;
 
     private final DisposableBag globalBag = new DisposableBag();
 
@@ -85,29 +97,9 @@ public class LoginViewModel extends LifecycleViewModel {
         this.authorizationResolver = resolver;
         this.appResources = appResources;
 
-        SimpleOnPropertyChangedCallback.addTo(host, () -> hostError.set(null));
-        SimpleOnPropertyChangedCallback.addTo(login, () -> {
-            loginError.set(null);
-            if (!TextUtils.isEmpty(login.get())) {
-                passwordError.set(null);
-            }
-        });
-        SimpleOnPropertyChangedCallback.addTo(password, () -> {
-            passwordError.set(null);
-            if (!TextUtils.isEmpty(password.get())) {
-                loginError.set(null);
-            }
-        });
+        initProperties();
+        initObservables();
 
-        Single.zip(
-                reloginPublisher
-                        .firstOrError(),
-                interactor.getLastInputedHost()
-                        .toSingle("")
-                        .compose(subscriber::defaultSchedulers),
-                LastLoggedHost::new
-        )//--->
-                .subscribe(subscriber.subscribe(this::handleLastCheckedHostUrl));
     }
 
     public void setArgs(boolean relogin) {
@@ -144,8 +136,8 @@ public class LoginViewModel extends LifecycleViewModel {
                             .compose(subscriber::defaultSchedulers)
                             .subscribe(subscriber.justSubscribe());
 
-                    loginUrl.set(this.checkedHost + "?external-clients-login-form");
-                    loginState.set(LoginViewModelState.LOGIN);
+                    loginUrl.set(getLoginUrl());
+                    loginState.set(LOGIN);
                 }));
     }
 
@@ -196,19 +188,26 @@ public class LoginViewModel extends LifecycleViewModel {
 
     public void onPageLoadingStarted(String url) {
         MyLog.d("Start load url: " + url);
-        if (loginState.get() == LoginViewModelState.LOGIN) {
-            isWebViewInProgress.set(true);
+        if (webViewState.get() != ERROR) {
+            webViewState.set(PROGRESS);
+        } else {
+            pageReloading.set(true);
         }
     }
 
     public void onPageLoadingFinished(String url) {
         MyLog.d("Loaded url: " + url);
-        if (loginState.get() == LoginViewModelState.LOGIN) {
-            isWebViewInProgress.set(false);
-        }
+        webViewState.set(networkAvailable ? NORMAL : ERROR);
+        pageReloading.set(false);
     }
 
     public boolean shouldOverrideUrlLoading(String url) {
+
+        if (!networkAvailable) {
+            webViewState.set(ERROR);
+            pageReloading.set(false);
+            return true;
+        }
 
         if (!url.equals(checkedHost.toString())) return false;
 
@@ -221,7 +220,7 @@ public class LoginViewModel extends LifecycleViewModel {
 
     public void onBackPressed() {
 
-        if (loginState.get() == LoginViewModelState.LOGIN) {
+        if (loginState.get() == LOGIN) {
 
             if (loginWebViewFullscreen.get()) {
 
@@ -236,7 +235,7 @@ public class LoginViewModel extends LifecycleViewModel {
             } else {
 
                 if (!relogin) {
-                    loginState.set(LoginViewModelState.HOST);
+                    loginState.set(HOST);
                 }
 
             }
@@ -250,10 +249,60 @@ public class LoginViewModel extends LifecycleViewModel {
 
     }
 
+    public void onWebViewError(@SuppressWarnings("unused") int errorCode) {
+        webViewState.set(ERROR);
+    }
+
+    public void onRetryWeb() {
+
+        if (pageReloading.get()) {
+            return;
+        }
+
+        reloadWebViewCommand.fire();
+    }
+
     @Override
     protected void onCleared() {
         globalBag.dispose();
         super.onCleared();
+    }
+
+    private void initProperties() {
+
+        SimpleOnPropertyChangedCallback.addTo(host, () -> hostError.set(null));
+        SimpleOnPropertyChangedCallback.addTo(login, () -> {
+            loginError.set(null);
+            if (!TextUtils.isEmpty(login.get())) {
+                passwordError.set(null);
+            }
+        });
+        SimpleOnPropertyChangedCallback.addTo(password, () -> {
+            passwordError.set(null);
+            if (!TextUtils.isEmpty(password.get())) {
+                loginError.set(null);
+            }
+        });
+
+    }
+
+    private void initObservables() {
+
+        Single.zip(
+                reloginPublisher
+                        .firstOrError(),
+                interactor.getLastInputedHost()
+                        .toSingle("")
+                        .compose(subscriber::defaultSchedulers),
+                LastLoggedHost::new
+        )//--->
+                .subscribe(subscriber.subscribe(this::handleLastCheckedHostUrl));
+
+        interactor.listenNetworkState()
+                .compose(subscriber::defaultSchedulers)
+                .compose(globalBag::track)
+                .subscribe(subscriber.subscribe(available -> networkAvailable = available));
+
     }
 
     private void handleLastCheckedHostUrl(LastLoggedHost lastHost) {
@@ -262,10 +311,10 @@ public class LoginViewModel extends LifecycleViewModel {
 
             host.set(lastHost.host);
             checkedHost = HttpUrl.parse(lastHost.host);
-            loginUrl.set(this.checkedHost + "?external-clients-login-form");
+            loginUrl.set(getLoginUrl());
 
             if (lastHost.relogin) {
-                loginState.set(LoginViewModelState.LOGIN);
+                loginState.set(LOGIN);
             }
         }
 
@@ -312,9 +361,14 @@ public class LoginViewModel extends LifecycleViewModel {
                 break;
 
             case CANCELLED:
-                loginUrl.set(this.checkedHost + "?external-clients-login-form");
+                loginUrl.set(getLoginUrl());
                 break;
 
         }
     }
+
+    private String getLoginUrl() {
+        return checkedHost != null ? checkedHost + "?external-clients-login-form" : null;
+    }
+
 }

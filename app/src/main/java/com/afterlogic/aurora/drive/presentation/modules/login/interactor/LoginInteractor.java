@@ -10,6 +10,7 @@ import com.afterlogic.aurora.drive.data.modules.cleaner.DataCleaner;
 import com.afterlogic.aurora.drive.data.modules.prefs.AppPrefs;
 import com.afterlogic.aurora.drive.model.AuthorizedAuroraSession;
 import com.afterlogic.aurora.drive.model.error.UnknownApiVersionError;
+import com.afterlogic.aurora.drive.presentation.common.components.rx.NetworkStateHelper;
 import com.annimon.stream.Stream;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import javax.inject.Inject;
 
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import okhttp3.HttpUrl;
 
@@ -35,6 +37,7 @@ public class LoginInteractor {
     private final AccountHelper accountHelper;
     private final LoginViewInteractor viewInteractor;
     private final DataCleaner dataCleaner;
+    private final NetworkStateHelper networkStateHelper;
 
     @Inject
     LoginInteractor(AppPrefs prefs,
@@ -42,7 +45,8 @@ public class LoginInteractor {
                     SessionManager sessionManager,
                     AccountHelper accountHelper,
                     LoginViewInteractor viewInteractor,
-                    DataCleaner dataCleaner) {
+                    DataCleaner dataCleaner,
+                    NetworkStateHelper networkStateHelper) {
 
         this.prefs = prefs;
         this.authenticatorService = authenticatorService;
@@ -50,6 +54,7 @@ public class LoginInteractor {
         this.accountHelper = accountHelper;
         this.viewInteractor = viewInteractor;
         this.dataCleaner = dataCleaner;
+        this.networkStateHelper = networkStateHelper;
     }
 
     public Maybe<String> getLastInputedHost() {
@@ -119,6 +124,10 @@ public class LoginInteractor {
         return authenticatorService.login(host, email, password)
                 .flatMap(this::handleSession);
 
+    }
+
+    public Observable<Boolean> listenNetworkState() {
+        return networkStateHelper.listenNetworkState();
     }
 
     private Single<AuthResult> handleSession(AuthorizedAuroraSession session) {

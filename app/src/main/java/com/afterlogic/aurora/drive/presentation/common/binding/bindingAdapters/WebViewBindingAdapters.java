@@ -4,6 +4,7 @@ import android.databinding.BindingAdapter;
 import android.webkit.WebView;
 
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
+import com.afterlogic.aurora.drive.presentation.common.binding.commands.SimpleCommand;
 import com.afterlogic.aurora.drive.presentation.common.binding.commands.WebViewGoBackCommand;
 
 /**
@@ -34,4 +35,16 @@ public class WebViewBindingAdapters {
         }
 
     }
+
+    @BindingAdapter("reloadCommand")
+    public static void bindReloadCommand(WebView webView, SimpleCommand command) {
+
+        if (command.handle()) {
+
+            webView.reload();
+
+        }
+
+    }
+
 }

@@ -16,7 +16,8 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/white">
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/textInputLayout2"
@@ -41,7 +42,7 @@
                 app:error="@{vm.loginError}"
                 app:focusCommand="@{vm.focus}"
                 app:focusTag='@{"login"}'
-                android:enabled="@{!vm.isInProgress}" />
+                android:enabled="@{!(vm.isInProgress || vm.loginWebViewFullscreen)}" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -66,7 +67,7 @@
                 app:error="@{vm.passwordError}"
                 app:focusCommand="@{vm.focus}"
                 app:focusTag='@{"password"}'
-                android:enabled="@{!vm.isInProgress}" />
+                android:enabled="@{!(vm.isInProgress || vm.loginWebViewFullscreen)}" />
         </android.support.design.widget.TextInputLayout>
 
         <Button
@@ -81,6 +82,7 @@
             android:textStyle="bold"
             android:onClick="@{() -> vm.onLogin()}"
             android:text='@{vm.isInProgress ? "" : @string/action_sign_in}'
+            android:enabled="@{!vm.loginWebViewFullscreen}"
             app:layout_constraintBottom_toTopOf="@+id/inputGuideLine"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -121,15 +123,18 @@
             android:layout_height="0dp"
             android:layout_marginTop="0dp"
             android:elevation="8dp"
+            visibility="@{ vm.webViewState.isError() ? View.GONE : View.VISIBLE }"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@+id/webViewGuideLine"
             app:login_url="@{vm.loginUrl}"
             app:login_webClient="@{vm}"
             app:login_webViewConfig="@{true}"
             app:onTouch="@{() -> vm.onWebViewTouch}"
             app:goBackCommand="@{vm.webViewGoBackCommand}"
+            app:reloadCommand="@{vm.reloadWebViewCommand}"
+            tools:visibility="gone"
             tools:ignore="UnusedAttribute" />
 
         <FrameLayout
@@ -137,11 +142,12 @@
             android:layout_height="0dp"
             android:background="@color/white_semi_50"
             android:elevation="8dp"
-            android:visibility="@{vm.isWebViewInProgress ? View.VISIBLE : View.GONE}"
+            android:visibility="@{ vm.webViewState.isProgress() ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/webView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/webView"
+            tools:visibility="gone"
             tools:ignore="UnusedAttribute">
 
             <ProgressBar
@@ -150,6 +156,62 @@
                 android:layout_gravity="center" />
 
         </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:elevation="8dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="@{ vm.webViewState.isError() ? View.VISIBLE : View.GONE}"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/webViewGuideLine"
+            tools:ignore="UnusedAttribute">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:gravity="center_horizontal"
+                android:text="@string/prompt_additional_auth_web_failed"
+                />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <Button
+                    style="?android:textAppearanceSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:onClick="@{() -> vm.onRetryWeb()}"
+                    android:text='@{vm.pageReloading ? "" : @string/prompt_retry}'
+                    app:layout_constraintBottom_toTopOf="@+id/inputGuideLine"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
+                    tools:text='@string/prompt_retry'/>
+
+                <ProgressBar
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:elevation="4dp"
+                    android:layout_gravity="center"
+                    android:visibility="@{vm.pageReloading ? View.VISIBLE : View.GONE}"/>
+
+            </FrameLayout>
+
+        </LinearLayout>
 
         <android.support.constraint.Guideline
             android:id="@+id/webViewGuideLine"

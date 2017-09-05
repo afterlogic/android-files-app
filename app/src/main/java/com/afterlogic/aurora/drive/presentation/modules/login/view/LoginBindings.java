@@ -4,12 +4,18 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.databinding.BindingAdapter;
 import android.graphics.Bitmap;
+import android.net.http.SslError;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
+import android.webkit.SslErrorHandler;
+import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginViewModel;
 
 /**
@@ -48,6 +54,33 @@ public class LoginBindings {
                         || super.shouldOverrideUrlLoading(view, url);
             }
 
+
+            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
+                super.onReceivedHttpError(view, request, errorResponse);
+                vm.onWebViewError(errorResponse.getStatusCode());
+            }
+
+            @TargetApi(Build.VERSION_CODES.M)
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                super.onReceivedError(view, request, error);
+                vm.onWebViewError(error.getErrorCode());
+            }
+
+            @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                super.onReceivedError(view, errorCode, description, failingUrl);
+                vm.onWebViewError(errorCode);
+            }
+
+            @Override
+            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                super.onReceivedSslError(view, handler, error);
+                vm.onWebViewError(error.getPrimaryError());
+            }
+
         });
     }
 
@@ -63,6 +96,8 @@ public class LoginBindings {
     @BindingAdapter("login_webViewConfig")
     public static void bindWebViewConfig(WebView webView, boolean useConfig) {
         if (!useConfig) return;
+
+        webView.setBackgroundColor(ContextCompat.getColor(webView.getContext(), R.color.white));
 
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);

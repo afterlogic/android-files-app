@@ -138,5 +138,6 @@
         <item quantity="many">%d файлов</item>
     </plurals>
     <string name="prompt_error_occurred_pull_to_refresh">Произошла ошибка.\nПотяните вниз, чтобы попробовать снова.</string>
+    <string name="prompt_additional_auth_web_failed">Не удалось получить данные дополнительных вариантов авторизации.</string>
 
 </resources>
