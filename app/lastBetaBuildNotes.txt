@@ -1,1 +1,3 @@
-Improve login logic. Login by webview added.
+Release 92:
+- Social authorization: Login by webview. Relogin improved (by email/pass in background or by webview in foreground).
+- Adopted for Android O (Notifications).
