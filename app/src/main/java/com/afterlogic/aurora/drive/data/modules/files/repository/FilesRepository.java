@@ -23,6 +23,8 @@ public interface FilesRepository {
 
     Single<List<AuroraFile>> getFiles(AuroraFile folder);
 
+    Single<List<AuroraFile>> getFiles(AuroraFile folder, String pattern);
+
     Single<Uri> getFileThumbnail(AuroraFile file);
 
     Single<Uri> viewFile(AuroraFile file);
@@ -49,6 +51,7 @@ public interface FilesRepository {
     Maybe<AuroraFile> getOfflineFile(String pathSpec);
     Single<List<AuroraFile>> getOfflineFiles();
 
+    // TODO: return more complex status (synced, offline, and more)
     Single<Boolean> getOfflineStatus(AuroraFile file);
 
     Completable clearOfflineData();
@@ -56,4 +59,8 @@ public interface FilesRepository {
     Single<String> createPublicLink(AuroraFile file);
 
     Completable deletePublicLink(AuroraFile file);
+
+    Completable replaceFiles(AuroraFile targetFolder, List<AuroraFile> files);
+
+    Completable copyFiles(AuroraFile targetFolder, List<AuroraFile> files);
 }

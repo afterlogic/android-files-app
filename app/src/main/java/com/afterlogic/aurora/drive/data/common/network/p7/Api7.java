@@ -41,6 +41,8 @@ public interface Api7 {
         String FILE_INFO = "FileInfo";
         String FILES_CREATE_PUBLIC_LINK = "FilesCreatePublicLink";
         String FILES_PUBLIC_LINK_DELETE = "FilesPublicLinkDelete";
+        String FILES_MOVE = "FilesMove";
+        String FILES_COPY = "FilesCopy";
     }
 
     interface Fields{
@@ -59,6 +61,12 @@ public interface Api7 {
         String TOKEN = "Token";
         String AUTH_TOKEN = "AuthToken";
         String IS_FOLDER = "IsFolder";
+        String FROM_TYPE = "FromType";
+        String TO_TYPE = "ToType";
+        String FROM_PATH = "FromPath";
+        String TO_PATH = "ToPath";
+        String FILES = "Files";
+        String SIZE = "Size";
     }
 
     interface Links{
@@ -67,17 +75,18 @@ public interface Api7 {
         String THUMBNAIL_URL = "?/Raw/FilesThumbnail/%d/%s/0/hash/%s"; //accountId/fileHash/authToken
     }
 
+
+    static String completeUrl(String base) {
+        return base + Api7.AJAX;
+    }
+
     @FormUrlEncoded()
     @POST()
     Single<ApiResponseP7<SystemAppData>> getSystemAppData(@Url String url, @FieldMap Map<String, Object> fields);
 
-    @FormUrlEncoded()
-    @POST(AJAX)
-    Single<ApiResponseP7<SystemAppData>> getSystemAppData(@FieldMap Map<String, Object> fields);
-
     @FormUrlEncoded
-    @POST(AJAX)
-    Single<ApiResponseP7<AuthToken>> login(@FieldMap Map<String, Object> fields);
+    @POST
+    Single<ApiResponseP7<AuthToken>> login(@Url String url, @FieldMap Map<String, Object> fields);
 
     @FormUrlEncoded
     @POST(AJAX)
@@ -106,6 +115,14 @@ public interface Api7 {
     @FormUrlEncoded
     @POST(AJAX)
     Single<ApiResponseP7<Boolean>> deletePublicLink(@FieldMap Map<String, Object> fields);
+
+    @FormUrlEncoded
+    @POST(AJAX)
+    Single<ApiResponseP7<Boolean>> replaceFiles(@FieldMap Map<String, Object> fields);
+
+    @FormUrlEncoded
+    @POST(AJAX)
+    Single<ApiResponseP7<Boolean>> copyFiles(@FieldMap Map<String, Object> fields);
 
     @GET(DownloadInterceptor.INTERCEPT_DOWNLOAD)
     Single<ResponseBody> downloadFile(@Query(DownloadInterceptor.QUERY_ACCOUNT_ID) long accountId,

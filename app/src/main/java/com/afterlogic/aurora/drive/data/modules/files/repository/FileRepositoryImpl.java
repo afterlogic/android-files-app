@@ -11,13 +11,14 @@ import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
 import com.afterlogic.aurora.drive.data.common.mapper.BiMapper;
 import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
 import com.afterlogic.aurora.drive.data.common.mapper.MapperUtil;
-import com.afterlogic.aurora.drive.data.common.repository.AuthorizedRepository;
-import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
+import com.afterlogic.aurora.drive.data.common.network.SessionManager;
+import com.afterlogic.aurora.drive.data.common.repository.Repository;
 import com.afterlogic.aurora.drive.data.modules.files.FilesDataModule;
 import com.afterlogic.aurora.drive.data.modules.files.mapper.general.FilesMapperFactory;
 import com.afterlogic.aurora.drive.data.modules.files.model.db.OfflineFileInfoEntity;
 import com.afterlogic.aurora.drive.data.modules.files.service.FilesLocalService;
 import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.FileInfo;
 import com.afterlogic.aurora.drive.model.OfflineType;
 import com.afterlogic.aurora.drive.model.Progressible;
@@ -44,15 +45,14 @@ import io.reactivex.Single;
  * Created by sashka on 19.10.16.<p/>
  * mail: sunnyday.development@gmail.com
  */
-public class FileRepositoryImpl extends AuthorizedRepository implements FilesRepository {
+public class FileRepositoryImpl extends Repository implements FilesRepository {
 
     private final static String FILES = "files";
 
     private final Context mAppContext;
     private final FileSubRepository mFileSubRepo;
     private final FilesLocalService mLocalService;
-
-    private final AuthRepository mAuthRepository;
+    private final SessionManager sessionManager;
 
     private final File mCacheDir;
     private final File mOfflineDir;
@@ -62,16 +62,16 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
 
     @Inject
     FileRepositoryImpl(SharedObservableStore cache,
-                       AuthRepository authRepository,
                        Context appContext,
                        FileSubRepository fileSubRepo,
                        FilesLocalService localService,
                        @Named(FilesDataModule.CACHE_DIR) File cacheDir,
                        @Named(FilesDataModule.OFFLINE_DIR) File offlineDir,
                        @Named(FilesDataModule.DOWNLOADS_DIR) File downloadsDir,
-                       FilesMapperFactory mapperFactory) {
-        super(cache, FILES, authRepository);
-        mAuthRepository = authRepository;
+                       FilesMapperFactory mapperFactory,
+                       SessionManager sessionManager) {
+        super(cache, FILES);
+        this.sessionManager = sessionManager;
         mAppContext = appContext;
         mFileSubRepo = fileSubRepo;
         mLocalService = localService;
@@ -90,7 +90,14 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
 
     @Override
     public Single<List<AuroraFile>> getFiles(AuroraFile folder) {
-        return mFileSubRepo.getFiles(folder);
+        return mFileSubRepo.getFiles(folder)
+                .map(this::sortFiles);
+    }
+
+    @Override
+    public Single<List<AuroraFile>> getFiles(AuroraFile folder, String pattern) {
+        return mFileSubRepo.getFiles(folder, pattern)
+                .map(this::sortFiles);
     }
 
     @Override
@@ -159,47 +166,15 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
                 )
                 .flatMapObservable(checked -> {
                     boolean isOffline = !mLocalService.get(file.getPathSpec()).isEmpty().blockingGet();
-                    boolean toDownloads = target.getPath().startsWith(mDownloadsDir.getPath());
 
                     if (isOffline){
-                        File offlineFile = new File(mOfflineDir, checked.getPathSpec());
-                        if (offlineFile.exists() && offlineFile.lastModified() >= checked.getLastModified()){
-                            return Observable.just(new Progressible<>(offlineFile, 0, 0, checked.getName(), true));
-                        } else {
-                            Observable<Progressible<File>> download = downloadFile(checked, target)
-                                    .map(progress -> {
-                                        if (toDownloads && progress.getProgress() > 0) {
-                                            progress.setProgress((long) (progress.getProgress() * 0.9f));
-                                        }
-                                        return progress;
-                                    });
-                            Observable<Progressible<File>> copyFile = copyFile(checked.getName(), offlineFile, target)
-                                    .map(progress -> {
-                                        if (toDownloads && progress.getProgress() > 0){
-                                            progress.setProgress((long) (progress.getMax() * 0.9f + progress.getProgress() * 0.1f));
-                                        }
-                                        return progress;
-                                    });
-                            return Observable.concat(
-                                    download,
-                                    toDownloads ? copyFile : Observable.empty()
-                            );
-                        }
-
+                        return checkOfflineAndDownload(checked, target);
                     } else {
-                        File localActual = new File(mCacheDir, checked.getPathSpec());
-                        if (localActual.exists() && localActual.lastModified() == checked.getLastModified()){
-                            if (toDownloads){
-                                return copyFile(checked.getName(), localActual, target);
-                            } else {
-                                return Observable.just(new Progressible<>(localActual, 0, 0, checked.getName(), true));
-                            }
-                        } else {
-                            return downloadFile(checked, target);
-                        }
+                        return checkCacheAndDownload(checked, target);
                     }
 
-                });
+                })
+                .startWith(new Progressible<>(null, -1, -1, file.getName(), false));
     }
 
     @Override
@@ -286,7 +261,11 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
     @Override
     public Single<List<AuroraFile>> getOfflineFiles() {
         return mLocalService.getOffline()
-                .map(offline -> MapperUtil.listOrEmpty(offline, mOfflineToBlMapper));
+                .map(offline -> {
+                    List<AuroraFile> files = MapperUtil.listOrEmpty(offline, mOfflineToBlMapper);
+                    Collections.sort(files, FileUtil.AURORA_FILE_COMPARATOR);
+                    return files;
+                });
     }
 
     @Override
@@ -307,6 +286,12 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
         return mFileSubRepo.createPublicLink(file)
                 .map(link -> {
 
+                    AuroraSession session = sessionManager.getSession();
+
+                    if (session == null) {
+                        throw new IllegalStateException("Not authorized.");
+                    }
+
                     if (link.startsWith("http://localhost")){
                         link = link.substring(16);
                     } else if (link.startsWith("https://localhost")){
@@ -315,10 +300,7 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
 
                     if (!link.startsWith("http")) {
 
-                        String domain = mAuthRepository.getCurrentSession()
-                                .blockingGet()
-                                .getDomain()
-                                .toString();
+                        String domain = session.getDomain().toString();
 
                         link = domain + link;
                     }
@@ -332,11 +314,87 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
         return mFileSubRepo.deletePublicLink(file);
     }
 
+    @Override
+    public Completable replaceFiles(AuroraFile targetFolder, List<AuroraFile> files) {
+        // TODO: check source files size, path and type
+        return mFileSubRepo.replaceFiles(targetFolder, files);
+    }
+
+    @Override
+    public Completable copyFiles(AuroraFile targetFolder, List<AuroraFile> files) {
+        // TODO: check source files size, path and type
+        return mFileSubRepo.copyFiles(targetFolder, files);
+    }
+
     private void checkFilesType(String type, List<AuroraFile> files) throws IllegalArgumentException{
         boolean allInType = Stream.of(files)
                 .allMatch(file -> type.equals(file.getType()));
         if (!allInType){
             throw new IllegalArgumentException("All files must be in one type.");
+        }
+    }
+
+    // TODO: Replace checking is to downloads folder to interactors
+    private Observable<Progressible<File>> checkOfflineAndDownload(AuroraFile checked, File target) throws IOException{
+
+        boolean toDownloads = target.getPath().startsWith(mDownloadsDir.getPath());
+
+        File offlineFile = new File(mOfflineDir, checked.getPathSpec());
+        boolean actual = offlineFile.exists() && offlineFile.lastModified() >= checked.getLastModified();
+
+        if (!toDownloads && actual){
+
+            return Observable.just(new Progressible<>(offlineFile, 0, 0, checked.getName(), true));
+
+        } else {
+
+            Observable<Progressible<File>> download = downloadFile(checked, target)
+                    .map(progress -> {
+                        if (toDownloads && progress.getProgress() > 0) {
+                            progress.setProgress((long) (progress.getProgress() * 0.9f));
+                        }
+                        return progress;
+                    });
+
+            Observable<Progressible<File>> copyFile = copyFile(checked.getName(), offlineFile, target)
+                    .map(progress -> {
+                        if (toDownloads && progress.getProgress() > 0){
+                            progress.setProgress((long) (progress.getMax() * 0.9f + progress.getProgress() * 0.1f));
+                        }
+                        return progress;
+                    });
+
+            return Observable.concat(
+                    actual ? Observable.empty() : download,
+                    toDownloads ? copyFile : Observable.empty()
+            );
+
+        }
+    }
+
+    // TODO: Copy file from cache to target dir
+    private Observable<Progressible<File>> checkCacheAndDownload(AuroraFile file, File target) throws IOException{
+
+        boolean toDownloads = target.getPath().startsWith(mDownloadsDir.getPath());
+
+        File localActual = new File(mCacheDir, file.getPathSpec());
+
+        if (localActual.exists() && localActual.lastModified() == file.getLastModified()){
+
+            if (toDownloads){
+
+                return copyFile(file.getName(), localActual, target);
+
+            } else {
+
+                return Observable.just(new Progressible<>(localActual, 0, 0, file.getName(), true));
+
+            }
+
+        } else {
+
+            return downloadFile(file, target);
+
         }
     }
 
@@ -357,20 +415,26 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
     }
 
     private Observable<Progressible<File>> downloadFile(AuroraFile file, File target){
+
         Observable<Progressible<File>> request = mFileSubRepo.downloadFileBody(file)
                 .flatMapObservable(fileBody -> Observable.create(emitter -> {
 
                     long maxSize = file.getSize();
 
                     InputStream is = fileBody.byteStream();
+
                     try{
+
                         FileUtil.writeFile(is, target, maxSize,
                                 written -> emitter.onNext(
                                         new Progressible<>(null, maxSize, written, file.getName(), false)
                                 )
                         );
+
                     } finally {
+
                         IOUtil.closeQuietly(is);
+
                     }
 
                     if (!target.setLastModified(file.getLastModified())){
@@ -380,10 +444,17 @@ public class FileRepositoryImpl extends AuthorizedRepository implements FilesRep
                     emitter.onNext(new Progressible<>(target, maxSize, maxSize, file.getName(), true));
 
                     emitter.onComplete();
+
                 }));
+
         return Observable.concat(
                 Observable.just(new Progressible<>(null, 0, 0, file.getName(), false)),
                 request
         );
+    }
+
+    private List<AuroraFile> sortFiles(List<AuroraFile> files) {
+        Collections.sort(files, FileUtil.AURORA_FILE_COMPARATOR);
+        return files;
     }
 }

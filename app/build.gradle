@@ -2,21 +2,24 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'org.greenrobot.greendao'
 
-project.ext.set("autoIncrementTasks", "assembleReleaseBeta")
 apply from: '../artifacts.gradle'
+
+project.ext.set("signingFolder", file("../signing").toString())
+apply from: '../signing/signings.gradle'
 
 android {
 
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.1"
 
     defaultConfig {
 
+        //prepareVersions()
+
         applicationId "com.afterlogic.aurora.files"
         minSdkVersion 15
-        targetSdkVersion 25
+        targetSdkVersion 26
 
-        prepareVersions()
         versionCode getIncrementalVersionCode()
         versionName getIncrementalVersionName()
 
@@ -34,23 +37,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-
-    signingConfigs {
-
-        Properties signingProperties = new Properties()
-        File propsFile = new File("signing/signing.properties")
-        if(propsFile.exists()) {
-            signingProperties.load(new FileInputStream(propsFile))
-        } else {
-            throw new IllegalStateException("Signing properties file not exist! File: " + propsFile.absolutePath)
-        }
-
-        sign {
-            storeFile file(signingProperties['keystore'])
-            storePassword signingProperties['keystore.password']
-            keyAlias signingProperties['key.alias']
-            keyPassword signingProperties['key.password']
-        }
+    dexOptions {
+        javaMaxHeapSize "2g"
+        jumboMode true
     }
 
     buildTypes {
@@ -86,28 +75,6 @@ greendao {
     schemaVersion 1
 }
 
-ext{
-    greenDaoSchemeVersion = 1
-
-    //Dependencies
-    compatVersion = '25.4.0'
-    daggerVersion = '2.11'
-    rxJavaVersion = '2.1.1'
-    rxJavaAndroidVersion = '2.0.1'
-    retrofitVersion = '2.3.0'
-    okHttpVersion = '3.8.1'
-    glideVersion = '3.8.0'
-    photoViewVersion = '1.3.1'
-    fabVersion = '1.10.1'
-    gsonVersion = '2.8.1'
-    streamVersion = '1.1.8'
-    constraintLayoutVersion = '1.1.0-beta1'
-    eventBusVersion = '3.0.0'
-    greenDaoVersion = '3.2.2'
-    trayPrefsVersion = '0.12.0'
-    crashlyticsVersion = '2.6.8@aar'
-}
-
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
@@ -117,54 +84,72 @@ dependencies {
     })
     testImplementation 'junit:junit:4.12'
     // Optional -- Mockito framework
-    testImplementation 'org.mockito:mockito-core:1.10.19'
+    testImplementation 'org.mockito:mockito-core:2.7.19'
 
     //Dagger - Dependency Injection
-    implementation "com.google.dagger:dagger:${daggerVersion}"
-    annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
+    implementation "com.google.dagger:dagger:${rootProject.daggerVersion}"
+    annotationProcessor "com.google.dagger:dagger-compiler:${rootProject.daggerVersion}"
+    implementation "com.google.dagger:dagger-android:${rootProject.daggerVersion}"
+    implementation "com.google.dagger:dagger-android-support:${rootProject.daggerVersion}"
+    annotationProcessor "com.google.dagger:dagger-android-processor:${rootProject.daggerVersion}"
 
     //Compat
-    implementation "com.android.support:appcompat-v7:${compatVersion}"
-    implementation "com.android.support:design:${compatVersion}"
-    implementation "com.android.support:recyclerview-v7:${compatVersion}"
-    implementation "com.android.support.constraint:constraint-layout:${constraintLayoutVersion}"
+    implementation "com.android.support:appcompat-v7:${rootProject.compatVersion}"
+    implementation "com.android.support:design:${rootProject.compatVersion}"
+    implementation "com.android.support:recyclerview-v7:${rootProject.compatVersion}"
+    //implementation "com.android.support:customtabs:${rootProject.compatVersion}"
+    implementation "com.android.support.constraint:constraint-layout:${rootProject.constraintLayoutVersion}"
 
     //Observable and Stream
-    implementation "com.annimon:stream:${streamVersion}"
-    implementation "io.reactivex.rxjava2:rxjava:${rxJavaVersion}"
-    implementation "io.reactivex.rxjava2:rxandroid:${rxJavaAndroidVersion}"
+    implementation "com.annimon:stream:${rootProject.streamVersion}"
+    implementation "io.reactivex.rxjava2:rxjava:${rootProject.rxJavaVersion}"
+    implementation "io.reactivex.rxjava2:rxandroid:${rootProject.rxJavaAndroidVersion}"
 
     //[START Api helpers]
-    implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
-    implementation "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
-    implementation "com.squareup.retrofit2:adapter-rxjava2:${retrofitVersion}"
-    implementation "com.squareup.okhttp3:okhttp:${okHttpVersion}"
-    implementation "com.squareup.okhttp3:logging-interceptor:${okHttpVersion}"
-    implementation "com.google.code.gson:gson:${gsonVersion}"
+    implementation "com.squareup.retrofit2:retrofit:${rootProject.retrofitVersion}"
+    implementation "com.squareup.retrofit2:converter-gson:${rootProject.retrofitVersion}"
+    implementation "com.squareup.retrofit2:converter-scalars:${rootProject.retrofitVersion}"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:${rootProject.retrofitVersion}"
+    implementation "com.squareup.okhttp3:okhttp:${rootProject.okHttpVersion}"
+    implementation "com.squareup.okhttp3:logging-interceptor:${rootProject.okHttpVersion}"
+    implementation "com.google.code.gson:gson:${rootProject.gsonVersion}"
     //[END Api helpers]
 
     //Floating action button
-    implementation "com.getbase:floatingactionbutton:${fabVersion}"
+    implementation "com.getbase:floatingactionbutton:${rootProject.fabVersion}"
     //Material progress bar
-    implementation 'me.zhanghai.android.materialprogressbar:library:1.1.5'
+    implementation "me.zhanghai.android.materialprogressbar:library:$rootProject.materialProgressBarVersion"
 
     //DB
-    implementation "org.greenrobot:greendao:${greenDaoVersion}"
+    implementation "org.greenrobot:greendao:${rootProject.greenDaoVersion}"
 
     //EventBus
-    implementation "org.greenrobot:eventbus:${eventBusVersion}"
+    implementation "org.greenrobot:eventbus:${rootProject.eventBusVersion}"
 
     //Pictures load
-    implementation "com.github.bumptech.glide:glide:${glideVersion}"
-    implementation "com.github.chrisbanes:PhotoView:${photoViewVersion}"
+    implementation "com.github.bumptech.glide:glide:${rootProject.glideVersion}"
+    implementation "com.github.chrisbanes:PhotoView:${rootProject.photoViewVersion}"
 
     //Preferences
-    implementation "net.grandcentrix.tray:tray:${trayPrefsVersion}"
+    implementation "net.grandcentrix.tray:tray:${rootProject.trayPrefsVersion}"
 
     //Crash and use analytics
-    implementation("com.crashlytics.sdk.android:crashlytics:${crashlyticsVersion}") {
-        transitive = true;
+    implementation("com.crashlytics.sdk.android:crashlytics:${rootProject.crashlyticsVersion}") {
+        transitive = true
     }
 
-    implementation "com.android.support.constraint:constraint-layout:$constraintLayoutVersion"
+    implementation "com.android.support.constraint:constraint-layout:$rootProject.constraintLayoutVersion"
+
+    implementation "android.arch.lifecycle:runtime:$rootProject.architectureComponentsVersion"
+    implementation "android.arch.lifecycle:extensions:$rootProject.architectureComponentsVersion"
+    annotationProcessor "android.arch.lifecycle:compiler:$rootProject.architectureComponentsVersion"
+
+    // Navigation
+    implementation "ru.terrakok.cicerone:cicerone:$rootProject.ciceroneVersion"
+
+
+    implementation "com.github.nitrico.lastadapter:lastadapter:$rootProject.lastAdapterVersion"
+
+    implementation "org.parceler:parceler-api:$rootProject.parcellerVersion"
+    annotationProcessor "org.parceler:parceler:$rootProject.parcellerVersion"
 }

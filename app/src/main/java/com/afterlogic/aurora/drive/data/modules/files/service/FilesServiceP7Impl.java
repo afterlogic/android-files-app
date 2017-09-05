@@ -10,11 +10,12 @@ import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.common.network.p7.Api7;
 import com.afterlogic.aurora.drive.data.common.network.p7.AuthorizedServiceP7;
 import com.afterlogic.aurora.drive.data.model.AuroraFilesResponse;
-import com.afterlogic.aurora.drive.model.AuroraSession;
-import com.afterlogic.aurora.drive.model.FileInfo;
 import com.afterlogic.aurora.drive.data.model.project7.ApiResponseP7;
 import com.afterlogic.aurora.drive.data.model.project7.AuroraFileP7;
 import com.afterlogic.aurora.drive.data.model.project7.UploadResultP7;
+import com.afterlogic.aurora.drive.data.modules.files.model.dto.ReplaceFileDto;
+import com.afterlogic.aurora.drive.model.AuroraSession;
+import com.afterlogic.aurora.drive.model.FileInfo;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -44,12 +45,12 @@ public class FilesServiceP7Impl extends AuthorizedServiceP7 implements FilesServ
     }
 
     @Override
-    public Single<ApiResponseP7<AuroraFilesResponse>> getFiles(String path, String type, String filterPatter) {
+    public Single<ApiResponseP7<AuroraFilesResponse>> getFiles(String path, String type, String pattern) {
         return Single.defer(() -> {
             Map<String, Object> fields = getDefaultParams(Api7.Actions.FILES)
                     .put(Api7.Fields.TYPE, type)
                     .put(Api7.Fields.PATH, path)
-                    .put(Api7.Fields.PATTERN, filterPatter)
+                    .put(Api7.Fields.PATTERN, pattern)
                     .create();
             return mApi.getFiles(fields);
         });
@@ -132,12 +133,13 @@ public class FilesServiceP7Impl extends AuthorizedServiceP7 implements FilesServ
     }
 
     @Override
-    public Single<ApiResponseP7<String>> createPublicLink(String type, String path, String name, boolean isFolder) {
+    public Single<ApiResponseP7<String>> createPublicLink(String type, String path, String name, long size, boolean isFolder) {
         return Single.defer(() -> {
             Map<String, Object> fields = getDefaultParams(Api7.Actions.FILES_CREATE_PUBLIC_LINK)
                     .put(Api7.Fields.TYPE, type)
                     .put(Api7.Fields.PATH, path)
                     .put(Api7.Fields.NAME, name)
+                    .put(Api7.Fields.SIZE, size)
                     .put(Api7.Fields.IS_FOLDER, isFolder ? 1 : 0)
                     .create();
             return mApi.createPublicLink(fields);
@@ -153,6 +155,34 @@ public class FilesServiceP7Impl extends AuthorizedServiceP7 implements FilesServ
                     .put(Api7.Fields.NAME, name)
                     .create();
             return mApi.deletePublicLink(fields);
+        });
+    }
+
+    @Override
+    public Single<ApiResponseP7<Boolean>> replaceFiles(String fromType, String toType, String fromPath, String toPath, List<ReplaceFileDto> files) {
+        return Single.defer(() -> {
+            Map<String, Object> fields = getDefaultParams(Api7.Actions.FILES_MOVE)
+                    .put(Api7.Fields.FROM_PATH, fromPath)
+                    .put(Api7.Fields.TO_PATH, toPath)
+                    .put(Api7.Fields.FROM_TYPE, fromType)
+                    .put(Api7.Fields.TO_TYPE, toType)
+                    .put(Api7.Fields.FILES, mGson.toJson(files))
+                    .create();
+            return mApi.copyFiles(fields);
+        });
+    }
+
+    @Override
+    public Single<ApiResponseP7<Boolean>> copyFiles(String fromType, String toType, String fromPath, String toPath, List<ReplaceFileDto> files) {
+        return Single.defer(() -> {
+            Map<String, Object> fields = getDefaultParams(Api7.Actions.FILES_COPY)
+                    .put(Api7.Fields.FROM_PATH, fromPath)
+                    .put(Api7.Fields.TO_PATH, toPath)
+                    .put(Api7.Fields.FROM_TYPE, fromType)
+                    .put(Api7.Fields.TO_TYPE, toType)
+                    .put(Api7.Fields.FILES, mGson.toJson(files))
+                    .create();
+            return mApi.copyFiles(fields);
         });
     }
 }

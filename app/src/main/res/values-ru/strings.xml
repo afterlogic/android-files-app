@@ -93,11 +93,11 @@
     <string name="prompt_offline_folder_is_empty">У вас нет оффлайн файлов.</string>
     <string name="prompt_offline_mode">Оффлайн режим</string>
     <string name="prompt_online_mode">Онлайн режим</string>
-    <string name="prompt_offline_file_not_exist">Файл отсутствует. Возможно он еще не синхронизирован.</string>
+    <string name="prompt_offline_file_in_sync">Файл сейчас синхронизируется.</string>
     <string name="content_descroption_file_icon">Иконка файла</string>
     <string name="prompt_syncing">Синхронизация</string>
     <string name="prompt_dialog_title_deleting">Удаление:</string>
-    <string name="prompt_dialog_title_folder_cration">Создание папки:</string>
+    <string name="prompt_dialog_title_folder_creation">Создание папки:</string>
     <string name="promtp_dialog_error_message_doesnt_have_chooser">Нет приложения для выбора файлов.</string>
     <string name="prompt_dialog_title_renaming">Переименовывание:</string>
     <string name="main__prompt__actions_not_allowed_in_zip">Действия над файлами не возможны в zip или GoogleDrive папке.</string>
@@ -106,6 +106,17 @@
     <string name="prompt_about_version">Версия: %1$s (%2$d)</string>
     <string name="prompt_about_privacy_policy_title">Политика конфиденциальности:</string>
     <string name="prompt_menu_about">О приложении</string>
+    <string name="prompt_action__replace">Переместить</string>
+    <string name="prompt_action__copy">Копировать</string>
+    <string name="prompt_title__replace">Переместить в …</string>
+    <string name="prompt_title__copy">Скопировать в …</string>
+    <string name="action_paste">Вставить</string>
+    <string name="prompt_coping">Копирование</string>
+    <string name="prompt_replacing">Перемещение</string>
+    <string name="prompt_offline_disable_offline">Убрать из оффлайна</string>
+
+    <string name="prompt_relogin_dialog_change_account">Вы уверены что хотите авторизоваться как другой пользователь? Все данные приложения хранимые локально будут потеряны.\nТекущий пользователь: %1$s\nНовый пользователь: %2$s</string>
+    <string name="prompt_relogin_notification">Сессия истекла. Для продолжения требуется авторизоваться повторно.</string>
 
     <plurals name="dialog_files_success_downloaded">
         <item quantity="zero">%d файлов успешно загружено.</item>
@@ -121,10 +132,12 @@
         <item quantity="few">%d файлa.</item>
     </plurals>
 
-    <plurals name="prompt_upload_files_count">
+    <plurals name="prompt_files_count">
         <item quantity="one">%d файлa</item>
         <item quantity="few">%d файлов</item>
         <item quantity="many">%d файлов</item>
     </plurals>
+    <string name="prompt_error_occurred_pull_to_refresh">Произошла ошибка.\nПотяните вниз, чтобы попробовать снова.</string>
+    <string name="prompt_additional_auth_web_failed">Не удалось получить данные дополнительных вариантов авторизации.</string>
 
 </resources>

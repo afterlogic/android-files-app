@@ -3,6 +3,7 @@ package com.afterlogic.aurora.drive.presentation.modules.fileView.presenter;
 import android.content.Context;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.core.common.contextWrappers.Notificator;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.error.FileAlreadyExistError;
@@ -25,15 +26,18 @@ public class FileViewPresenterImpl extends BaseLoadPresenter<FileViewPresentatio
 
     private final FileViewInteractor mInteractor;
     private final FileViewRouter mRouter;
+    private final Notificator notificator;
     private FileViewModel mModel;
 
     @Inject
     FileViewPresenterImpl(ViewState<FileViewPresentationView> viewState,
                           FileViewInteractor interactor,
-                          Context appContext, FileViewRouter router) {
+                          Context appContext, FileViewRouter router,
+                          Notificator notificator) {
         super(viewState, appContext);
         mInteractor = interactor;
         mRouter = router;
+        this.notificator = notificator;
     }
 
     @Override
@@ -62,8 +66,8 @@ public class FileViewPresenterImpl extends BaseLoadPresenter<FileViewPresentatio
         mInteractor.downloadToDownloads(file)
                 .compose(progressibleLoadTask(true))
                 .subscribe(
-                        //TODO dialog: open file?
-                        localFile -> mRouter.openFile(file, localFile),
+                        localFile -> notificator
+                                .notifyDownloadedToDownloads(null, file.getName()),
                         this::onErrorObtained
                 );
     }

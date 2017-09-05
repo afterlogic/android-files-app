@@ -24,10 +24,10 @@ public class CloudServiceP8 {
 
     protected Map<String, Object> getDefaultFields(@NonNull String method, @NonNull String params){
         Map<String, Object> fields = new HashMap<>();
-        fields.put(Api8.Field.MODULE, mModuleName);
-        fields.put(Api8.Field.METHOD, method);
+        fields.put(Api8.ApiField.MODULE, mModuleName);
+        fields.put(Api8.ApiField.METHOD, method);
         if (!TextUtils.isEmpty(params)) {
-            fields.put(Api8.Field.PARAMS, params);
+            fields.put(Api8.ApiField.PARAMS, params);
         }
         return fields;
     }

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="com.afterlogic.aurora.drive.presentation.modules.upload.viewModel.UploadFileListViewModel"/>
+
+        <variable
+            name="vm"
+            type="UploadFileListViewModel"/>
+    </data>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:refreshing="@{vm.viewModelState.isLoading()}"
+            app:onRefresh="@{() -> vm.onRefresh()}"
+            app:colorSchemeResources="@{@intArray/swipe_refresh_color_scheme}">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <include layout="@layout/filelist_state_layout"
+                    android:id="@+id/filelist_state"
+                    app:vmState="@{vm.viewModelState}"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingBottom="72dp"
+                    android:clipToPadding="false"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                    app:upload_filesAdapter="@{vm.items}"
+                    tools:listitem="@layout/replace_item_list_file"/>
+            </FrameLayout>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+    </LinearLayout>
+</layout>

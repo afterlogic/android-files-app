@@ -10,12 +10,9 @@ import android.content.SyncResult;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 
-import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.core.common.util.AccountUtil;
-import com.afterlogic.aurora.drive.core.consts.NotificationConst;
+import com.afterlogic.aurora.drive.core.common.contextWrappers.Notificator;
+import com.afterlogic.aurora.drive.core.common.contextWrappers.account.AccountHelper;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
@@ -49,7 +46,9 @@ public class SyncService extends MVPService implements SyncView {
     protected SyncViewModel mViewModel;
 
     private FileSyncAdapter mFileSyncAdapter;
-    private NotificationManagerCompat mNotificationManager;
+
+    @Inject
+    protected Notificator notificator;
 
     private SyncMessenger mMessenger;
 
@@ -64,10 +63,10 @@ public class SyncService extends MVPService implements SyncView {
         extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
 
-        Account account = AccountUtil.getCurrentAccount(context);
+        Account account = AccountHelper.getCurrentAccount(context);
         ContentResolver.requestSync(
                 account,
-                AccountUtil.FILE_SYNC_AUTHORITY,
+                AccountHelper.FILE_SYNC_AUTHORITY,
                 extras
         );
     }
@@ -87,7 +86,6 @@ public class SyncService extends MVPService implements SyncView {
     @Override
     public void onCreate() {
         super.onCreate();
-        mNotificationManager = NotificationManagerCompat.from(getApplicationContext());
         mFileSyncAdapter = new FileSyncAdapter(getApplicationContext(), mPresenter);
 
         mViewModel.getCurrentSyncProgress().addOnPropertyChangedCallback(mProgressListener);
@@ -115,16 +113,9 @@ public class SyncService extends MVPService implements SyncView {
     private void updateProgressNotify(){
         SyncProgress progress = mViewModel.getCurrentSyncProgress().get();
         if (progress == null){
-            mNotificationManager.cancel(NotificationConst.SYNC_PROGRESS);
+            notificator.cancelSyncProgressNotification();
         } else {
-            NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(getApplicationContext())
-                    .setContentTitle(getString(R.string.prompt_syncing))
-                    .setProgress(100, progress.getProgress(), progress.getProgress() == -1)
-                    .setContentText(progress.getFileName())
-                    .setSmallIcon(R.drawable.ic_folder)
-                    .setOngoing(true);
-
-            mNotificationManager.notify(NotificationConst.SYNC_PROGRESS, notifyBuilder.build());
+            notificator.notifySyncProgress(progress);
             mMessenger.notifyProgress(progress);
         }
     }

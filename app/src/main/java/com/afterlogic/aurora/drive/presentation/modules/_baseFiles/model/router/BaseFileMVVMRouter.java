@@ -7,7 +7,7 @@ import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.presentation.common.modules.model.router.BaseMVVMRouter;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.StoreableMVVMView;
 import com.afterlogic.aurora.drive.presentation.common.util.IntentUtil;
-import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginIntent;
+import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
 import com.afterlogic.aurora.drive.presentation.modules.offline.view.OfflineActivity;
 
 import javax.inject.Inject;
@@ -27,7 +27,7 @@ public class BaseFileMVVMRouter<V extends Activity & StoreableMVVMView> extends 
     @Override
     public void goToOfflineError() {
         ifViewActive(activity -> {
-            Intent offline = OfflineActivity.intent(false, activity);
+            Intent offline = OfflineActivity.intent(activity,false);
             activity.startActivity(IntentUtil.makeRestartTask(offline));
             activity.overridePendingTransition(0, 0);
             activity.finish();
@@ -37,8 +37,8 @@ public class BaseFileMVVMRouter<V extends Activity & StoreableMVVMView> extends 
     @Override
     public void openAuth() {
         ifViewActive(activity -> {
-            Intent offline = LoginIntent.intent(activity);
-            activity.startActivity(IntentUtil.makeRestartTask(offline));
+            Intent login = LoginActivity.intent(false);
+            activity.startActivity(IntentUtil.makeRestartTask(login));
             activity.finish();
         });
     }

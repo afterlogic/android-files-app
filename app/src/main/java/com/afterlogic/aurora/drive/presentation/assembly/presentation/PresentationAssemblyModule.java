@@ -14,13 +14,12 @@ import dagger.Provides;
  *
  * See {@link PresentationAssemblyComponent}.
  */
-@Module
+@Module()
 public class PresentationAssemblyModule {
 
     public PresentationAssemblyModule() {
 
     }
-
 
     @Provides @PresentationScope
     PresentationModulesStore provideStore(){
@@ -31,4 +30,5 @@ public class PresentationAssemblyModule {
     MVVMComponentsStore mvvmStore(MVVMComponentsStoreImpl store){
         return store;
     }
+
 }

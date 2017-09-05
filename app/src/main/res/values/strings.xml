@@ -23,6 +23,7 @@
     <string name="dialog_prompt_processing">Processing…</string>
     <string name="error_connection_to_domain">Connection to server failed.</string>
     <string name="prompt_error_occurred">Error occurred.</string>
+    <string name="prompt_error_occurred_pull_to_refresh">Error occurred.\nPull down to retry.</string>
     <string name="error_default_api_error">Request was failed.</string>
     <string name="error_adding_aurora_account">Adding Aurora account was failed.</string>
     <string name="error_add_more_than_one_account">Only one Aurora account may be signed in at a time. You must remove your current account before adding a new one.</string>
@@ -99,11 +100,11 @@
     <string name="prompt_offline_mode">Offline mode</string>
     <string name="prompt_manual_offline_mode_title">These files available in offline mode:</string>
     <string name="prompt_online_mode">Online mode</string>
-    <string name="prompt_offline_file_not_exist">Offline file not exists. Maybe it not synced yet.</string>
+    <string name="prompt_offline_file_in_sync">Offline file is in sync now.</string>
     <string name="content_descroption_file_icon">File icon</string>
     <string name="prompt_syncing">Syncing</string>
     <string name="prompt_dialog_title_deleting">Deleting:</string>
-    <string name="prompt_dialog_title_folder_cration">Folder creating:</string>
+    <string name="prompt_dialog_title_folder_creation">Folder creating:</string>
     <string name="promtp_dialog_error_message_doesnt_have_chooser">Doesn\'t have application for file choosing.</string>
     <string name="prompt_dialog_title_renaming">Renaming:</string>
     <string name="prompt_title_account_info">Aurora account</string>
@@ -112,19 +113,35 @@
     <string name="url_privacy_policy" translatable="false">http://afterlogic.com/privacy-policy</string>
     <string name="prompt_menu_about">About</string>
     <string name="main__prompt__actions_not_allowed_in_zip">Actions not allowed in zip or GoogleDrive folders.</string>
+    <string name="prompt_action__replace">Replace</string>
+    <string name="prompt_action__copy">Copy</string>
+
+    <string name="prompt_title__replace">Replace to …</string>
+    <string name="prompt_title__copy">Copy to …</string>
+    <string name="action_paste">Paste</string>
+    <string name="prompt_coping">Coping</string>
+    <string name="prompt_replacing">Replacing</string>
+    <string name="prompt_offline_disable_offline">Disable offline</string>
+
+    <string name="prompt_relogin_dialog_change_account">Are you sure you wish to login as a different user? All app data stored locally will be lost.\nCurrent username: %1$s\nNew username: %2$s</string>
+    <string name="prompt_relogin_notification">The session is expired. You need to relogin.</string>
+    <string name="prompt_additional_auth_web_failed">Failed to retrieve data for additional authorization options.</string>
 
     <plurals name="dialog_files_success_downloaded">
         <item quantity="one">%d file success downloaded.</item>
         <item quantity="many">%d files success downloaded.</item>
+        <item quantity="other">%d files success downloaded.</item>
     </plurals>
 
     <plurals name="files">
         <item quantity="one">%d file.</item>
         <item quantity="many">%d files.</item>
+        <item quantity="other">%d files.</item>
     </plurals>
 
-    <plurals name="prompt_upload_files_count">
+    <plurals name="prompt_files_count">
         <item quantity="one">%d file</item>
+        <item quantity="many">%d files</item>
         <item quantity="other">%d files</item>
     </plurals>
 </resources>

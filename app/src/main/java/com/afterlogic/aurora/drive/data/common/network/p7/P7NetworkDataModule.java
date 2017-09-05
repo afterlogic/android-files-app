@@ -10,6 +10,8 @@ import com.afterlogic.aurora.drive.data.model.project7.ApiResponseP7;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.concurrent.TimeUnit;
+
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.OkHttpClient;
@@ -45,7 +47,11 @@ public class P7NetworkDataModule {
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             clientBuilder.addInterceptor(interceptor);
         }
-        return clientBuilder.build();
+        return clientBuilder
+                .connectTimeout(1, TimeUnit.MINUTES)
+                .readTimeout(1, TimeUnit.MINUTES)
+                .writeTimeout(1, TimeUnit.MINUTES)
+                .build();
     }
 
     @Provides @P7

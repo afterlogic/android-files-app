@@ -1,5 +1,5 @@
-Обновить иконки в приложении
-BUG - получаемой публичной ссылке не хватает слеша "/" после домена
-Убрать кнопку создания папок и файлов в режиме выделения
+Release 92:
+- Social authorization: Login by webview. Relogin improved (by email/pass in background or by webview in foreground).
+- Adopted for Android O (Notifications, Accounts changing).
 
-+ правка публичной ссылки без домена
+!!! Be careful, this build requires re login, so all local data will lost. !!!

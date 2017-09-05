@@ -20,6 +20,8 @@ import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.inject.Inject;
+
 import io.reactivex.Observable;
 
 import static com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncMessenger.PROGRESS;
@@ -29,7 +31,7 @@ import static com.afterlogic.aurora.drive.presentation.modulesBackground.sync.vi
  * mail: sunnyday.development@gmail.com
  */
 
-public class SyncListener implements Stoppable{
+public class SyncListener implements Stoppable {
 
     private static int sListenerId = 0;
 
@@ -55,6 +57,7 @@ public class SyncListener implements Stoppable{
 
     private final int mId;
 
+    @Inject
     public SyncListener(Context context) {
         mContext = context;
         mId = ++sListenerId;

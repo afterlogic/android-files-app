@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View"/>
+        <import type="android.databinding.ObservableField"/>
+        <import type="com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ViewModelState"/>
+
+        <variable
+            name="vmState"
+            type="ViewModelState"/>
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/prompt_error_occurred_pull_to_refresh"
+            android:padding="32dp"
+            android:gravity="center_horizontal"
+            android:visibility="@{vmState.isError() ? View.VISIBLE : View.GONE}"
+            tools:visibility="gone"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/prompt_folder_is_empty"
+            android:padding="32dp"
+            android:gravity="center_horizontal"
+            android:visibility="@{vmState.isEmpty() ? View.VISIBLE : View.GONE}"
+            tools:visibility="gone"/>
+    </FrameLayout>
+</layout>

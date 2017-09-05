@@ -1,8 +1,8 @@
 package com.afterlogic.aurora.drive.presentation.assembly.presentation;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.PresentationScope;
-import com.afterlogic.aurora.drive.presentation.assembly.assemblies.ModulesComponentCreator;
 import com.afterlogic.aurora.drive.presentation.assembly.assemblies.AssembliesAssemblyModule;
+import com.afterlogic.aurora.drive.presentation.assembly.assemblies.ModulesComponentCreator;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsModule;
 

@@ -9,4 +9,6 @@ public interface AppPrefs {
     Pref<Integer> appConfigVersion();
 
     Pref<Boolean> loggedIn();
+
+    Pref<String> lastInputedHost();
 }

@@ -3,10 +3,17 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_action_search"
+        android:title=""
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/action_multichoise"
         android:title="@string/multichoise"
         android:icon="@drawable/ic_action_multichoise"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
 
     <item
         android:id="@+id/action_offline_mode"
@@ -15,8 +22,7 @@
 
     <item
         android:id="@+id/action_logout"
-        android:title="@string/logout"/>
-
+        android:title="@string/logout" />
     <item
         android:id="@+id/action_about"
         app:showAsAction="never"
