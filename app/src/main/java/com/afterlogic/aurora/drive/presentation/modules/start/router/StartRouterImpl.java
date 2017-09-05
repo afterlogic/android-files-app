@@ -3,7 +3,7 @@ package com.afterlogic.aurora.drive.presentation.modules.start.router;
 import com.afterlogic.aurora.drive.presentation.common.modules.model.router.BaseRouter;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.MVPActivity;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
-import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginIntent;
+import com.afterlogic.aurora.drive.presentation.modules.login.view.LoginActivity;
 import com.afterlogic.aurora.drive.presentation.modules.main.view.MainActivity;
 import com.afterlogic.aurora.drive.presentation.modules.start.view.StartView;
 
@@ -23,7 +23,7 @@ public class StartRouterImpl extends BaseRouter<StartView, MVPActivity> implemen
 
     @Override
     public void openLogin() {
-        ifViewActive(activity -> activity.startActivity(LoginIntent.intent(activity)));
+        ifViewActive(activity -> activity.startActivity(LoginActivity.intent(false)));
     }
 
     @Override

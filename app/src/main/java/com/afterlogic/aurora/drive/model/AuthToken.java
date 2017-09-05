@@ -7,13 +7,15 @@ import com.google.gson.annotations.SerializedName;
  * mail: sunnyday.development@gmail.com
  */
 public class AuthToken {
+
     @SerializedName("AuthToken")
     public String token;
+
+    public long userId = -1;
 
     public AuthToken(String token) {
         this.token = token;
     }
 
-    public AuthToken() {
-    }
+    public AuthToken() { }
 }

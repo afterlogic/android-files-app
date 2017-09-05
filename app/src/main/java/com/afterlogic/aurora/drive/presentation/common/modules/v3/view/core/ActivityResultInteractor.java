@@ -3,6 +3,7 @@ package com.afterlogic.aurora.drive.presentation.common.modules.v3.view.core;
 import android.app.Activity;
 import android.content.Intent;
 
+import com.afterlogic.aurora.drive.application.ActivityTracker;
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.PresentationScope;
 import com.afterlogic.aurora.drive.model.events.ActivityResultEvent;
 
@@ -19,13 +20,13 @@ import io.reactivex.subjects.PublishSubject;
 @PresentationScope
 public class ActivityResultInteractor {
 
-    private final CurrentActivityTracker currentActivityTracker;
+    private final ActivityTracker activityTracker;
 
     private PublishSubject<ActivityResultEvent> activityResultEventPublishSubject = PublishSubject.create();
 
     @Inject
-    public ActivityResultInteractor(CurrentActivityTracker currentActivityTracker) {
-        this.currentActivityTracker = currentActivityTracker;
+    public ActivityResultInteractor(ActivityTracker activityTracker) {
+        this.activityTracker = activityTracker;
     }
 
     public Single<ActivityResultEvent> waitResult(int requestId) {
@@ -38,7 +39,7 @@ public class ActivityResultInteractor {
         return waitResult(request.getRequestId())
                 .doOnSubscribe(disposable -> {
 
-                    Activity currentActivity = currentActivityTracker.getCurrentActivity();
+                    Activity currentActivity = activityTracker.getLastActiveActivity();
 
                     if (currentActivity == null) {
                         throw new Error("Activity not present");

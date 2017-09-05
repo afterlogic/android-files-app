@@ -6,7 +6,7 @@ buildscript {
         maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0-beta1'
+        classpath 'com.android.tools.build:gradle:3.0.0-beta4'
         classpath 'org.greenrobot:greendao-gradle-plugin:3.2.2'
         classpath 'io.fabric.tools:gradle:1.+'
 
@@ -28,7 +28,7 @@ allprojects {
 
 ext{
     //Dependencies
-    compatVersion = '26.0.1'
+    compatVersion = '26.0.2'
     daggerVersion = '2.11'
     rxJavaVersion = '2.1.1'
     rxJavaAndroidVersion = '2.0.1'
@@ -45,7 +45,7 @@ ext{
     trayPrefsVersion = '0.12.0'
     crashlyticsVersion = '2.6.8@aar'
 
-    architectureComponentsVersion = '1.0.0-alpha8'
+    architectureComponentsVersion = '1.0.0-alpha9'
     ciceroneVersion = '1.2.1'
 
     lastAdapterVersion = '2.2.2'

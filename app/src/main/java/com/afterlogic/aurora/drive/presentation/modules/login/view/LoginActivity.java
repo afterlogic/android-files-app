@@ -1,72 +1,79 @@
 package com.afterlogic.aurora.drive.presentation.modules.login.view;
 
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.databinding.ViewDataBinding;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.IntentCompat;
-import android.view.inputmethod.EditorInfo;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.databinding.ActivityLoginBinding;
-import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
-import com.afterlogic.aurora.drive.presentation.common.modules.view.MVVMActivity;
-import com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginViewModel;
+import com.afterlogic.aurora.drive.application.assembly.Injectable;
+import com.afterlogic.aurora.drive.databinding.GeneralContentContainerBinding;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.core.AppCoreActivity;
+import com.afterlogic.aurora.drive.presentation.common.util.IntentUtil;
+
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.support.HasSupportFragmentInjector;
 
 /**
- * A checkApiVersion screen that offers checkApiVersion via email/password.
+ * Created by aleksandrcikin on 11.08.17.
+ * mail: mail@sunnydaydev.me
  */
-public class LoginActivity extends MVVMActivity<LoginViewModel> {
 
-    public static Intent intent(boolean restartTask, Context context) {
-        if (restartTask) {
-            return IntentCompat.makeRestartActivityTask(new ComponentName(context, LoginActivity.class));
-        } else {
-            return new Intent(context, LoginActivity.class);
+public class LoginActivity extends AppCoreActivity implements Injectable, HasSupportFragmentInjector {
+
+    public static final String KEY_RELOGIN = "relogin";
+
+    @Inject
+    protected DispatchingAndroidInjector<Fragment> fragmentDispatchingAndroidInjector;
+
+    private GeneralContentContainerBinding binding;
+
+    public static Intent intent(boolean relogin) {
+        return IntentUtil.intent(LoginActivity.class)
+                .putExtra(KEY_RELOGIN, relogin);
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        binding = DataBindingUtil.setContentView(
+                this, R.layout.general_content_container
+        );
+
+        if (savedInstanceState == null) {
+
+            FragmentManager fm = getSupportFragmentManager();
+
+            boolean relogin = getIntent().getBooleanExtra(KEY_RELOGIN, false);
+
+            fm.beginTransaction()
+                    .add(binding.contentContainer.getId(), LoginFragment.newInstance(relogin))
+                    .commit();
+            fm.executePendingTransactions();
+
         }
     }
 
     @Override
-    public void assembly(InjectorsComponent modulesFactory) {
-        modulesFactory.login().inject(this);
+    public AndroidInjector<Fragment> supportFragmentInjector() {
+        return fragmentDispatchingAndroidInjector;
     }
 
     @Override
-    protected void onPerformCreate(@Nullable Bundle savedInstanceState) {
-        super.onPerformCreate(savedInstanceState);
-        setCheckAuth(false);
-    }
+    public void onBackPressed() {
 
-    @NonNull
-    @Override
-    protected ViewDataBinding onCreateBinding(@Nullable Bundle savedInstanceState) {
-        return DataBindingUtil.setContentView(this, R.layout.activity_login);
-    }
+        FragmentManager fm = getSupportFragmentManager();
 
-    @Override
-    protected void onBindingCreated(@Nullable Bundle savedInstanceState) {
-        super.onBindingCreated(savedInstanceState);
-        ActivityLoginBinding binding = getBinding();
+        LoginFragment fragment = (LoginFragment) fm.findFragmentById(binding.contentContainer.getId());
 
-        setSupportActionBar(binding.toolbar);
-
-        binding.password.setOnEditorActionListener((textView, id, keyEvent) -> {
-            if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                getViewModel().onLogin();
-                return true;
-            }
-            return false;
-        });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getViewModel().onViewResumed();
+        if (fragment != null) {
+            fragment.onBackPressed();
+        }
     }
 }
-

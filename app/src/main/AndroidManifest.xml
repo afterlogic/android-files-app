@@ -22,7 +22,6 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
-
     <permission android:protectionLevel="signature" android:name="com.afterlogic.aurora.CATCH_LOGIN" />
     <uses-permission android:name="com.afterlogic.aurora.CATCH_LOGIN"/>
 
@@ -39,10 +38,14 @@
             android:name="io.fabric.ApiKey"
             android:value="e389d068cbb5a55d812a15e7cb135cd85d9cf647" />
 
+        <!-- region Main process -->
+
+        <!-- region [ Activities ] -->
+
         <activity android:name=".presentation.modules.start.view.StartActivity"
-                  android:label="@string/app_name"
-                  android:theme="@style/Theme.Transparent"
-                  android:noHistory="true">
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Transparent"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -50,9 +53,10 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".presentation.modules.login.view.LoginActivity"
-            android:label="@string/app_name">
+        <activity android:name=".presentation.modules.login.view.LoginActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleInstance"
+            android:windowSoftInputMode="adjustPan">
         </activity>
 
         <activity android:name="com.afterlogic.aurora.drive.presentation.modules.main.view.MainActivity"
@@ -68,8 +72,7 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name="com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadActivity"
+        <activity android:name="com.afterlogic.aurora.drive.presentation.modules.upload.view.UploadActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>
@@ -80,27 +83,25 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".presentation.modules.fileView.view.FileViewActivity"/>
+        <activity android:name=".presentation.modules.fileView.view.FileViewActivity"/>
 
-        <activity
-            android:name=".presentation.modules.offline.view.OfflineActivity"/>
+        <activity android:name=".presentation.modules.offline.view.OfflineActivity"/>
 
-        <activity
-            android:name=".presentation.modules.accountInfo.view.AccountInfoActivity"
+        <activity android:name=".presentation.modules.accountInfo.view.AccountInfoActivity"
             android:label="@string/prompt_title_account_info"/>
 
-        <activity
-            android:name=".presentation.modules.about.view.AboutAppActivity"
+        <activity android:name=".presentation.modules.about.view.AboutAppActivity"
             android:theme="@style/AppTheme"/>
 
-        <activity
-            android:name=".presentation.modules.replace.view.ReplaceActivity"/>
+        <activity android:name=".presentation.modules.replace.view.ReplaceActivity"/>
 
-        <activity
-            android:name=".presentation.modules._util.BackToNullActivity"
+        <activity android:name=".presentation.modules._util.BackToNullActivity"
             android:theme="@style/Theme.Transparent"
             android:noHistory="true"/>
+
+        <!-- endregion -->
+
+        <!-- region [ Services ] -->
 
         <service android:name=".presentation.modulesBackground.authenticator.AuthenticatorService">
             <intent-filter>
@@ -115,6 +116,10 @@
             android:exported="false"
             android:enabled="false"/>
 
+        <!-- endregion -->
+
+        <!-- region [ Receivers ] -->
+
         <receiver android:name=".presentation.modulesBackground.receivers.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
@@ -124,49 +129,19 @@
         <receiver android:name=".presentation.modulesBackground.accountAction.AccountActionReceiver">
             <intent-filter>
                 <action android:name="android.accounts.LOGIN_ACCOUNTS_CHANGED"/>
+                <action android:name="com.afterlogic.aurora.files.LOGIN_ACCOUNTS_CHANGED_ACTION"/>
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".presentation.modulesBackground.session.SessionChangedReceiver"
-            android:exported="false">
+        <receiver android:name=".presentation.modulesBackground.receivers.NotificationActionReceiver">
             <intent-filter>
-                <action android:name="com.afterlogic.aurora.ACTION_SESSION_CHANGED"/>
+                <action android:name="com.afterlogic.aurora.files.NOTIFICATION_ACTION"/>
             </intent-filter>
         </receiver>
 
-        <!--[END Main process]-->
+        <!-- endregion -->
 
-        <!--[START File load process]-->
-
-        <receiver android:name=".presentation.modulesBackground.session.SessionChangedReceiver_LoadProcess"
-                  android:process=":load"
-                  android:exported="false">
-            <intent-filter>
-                <action android:name="com.afterlogic.aurora.ACTION_SESSION_CHANGED"/>
-            </intent-filter>
-        </receiver>
-        <!--[END File load process]-->
-
-        <!--[START Sync process]-->
-        <service
-            android:name=".presentation.modulesBackground.sync.view.SyncService"
-            android:exported="true"
-            android:process=":sync">
-            <intent-filter>
-                <action android:name="android.content.SyncAdapter"/>
-            </intent-filter>
-            <meta-data android:name="android.content.SyncAdapter"
-                       android:resource="@xml/syncadapter" />
-        </service>
-
-        <receiver android:name=".presentation.modulesBackground.session.SessionChangedReceiver_SyncProcess"
-                  android:process=":sync"
-                  android:exported="false">
-            <intent-filter>
-                <action android:name="com.afterlogic.aurora.ACTION_SESSION_CHANGED"/>
-            </intent-filter>
-        </receiver>
-        <!--[END Sync process]-->
+        <!-- region [ Providers ] -->
 
         <provider
             android:name=".data.modules.stubProvider.StubContentProvider"
@@ -183,6 +158,25 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_path"/>
         </provider>
+
+        <!-- endregion -->
+
+        <!--endregion-->
+
+        <!-- region [ Sync process ] -->
+
+        <service
+            android:name=".presentation.modulesBackground.sync.view.SyncService"
+            android:exported="true"
+            android:process=":sync">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+            <meta-data android:name="android.content.SyncAdapter"
+                       android:resource="@xml/syncadapter" />
+        </service>
+
+        <!-- endregion -->
 
     </application>
 

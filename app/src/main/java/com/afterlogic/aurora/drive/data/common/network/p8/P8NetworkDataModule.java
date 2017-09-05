@@ -1,6 +1,7 @@
 package com.afterlogic.aurora.drive.data.common.network.p8;
 
 import com.afterlogic.aurora.drive.BuildConfig;
+import com.afterlogic.aurora.drive.core.common.annotation.scopes.DataScope;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.data.common.annotations.P8;
 import com.afterlogic.aurora.drive.data.common.network.DynamicDomainProvider;
@@ -21,6 +22,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 /**
  * Created by sashka on 03.02.17.<p/>
@@ -31,7 +33,9 @@ public class P8NetworkDataModule {
 
     @Provides
     @P8
-    OkHttpClient provideClient(DynamicDomainProvider domainProvider, AuthHeaderInterceptor authInterceptor){
+    OkHttpClient provideClient(DynamicDomainProvider domainProvider,
+                               AuthHeaderInterceptor authInterceptor,
+                               P8ModuleHeadersInterceptor moduleHeadersInterceptor){
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
 
         //Dynamic notifyEnd point interceptor
@@ -41,6 +45,8 @@ public class P8NetworkDataModule {
         ));
 
         clientBuilder.addInterceptor(authInterceptor);
+
+        clientBuilder.addInterceptor(moduleHeadersInterceptor);
 
         //Add logging for debug
         if (BuildConfig.DEBUG) {
@@ -56,7 +62,7 @@ public class P8NetworkDataModule {
                 .build();
     }
 
-    @Provides @P8
+    @Provides @P8 @DataScope
     Gson provideGson(){
         Gson gson = new GsonBuilder()
                 .addDeserializationExclusionStrategy(new IgnoreDeserealizationExcludeStrategy())
@@ -71,9 +77,12 @@ public class P8NetworkDataModule {
     @Provides @P8
     Retrofit provideRetrofit(@P8 OkHttpClient client, @P8 Gson gson){
         MyLog.d(this, "Provide retrofit.");
+
         return new Retrofit.Builder()
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(P8RequestFactory.create(gson))
                 .addConverterFactory(GsonConverterFactory.create(gson))
+                .addConverterFactory(ScalarsConverterFactory.create())
                 .client(client)
                 .baseUrl(DynamicEndPointInterceptor.DYNAMIC_BASE_URL)
                 .build();
@@ -84,4 +93,5 @@ public class P8NetworkDataModule {
         MyLog.d(this, "Provide Api8. Retrofit: " + retrofit);
         return retrofit.create(Api8.class);
     }
+
 }

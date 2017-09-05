@@ -5,6 +5,7 @@ import com.afterlogic.aurora.drive.data.common.mapper.MapperUtil;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.FileType;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.interactor.InteractorUtil;
 
 import java.util.List;
 
@@ -32,6 +33,6 @@ public class FilesRootInteractor {
     public Single<List<FileType>> getAvailableFileTypes() {
         return filesRepository.getAvailableFileTypes()
                 .map(availableTypes -> MapperUtil.listOrEmpty(availableTypes, typesMapper))
-                .retry(3);
+                .compose(upstream -> InteractorUtil.retryIfNotAuthError(3, upstream));
     }
 }

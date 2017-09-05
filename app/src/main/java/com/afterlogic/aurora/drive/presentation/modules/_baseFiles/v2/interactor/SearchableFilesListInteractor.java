@@ -2,6 +2,7 @@ package com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interacto
 
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.interactor.InteractorUtil;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class SearchableFilesListInteractor extends FilesListInteractor {
 
     public Single<List<AuroraFile>> getFiles(AuroraFile folder, String pattern) {
         return filesRepository.getFiles(folder, pattern)
-                .retry(3);
+                .compose(upstream -> InteractorUtil.retryIfNotAuthError(3, upstream));
     }
+
 }

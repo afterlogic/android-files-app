@@ -1,17 +1,15 @@
 package com.afterlogic.aurora.drive.presentation.common.modules.view;
 
-import android.app.Notification;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.widget.Toast;
 
-import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.application.App;
+import com.afterlogic.aurora.drive.core.common.contextWrappers.Notificator;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.consts.NotificationConst;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
@@ -39,10 +37,13 @@ public abstract class MVPService extends Service implements PresentationView {
 
     final Set<Presenter> mPresenters = new HashSet<>();
 
+    private Notificator notificator;
+
     @Override
     public void onCreate() {
         super.onCreate();
         MyLog.d("onCreate()");
+        notificator = new Notificator(getApplicationContext());
 
         mIsActive = true;
 
@@ -102,17 +103,7 @@ public abstract class MVPService extends Service implements PresentationView {
     public void showMessage(String message, int type) {
         switch (type){
             case PresentationView.TYPE_MESSAGE_MAJOR:
-                NotificationManagerCompat nm  = NotificationManagerCompat.from(this);
-                NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(this);
-
-                Notification notification = notifyBuilder.setAutoCancel(true)
-                        .setSmallIcon(R.drawable.ic_notify)
-                        .setTicker(message)
-                        .setContentText(message)
-                        .setContentTitle(getString(R.string.app_name))
-                        .build();
-
-                nm.notify(getMajorMessageTag(), NotificationConst.SERVICE_MAJOR_MESSAGE, notification);
+                notificator.notifyMessage(getMajorMessageTag(), null, message);
                 break;
 
             case PresentationView.TYPE_MESSAGE_MINOR:

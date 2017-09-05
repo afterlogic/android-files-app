@@ -5,8 +5,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.afterlogic.aurora.drive.core.common.util.AppUtil;
+import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
-import com.afterlogic.aurora.drive.data.modules.auth.AuthRepository;
+import com.afterlogic.aurora.drive.data.modules.auth.AuthenticatorService;
+import com.afterlogic.aurora.drive.data.modules.cleaner.DataCleaner;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.FilesRootInteractor;
@@ -24,21 +26,28 @@ import io.reactivex.Single;
 
 public class MainInteractor extends FilesRootInteractor {
 
-    private final AuthRepository authRepository;
+    private final AuthenticatorService authenticatorService;
+    private final DataCleaner dataCleaner;
+    private final SessionManager sessionManager;
     private final Context appContext;
 
     @Inject
     MainInteractor(FilesRepository filesRepository,
-                             AppResources appResources,
-                             AuthRepository authRepository,
-                             Context appContext) {
+                   AppResources appResources,
+                   AuthenticatorService authenticatorService,
+                   DataCleaner dataCleaner,
+                   SessionManager sessionManager,
+                   Context appContext) {
         super(filesRepository, appResources);
-        this.authRepository = authRepository;
+        this.authenticatorService = authenticatorService;
+        this.dataCleaner = dataCleaner;
+        this.sessionManager = sessionManager;
         this.appContext = appContext;
     }
 
     public Completable logout() {
-        return authRepository.logoutAndClearData()
+        return authenticatorService.logout()
+                .andThen(dataCleaner.cleanAllUserData())
                 .andThen(Completable.fromAction(() -> {
                     appContext.stopService(FileObserverService.intent(appContext));
                     AppUtil.setComponentEnabled(FileObserverService.class, false, appContext);
@@ -46,12 +55,23 @@ public class MainInteractor extends FilesRootInteractor {
     }
 
     public Single<String> getUserLogin() {
-        return authRepository.getCurrentSession()
-                .map(AuroraSession::getLogin)
-                .toSingle();
+
+        return Single.fromCallable(() -> {
+
+            AuroraSession session = sessionManager.getSession();
+
+            if (session == null) {
+                throw new IllegalStateException("Not authorized.");
+            }
+
+            return session.getUser();
+
+        });
+
     }
 
     public Single<Boolean> getNetworkState() {
+
         return Single.fromCallable(() -> {
 
             ConnectivityManager cm =
@@ -64,5 +84,6 @@ public class MainInteractor extends FilesRootInteractor {
             return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
 
         });
+
     }
 }
