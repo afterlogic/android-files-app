@@ -1,10 +1,21 @@
 import groovy.swing.SwingBuilder
 
-ext{
+ext {
     getIncrementalVersionCode = this.&getIncrementalVersionCode
     getIncrementalVersionName = this.&getIncrementalVersionName
     getLastBuildReleaseNoteFile = this.&getLastBuildReleaseNoteFile
-    prepareVersions = this.&prepareVersions
+}
+
+gradle.taskGraph.whenReady { taskGraph ->
+
+    prepareVersions(false)
+
+} // end whenReady*/
+
+task prepeareVersions << {
+
+    prepareVersions(true)
+
 }
 
 /**
@@ -32,7 +43,7 @@ android.applicationVariants.all { variant ->
     }
 }
 
-void prepareVersions() {
+void prepareVersions(boolean manual) {
 
     Properties versionProperties = new Properties()
     File propsFile = getVersionFile()
@@ -44,7 +55,7 @@ void prepareVersions() {
     }
 
     if(checkAndInit(versionProperties)
-            || isNeedIncrement() && checkVersionChanges(versionProperties)) {
+            || (manual || isNeedIncrement()) && checkVersionChanges(versionProperties)) {
 
         versionProperties.store(propsFile.newWriter(), null)
 

@@ -15,11 +15,12 @@ android {
 
     defaultConfig {
 
+        //prepareVersions()
+
         applicationId "com.afterlogic.aurora.files"
         minSdkVersion 15
         targetSdkVersion 26
 
-        prepareVersions()
         versionCode getIncrementalVersionCode()
         versionName getIncrementalVersionName()
 

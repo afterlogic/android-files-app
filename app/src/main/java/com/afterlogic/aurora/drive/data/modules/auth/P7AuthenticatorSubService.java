@@ -64,7 +64,7 @@ class P7AuthenticatorSubService implements AuthenticatorSubService {
 
         SystemAppData systemAppData = loginResult.getSystemAppData();
 
-        if (systemAppData.isAuthorized()) {
+        if (!systemAppData.isAuthorized()) {
             throw new Error("Not authorized!");
         }
 

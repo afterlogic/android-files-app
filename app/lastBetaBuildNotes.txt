@@ -1,3 +1,5 @@
 Release 92:
 - Social authorization: Login by webview. Relogin improved (by email/pass in background or by webview in foreground).
-- Adopted for Android O (Notifications).
+- Adopted for Android O (Notifications, Accounts changing).
+
+!!! Be careful, this build requires re login, so all local data will lost. !!!

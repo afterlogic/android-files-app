@@ -15,6 +15,7 @@ import com.afterlogic.aurora.drive.core.common.logging.CrashlyticsLogger;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.logging.ToCrashlyticsLogger;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
+import com.afterlogic.aurora.drive.data.modules.cleaner.DataCleaner;
 import com.afterlogic.aurora.drive.data.modules.prefs.AppPrefs;
 import com.afterlogic.aurora.drive.data.modules.prefs.Pref;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
@@ -38,25 +39,28 @@ import io.fabric.sdk.android.Fabric;
  */
 public class App extends Application implements HasActivityInjector, HasBroadcastReceiverInjector {
 
-    private static final int APP_UPDATER_VERSION = 1;
+    private static final int APP_UPDATER_VERSION = 2;
 
     //Presentation modules's factory
     private InjectorsComponent mInjectors;
 
     @Inject
-    AppPrefs appPrefs;
+    protected AppPrefs appPrefs;
 
     @Inject
-    DispatchingAndroidInjector<Activity> activityInjector;
+    protected DispatchingAndroidInjector<Activity> activityInjector;
 
     @Inject
-    DispatchingAndroidInjector<BroadcastReceiver> receiverInjector;
+    protected DispatchingAndroidInjector<BroadcastReceiver> receiverInjector;
 
     @Inject
-    ActivityTracker activityTracker;
+    protected ActivityTracker activityTracker;
 
     @Inject
-    SessionManager sessionManager;
+    protected SessionManager sessionManager;
+
+    @Inject
+    protected DataCleaner dataCleaner;
 
     @Override
     public void onCreate() {
@@ -64,9 +68,9 @@ public class App extends Application implements HasActivityInjector, HasBroadcas
 
         AppInjector.inject(this);
 
-        initThirdParties();
-
         checkAppVersion();
+
+        initThirdParties();
 
         startService(new Intent(this, FileObserverService.class));
 
@@ -84,6 +88,16 @@ public class App extends Application implements HasActivityInjector, HasBroadcas
             );
 
         }
+    }
+
+    @Override
+    public AndroidInjector<Activity> activityInjector() {
+        return activityInjector;
+    }
+
+    @Override
+    public AndroidInjector<BroadcastReceiver> broadcastReceiverInjector() {
+        return receiverInjector;
     }
 
     /**
@@ -123,23 +137,31 @@ public class App extends Application implements HasActivityInjector, HasBroadcas
 
         Pref<Integer> appConfigVersion = appPrefs.appConfigVersion();
         int currentAppConfigVersion = appConfigVersion.get();
-        if (currentAppConfigVersion != APP_UPDATER_VERSION){
-            updateApp(currentAppConfigVersion, APP_UPDATER_VERSION);
+
+        if (currentAppConfigVersion != APP_UPDATER_VERSION) {
+
+            if (currentAppConfigVersion != 0) {
+                updateApp(currentAppConfigVersion);
+            }
+
             appConfigVersion.set(APP_UPDATER_VERSION);
+
         }
-    }
-
-    private void updateApp(int from, int to){
 
     }
 
-    @Override
-    public AndroidInjector<Activity> activityInjector() {
-        return activityInjector;
-    }
+    private void updateApp(int from){
 
-    @Override
-    public AndroidInjector<BroadcastReceiver> broadcastReceiverInjector() {
-        return receiverInjector;
+        if (from < 2) {
+
+            Throwable error = dataCleaner.cleanAllUserData()
+                    .blockingGet();
+
+            if (error != null) {
+                MyLog.majorException(error);
+            }
+
+        }
+
     }
 }
