@@ -58,30 +58,27 @@ public class LoginBindings {
             @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
-                super.onReceivedHttpError(view, request, errorResponse);
                 vm.onWebViewError(errorResponse.getStatusCode());
             }
 
             @TargetApi(Build.VERSION_CODES.M)
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                super.onReceivedError(view, request, error);
                 vm.onWebViewError(error.getErrorCode());
             }
 
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                super.onReceivedError(view, errorCode, description, failingUrl);
                 vm.onWebViewError(errorCode);
             }
 
             @Override
             public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-                super.onReceivedSslError(view, handler, error);
                 vm.onWebViewError(error.getPrimaryError());
             }
 
         });
+
     }
 
     @BindingAdapter("login_url")

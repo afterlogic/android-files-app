@@ -2,6 +2,8 @@ package com.afterlogic.aurora.drive.presentation.modules.login.viewModel;
 
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.webkit.CookieManager;
 
@@ -60,6 +62,7 @@ public class LoginViewModel extends LifecycleViewModel {
     public ObservableBoolean loginWebViewFullscreen = new ObservableBoolean(false);
     public WebViewGoBackCommand webViewGoBackCommand = new WebViewGoBackCommand();
     public SimpleCommand reloadWebViewCommand = new SimpleCommand();
+    public SimpleCommand webViewStopLoadingCommand = new SimpleCommand();
 
     public ObservableBoolean pageReloading = new ObservableBoolean(false);
     public ObservableField<LoginWebViewModelState> webViewState = new ObservableField<>(NORMAL);
@@ -82,8 +85,11 @@ public class LoginViewModel extends LifecycleViewModel {
     private boolean relogin;
 
     private boolean networkAvailable = true;
+    private boolean errorStateHandled = true;
 
     private final DisposableBag globalBag = new DisposableBag();
+
+    private Handler uiHandler = new Handler(Looper.getMainLooper());
 
     @Inject
     public LoginViewModel(LoginInteractor interactor,
@@ -187,26 +193,36 @@ public class LoginViewModel extends LifecycleViewModel {
     }
 
     public void onPageLoadingStarted(String url) {
+
         MyLog.d("Start load url: " + url);
-        if (webViewState.get() != ERROR) {
-            webViewState.set(PROGRESS);
-        } else {
+
+        if (webViewState.get() == ERROR) {
             pageReloading.set(true);
+        } else {
+            webViewState.set(PROGRESS);
         }
+
     }
 
     public void onPageLoadingFinished(String url) {
+
         MyLog.d("Loaded url: " + url);
+
+        if (webViewState.get() == ERROR && !errorStateHandled) return;
+
         webViewState.set(networkAvailable ? NORMAL : ERROR);
         pageReloading.set(false);
+
     }
 
     public boolean shouldOverrideUrlLoading(String url) {
 
         if (!networkAvailable) {
-            webViewState.set(ERROR);
-            pageReloading.set(false);
+
+            moveToWebErrorState();
+
             return true;
+
         }
 
         if (!url.equals(checkedHost.toString())) return false;
@@ -236,6 +252,7 @@ public class LoginViewModel extends LifecycleViewModel {
 
                 if (!relogin) {
                     loginState.set(HOST);
+                    webViewState.set(NORMAL);
                 }
 
             }
@@ -250,10 +267,14 @@ public class LoginViewModel extends LifecycleViewModel {
     }
 
     public void onWebViewError(@SuppressWarnings("unused") int errorCode) {
-        webViewState.set(ERROR);
+
+        uiHandler.post(this::moveToWebErrorState);
+
     }
 
     public void onRetryWeb() {
+
+        errorStateHandled = true;
 
         if (pageReloading.get()) {
             return;
@@ -266,6 +287,15 @@ public class LoginViewModel extends LifecycleViewModel {
     protected void onCleared() {
         globalBag.dispose();
         super.onCleared();
+    }
+
+    private void moveToWebErrorState() {
+
+        errorStateHandled = false;
+        webViewStopLoadingCommand.fire();
+        webViewState.set(ERROR);
+        pageReloading.set(false);
+
     }
 
     private void initProperties() {

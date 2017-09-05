@@ -47,4 +47,15 @@ public class WebViewBindingAdapters {
 
     }
 
+    @BindingAdapter("stopLoadingCommand")
+    public static void bindStopLoadingCommand(WebView webView, SimpleCommand command) {
+
+        if (command.handle()) {
+
+            webView.stopLoading();
+
+        }
+
+    }
+
 }

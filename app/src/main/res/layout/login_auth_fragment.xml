@@ -134,6 +134,7 @@
             app:onTouch="@{() -> vm.onWebViewTouch}"
             app:goBackCommand="@{vm.webViewGoBackCommand}"
             app:reloadCommand="@{vm.reloadWebViewCommand}"
+            app:stopLoadingCommand="@{vm.webViewStopLoadingCommand}"
             tools:visibility="gone"
             tools:ignore="UnusedAttribute" />
 

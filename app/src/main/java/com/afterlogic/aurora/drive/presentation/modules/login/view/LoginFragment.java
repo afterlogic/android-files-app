@@ -82,19 +82,29 @@ public class LoginFragment
             Fragment currentFragment = fm.findFragmentById(binding.contentContainer.getId());
 
             switch (field.get()) {
+
                 case HOST:
+
                     if (currentFragment instanceof HostFragment) return;
+
                     fm.beginTransaction()
                             .replace(binding.contentContainer.getId(), HostFragment.newInstance())
                             .commitAllowingStateLoss();
+                    fm.executePendingTransactions();
+
                     break;
 
                 case LOGIN:
+
                     if (currentFragment instanceof AuthFragment) return;
+
                     fm.beginTransaction()
                             .replace(binding.contentContainer.getId(), AuthFragment.newInstance())
                             .commitAllowingStateLoss();
+                    fm.executePendingTransactions();
+
                     break;
+
             }
         });
     }
