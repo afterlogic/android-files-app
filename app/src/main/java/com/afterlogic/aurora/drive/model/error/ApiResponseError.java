@@ -12,6 +12,8 @@ public class ApiResponseError extends BaseError implements ApiError{
     public static final int DATABASE_ERROR = 104;
     public static final int UNKNOWN = 999;
     public static final int FILE_NOT_EXIST = UNKNOWN;
+    public static final int MODULE_NOT_EXIST = 113;
+    public static final int METHOD_NOT_EXIST = 114;
 
     public static final int RESULT_FALSE = 10001;
 

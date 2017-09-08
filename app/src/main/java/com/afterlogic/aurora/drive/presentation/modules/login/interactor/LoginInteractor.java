@@ -130,6 +130,10 @@ public class LoginInteractor {
         return networkStateHelper.listenNetworkState();
     }
 
+    public Single<Boolean> isExternalLoginFormsAllowed(String host) {
+        return authenticatorService.checkExternalLoginFormsEnabled(host);
+    }
+
     private Single<AuthResult> handleSession(AuthorizedAuroraSession session) {
 
         Account currentAccount = accountHelper.getCurrentAccount();

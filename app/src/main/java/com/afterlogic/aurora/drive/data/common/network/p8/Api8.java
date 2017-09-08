@@ -59,8 +59,11 @@ public interface Api8 {
         String CORE = "Core";
         String FILES = "Files";
         String STANDARD_AUTH = "StandardAuth";
+        String EXTERNAL_CLIENTS_LOGIN_FORM_WEBCLIENT = "ExternalClientsLoginFormWebclient";
 
         String HEADER_CORE = HEADER + "Core";
+        String HEADER_EXTERNAL_CLIENTS_LOGIN_FORM_WEBCLIENT = HEADER
+                + EXTERNAL_CLIENTS_LOGIN_FORM_WEBCLIENT;
     }
 
     interface Method {
@@ -81,11 +84,13 @@ public interface Api8 {
         String DELETE_PUBLIC_LINK = "DeletePublicLink";
         String COPY = "Copy";
         String MOVE = "Move";
-        String GET_USER ="GetUser";
+        String GET_USER = "GetUser";
+        String IS_AVAILABLE = "IsAvailable";
 
         String HEADER_PING= HEADER + PING;
         String HEADER_LOGIN= HEADER + LOGIN;
         String HEADER_GET_USER = HEADER + GET_USER;
+        String HEADER_IS_AVAILABLE = HEADER + IS_AVAILABLE;
     }
 
     interface Param {
@@ -146,6 +151,13 @@ public interface Api8 {
             @Header(ApiHeader.NAME_AUTHORISATION) @FormatHeader("Bearer %s") String token,
             @Field("Parameters") @JsonField GetUserParametersDto params
     );
+
+    @POST
+    @Headers({
+            Module.HEADER_EXTERNAL_CLIENTS_LOGIN_FORM_WEBCLIENT,
+            Method.HEADER_IS_AVAILABLE
+    })
+    Single<ApiResponseP8<Boolean>> checkExternalClientLoginFormAvailable(@Url String host);
 
     @POST(API)
     @FormUrlEncoded

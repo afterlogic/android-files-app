@@ -44,6 +44,7 @@ import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.L
 import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewState.ERROR;
 import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewState.INITIALIZATION;
 import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewState.NORMAL;
+import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewState.NOT_AVAILABLE;
 import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewState.PROGRESS;
 
 /**
@@ -146,7 +147,7 @@ public class LoginViewModel extends LifecycleViewModel {
                             .compose(subscriber::defaultSchedulers)
                             .subscribe(subscriber.justSubscribe());
 
-                    checkWebViewAuthorization();
+                    setToLoginState();
 
                 }));
     }
@@ -302,7 +303,15 @@ public class LoginViewModel extends LifecycleViewModel {
             return;
         }
 
-        reloadWebViewCommand.fire();
+        if (loginUrl.get() != null) {
+
+            reloadWebViewCommand.fire();
+
+        } else {
+
+            checkExternalLoginFormsAvailableAndUpdateUrl();
+
+        }
     }
 
     @Override
@@ -363,12 +372,43 @@ public class LoginViewModel extends LifecycleViewModel {
 
     }
 
-    private void checkWebViewAuthorization() {
+    private void setToLoginState() {
 
         webViewState.set(INITIALIZATION);
-        loginUrl.set(getLoginUrl());
+        loginUrl.set(null);
         loginState.set(LOGIN);
 
+        checkExternalLoginFormsAvailableAndUpdateUrl();
+
+    }
+
+    private void checkExternalLoginFormsAvailableAndUpdateUrl() {
+        interactor.isExternalLoginFormsAllowed(checkedHost.toString())
+                .compose(subscriber::defaultSchedulers)
+                .doOnSubscribe(disposable -> {
+
+                    if (webViewState.get() == ERROR) {
+                        pageReloading.set(true);
+                    }
+
+                })
+                .subscribe(subscriber.subscribe(
+                        allowed -> {
+
+                            if (allowed) {
+                                loginUrl.set(getLoginUrl());
+                            } else {
+                                webViewState.set(NOT_AVAILABLE);
+                            }
+
+                        },
+                        error -> {
+
+                            moveToWebErrorState();
+                            return true;
+
+                        }
+                ));
     }
 
     private void moveToWebErrorState() {

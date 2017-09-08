@@ -16,5 +16,7 @@ interface AuthenticatorSubService {
 
     Single<AuthorizedAuroraSession> byToken(String host, String token);
 
+    Single<Boolean> isExternalClientLoginFormsAvailable(String host);
+
     Maybe<Integer> getApiVersion(String host);
 }
