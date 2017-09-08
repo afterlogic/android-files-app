@@ -87,7 +87,7 @@ android {
 
 autoVersion {
 
-    autoVersionForTasks "assembleRelease", "assembleReleaseBeta"
+    //autoVersionForTasks "assembleRelease", "assembleReleaseBeta"
 
 }
 
