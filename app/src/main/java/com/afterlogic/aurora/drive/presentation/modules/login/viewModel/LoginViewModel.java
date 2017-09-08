@@ -67,6 +67,7 @@ public class LoginViewModel extends LifecycleViewModel {
     public WebViewGoBackCommand webViewGoBackCommand = new WebViewGoBackCommand();
     public SimpleCommand reloadWebViewCommand = new SimpleCommand();
     public SimpleCommand webViewStopLoadingCommand = new SimpleCommand();
+    public SimpleCommand webViewClearHistoryCommand = new SimpleCommand();
 
     public ObservableBoolean pageReloading = new ObservableBoolean(false);
     public ObservableField<LoginWebViewState> webViewState = new ObservableField<>(INITIALIZATION);
@@ -90,6 +91,7 @@ public class LoginViewModel extends LifecycleViewModel {
 
     private boolean networkAvailable = true;
     private boolean errorStateHandled = true;
+    private boolean isPageLoadingAfterCancellAuth = false;
 
     private final DisposableBag globalBag = new DisposableBag();
 
@@ -236,6 +238,13 @@ public class LoginViewModel extends LifecycleViewModel {
 
         MyLog.d("Loaded url: " + url);
 
+        if (isPageLoadingAfterCancellAuth) {
+
+            isPageLoadingAfterCancellAuth = false;
+            webViewClearHistoryCommand.fire();
+
+        }
+
         if (webViewState.get() == ERROR && !errorStateHandled) return;
 
         webViewState.set(networkAvailable ? NORMAL : ERROR);
@@ -271,13 +280,21 @@ public class LoginViewModel extends LifecycleViewModel {
 
             if (loginWebViewFullscreen.get()) {
 
-                webViewGoBackCommand.goBack(success -> {
+                if (isPageLoadingAfterCancellAuth) {
 
-                    if (!success) {
-                        loginWebViewFullscreen.set(false);
-                    }
+                    loginWebViewFullscreen.set(false);
 
-                });
+                } else {
+
+                    webViewGoBackCommand.goBack(success -> {
+
+                        if (!success) {
+                            loginWebViewFullscreen.set(false);
+                        }
+
+                    });
+
+                }
 
             } else {
 
@@ -461,6 +478,7 @@ public class LoginViewModel extends LifecycleViewModel {
                 } else {
                     router.newRootScreen(AppRouter.MAIN);
                 }
+
                 break;
 
             case ACCOUNT_CHANGED:
@@ -471,7 +489,11 @@ public class LoginViewModel extends LifecycleViewModel {
                 break;
 
             case CANCELLED:
+
+                isPageLoadingAfterCancellAuth = true;
+                webViewClearHistoryCommand.fire();
                 loginUrl.set(getLoginUrl());
+
                 break;
 
         }

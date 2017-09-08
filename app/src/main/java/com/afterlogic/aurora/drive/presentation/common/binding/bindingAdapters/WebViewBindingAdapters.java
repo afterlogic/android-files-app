@@ -47,6 +47,17 @@ public class WebViewBindingAdapters {
 
     }
 
+    @BindingAdapter("clearHistoryCommand")
+    public static void bindClearHistoryCommand(WebView webView, SimpleCommand command) {
+
+        if (command.handle()) {
+
+            webView.clearHistory();
+
+        }
+
+    }
+
     @BindingAdapter("stopLoadingCommand")
     public static void bindStopLoadingCommand(WebView webView, SimpleCommand command) {
 
