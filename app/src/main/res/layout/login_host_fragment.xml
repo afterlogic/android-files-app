@@ -31,6 +31,7 @@
             app:layout_constraintVertical_chainStyle="packed">
 
             <AutoCompleteTextView
+
                 android:id="@+id/domain"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -39,12 +40,15 @@
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
                 android:singleLine="true"
+                android:imeOptions="actionNext"
                 app:bindableText="@{vm.host}"
                 app:error="@{vm.hostError}"
                 app:focusCommand="@{vm.focus}"
                 app:focusTag='@{"host"}'
+                app:onEditorEvent="@{vm::onHostEditorEvent}"
                 tools:hint="@null"
-                tools:text="http://aurora.com" />
+                tools:text="http://aurora.com"
+                />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -66,7 +70,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/domain_wrapper"
-            tools:text="@string/action_sign_in" />
+            tools:text="@string/prompt_login_next" />
 
         <ProgressBar
             android:id="@+id/login_progress"

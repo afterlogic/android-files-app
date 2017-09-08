@@ -5,6 +5,8 @@ import android.databinding.ObservableField;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
 import android.webkit.CookieManager;
 
 import com.afterlogic.aurora.drive.R;
@@ -19,6 +21,7 @@ import com.afterlogic.aurora.drive.presentation.common.binding.binder.Bindable;
 import com.afterlogic.aurora.drive.presentation.common.binding.commands.FocusCommand;
 import com.afterlogic.aurora.drive.presentation.common.binding.commands.SimpleCommand;
 import com.afterlogic.aurora.drive.presentation.common.binding.commands.WebViewGoBackCommand;
+import com.afterlogic.aurora.drive.presentation.common.binding.models.EditorEvent;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnPropertyChangedCallback;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.AsyncUiObservableField;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.LifecycleViewModel;
@@ -34,13 +37,14 @@ import io.reactivex.Completable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.subjects.PublishSubject;
-import okhttp3.HttpUrl;
 
 import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginViewModelState.HOST;
 import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginViewModelState.LOGIN;
-import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewModelState.ERROR;
-import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewModelState.NORMAL;
-import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewModelState.PROGRESS;
+import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewState.ERROR;
+import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewState.INITIALIZATION;
+import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewState.NORMAL;
+import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewState.NOT_AVAILABLE;
+import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewState.PROGRESS;
 
 /**
  * Created by aleksandrcikin on 11.08.17.
@@ -63,9 +67,10 @@ public class LoginViewModel extends LifecycleViewModel {
     public WebViewGoBackCommand webViewGoBackCommand = new WebViewGoBackCommand();
     public SimpleCommand reloadWebViewCommand = new SimpleCommand();
     public SimpleCommand webViewStopLoadingCommand = new SimpleCommand();
+    public SimpleCommand webViewClearHistoryCommand = new SimpleCommand();
 
     public ObservableBoolean pageReloading = new ObservableBoolean(false);
-    public ObservableField<LoginWebViewModelState> webViewState = new ObservableField<>(NORMAL);
+    public ObservableField<LoginWebViewState> webViewState = new ObservableField<>(INITIALIZATION);
 
     public FocusCommand focus = new FocusCommand();
 
@@ -79,13 +84,14 @@ public class LoginViewModel extends LifecycleViewModel {
     private final AuthorizationResolver authorizationResolver;
     private final AppResources appResources;
 
-    private HttpUrl checkedHost;
+    private String checkedHost;
 
     private PublishSubject<Boolean> reloginPublisher = PublishSubject.create();
     private boolean relogin;
 
     private boolean networkAvailable = true;
     private boolean errorStateHandled = true;
+    private boolean isPageLoadingAfterCancellAuth = false;
 
     private final DisposableBag globalBag = new DisposableBag();
 
@@ -134,7 +140,7 @@ public class LoginViewModel extends LifecycleViewModel {
                 .compose(globalBag::track)
                 .subscribe(subscriber.subscribe(checkedHost -> {
 
-                    this.checkedHost = checkedHost;
+                    this.checkedHost = checkedHost.toString();
 
                     interactor.storeLastInputedHost(checkedHost.toString())
                             .onErrorResumeNext(error -> interactor.storeLastInputedHost(null))
@@ -142,9 +148,23 @@ public class LoginViewModel extends LifecycleViewModel {
                             .compose(subscriber::defaultSchedulers)
                             .subscribe(subscriber.justSubscribe());
 
-                    loginUrl.set(getLoginUrl());
-                    loginState.set(LOGIN);
+                    setToLoginState();
+
                 }));
+    }
+
+    public boolean onHostEditorEvent(EditorEvent event) {
+
+        if (event.getActionId() == EditorInfo.IME_ACTION_NEXT
+                || event.getKeyEvent() != null
+                && event.getKeyEvent().getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+
+            onHostWritten();
+
+        }
+
+        return true;
+
     }
 
     public void onLogin() {
@@ -163,7 +183,7 @@ public class LoginViewModel extends LifecycleViewModel {
             return;
         }
 
-        interactor.login(checkedHost.toString(), login.get(), password.get())
+        interactor.login(checkedHost, login.get(), password.get())
                 .compose(subscriber::defaultSchedulers)
                 .doOnSubscribe(dis -> isInProgress.set(true))
                 .doFinally(() -> isInProgress.set(false))
@@ -176,6 +196,7 @@ public class LoginViewModel extends LifecycleViewModel {
                 })
                 .compose(globalBag::track)
                 .subscribe(subscriber.subscribe(this::handleAuthResult));
+
     }
 
     public boolean onWebViewTouch() {
@@ -196,10 +217,19 @@ public class LoginViewModel extends LifecycleViewModel {
 
         MyLog.d("Start load url: " + url);
 
-        if (webViewState.get() == ERROR) {
-            pageReloading.set(true);
-        } else {
-            webViewState.set(PROGRESS);
+        switch (webViewState.get()) {
+
+            case ERROR:
+                pageReloading.set(true);
+                break;
+
+            case NORMAL:
+                webViewState.set(PROGRESS);
+                break;
+
+            default:
+                //no-op
+
         }
 
     }
@@ -207,6 +237,13 @@ public class LoginViewModel extends LifecycleViewModel {
     public void onPageLoadingFinished(String url) {
 
         MyLog.d("Loaded url: " + url);
+
+        if (isPageLoadingAfterCancellAuth) {
+
+            isPageLoadingAfterCancellAuth = false;
+            webViewClearHistoryCommand.fire();
+
+        }
 
         if (webViewState.get() == ERROR && !errorStateHandled) return;
 
@@ -225,7 +262,10 @@ public class LoginViewModel extends LifecycleViewModel {
 
         }
 
-        if (!url.equals(checkedHost.toString())) return false;
+        String urlWithoutScheme = urlWithoutScheme(url);
+        String checkedHostWithoutScheme = urlWithoutScheme(checkedHost);
+
+        if (!urlWithoutScheme.equals(checkedHostWithoutScheme)) return false;
 
         String cookie = CookieManager.getInstance().getCookie(url);
         parseAuthorizedCookie(cookie);
@@ -240,13 +280,21 @@ public class LoginViewModel extends LifecycleViewModel {
 
             if (loginWebViewFullscreen.get()) {
 
-                webViewGoBackCommand.goBack(success -> {
+                if (isPageLoadingAfterCancellAuth) {
 
-                    if (!success) {
-                        loginWebViewFullscreen.set(false);
-                    }
+                    loginWebViewFullscreen.set(false);
 
-                });
+                } else {
+
+                    webViewGoBackCommand.goBack(success -> {
+
+                        if (!success) {
+                            loginWebViewFullscreen.set(false);
+                        }
+
+                    });
+
+                }
 
             } else {
 
@@ -280,22 +328,21 @@ public class LoginViewModel extends LifecycleViewModel {
             return;
         }
 
-        reloadWebViewCommand.fire();
+        if (loginUrl.get() != null) {
+
+            reloadWebViewCommand.fire();
+
+        } else {
+
+            checkExternalLoginFormsAvailableAndUpdateUrl();
+
+        }
     }
 
     @Override
     protected void onCleared() {
         globalBag.dispose();
         super.onCleared();
-    }
-
-    private void moveToWebErrorState() {
-
-        errorStateHandled = false;
-        webViewStopLoadingCommand.fire();
-        webViewState.set(ERROR);
-        pageReloading.set(false);
-
     }
 
     private void initProperties() {
@@ -340,13 +387,63 @@ public class LoginViewModel extends LifecycleViewModel {
         if (!TextUtils.isEmpty(lastHost.host)) {
 
             host.set(lastHost.host);
-            checkedHost = HttpUrl.parse(lastHost.host);
+            checkedHost = lastHost.host;
             loginUrl.set(getLoginUrl());
 
             if (lastHost.relogin) {
                 loginState.set(LOGIN);
             }
         }
+
+    }
+
+    private void setToLoginState() {
+
+        webViewState.set(INITIALIZATION);
+        loginUrl.set(null);
+        loginState.set(LOGIN);
+
+        checkExternalLoginFormsAvailableAndUpdateUrl();
+
+    }
+
+    private void checkExternalLoginFormsAvailableAndUpdateUrl() {
+
+        interactor.isExternalLoginFormsAllowed(checkedHost)
+                .compose(subscriber::defaultSchedulers)
+                .doOnSubscribe(disposable -> {
+
+                    if (webViewState.get() == ERROR) {
+                        pageReloading.set(true);
+                    }
+
+                })
+                .subscribe(subscriber.subscribe(
+                        allowed -> {
+
+                            if (allowed) {
+                                loginUrl.set(getLoginUrl());
+                            } else {
+                                webViewState.set(NOT_AVAILABLE);
+                            }
+
+                        },
+                        error -> {
+
+                            moveToWebErrorState();
+                            return true;
+
+                        }
+                ));
+
+    }
+
+    private void moveToWebErrorState() {
+
+        errorStateHandled = false;
+        webViewStopLoadingCommand.fire();
+        webViewState.set(ERROR);
+        pageReloading.set(false);
 
     }
 
@@ -381,6 +478,7 @@ public class LoginViewModel extends LifecycleViewModel {
                 } else {
                     router.newRootScreen(AppRouter.MAIN);
                 }
+
                 break;
 
             case ACCOUNT_CHANGED:
@@ -391,7 +489,11 @@ public class LoginViewModel extends LifecycleViewModel {
                 break;
 
             case CANCELLED:
+
+                isPageLoadingAfterCancellAuth = true;
+                webViewClearHistoryCommand.fire();
                 loginUrl.set(getLoginUrl());
+
                 break;
 
         }
@@ -399,6 +501,10 @@ public class LoginViewModel extends LifecycleViewModel {
 
     private String getLoginUrl() {
         return checkedHost != null ? checkedHost + "?external-clients-login-form" : null;
+    }
+
+    private String urlWithoutScheme(String url) {
+        return url.startsWith("http://") ? url.substring(7) : url.substring(8);
     }
 
 }

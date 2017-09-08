@@ -83,10 +83,13 @@ public class LoginBindings {
 
     @BindingAdapter("login_url")
     public static void bindUrl(WebView webView, String url) {
+
         String currentUrl = webView.getUrl();
+
         if (currentUrl == null || !currentUrl.equals(url)) {
             webView.loadUrl(url);
         }
+
     }
 
     @SuppressLint("SetJavaScriptEnabled")
