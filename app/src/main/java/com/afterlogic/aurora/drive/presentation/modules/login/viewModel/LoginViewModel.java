@@ -41,9 +41,10 @@ import okhttp3.HttpUrl;
 
 import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginViewModelState.HOST;
 import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginViewModelState.LOGIN;
-import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewModelState.ERROR;
-import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewModelState.NORMAL;
-import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewModelState.PROGRESS;
+import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewState.ERROR;
+import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewState.INITIALIZATION;
+import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewState.NORMAL;
+import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewState.PROGRESS;
 
 /**
  * Created by aleksandrcikin on 11.08.17.
@@ -68,7 +69,7 @@ public class LoginViewModel extends LifecycleViewModel {
     public SimpleCommand webViewStopLoadingCommand = new SimpleCommand();
 
     public ObservableBoolean pageReloading = new ObservableBoolean(false);
-    public ObservableField<LoginWebViewModelState> webViewState = new ObservableField<>(NORMAL);
+    public ObservableField<LoginWebViewState> webViewState = new ObservableField<>(INITIALIZATION);
 
     public FocusCommand focus = new FocusCommand();
 
@@ -145,8 +146,8 @@ public class LoginViewModel extends LifecycleViewModel {
                             .compose(subscriber::defaultSchedulers)
                             .subscribe(subscriber.justSubscribe());
 
-                    loginUrl.set(getLoginUrl());
-                    loginState.set(LOGIN);
+                    checkWebViewAuthorization();
+
                 }));
     }
 
@@ -208,10 +209,19 @@ public class LoginViewModel extends LifecycleViewModel {
 
         MyLog.d("Start load url: " + url);
 
-        if (webViewState.get() == ERROR) {
-            pageReloading.set(true);
-        } else {
-            webViewState.set(PROGRESS);
+        switch (webViewState.get()) {
+
+            case ERROR:
+                pageReloading.set(true);
+                break;
+
+            case NORMAL:
+                webViewState.set(PROGRESS);
+                break;
+
+            default:
+                //no-op
+
         }
 
     }
@@ -301,15 +311,6 @@ public class LoginViewModel extends LifecycleViewModel {
         super.onCleared();
     }
 
-    private void moveToWebErrorState() {
-
-        errorStateHandled = false;
-        webViewStopLoadingCommand.fire();
-        webViewState.set(ERROR);
-        pageReloading.set(false);
-
-    }
-
     private void initProperties() {
 
         SimpleOnPropertyChangedCallback.addTo(host, () -> hostError.set(null));
@@ -359,6 +360,23 @@ public class LoginViewModel extends LifecycleViewModel {
                 loginState.set(LOGIN);
             }
         }
+
+    }
+
+    private void checkWebViewAuthorization() {
+
+        webViewState.set(INITIALIZATION);
+        loginUrl.set(getLoginUrl());
+        loginState.set(LOGIN);
+
+    }
+
+    private void moveToWebErrorState() {
+
+        errorStateHandled = false;
+        webViewStopLoadingCommand.fire();
+        webViewState.set(ERROR);
+        pageReloading.set(false);
 
     }
 
