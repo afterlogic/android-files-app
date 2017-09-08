@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'org.greenrobot.greendao'
 
-apply from: '../artifacts.gradle'
+apply plugin: 'me.sunnydaydev.autoversion'
 
 project.ext.set("signingFolder", file("../signing").toString())
 apply from: '../signing/signings.gradle'
@@ -14,68 +14,91 @@ android {
 
     defaultConfig {
 
-        //prepareVersions()
-
         applicationId "com.afterlogic.aurora.files"
         minSdkVersion 15
         targetSdkVersion 26
 
-        versionCode getIncrementalVersionCode()
-        versionName getIncrementalVersionName()
+        versionCode autoVersion.incrementalVersionCode
+        versionName autoVersion.incrementalVersionName
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
+
     }
 
     dataBinding{
+
         enabled true
+
     }
 
     compileOptions {
+
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+
     }
 
     dexOptions {
+
         javaMaxHeapSize "2g"
         jumboMode true
+
     }
 
     buildTypes {
 
         release {
+
             signingConfig signingConfigs.sign
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
         }
 
         debug {
+
             signingConfig signingConfigs.sign
             minifyEnabled false
             ext.enableCrashlytics = false
+
         }
 
         releaseBeta {
+
             signingConfig signingConfigs.sign
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
             ext.betaDistributionGroupAliases = "aurora-android"
-            ext.betaDistributionReleaseNotesFilePath = projectDir.absolutePath + "/lastBetaBuildNotes.txt"
+            ext.betaDistributionReleaseNotesFilePath = autoVersion.lastBuildReleaseNoteFile
+
         }
     }
 
     packagingOptions {
+
         exclude 'META-INF/rxjava.properties'
+
     }
+
+}
+
+autoVersion {
+
+    autoVersionForTasks "assembleRelease", "assembleReleaseBeta"
+
 }
 
 greendao {
+
     schemaVersion 1
+
 }
 
 dependencies {
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     //For test
@@ -152,4 +175,33 @@ dependencies {
 
     implementation "org.parceler:parceler-api:$rootProject.parcellerVersion"
     annotationProcessor "org.parceler:parceler:$rootProject.parcellerVersion"
+
+}
+
+/**
+ * Result apk naming.
+ */
+android.applicationVariants.all { variant ->
+
+    def appName
+    //Check if an applicationName property is supplied; if not use the name of the parent project.
+    if (project.hasProperty("applicationName")) {
+        appName = applicationName
+    } else {
+        appName = parent.name
+    }
+
+    variant.outputs.all { output ->
+
+        def newApkName
+        //If there's no ZipAlign task it means that our artifact will be unaligned and we need to mark it as such.
+        if (output.zipAlign) {
+            newApkName = "${appName}-${project.name}-${output.baseName}-${variant.versionName}-b${variant.versionCode}.apk"
+        } else {
+            newApkName = "${appName}-${project.name}-${output.baseName}-${variant.versionName}-b${variant.versionCode}-unaligned.apk"
+        }
+        outputFileName = newApkName
+
+    }
+
 }

@@ -5,6 +5,8 @@ import android.databinding.ObservableField;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
 import android.webkit.CookieManager;
 
 import com.afterlogic.aurora.drive.R;
@@ -19,6 +21,7 @@ import com.afterlogic.aurora.drive.presentation.common.binding.binder.Bindable;
 import com.afterlogic.aurora.drive.presentation.common.binding.commands.FocusCommand;
 import com.afterlogic.aurora.drive.presentation.common.binding.commands.SimpleCommand;
 import com.afterlogic.aurora.drive.presentation.common.binding.commands.WebViewGoBackCommand;
+import com.afterlogic.aurora.drive.presentation.common.binding.models.EditorEvent;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnPropertyChangedCallback;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.AsyncUiObservableField;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.LifecycleViewModel;
@@ -145,6 +148,15 @@ public class LoginViewModel extends LifecycleViewModel {
                     loginUrl.set(getLoginUrl());
                     loginState.set(LOGIN);
                 }));
+    }
+
+    public boolean onHostEditorEvent(EditorEvent event) {
+        if (event.getActionId() == EditorInfo.IME_ACTION_NEXT
+                || event.getKeyEvent() != null
+                        && event.getKeyEvent().getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+            onHostWritten();
+        }
+        return true;
     }
 
     public void onLogin() {
