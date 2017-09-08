@@ -54,3 +54,6 @@ gradle/
 fabric.properties
 
 \.DS_Store
+
+gradlew
+gradlew.bat
