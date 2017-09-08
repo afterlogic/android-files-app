@@ -112,9 +112,9 @@ public class LoginInteractor {
         });
     }
 
-    public Single<AuthResult> handleAuth(String authToken, HttpUrl host) {
+    public Single<AuthResult> handleAuth(String authToken, String host) {
 
-        return authenticatorService.createSession(host.toString(), authToken)
+        return authenticatorService.createSession(host, authToken)
                 .flatMap(this::handleSession);
 
     }

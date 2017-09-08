@@ -37,7 +37,6 @@ import io.reactivex.Completable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.subjects.PublishSubject;
-import okhttp3.HttpUrl;
 
 import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginViewModelState.HOST;
 import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginViewModelState.LOGIN;
@@ -84,7 +83,7 @@ public class LoginViewModel extends LifecycleViewModel {
     private final AuthorizationResolver authorizationResolver;
     private final AppResources appResources;
 
-    private HttpUrl checkedHost;
+    private String checkedHost;
 
     private PublishSubject<Boolean> reloginPublisher = PublishSubject.create();
     private boolean relogin;
@@ -139,7 +138,7 @@ public class LoginViewModel extends LifecycleViewModel {
                 .compose(globalBag::track)
                 .subscribe(subscriber.subscribe(checkedHost -> {
 
-                    this.checkedHost = checkedHost;
+                    this.checkedHost = checkedHost.toString();
 
                     interactor.storeLastInputedHost(checkedHost.toString())
                             .onErrorResumeNext(error -> interactor.storeLastInputedHost(null))
@@ -153,12 +152,17 @@ public class LoginViewModel extends LifecycleViewModel {
     }
 
     public boolean onHostEditorEvent(EditorEvent event) {
+
         if (event.getActionId() == EditorInfo.IME_ACTION_NEXT
                 || event.getKeyEvent() != null
-                        && event.getKeyEvent().getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                && event.getKeyEvent().getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+
             onHostWritten();
+
         }
+
         return true;
+
     }
 
     public void onLogin() {
@@ -177,7 +181,7 @@ public class LoginViewModel extends LifecycleViewModel {
             return;
         }
 
-        interactor.login(checkedHost.toString(), login.get(), password.get())
+        interactor.login(checkedHost, login.get(), password.get())
                 .compose(subscriber::defaultSchedulers)
                 .doOnSubscribe(dis -> isInProgress.set(true))
                 .doFinally(() -> isInProgress.set(false))
@@ -190,6 +194,7 @@ public class LoginViewModel extends LifecycleViewModel {
                 })
                 .compose(globalBag::track)
                 .subscribe(subscriber.subscribe(this::handleAuthResult));
+
     }
 
     public boolean onWebViewTouch() {
@@ -248,7 +253,10 @@ public class LoginViewModel extends LifecycleViewModel {
 
         }
 
-        if (!url.equals(checkedHost.toString())) return false;
+        String urlWithoutScheme = urlWithoutScheme(url);
+        String checkedHostWithoutScheme = urlWithoutScheme(checkedHost);
+
+        if (!urlWithoutScheme.equals(checkedHostWithoutScheme)) return false;
 
         String cookie = CookieManager.getInstance().getCookie(url);
         parseAuthorizedCookie(cookie);
@@ -362,7 +370,7 @@ public class LoginViewModel extends LifecycleViewModel {
         if (!TextUtils.isEmpty(lastHost.host)) {
 
             host.set(lastHost.host);
-            checkedHost = HttpUrl.parse(lastHost.host);
+            checkedHost = lastHost.host;
             loginUrl.set(getLoginUrl());
 
             if (lastHost.relogin) {
@@ -383,7 +391,8 @@ public class LoginViewModel extends LifecycleViewModel {
     }
 
     private void checkExternalLoginFormsAvailableAndUpdateUrl() {
-        interactor.isExternalLoginFormsAllowed(checkedHost.toString())
+
+        interactor.isExternalLoginFormsAllowed(checkedHost)
                 .compose(subscriber::defaultSchedulers)
                 .doOnSubscribe(disposable -> {
 
@@ -409,6 +418,7 @@ public class LoginViewModel extends LifecycleViewModel {
 
                         }
                 ));
+
     }
 
     private void moveToWebErrorState() {
@@ -469,6 +479,10 @@ public class LoginViewModel extends LifecycleViewModel {
 
     private String getLoginUrl() {
         return checkedHost != null ? checkedHost + "?external-clients-login-form" : null;
+    }
+
+    private String urlWithoutScheme(String url) {
+        return url.startsWith("http://") ? url.substring(7) : url.substring(8);
     }
 
 }
