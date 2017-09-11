@@ -63,7 +63,7 @@
             android:layout_marginTop="8dp"
             android:enabled="@{!vm.isInProgress}"
             android:onClick="@{() -> vm.onHostWritten()}"
-            android:text='@{vm.isInProgress ? "" : @string/action_sign_in}'
+            android:text='@{vm.isInProgress ? "" : @string/prompt_login_next}'
             android:textColor="@color/white"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
