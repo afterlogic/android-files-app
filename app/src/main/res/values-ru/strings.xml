@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <string name="value_webView_localization">ru-RU</string>
+
     <string name="app_name">Aurora.Файлы</string>
     <string name="prompt_downloaded_file_description">Из Aurora.Файлы</string>
 
@@ -140,5 +143,6 @@
     <string name="prompt_error_occurred_pull_to_refresh">Произошла ошибка.\nПотяните вниз, чтобы попробовать снова.</string>
     <string name="prompt_additional_auth_web_failed">Не удалось получить данные дополнительных вариантов авторизации.</string>
     <string name="prompt_login_next">Далее</string>
+    <string name="prompt__login__prepare_form">Подготовка формы авторизации…</string>
 
 </resources>

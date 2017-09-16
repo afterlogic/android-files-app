@@ -37,9 +37,11 @@ import io.reactivex.Completable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.subjects.PublishSubject;
+import okhttp3.HttpUrl;
 
 import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginViewModelState.HOST;
 import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginViewModelState.LOGIN;
+import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginViewModelState.LOGIN_INITIALIZATION;
 import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewState.ERROR;
 import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewState.INITIALIZATION;
 import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewState.NORMAL;
@@ -53,7 +55,7 @@ import static com.afterlogic.aurora.drive.presentation.modules.login.viewModel.L
 
 public class LoginViewModel extends LifecycleViewModel {
 
-    public ObservableField<LoginViewModelState> loginState = new AsyncUiObservableField<>(HOST);
+    public ObservableField<LoginViewModelState> viewModelState = new AsyncUiObservableField<>(HOST);
 
     public Bindable<String> host = Bindable.create();
     public Bindable<String> login = Bindable.create();
@@ -130,6 +132,11 @@ public class LoginViewModel extends LifecycleViewModel {
         }
 
         interactor.checkHost(host.get())
+                .map(HttpUrl::toString)
+                .flatMap(checkedHost -> interactor.isExternalLoginFormsAllowed(checkedHost)
+                        //.onErrorReturnItem(false)
+                        .map(allowed -> new CheckedHost(checkedHost, allowed))
+                )
                 .compose(subscriber::defaultSchedulers)
                 .doOnSubscribe(disposable -> isInProgress.set(true))
                 .doFinally(() -> isInProgress.set(false))
@@ -140,15 +147,13 @@ public class LoginViewModel extends LifecycleViewModel {
                 .compose(globalBag::track)
                 .subscribe(subscriber.subscribe(checkedHost -> {
 
-                    this.checkedHost = checkedHost.toString();
+                    handleCheckedHostAndSetStateToLogin(checkedHost);
 
-                    interactor.storeLastInputedHost(checkedHost.toString())
+                    interactor.storeLastInputedHost(checkedHost.host)
                             .onErrorResumeNext(error -> interactor.storeLastInputedHost(null))
                             .onErrorComplete()
                             .compose(subscriber::defaultSchedulers)
                             .subscribe(subscriber.justSubscribe());
-
-                    setToLoginState();
 
                 }));
     }
@@ -276,7 +281,7 @@ public class LoginViewModel extends LifecycleViewModel {
 
     public void onBackPressed() {
 
-        if (loginState.get() == LOGIN) {
+        if (viewModelState.get() == LOGIN) {
 
             if (loginWebViewFullscreen.get()) {
 
@@ -299,8 +304,8 @@ public class LoginViewModel extends LifecycleViewModel {
             } else {
 
                 if (!relogin) {
-                    loginState.set(HOST);
-                    webViewState.set(NORMAL);
+                    viewModelState.set(HOST);
+                    webViewState.set(NOT_AVAILABLE);
                 }
 
             }
@@ -328,15 +333,7 @@ public class LoginViewModel extends LifecycleViewModel {
             return;
         }
 
-        if (loginUrl.get() != null) {
-
-            reloadWebViewCommand.fire();
-
-        } else {
-
-            checkExternalLoginFormsAvailableAndUpdateUrl();
-
-        }
+        reloadWebViewCommand.fire();
     }
 
     @Override
@@ -387,54 +384,48 @@ public class LoginViewModel extends LifecycleViewModel {
         if (!TextUtils.isEmpty(lastHost.host)) {
 
             host.set(lastHost.host);
-            checkedHost = lastHost.host;
-            loginUrl.set(getLoginUrl());
 
             if (lastHost.relogin) {
-                loginState.set(LOGIN);
+
+                viewModelState.set(LOGIN_INITIALIZATION);
+
+                Single.zip(
+                        interactor.isExternalLoginFormsAllowed(lastHost.host),
+                        Single.timer(1, TimeUnit.SECONDS),
+                        (allowed, tick) -> allowed
+                )//--->
+                        .onErrorReturnItem(false)
+                        .map(allowed -> new CheckedHost(lastHost.host, allowed))
+                        .compose(subscriber::defaultSchedulers)
+                        .subscribe(subscriber.subscribe(
+                                this::handleCheckedHostAndSetStateToLogin,
+                                error -> {
+                                    viewModelState.set(HOST);
+                                    return true;
+                                }
+                        ));
+
             }
         }
 
     }
 
-    private void setToLoginState() {
+    private void handleCheckedHostAndSetStateToLogin(CheckedHost checkedHost) {
 
-        webViewState.set(INITIALIZATION);
-        loginUrl.set(null);
-        loginState.set(LOGIN);
+        this.checkedHost = checkedHost.host;
 
-        checkExternalLoginFormsAvailableAndUpdateUrl();
+        if (checkedHost.externalLoginAllowed) {
 
-    }
+            loginUrl.set(getLoginUrl(checkedHost.host));
+            webViewState.set(INITIALIZATION);
 
-    private void checkExternalLoginFormsAvailableAndUpdateUrl() {
+        } else {
 
-        interactor.isExternalLoginFormsAllowed(checkedHost)
-                .compose(subscriber::defaultSchedulers)
-                .doOnSubscribe(disposable -> {
+            webViewState.set(NOT_AVAILABLE);
 
-                    if (webViewState.get() == ERROR) {
-                        pageReloading.set(true);
-                    }
+        }
 
-                })
-                .subscribe(subscriber.subscribe(
-                        allowed -> {
-
-                            if (allowed) {
-                                loginUrl.set(getLoginUrl());
-                            } else {
-                                webViewState.set(NOT_AVAILABLE);
-                            }
-
-                        },
-                        error -> {
-
-                            moveToWebErrorState();
-                            return true;
-
-                        }
-                ));
+        viewModelState.set(LOGIN);
 
     }
 
@@ -492,15 +483,19 @@ public class LoginViewModel extends LifecycleViewModel {
 
                 isPageLoadingAfterCancellAuth = true;
                 webViewClearHistoryCommand.fire();
-                loginUrl.set(getLoginUrl());
+                loginUrl.set(getLoginUrl(checkedHost));
 
                 break;
 
         }
     }
 
-    private String getLoginUrl() {
-        return checkedHost != null ? checkedHost + "?external-clients-login-form" : null;
+    private String getLoginUrl(String host) {
+
+        if (host == null) return null;
+
+        return host + "?external-clients-login-form"
+                        + "&locale=" + appResources.getString(R.string.value_webView_localization);
     }
 
     private String urlWithoutScheme(String url) {

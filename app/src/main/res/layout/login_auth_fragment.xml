@@ -127,7 +127,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.5" />
+            app:layout_constraintGuide_percent="0.5"
+            tools:layout_constraintGuide_percent="0.5f" />
 
         <WebView
             android:id="@+id/webView"
@@ -146,6 +147,7 @@
             app:goBackCommand="@{vm.webViewGoBackCommand}"
             app:reloadCommand="@{vm.reloadWebViewCommand}"
             app:stopLoadingCommand="@{vm.webViewStopLoadingCommand}"
+            app:clearHistoryCommand="@{vm.webViewClearHistoryCommand}"
             tools:visibility="visible"
             tools:ignore="UnusedAttribute" />
 
@@ -228,7 +230,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.5" />
+            app:layout_constraintGuide_percent="0.5"
+            tools:layout_constraintGuide_percent="0.5f"/>
 
     </android.support.constraint.ConstraintLayout>
 

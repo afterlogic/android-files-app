@@ -1,6 +1,8 @@
 package com.afterlogic.aurora.drive.presentation.common.binding.utils;
 
 import android.databinding.Observable;
+import android.databinding.ObservableBoolean;
+import android.databinding.ObservableField;
 import android.support.annotation.NonNull;
 
 import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
@@ -33,6 +35,24 @@ public class UnbindableObservable<T extends Observable> {
     public static <T extends Observable> UnbindableObservable<T> bind(T field, UnbindableObservable.Bag bag, UnbindableObservableListener<T> listener) {
         UnbindableObservable<T> unbindableObservable = create(field)
                 .addListener(listener)
+                .addTo(bag)
+                .bind();
+        unbindableObservable.notifyChanged();
+        return unbindableObservable;
+    }
+
+    public static <T> UnbindableObservable<ObservableField<T>> bindToValue(ObservableField<T> field, UnbindableObservable.Bag bag, UnbindableObservableListener<T> listener) {
+        UnbindableObservable<ObservableField<T>> unbindableObservable = create(field)
+                .addListener(f -> listener.onChange(f.get()))
+                .addTo(bag)
+                .bind();
+        unbindableObservable.notifyChanged();
+        return unbindableObservable;
+    }
+
+    public static UnbindableObservable<ObservableBoolean> bindToValue(ObservableBoolean field, UnbindableObservable.Bag bag, UnbindableObservableListener<Boolean> listener) {
+        UnbindableObservable<ObservableBoolean> unbindableObservable = create(field)
+                .addListener(f -> listener.onChange(f.get()))
                 .addTo(bag)
                 .bind();
         unbindableObservable.notifyChanged();
