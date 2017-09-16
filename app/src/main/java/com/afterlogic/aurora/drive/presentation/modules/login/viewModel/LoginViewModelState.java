@@ -6,5 +6,5 @@ package com.afterlogic.aurora.drive.presentation.modules.login.viewModel;
  */
 
 public enum LoginViewModelState {
-    HOST, LOGIN
+    HOST, LOGIN_INITIALIZATION, LOGIN
 }

@@ -127,6 +127,7 @@
     <string name="prompt_relogin_notification">The session is expired. You need to relogin.</string>
     <string name="prompt_additional_auth_web_failed">Failed to retrieve data for additional authorization options.</string>
     <string name="prompt_login_next">Next</string>
+    <string name="prompt__login__prepare_form">Preparing of auth form…</string>
 
     <plurals name="dialog_files_success_downloaded">
         <item quantity="one">%d file success downloaded.</item>

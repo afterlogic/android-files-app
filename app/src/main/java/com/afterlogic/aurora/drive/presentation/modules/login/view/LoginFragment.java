@@ -76,7 +76,7 @@ public class LoginFragment
     protected void bindCreated(LoginViewModel vm, UnbindableObservable.Bag bag) {
         super.bindCreated(vm, bag);
 
-        UnbindableObservable.bind(vm.loginState, bag, field -> {
+        UnbindableObservable.bind(vm.viewModelState, bag, field -> {
 
             FragmentManager fm = getChildFragmentManager();
             Fragment currentFragment = fm.findFragmentById(binding.contentContainer.getId());
@@ -89,6 +89,17 @@ public class LoginFragment
 
                     fm.beginTransaction()
                             .replace(binding.contentContainer.getId(), HostFragment.newInstance())
+                            .commitAllowingStateLoss();
+                    fm.executePendingTransactions();
+
+                    break;
+
+                case LOGIN_INITIALIZATION:
+
+                    if (currentFragment instanceof LoginInitializationFragment) return;
+
+                    fm.beginTransaction()
+                            .replace(binding.contentContainer.getId(), LoginInitializationFragment.newInstance())
                             .commitAllowingStateLoss();
                     fm.executePendingTransactions();
 
