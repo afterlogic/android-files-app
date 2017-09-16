@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -416,14 +417,16 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
 
     private Observable<Progressible<File>> downloadFile(AuroraFile file, File target){
 
+        AtomicBoolean finished = new AtomicBoolean(false);
+
         Observable<Progressible<File>> request = mFileSubRepo.downloadFileBody(file)
-                .flatMapObservable(fileBody -> Observable.create(emitter -> {
+                .flatMapObservable(fileBody -> Observable.<Progressible<File>>create(emitter -> {
 
                     long maxSize = file.getSize();
 
                     InputStream is = fileBody.byteStream();
 
-                    try{
+                    try {
 
                         FileUtil.writeFile(is, target, maxSize,
                                 written -> emitter.onNext(
@@ -431,21 +434,28 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
                                 )
                         );
 
+                        if (!target.setLastModified(file.getLastModified())){
+                            MyLog.majorException(new IOException("Can't set last modified: " + target.getPath()));
+                        }
+
+                        emitter.onNext(new Progressible<>(target, maxSize, maxSize, file.getName(), true));
+
+                        emitter.onComplete();
+
+                    } catch (Exception e) {
+
+                        if (!finished.get()) {
+                            emitter.onError(e);
+                        }
+
                     } finally {
 
                         IOUtil.closeQuietly(is);
 
                     }
 
-                    if (!target.setLastModified(file.getLastModified())){
-                        MyLog.majorException(new IOException("Can't set last modified: " + target.getPath()));
-                    }
-
-                    emitter.onNext(new Progressible<>(target, maxSize, maxSize, file.getName(), true));
-
-                    emitter.onComplete();
-
-                }));
+                }))
+                .doFinally(() -> finished.set(true));
 
         return Observable.concat(
                 Observable.just(new Progressible<>(null, 0, 0, file.getName(), false)),

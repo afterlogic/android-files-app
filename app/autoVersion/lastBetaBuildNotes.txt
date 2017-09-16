@@ -2,3 +2,4 @@ Release 94:
 - Detect capability to login using social authorization
 - Improvements of social authorization
 - Add localization for social authorisation request
+- Progress while file donloading

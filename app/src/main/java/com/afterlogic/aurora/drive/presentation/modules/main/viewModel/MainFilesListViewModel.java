@@ -571,9 +571,6 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     private void downloadFile(AuroraFile file) {
         interactor.downloadToDownloads(file)
                 .compose(subscriber::defaultSchedulers)
-                .doOnNext(progress -> {
-                    MyLog.d("Progress: " + progress);
-                })
                 .compose(cancellableLoadProgress(appResources.getString(R.string.dialog_files_title_dowloading)))
                 .filter(Progressible::isDone)
                 .lastElement()
