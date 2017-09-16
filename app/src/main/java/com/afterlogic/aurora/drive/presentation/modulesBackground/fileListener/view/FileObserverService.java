@@ -16,7 +16,7 @@ import javax.inject.Inject;
  * Created by sashka on 28.03.16.
  * mail: sunnyday.development@gmail.com
  */
-public class FileObserverService extends MVPService implements FileObserverView{
+public class FileObserverService extends MVPService implements FileObserverView {
 
     @Inject @ViewPresenter
     protected FileObserverPresenter mPresenter;

@@ -14,10 +14,12 @@ import com.afterlogic.aurora.drive.core.common.contextWrappers.account.AccountHe
 import com.afterlogic.aurora.drive.core.common.logging.CrashlyticsLogger;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.logging.ToCrashlyticsLogger;
+import com.afterlogic.aurora.drive.core.common.util.AppUtil;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.modules.cleaner.DataCleaner;
 import com.afterlogic.aurora.drive.data.modules.prefs.AppPrefs;
 import com.afterlogic.aurora.drive.data.modules.prefs.Pref;
+import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.accountAction.AccountActionReceiver;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.view.FileObserverService;
@@ -77,6 +79,12 @@ public class App extends Application implements HasActivityInjector, HasBroadcas
         activityTracker.register(this);
 
         sessionManager.start();
+
+        AuroraSession session = sessionManager.getSession();
+        if (session == null) {
+            stopService(new Intent(this, FileObserverService.class));
+            AppUtil.setComponentEnabled(FileObserverService.class, false, this);
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
