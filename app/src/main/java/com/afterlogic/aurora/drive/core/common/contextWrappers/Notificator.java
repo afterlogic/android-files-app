@@ -73,7 +73,6 @@ public class Notificator {
                 .build();
 
         notificationManagerCompat.notify(UUID.randomUUID().toString(), ID_DOWNLOADS, notification);
-        notificationManagerCompat.notify(ID_DOWNLOADS, notification);
     }
 
     public void notifyMessage(@Nullable String tag, String title, String message) {
@@ -97,6 +96,7 @@ public class Notificator {
                 .setProgress(100, progress.getProgress(), progress.getProgress() == -1)
                 .setContentText(progress.getFileName())
                 .setSmallIcon(R.drawable.ic_notify)
+                .setDefaults(0)
                 .setOngoing(true);
 
         notificationManagerCompat.notify(ID_SYNC_PROGRESS, notifyBuilder.build());
