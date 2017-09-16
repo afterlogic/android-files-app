@@ -1,10 +1,11 @@
 <resources>
 
+    <string name="value_webView_localization">en-GB</string>
+
     <string name="shared_user_label" translatable="false" >Afterlogic.Aurora</string>
 
     <string name="app_name">Aurora.Files</string>
     <string name="prompt_downloaded_file_description">From Aurora.Files</string>
-
 
     <string name="app_name_global" translatable="false">Aurora</string>
 

@@ -416,7 +416,7 @@ public class LoginViewModel extends LifecycleViewModel {
 
         if (checkedHost.externalLoginAllowed) {
 
-            loginUrl.set(getLoginUrl());
+            loginUrl.set(getLoginUrl(checkedHost.host));
             webViewState.set(INITIALIZATION);
 
         } else {
@@ -483,15 +483,19 @@ public class LoginViewModel extends LifecycleViewModel {
 
                 isPageLoadingAfterCancellAuth = true;
                 webViewClearHistoryCommand.fire();
-                loginUrl.set(getLoginUrl());
+                loginUrl.set(getLoginUrl(checkedHost));
 
                 break;
 
         }
     }
 
-    private String getLoginUrl() {
-        return checkedHost != null ? checkedHost + "?external-clients-login-form" : null;
+    private String getLoginUrl(String host) {
+
+        if (host == null) return null;
+
+        return host + "?external-clients-login-form"
+                        + "&locale=" + appResources.getString(R.string.value_webView_localization);
     }
 
     private String urlWithoutScheme(String url) {

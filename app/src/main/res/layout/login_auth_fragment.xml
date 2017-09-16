@@ -147,6 +147,7 @@
             app:goBackCommand="@{vm.webViewGoBackCommand}"
             app:reloadCommand="@{vm.reloadWebViewCommand}"
             app:stopLoadingCommand="@{vm.webViewStopLoadingCommand}"
+            app:clearHistoryCommand="@{vm.webViewClearHistoryCommand}"
             tools:visibility="visible"
             tools:ignore="UnusedAttribute" />
 
