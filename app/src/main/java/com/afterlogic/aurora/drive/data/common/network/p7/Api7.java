@@ -20,6 +20,7 @@ import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Query;
+import retrofit2.http.Streaming;
 import retrofit2.http.Url;
 
 /**
@@ -125,6 +126,7 @@ public interface Api7 {
     Single<ApiResponseP7<Boolean>> copyFiles(@FieldMap Map<String, Object> fields);
 
     @GET(DownloadInterceptor.INTERCEPT_DOWNLOAD)
+    @Streaming
     Single<ResponseBody> downloadFile(@Query(DownloadInterceptor.QUERY_ACCOUNT_ID) long accountId,
                                           @Query(DownloadInterceptor.QUERY_HASH) String sharedHash,
                                           @Query(DownloadInterceptor.QUERY_AUTH_TOKEN) String authToken);
