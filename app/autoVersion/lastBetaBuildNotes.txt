@@ -1,6 +1,4 @@
-Release 93:
- - Improvements of social authorization
- - BUG - additional login form can't be loaded
- - Detect capability to login using social authorization
-
-!!! Be careful, if you use version with build lower than 92 then re login required and all local data will lost. !!!
+Release 94:
+- Detect capability to login using social authorization
+- Improvements of social authorization
+- Add localization for social authorisation request

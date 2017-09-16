@@ -18,8 +18,8 @@ android {
         minSdkVersion 15
         targetSdkVersion 26
 
-        versionCode autoVersion.incrementalVersionCode
-        versionName autoVersion.incrementalVersionName
+        versionCode autoVersion.versionCode
+        versionName autoVersion.versionName
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -72,7 +72,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
             ext.betaDistributionGroupAliases = "aurora-android"
-            ext.betaDistributionReleaseNotesFilePath = autoVersion.lastBuildReleaseNoteFile
+            ext.betaDistributionReleaseNotesFilePath = autoVersion.releaseNoteFilePath
 
         }
     }
@@ -87,7 +87,7 @@ android {
 
 autoVersion {
 
-    autoVersionForTasks "assembleRelease", "assembleReleaseBeta"
+    prepareVersionOnTasks "assembleRelease", "assembleReleaseBeta"
 
 }
 
