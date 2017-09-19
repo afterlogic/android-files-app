@@ -17,9 +17,9 @@ import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
-import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.MessageDialogViewModel;
 import com.afterlogic.aurora.drive.presentation.common.binding.commands.ContextMenuCommand;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.OnActionListener;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.MessageDialogViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFileListViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.ViewModelsConnection;
 import com.afterlogic.aurora.drive.presentation.modules.offline.interactor.OfflineFileListInteractor;
@@ -86,7 +86,7 @@ public class OfflineFileListViewModel extends SearchableFileListViewModel<Offlin
     }
 
     @Override
-    protected OfflineFileViewModel mapFileItem(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener) {
+    protected OfflineFileViewModel mapFileItem(AuroraFile file, OnActionListener<AuroraFile> onItemClickListener) {
         return mapper.map(file, onItemClickListener);
     }
 

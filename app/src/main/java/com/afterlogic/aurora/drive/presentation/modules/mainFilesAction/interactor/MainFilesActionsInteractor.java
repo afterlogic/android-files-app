@@ -3,6 +3,9 @@ package com.afterlogic.aurora.drive.presentation.modules.mainFilesAction.interac
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
 import com.afterlogic.aurora.drive.core.common.rx.OptionalDisposable;
 import com.afterlogic.aurora.drive.core.common.rx.RxVariable;
+import com.afterlogic.aurora.drive.core.consts.Const;
+import com.afterlogic.aurora.drive.data.common.network.SessionManager;
+import com.afterlogic.aurora.drive.model.AuroraSession;
 
 import javax.inject.Inject;
 
@@ -17,12 +20,14 @@ import io.reactivex.subjects.PublishSubject;
 @ModuleScope
 public class MainFilesActionsInteractor {
 
-    private RxVariable<MainFileActionsFile> file = new RxVariable<>();
-    private OptionalDisposable requestDisposable = new OptionalDisposable();
-    private PublishSubject<MainFileAction> actionPublishSubject = PublishSubject.create();
+    private final RxVariable<MainFileActionsFile> file = new RxVariable<>();
+    private final OptionalDisposable requestDisposable = new OptionalDisposable();
+    private final PublishSubject<MainFileAction> actionPublishSubject = PublishSubject.create();
+    private final SessionManager sessionManager;
 
     @Inject
-    MainFilesActionsInteractor() {
+    MainFilesActionsInteractor(SessionManager sessionManager) {
+        this.sessionManager = sessionManager;
     }
 
     public void finishCurrentRequest() {
@@ -31,6 +36,11 @@ public class MainFilesActionsInteractor {
 
     public void postAction(MainFileAction action) {
         actionPublishSubject.onNext(action);
+    }
+
+    public boolean isP8() {
+        AuroraSession session = sessionManager.getSession();
+        return session != null && session.getApiVersion() == Const.ApiVersion.API_P8;
     }
 
     public Observable<RxVariable.Value<MainFileActionsFile>> getFile() {

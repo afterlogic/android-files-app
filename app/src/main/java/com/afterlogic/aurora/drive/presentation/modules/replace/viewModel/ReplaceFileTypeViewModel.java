@@ -4,7 +4,7 @@ import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.OnActionListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.ProgressViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileListArgs;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFileListViewModel;
@@ -43,7 +43,7 @@ public class ReplaceFileTypeViewModel extends SearchableFileListViewModel<
     }
 
     @Override
-    protected ReplaceFileViewModel mapFileItem(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener) {
+    protected ReplaceFileViewModel mapFileItem(AuroraFile file, OnActionListener<AuroraFile> onItemClickListener) {
         return new ReplaceFileViewModel(file, onItemClickListener);
     }
 

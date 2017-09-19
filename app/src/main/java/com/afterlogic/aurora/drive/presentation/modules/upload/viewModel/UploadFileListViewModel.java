@@ -12,7 +12,7 @@ import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.model.error.FileAlreadyExistError;
-import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.OnActionListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.MessageDialogViewModel;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.ProgressViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.rx.WakeLockTransformer;
@@ -48,6 +48,8 @@ public class UploadFileListViewModel extends FileListViewModel<UploadFileListVie
     private final Router router;
     private final WakeLockTransformer.Factory wakeLockFactory;
 
+    private final FileMap fileMap;
+
     private final PublishSubject<UploadArgs> argsPublisher = PublishSubject.create();
 
     private final AtomicBoolean uploading = new AtomicBoolean(false);
@@ -61,13 +63,17 @@ public class UploadFileListViewModel extends FileListViewModel<UploadFileListVie
                             AppResources appResources,
                             Router router,
                             WakeLockTransformer.Factory wakeLockFactory) {
+
         super(interactor, subscriber, viewModelsConnection);
+
         this.interactor = interactor;
         this.subscriber = subscriber;
         this.appResources = appResources;
         this.viewModelsConnection = viewModelsConnection;
         this.router = router;
         this.wakeLockFactory = wakeLockFactory;
+
+        this.fileMap = new FileMap(appResources);
 
         argsPublisher
                 .map(UploadArgs::getType)
@@ -78,8 +84,8 @@ public class UploadFileListViewModel extends FileListViewModel<UploadFileListVie
     }
 
     @Override
-    protected UploadFileViewModel mapFileItem(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener) {
-        return new UploadFileViewModel(file, onItemClickListener);
+    protected UploadFileViewModel mapFileItem(AuroraFile file, OnActionListener<AuroraFile> onClick) {
+        return fileMap.mapAndStoreSource(file, onClick);
     }
 
     @Override
@@ -92,6 +98,40 @@ public class UploadFileListViewModel extends FileListViewModel<UploadFileListVie
     protected void onCleared() {
         super.onCleared();
         globalDisposableBag.dispose();
+    }
+
+    @Override
+    protected void onFileClick(AuroraFile file) {
+        if (!file.isFolder()) return;
+
+        super.onFileClick(file);
+    }
+
+    @Override
+    protected void handleFiles(List<AuroraFile> files) {
+
+        fileMap.clear();
+
+        super.handleFiles(files);
+
+        Stream.of(files)
+                .filter(AuroraFile::hasThumbnail)
+                .map(file -> interactor.getThumbnail(file)
+                        .compose(subscriber::defaultSchedulers)
+                        .doOnSuccess(thumb -> {
+
+                            UploadFileViewModel vm = fileMap.getViewModel(file);
+                            if (vm != null) {
+                                vm.setThumbnail(thumb);
+                            }
+
+                        })
+                        .toCompletable()
+                        .onErrorComplete()
+                )
+                .collect(Observables.Collectors.concatCompletable())
+                .subscribe(subscriber.justSubscribe());
+
     }
 
     private void onAction(UploadAction action) {

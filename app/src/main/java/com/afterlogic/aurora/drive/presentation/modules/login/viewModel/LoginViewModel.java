@@ -418,6 +418,7 @@ public class LoginViewModel extends LifecycleViewModel {
 
             loginUrl.set(getLoginUrl(checkedHost.host));
             webViewState.set(INITIALIZATION);
+            focus.focus("login");
 
         } else {
 

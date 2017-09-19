@@ -12,7 +12,7 @@ import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnPropertyChangedCallback;
-import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.OnActionListener;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.AuroraFileViewModel;
 import com.github.nitrico.lastadapter.StableId;
 
@@ -36,7 +36,7 @@ public class OfflineFileViewModel extends AuroraFileViewModel implements View.On
     private final long stableId;
 
     OfflineFileViewModel(AuroraFile file,
-                         OnItemClickListener<AuroraFile> onItemClickListener,
+                         OnActionListener<AuroraFile> onItemClickListener,
                          OnFileViewLongClickListener onLongClickListener,
                          AppResources appResources,
                          long stableId) {

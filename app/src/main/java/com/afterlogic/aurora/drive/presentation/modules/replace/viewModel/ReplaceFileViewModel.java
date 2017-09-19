@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.replace.viewModel;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.OnActionListener;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.AuroraFileViewModel;
 
 /**
@@ -11,7 +11,7 @@ import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.
 
 public class ReplaceFileViewModel extends AuroraFileViewModel {
 
-    public ReplaceFileViewModel(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener) {
+    public ReplaceFileViewModel(AuroraFile file, OnActionListener<AuroraFile> onItemClickListener) {
         super(file, onItemClickListener);
     }
 }

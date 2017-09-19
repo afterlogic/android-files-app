@@ -11,7 +11,7 @@ import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnPropertyChangedCallback;
-import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.OnActionListener;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.AuroraFileViewModel;
 
 /**
@@ -32,13 +32,13 @@ public class MainFileViewModel extends AuroraFileViewModel {
     private final AuroraFile file;
     private final AppResources appResources;
 
-    private final OnItemClickListener<AuroraFile> onLongClickListener;
+    private final OnActionListener<AuroraFile> onLongClickListener;
 
     private Uri thumbnail;
 
     MainFileViewModel(AuroraFile file,
-                      OnItemClickListener<AuroraFile> onItemClickListener,
-                      OnItemClickListener<AuroraFile> onLongClickListener,
+                      OnActionListener<AuroraFile> onItemClickListener,
+                      OnActionListener<AuroraFile> onLongClickListener,
                       AppResources appResources) {
         super(file, onItemClickListener);
         this.file = file;
@@ -53,7 +53,7 @@ public class MainFileViewModel extends AuroraFileViewModel {
     }
 
     public void onLongClick() {
-        onLongClickListener.onItemClicked(-1, file);
+        onLongClickListener.onAction(file);
     }
 
     void setThumbnail(Uri thumb) {

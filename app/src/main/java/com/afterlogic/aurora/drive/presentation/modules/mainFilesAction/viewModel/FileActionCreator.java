@@ -14,7 +14,7 @@ public class FileActionCreator {
     private final AppResources appResources;
 
     @Inject
-    public FileActionCreator(AppResources appResources) {
+    FileActionCreator(AppResources appResources) {
         this.appResources = appResources;
     }
 
