@@ -1,7 +1,5 @@
 package com.afterlogic.aurora.drive.presentation.common.modules.v3.view;
 
-import android.arch.lifecycle.LifecycleRegistry;
-import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.ViewDataBinding;
@@ -14,8 +12,8 @@ import android.view.ViewGroup;
 
 import com.afterlogic.aurora.drive.BR;
 import com.afterlogic.aurora.drive.application.assembly.Injectable;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.LifecycleViewModel;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.LifecycleViewModel;
 
 import javax.inject.Inject;
 
@@ -24,9 +22,10 @@ import javax.inject.Inject;
  * mail: mail@sunnydaydev.me
  */
 
-public abstract class InjectableMVVMFragment<VM extends LifecycleViewModel> extends Fragment implements LifecycleRegistryOwner, Injectable {
-
-    private LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
+public abstract class InjectableMVVMFragment<VM extends LifecycleViewModel>
+        extends Fragment
+        implements Injectable
+{
 
     private UnbindableObservable.Bag startedBindingsBag = new UnbindableObservable.Bag();
     private UnbindableObservable.Bag createdBindingsBag = new UnbindableObservable.Bag();
@@ -82,11 +81,6 @@ public abstract class InjectableMVVMFragment<VM extends LifecycleViewModel> exte
         createdBindingsBag.unbindAndClear();
         binding.unbind();
         super.onDestroyView();
-    }
-
-    @Override
-    public LifecycleRegistry getLifecycle() {
-        return lifecycleRegistry;
     }
 
     public abstract VM createViewModel(ViewModelProvider provider);
