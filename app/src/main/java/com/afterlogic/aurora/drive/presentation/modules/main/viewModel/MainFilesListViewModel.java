@@ -29,7 +29,7 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnListChangedCallback;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnPropertyChangedCallback;
-import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.OnActionListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ViewModelState;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.MessageDialogViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileListArgs;
@@ -122,7 +122,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
         this.viewModelsConnection = viewModelsConnection;
         this.notificator = notificator;
 
-        mapper.setOnLongClickListener((position, item) -> onFileLongClick(item));
+        mapper.setOnLongClickListener(this::onFileLongClick);
 
         viewModelsConnection.getMultiChoiceMode()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -156,7 +156,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     }
 
     @Override
-    protected MainFileViewModel mapFileItem(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener) {
+    protected MainFileViewModel mapFileItem(AuroraFile file, OnActionListener<AuroraFile> onItemClickListener) {
         return mapper.mapAndStore(file, onItemClickListener);
     }
 
@@ -528,7 +528,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
         if (vm != null) {
             items.remove(vm);
 
-            MainFileViewModel newVM = mapper.mapAndStore(newFile, (p, item) -> onFileClick(item));
+            MainFileViewModel newVM = mapper.mapAndStore(newFile, this::onFileClick);
 
             int newPosition = Stream.of(mapper.getKeys())
                     .sorted(FileUtil.AURORA_FILE_COMPARATOR)

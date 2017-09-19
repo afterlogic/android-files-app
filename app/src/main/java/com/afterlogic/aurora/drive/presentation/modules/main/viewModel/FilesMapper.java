@@ -4,7 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.OnActionListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,18 +24,18 @@ class FilesMapper {
     private final Map<AuroraFile, MainFileViewModel> byFileMap = new HashMap<>();
     private final Map<String, MainFileViewModel> byFileSpecMap = new HashMap<>();
 
-    private OnItemClickListener<AuroraFile> onLongClickListener;
+    private OnActionListener<AuroraFile> onLongClickListener;
 
     @Inject
     FilesMapper(AppResources appResources) {
         this.appResources = appResources;
     }
 
-    void setOnLongClickListener(OnItemClickListener<AuroraFile> onLongClickListener) {
+    void setOnLongClickListener(OnActionListener<AuroraFile> onLongClickListener) {
         this.onLongClickListener = onLongClickListener;
     }
 
-    MainFileViewModel mapAndStore(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener) {
+    MainFileViewModel mapAndStore(AuroraFile file, OnActionListener<AuroraFile> onItemClickListener) {
         MainFileViewModel vm = new MainFileViewModel(file, onItemClickListener, onLongClickListener, appResources);
         byFileMap.put(file, vm);
         byFileSpecMap.put(file.getPathSpec(), vm);

@@ -11,12 +11,12 @@ import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.core.common.streams.StreamCollectors;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnListChangedCallback;
-import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.LifecycleViewModel;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.SynchronizedUiObservableField;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.ProgressViewModel;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.AsyncUiObservableField;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.LifecycleViewModel;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.OnActionListener;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.SynchronizedUiObservableField;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ViewModelState;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.ProgressViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.FilesListInteractor;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileListArgs;
 import com.annimon.stream.Stream;
@@ -118,15 +118,16 @@ public abstract class FileListViewModel<
 
     protected void handleFiles(List<AuroraFile> files) {
 
-        OnItemClickListener<AuroraFile> onItemClickListener = (p, file) -> onFileClick(file);
+        OnActionListener<AuroraFile> onItemClickListener = this::onFileClick;
         Stream.of(files)
                 .map(file -> mapFileItem(file, onItemClickListener))
                 .collect(StreamCollectors.setListByClearAdd(items));
 
         viewModelState.set(items.size() > 0 ? ViewModelState.CONTENT : ViewModelState.EMPTY);
+
     }
 
-    protected abstract FileVM mapFileItem(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener);
+    protected abstract FileVM mapFileItem(AuroraFile file, OnActionListener<AuroraFile> onItemClickListener);
 
     protected void onFileClick(AuroraFile file) {
         if (file.isFolder()) {
