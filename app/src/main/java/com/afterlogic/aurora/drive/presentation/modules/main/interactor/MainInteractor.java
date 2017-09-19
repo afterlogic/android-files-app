@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.afterlogic.aurora.drive.core.common.util.AppUtil;
+import com.afterlogic.aurora.drive.core.consts.Const;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthenticatorService;
@@ -43,6 +44,13 @@ public class MainInteractor extends FilesRootInteractor {
         this.dataCleaner = dataCleaner;
         this.sessionManager = sessionManager;
         this.appContext = appContext;
+    }
+
+    public boolean isP8() {
+
+        AuroraSession session = sessionManager.getSession();
+        return session != null && session.getApiVersion() == Const.ApiVersion.API_P8;
+
     }
 
     public Completable logout() {

@@ -10,7 +10,6 @@ import com.afterlogic.aurora.drive.core.common.rx.DisposableBag;
 import com.afterlogic.aurora.drive.core.common.rx.RxVariable;
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
-import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnPropertyChangedCallback;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ViewModelState;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFilesRootViewModel;
@@ -35,7 +34,7 @@ public class MainViewModel extends SearchableFilesRootViewModel<MainFilesListVie
     public final ObservableField<String> logoutButtonText = new ObservableField<>();
     public final ObservableBoolean multiChoiceMode = new ObservableBoolean();
     public final ObservableInt multiChoiceCount = new ObservableInt(0);
-    public final ObservableBoolean multiChoiceHasFolder = new ObservableBoolean(false);
+    public final ObservableBoolean multiChoiceDownloadable = new ObservableBoolean(false);
     public final ObservableBoolean multiChoiceOfflineEnabled = new ObservableBoolean(false);
 
     private final MainInteractor interactor;
@@ -159,7 +158,12 @@ public class MainViewModel extends SearchableFilesRootViewModel<MainFilesListVie
         if (list == null) return;
 
         multiChoiceCount.set(list.size());
-        multiChoiceHasFolder.set(Stream.of(list).map(MultiChoiceFile::getFile).anyMatch(AuroraFile::isFolder));
+
+        boolean downloadable = !Stream.of(list)
+                .map(MultiChoiceFile::getFile)
+                .anyMatch(file -> file.isFolder() || file.isLink());
+        multiChoiceDownloadable.set(downloadable);
+
         multiChoiceOfflineEnabled.set(Stream.of(list).allMatch(MultiChoiceFile::isOfflineEnabled));
     }
 

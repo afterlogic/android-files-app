@@ -55,4 +55,5 @@ public class AuroraSession {
         String apiVersion = accountManager.getUserData(account, AccountHelper.API_VERSION);
         return Integer.parseInt(apiVersion);
     }
+
 }

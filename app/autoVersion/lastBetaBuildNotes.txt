@@ -3,3 +3,4 @@ Release 94:
 - Improvements of social authorization
 - Add localization for social authorisation request
 - Progress while file donloading
+- BUG - disable downloading for urls
