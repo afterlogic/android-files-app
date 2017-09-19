@@ -61,4 +61,5 @@ public class FileProgressTransformer<T extends Progressible> implements Observab
                 .doFinally(() -> progress.set(null))
                 .compose(disposable::track);
     }
+
 }

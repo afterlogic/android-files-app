@@ -51,7 +51,7 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
     private final static String FILES = "files";
 
     private final Context mAppContext;
-    private final FileSubRepository mFileSubRepo;
+    private final FileSubRepository subRepo;
     private final FilesLocalService mLocalService;
     private final SessionManager sessionManager;
 
@@ -74,7 +74,7 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
         super(cache, FILES);
         this.sessionManager = sessionManager;
         mAppContext = appContext;
-        mFileSubRepo = fileSubRepo;
+        subRepo = fileSubRepo;
         mLocalService = localService;
         mCacheDir = cacheDir;
         mOfflineDir = offlineDir;
@@ -86,34 +86,34 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
 
     @Override
     public Single<List<String>> getAvailableFileTypes() {
-        return mFileSubRepo.getAvailableFileTypes();
+        return subRepo.getAvailableFileTypes();
     }
 
     @Override
     public Single<List<AuroraFile>> getFiles(AuroraFile folder) {
-        return mFileSubRepo.getFiles(folder)
+        return subRepo.getFiles(folder)
                 .map(this::sortFiles);
     }
 
     @Override
     public Single<List<AuroraFile>> getFiles(AuroraFile folder, String pattern) {
-        return mFileSubRepo.getFiles(folder, pattern)
+        return subRepo.getFiles(folder, pattern)
                 .map(this::sortFiles);
     }
 
     @Override
     public Single<Uri> getFileThumbnail(AuroraFile file) {
-        return mFileSubRepo.getFileThumbnail(file);
+        return subRepo.getFileThumbnail(file);
     }
 
     @Override
     public Single<Uri> viewFile(AuroraFile file) {
-        return mFileSubRepo.viewFile(file);
+        return subRepo.viewFile(file);
     }
 
     @Override
     public Completable createFolder(AuroraFile file) {
-        return mFileSubRepo.createFolder(file);
+        return subRepo.createFolder(file);
     }
 
     @Override
@@ -123,18 +123,18 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
         return checkFileExisting(newFile)
                 .andThen(Completable.error(new FileAlreadyExistError(newFile)))
                 .compose(Observables.completeOnError(FileNotExistError.class))
-                .andThen(mFileSubRepo.rename(file, newName))
+                .andThen(subRepo.rename(file, newName))
                 .andThen(checkFile(newFile));
     }
 
     @Override
     public Completable checkFileExisting(AuroraFile file) {
-        return mFileSubRepo.checkFileExisting(file);
+        return subRepo.checkFileExisting(file);
     }
 
     @Override
     public Single<AuroraFile> checkFile(AuroraFile file) {
-        return mFileSubRepo.checkFile(file);
+        return subRepo.checkFile(file);
     }
 
     @Override
@@ -149,7 +149,7 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
 
             checkFilesType(type, files);
 
-            return mFileSubRepo.delete(type, files)
+            return subRepo.delete(type, files)
                     .andThen(Completable.defer(() -> Stream.of(files)
                             .map(it -> setOffline(it, false))
                             .collect(Observables.Collectors.concatCompletable())
@@ -159,7 +159,7 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
 
     @Override
     public final Observable<Progressible<File>> downloadOrGetOffline(AuroraFile file, File target) {
-        return mFileSubRepo.checkFile(file)
+        return subRepo.checkFile(file)
                 .onErrorResumeNext(error -> getOfflineFile(file.getPathSpec())
                         .flatMap(offlineFile -> offlineFile.getLastModified() != -1 ? Maybe.just(offlineFile) : Maybe.empty())
                         .switchIfEmpty(Maybe.error(error))
@@ -190,8 +190,8 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
                     .andThen(Completable.error(new FileAlreadyExistError(checkFile)))
                     .compose(Observables.completeOnError(FileNotExistError.class))
                     //upload
-                    .andThen(mFileSubRepo.uploadFileToServer(folder, fileInfo))
-                    .flatMap(progress -> {
+                    .andThen(subRepo.uploadFileToServer(folder, fileInfo))
+                    .<Progressible<AuroraFile>>flatMap(progress -> {
                         if (!progress.isDone()){
                             return Observable.just(progress.map(null));
                         } else {
@@ -200,7 +200,8 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
                                     .toObservable()
                                     .startWith(new Progressible<>(null, progress.getMax(), progress.getProgress(), progress.getName(), false));
                         }
-                    });
+                    })
+                    .startWith(new Progressible<>(null, -1, -1, checkFile.getName(), false));
         });
     }
 
@@ -214,7 +215,7 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
                 .andThen(delete(file))
                 .compose(Observables.completeOnError(FileNotExistError.class))
                 //upload
-                .andThen(mFileSubRepo.uploadFileToServer(folder, fileInfo))
+                .andThen(subRepo.uploadFileToServer(folder, fileInfo))
                 .flatMap(progress -> {
                     if (!progress.isDone()){
                         return Observable.just(progress.map(null));
@@ -284,7 +285,7 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
 
     @Override
     public Single<String> createPublicLink(AuroraFile file) {
-        return mFileSubRepo.createPublicLink(file)
+        return subRepo.createPublicLink(file)
                 .map(link -> {
 
                     AuroraSession session = sessionManager.getSession();
@@ -312,19 +313,19 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
 
     @Override
     public Completable deletePublicLink(AuroraFile file) {
-        return mFileSubRepo.deletePublicLink(file);
+        return subRepo.deletePublicLink(file);
     }
 
     @Override
     public Completable replaceFiles(AuroraFile targetFolder, List<AuroraFile> files) {
         // TODO: check source files size, path and type
-        return mFileSubRepo.replaceFiles(targetFolder, files);
+        return subRepo.replaceFiles(targetFolder, files);
     }
 
     @Override
     public Completable copyFiles(AuroraFile targetFolder, List<AuroraFile> files) {
         // TODO: check source files size, path and type
-        return mFileSubRepo.copyFiles(targetFolder, files);
+        return subRepo.copyFiles(targetFolder, files);
     }
 
     private void checkFilesType(String type, List<AuroraFile> files) throws IllegalArgumentException{
@@ -419,7 +420,7 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
 
         AtomicBoolean finished = new AtomicBoolean(false);
 
-        Observable<Progressible<File>> request = mFileSubRepo.downloadFileBody(file)
+        Observable<Progressible<File>> request = subRepo.downloadFileBody(file)
                 .flatMapObservable(fileBody -> Observable.<Progressible<File>>create(emitter -> {
 
                     long maxSize = file.getSize();

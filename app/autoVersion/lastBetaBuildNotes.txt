@@ -4,3 +4,4 @@ Release 94:
 - Add localization for social authorisation request
 - Progress while file donloading
 - BUG - disable downloading for urls
+- BUG - error message on donload/upload cancelling
