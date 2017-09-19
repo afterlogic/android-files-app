@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:bind="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+        
         <import type="android.view.View"/>
         <import type="com.afterlogic.aurora.drive.presentation.modules.fileView.viewModel.FileViewImageItemViewModel"/>
 
@@ -19,18 +19,24 @@
         android:layout_height="match_parent"
         android:background="@{viewModel.fullscreen ? @color/black : @color/white}">
 
-        <uk.co.senab.photoview.PhotoView
+        <com.github.chrisbanes.photoview.PhotoView
             android:id="@+id/image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="fitCenter"
             android:visibility="@{viewModel.error ? View.GONE : View.VISIBLE}"
-            android:onClick="@{viewModel}"
-            bind:imageUri="@{viewModel.imageContent}"
-            bind:glideListener="@{viewModel}"
-            bind:zoomable="@{viewModel.fullscreen}"
-            bind:scale="@{viewModel.fullscreen ? -1f : 1f}"
-            bind:onTap="@{viewModel}"/>
+            app:imageUri="@{viewModel.imageContent}"
+            app:glideListener="@{viewModel}"
+            app:zoomable="@{viewModel.fullscreen}"
+            app:scale="@{viewModel.fullscreen ? -1f : 1f}"
+            app:onTap="@{() -> viewModel.toggleFullscreen()}"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:onClick="@{() -> viewModel.toggleFullscreen()}"
+            android:visibility="@{viewModel.fullscreen ? View.GONE : View.VISIBLE}"/>
 
         <TextView
             android:id="@+id/error"
@@ -47,5 +53,7 @@
             android:layout_height="64dp"
             android:layout_centerInParent="true"
             android:visibility="@{viewModel.progress ? View.VISIBLE : View.GONE}"/>
+        
     </RelativeLayout>
+    
 </layout>

@@ -1,7 +1,5 @@
 package com.afterlogic.aurora.drive.presentation.common.modules.v3.view;
 
-import android.arch.lifecycle.LifecycleRegistry;
-import android.arch.lifecycle.LifecycleRegistryOwner;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.ViewDataBinding;
@@ -24,9 +22,7 @@ import javax.inject.Inject;
  * mail: mail@sunnydaydev.me
  */
 
-public abstract class InjectableMVVMBottomSheetDialogFragment<VM extends LifecycleViewModel> extends BottomSheetDialogFragment implements LifecycleRegistryOwner, Injectable {
-
-    private LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
+public abstract class InjectableMVVMBottomSheetDialogFragment<VM extends LifecycleViewModel> extends BottomSheetDialogFragment implements Injectable {
 
     private UnbindableObservable.Bag startedBindingsBag = new UnbindableObservable.Bag();
     private UnbindableObservable.Bag createdBindingsBag = new UnbindableObservable.Bag();
@@ -82,11 +78,6 @@ public abstract class InjectableMVVMBottomSheetDialogFragment<VM extends Lifecyc
         createdBindingsBag.unbindAndClear();
         binding.unbind();
         super.onDestroyView();
-    }
-
-    @Override
-    public LifecycleRegistry getLifecycle() {
-        return lifecycleRegistry;
     }
 
     public abstract VM createViewModel(ViewModelProvider provider);

@@ -43,12 +43,12 @@ ext {
     //Dependencies
     compatVersion = '26.1.0'
     daggerVersion = '2.11'
-    rxJavaVersion = '2.1.1'
+    rxJavaVersion = '2.1.3'
     rxJavaAndroidVersion = '2.0.1'
     retrofitVersion = '2.3.0'
-    okHttpVersion = '3.8.1'
-    glideVersion = '3.8.0'
-    photoViewVersion = '1.3.1'
+    okHttpVersion = '3.9.0'
+    glideVersion = '4.1.1'
+    photoViewVersion = '2.0.0'
     fabVersion = '1.10.1'
     gsonVersion = '2.8.1'
     streamVersion = '1.1.8'
@@ -59,7 +59,7 @@ ext {
     crashlyticsVersion = '2.6.8@aar'
 
     architectureComponentsVersion = '1.0.0-alpha9-1'
-    ciceroneVersion = '1.2.1'
+    ciceroneVersion = '2.1.0'
 
     lastAdapterVersion = '2.2.2'
     materialProgressBarVersion = '1.1.5'
