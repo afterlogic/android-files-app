@@ -1,6 +1,5 @@
 package com.afterlogic.aurora.drive.data.modules.auth;
 
-import android.support.v4.util.LruCache;
 import android.support.v4.util.Pair;
 
 import com.afterlogic.aurora.drive.core.consts.Const;
@@ -24,8 +23,6 @@ import okhttp3.HttpUrl;
 class P8AuthenticatorSubService implements AuthenticatorSubService {
 
     private final P8AuthenticatorNetworkService service;
-
-    private final LruCache<String, Boolean> apiVersionsCache = new LruCache<>(10);
 
     @Inject
     P8AuthenticatorSubService(P8AuthenticatorNetworkService service) {
@@ -95,26 +92,11 @@ class P8AuthenticatorSubService implements AuthenticatorSubService {
     @Override
     public Maybe<Integer> getApiVersion(String host) {
 
-        return Single.defer(() -> {
-
-            Boolean cached = apiVersionsCache.get(host);
-
-            if (cached == null) {
-
-                return service.ping(host)
-                        .map(pong -> true)
-                        .onErrorResumeNext(error -> isIncorrectApiVersionError(error)
-                                ? Single.just(false): Single.error(error)
-                        )
-                        .doOnSuccess(isP8 -> apiVersionsCache.put(host, isP8));
-
-            } else {
-
-                return Single.just(cached);
-
-            }
-
-        })//--->
+        return service.ping(host)
+                .map(pong -> true)
+                .onErrorResumeNext(error -> isIncorrectApiVersionError(error) ?
+                        Single.just(false): Single.error(error)
+                )
                 .toMaybe()
                 .flatMap(isP8 -> isP8 ? Maybe.just(Const.ApiVersion.API_P8) : Maybe.empty());
 
@@ -130,7 +112,7 @@ class P8AuthenticatorSubService implements AuthenticatorSubService {
         private final UserP8 user;
         private final Long accountId;
 
-        public AuthorizedData(AuthToken authToken, Pair<Long, UserP8> user) {
+        private AuthorizedData(AuthToken authToken, Pair<Long, UserP8> user) {
             this.token = authToken.token;
             this.user = user.second;
             this.accountId = user.first;

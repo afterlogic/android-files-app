@@ -29,17 +29,17 @@ class P7AuthenticatorNetworkService {
         this.api = api;
     }
 
-    public Single<SystemAppData> getSystemAppData(String host) {
+    Single<SystemAppData> getSystemAppData(String host) {
         return getSystemAppData(host, null)
                 .map(ApiResponse::getResult);
     }
 
-    public Single<Pair<Long, SystemAppData>> getLoggedSystemAppData(String host, String authToken) {
+    Single<Pair<Long, SystemAppData>> getLoggedSystemAppData(String host, String authToken) {
         return getSystemAppData(host, authToken)
                 .map(response -> new Pair<>(response.getAccountId(), response.getData()));
     }
 
-    public Single<AuthToken> login(String host, String login, String pass) {
+    Single<AuthToken> login(String host, String login, String pass) {
         return Single.defer(() -> {
 
             HashMap<String, Object> fields = new HashMap<>();
