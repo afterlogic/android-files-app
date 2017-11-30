@@ -38,7 +38,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:layout_gravity="bottom"
                 app:pager="@{viewpager}"
-                android:visibility="@{vm.fileTypesLocked || vm.storages.size() == 0 ? View.GONE : View.VISIBLE}"
+                android:visibility="@{vm.fileTypesLocked || vm.storages.size() &lt; 2 ? View.GONE : View.VISIBLE}"
                 app:layout_scrollFlags="scroll|enterAlways"/>
 
         </android.support.design.widget.AppBarLayout>
