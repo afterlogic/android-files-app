@@ -9,8 +9,8 @@ apply from: '../signing/signings.gradle'
 
 android {
 
-    compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.1"
 
     defaultConfig {
 
@@ -18,7 +18,7 @@ android {
 
         applicationId "com.afterlogic.aurora.files"
         minSdkVersion 15
-        targetSdkVersion 26
+        targetSdkVersion 27
 
         versionCode autoVersion.versionCode
         versionName autoVersion.versionName
