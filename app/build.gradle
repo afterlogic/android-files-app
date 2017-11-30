@@ -99,7 +99,7 @@ autoVersion {
 
         general {
 
-            onBuildTypes "release"
+            onBuildTypes "release", "releaseBeta"
             versionNameIncrement "0.0.1"
             versionCodeIncrement 1
             confirmByDialog true
