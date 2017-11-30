@@ -80,7 +80,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
             ext.betaDistributionGroupAliases = "aurora-android"
-            ext.betaDistributionReleaseNotesFilePath = autoVersion.releaseNoteFilePath
+            ext.betaDistributionReleaseNotesFilePath = autoVersion.releaseNotesFilePath
 
         }
     }
@@ -95,7 +95,18 @@ android {
 
 autoVersion {
 
-    prepareVersionOnTasks "assembleRelease", "assembleReleaseBeta"
+    increments {
+
+        general {
+
+            onBuildTypes "release"
+            versionNameIncrement "0.0.1"
+            versionCodeIncrement 1
+            confirmByDialog true
+
+        }
+
+    }
 
 }
 
