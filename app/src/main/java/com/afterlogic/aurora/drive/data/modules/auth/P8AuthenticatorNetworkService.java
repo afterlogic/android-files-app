@@ -32,18 +32,18 @@ class P8AuthenticatorNetworkService {
                 .compose(ApiUtil::checkResponseAndGetData);
     }
 
-    public Single<Pair<Long, UserP8>> getUser(String host, String token) {
+    Single<Pair<Long, UserP8>> getUser(String host, String token) {
         return api.getUser(Api8.completeUrl(host), token, new GetUserParametersDto(token))
                 .compose(ApiUtil::checkResponse)
                 .map(response -> new Pair<>(response.getAccountId(), response.getResult()));
     }
 
-    public Single<AuthToken> login(String host, String login, String password) {
+    Single<AuthToken> login(String host, String login, String password) {
         return api.login(Api8.completeUrl(host), new LoginParametersDto(login, password))
                 .compose(ApiUtil::checkResponseAndGetData);
     }
 
-    public Single<Boolean> checkExternalLoginFormsAvailable(String host) {
+    Single<Boolean> checkExternalLoginFormsAvailable(String host) {
         return api.checkExternalClientLoginFormAvailable(Api8.completeUrl(host))
                 .compose(ApiUtil::checkResponseAndGetData);
     }

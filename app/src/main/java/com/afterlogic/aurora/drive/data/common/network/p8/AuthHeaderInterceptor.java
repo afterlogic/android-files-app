@@ -20,20 +20,22 @@ import okhttp3.Response;
 
 class AuthHeaderInterceptor implements Interceptor {
 
-    private final SessionManager mSessionManager;
+    private final SessionManager sessionManager;
 
     @Inject
     AuthHeaderInterceptor(SessionManager sessionManager) {
-        mSessionManager = sessionManager;
+        this.sessionManager = sessionManager;
     }
 
     @Override
     public Response intercept(@NonNull Chain chain) throws IOException {
-        AuroraSession session = mSessionManager.getSession();
+
+        AuroraSession session = sessionManager.getSession();
 
         Request originalRequest = chain.request();
 
         String authHeader = originalRequest.headers().get(Api8.ApiHeader.NAME_AUTHORISATION);
+
         if (authHeader != null && authHeader.equals(Api8.ApiHeader.VALUE_AUTHORISATION)) {
 
             Request.Builder request = chain.request().newBuilder();
@@ -41,18 +43,31 @@ class AuthHeaderInterceptor implements Interceptor {
             request.removeHeader(Api8.ApiHeader.NAME_AUTHORISATION);
 
             if (session != null) {
+
                 String token = session.getAuthToken();
+
                 if (token != null) {
+
+                    String authHeaderValue = Api8.ApiHeader.VALUE_AUTHORISATION
+                            .replace(Api8.ApiHeader.AUTH_TOKEN, token);
+
                     request.addHeader(
                             Api8.ApiHeader.NAME_AUTHORISATION,
-                            Api8.ApiHeader.VALUE_AUTHORISATION.replace(Api8.ApiHeader.AUTH_TOKEN, token)
+                            authHeaderValue
                     );
+
                 }
+
             }
+
             return chain.proceed(request.build());
 
         } else {
+
             return chain.proceed(originalRequest);
+
         }
+
     }
+
 }

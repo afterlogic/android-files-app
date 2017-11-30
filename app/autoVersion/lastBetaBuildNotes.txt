@@ -1,8 +1,3 @@
-Release 94:
-- Detect capability to login using social authorization.
-- Improvements of social authorization.
-- Add localization for social authorisation request.
-- Progress while file downloading.
-- BUG - disable downloading for urls.
-- BUG - error message on download/upload cancelling.
-- Show file on upload.
+Release 95:
+ - Detect capability to login using social authorization
+ - BUG - Files app doesn't intercept callback of Aurora page by Facebook

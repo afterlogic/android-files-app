@@ -2,7 +2,6 @@ package com.afterlogic.aurora.drive.data.modules.auth;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.util.LruCache;
 import android.support.v4.util.Pair;
 
 import com.afterlogic.aurora.drive.core.consts.Const;
@@ -26,8 +25,6 @@ import okhttp3.HttpUrl;
 class P7AuthenticatorSubService implements AuthenticatorSubService {
 
     private final P7AuthenticatorNetworkService service;
-
-    private final LruCache<String, SystemAppData> systemAppDataCache = new LruCache<>(3);
 
     @Inject
     P7AuthenticatorSubService(P7AuthenticatorNetworkService service) {
@@ -59,7 +56,7 @@ class P7AuthenticatorSubService implements AuthenticatorSubService {
     @Override
     public Single<Boolean> isExternalClientLoginFormsAvailable(String host) {
 
-        return getSystemAppData(host)
+        return service.getSystemAppData(host)
                 .map(data -> data.getApp().isAllowExternalClientCustomAuthentication());
 
     }
@@ -67,33 +64,12 @@ class P7AuthenticatorSubService implements AuthenticatorSubService {
     @Override
     public Maybe<Integer> getApiVersion(String host) {
 
-        return getSystemAppData(host)
+        return service.getSystemAppData(host)
                 .toMaybe()
                 .onErrorResumeNext(error -> isIncorrectApiVersionError(error)
                         ? Maybe.empty() : Maybe.error(error)
                 )
                 .map(systemAppData -> Const.ApiVersion.API_P7);
-
-    }
-
-    private Single<SystemAppData> getSystemAppData(String host) {
-
-        return Single.defer(() -> {
-
-            SystemAppData cached = systemAppDataCache.get(host);
-
-            if (cached != null) {
-
-                return Single.just(cached);
-
-            } else {
-
-                return service.getSystemAppData(host)
-                        .doOnSuccess(data -> systemAppDataCache.put(host, data));
-
-            }
-
-        });
 
     }
 

@@ -304,8 +304,11 @@ public class LoginViewModel extends LifecycleViewModel {
             } else {
 
                 if (!relogin) {
+
                     viewModelState.set(HOST);
                     webViewState.set(NOT_AVAILABLE);
+                    loginUrl.set(null);
+
                 }
 
             }
