@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.interactor;
 
 import com.afterlogic.aurora.drive.presentation.common.modules.model.interactor.Interactor;
-import com.afterlogic.aurora.drive.model.FileType;
+import com.afterlogic.aurora.drive.model.Storage;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import io.reactivex.Single;
 
 public interface FilesInteractor extends Interactor {
 
-    Single<List<FileType>> getAvailableFileTypes();
+    Single<List<Storage>> getAvailableFileTypes();
 
     Single<Boolean> getAuthStatus();
 }

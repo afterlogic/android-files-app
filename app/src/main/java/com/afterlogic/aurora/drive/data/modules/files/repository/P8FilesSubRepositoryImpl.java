@@ -28,6 +28,7 @@ import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.DeleteFileInfo;
 import com.afterlogic.aurora.drive.model.FileInfo;
 import com.afterlogic.aurora.drive.model.Progressible;
+import com.afterlogic.aurora.drive.model.Storage;
 import com.afterlogic.aurora.drive.model.error.FileNotExistError;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
@@ -116,10 +117,16 @@ public class P8FilesSubRepositoryImpl extends Repository implements FileSubRepos
     }
 
     @Override
-    public Single<List<String>> getAvailableStorages() {
+    public Single<List<Storage>> getAvailableStorages() {
+
         return filesService.getAvailableStorages()
                 .compose(Repository::withNetMapper)
-                .compose(authorizationResolver::checkAuth);
+                .compose(authorizationResolver::checkAuth)
+                .map(dtos -> Stream.of(dtos)
+                        .map(dto -> new Storage(dto.getType(), dto.getDisplayName()))
+                        .toList()
+                );
+
     }
 
     @Override

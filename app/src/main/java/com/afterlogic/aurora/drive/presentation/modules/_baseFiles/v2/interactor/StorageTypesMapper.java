@@ -1,25 +1,30 @@
 package com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor;
 
+import android.support.annotation.Nullable;
 import android.util.Pair;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
-import com.afterlogic.aurora.drive.model.FileType;
+import com.afterlogic.aurora.drive.model.Storage;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 
 import java.util.Map;
 
+import javax.inject.Inject;
+
 /**
  * Created by aleksandrcikin on 04.07.17.
  * mail: mail@sunnydaydev.me
  */
-class TypesMapper implements Mapper<FileType, String> {
+public class StorageTypesMapper implements Mapper<Storage, String> {
 
     private final Map<String, String> captionsMap;
 
-    TypesMapper(AppResources appResources) {
+    @Inject
+    StorageTypesMapper(AppResources appResources) {
+
         String[] types = appResources.getStringArray(R.array.folder_types);
         String[] captions = appResources.getStringArray(R.array.folder_captions);
 
@@ -31,10 +36,19 @@ class TypesMapper implements Mapper<FileType, String> {
                 p -> p.first,
                 p -> p.second
         ));
+
     }
 
     @Override
-    public FileType map(String source) {
-        return new FileType(source, captionsMap.get(source));
+    @Nullable
+    public Storage map(String source) {
+
+        String caption = captionsMap.get(source);
+
+        if (caption == null) return null;
+
+        return new Storage(source, caption);
+
     }
+
 }

@@ -7,7 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 
 import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.model.FileType;
+import com.afterlogic.aurora.drive.model.Storage;
 import com.afterlogic.aurora.drive.presentation.modules.upload.viewModel.UploadFileViewModel;
 import com.android.databinding.library.baseAdapters.BR;
 import com.github.nitrico.lastadapter.LastAdapter;
@@ -22,14 +22,14 @@ import java.util.List;
 public class UploadBindings {
 
     @BindingAdapter("upload_fileTypesAdapter")
-    public static void bindUploadFileTypesAdapter(ViewPager pager, List<FileType> fileTypes) {
+    public static void bindUploadFileTypesAdapter(ViewPager pager, List<Storage> storages) {
         FragmentManager fm = ((FragmentActivity) pager.getContext()).getSupportFragmentManager();
         UploadFileTypesAdapter adapter = (UploadFileTypesAdapter) pager.getAdapter();
         if (adapter == null) {
             adapter = new UploadFileTypesAdapter(fm);
             pager.setAdapter(adapter);
         }
-        adapter.setItems(fileTypes);
+        adapter.setItems(storages);
     }
 
 

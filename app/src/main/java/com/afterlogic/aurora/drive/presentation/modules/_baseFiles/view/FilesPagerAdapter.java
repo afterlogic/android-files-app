@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
-import com.afterlogic.aurora.drive.model.FileType;
+import com.afterlogic.aurora.drive.model.Storage;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ItemsAdapter;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.SimpleOnObservableListChangedListener;
 
@@ -21,11 +21,11 @@ import java.util.UUID;
  * mail: sunnyday.development@gmail.com
  */
 
-public class FilesPagerAdapter extends FragmentStatePagerAdapter implements ItemsAdapter<FileType>{
+public class FilesPagerAdapter extends FragmentStatePagerAdapter implements ItemsAdapter<Storage>{
 
     private final FilesContentProvider mFilesContentProvider;
 
-    private List<FileType> mFileTypes;
+    private List<Storage> mStorages;
 
     private BaseFilesListFragment mPrimaryFragment = null;
 
@@ -33,7 +33,7 @@ public class FilesPagerAdapter extends FragmentStatePagerAdapter implements Item
 
     private int mDataStateIndex = 0;
 
-    private ObservableList.OnListChangedCallback<ObservableList<FileType>> mOnListChangedCallback = new SimpleOnObservableListChangedListener<>(
+    private ObservableList.OnListChangedCallback<ObservableList<Storage>> mOnListChangedCallback = new SimpleOnObservableListChangedListener<>(
             this::notifyDataSetChanged
     );
 
@@ -46,11 +46,11 @@ public class FilesPagerAdapter extends FragmentStatePagerAdapter implements Item
     }
 
     @Override
-    public void setItems(List<FileType> items) {
-        if (mFileTypes == items) return;
+    public void setItems(List<Storage> items) {
+        if (mStorages == items) return;
 
-        if (mFileTypes != null && mFileTypes instanceof ObservableList){
-            ObservableList<FileType> observable = (ObservableList<FileType>) mFileTypes;
+        if (mStorages != null && mStorages instanceof ObservableList){
+            ObservableList<Storage> observable = (ObservableList<Storage>) mStorages;
             observable.removeOnListChangedCallback(mOnListChangedCallback);
         }
 
@@ -58,19 +58,19 @@ public class FilesPagerAdapter extends FragmentStatePagerAdapter implements Item
             /*
             TODO reverse pages
             if (RtlUtil.isRtl(mContext)) {
-                mFileTypes = new ArrayList<>();
-                Stream.of(items).forEach(it -> mFileTypes.add(0, it));
+                mStorages = new ArrayList<>();
+                Stream.of(items).forEach(it -> mStorages.add(0, it));
             } else {
-                mFileTypes = new ArrayList<>(items);
+                mStorages = new ArrayList<>(items);
             }*/
 
-            mFileTypes = new ArrayList<>(items);
+            mStorages = new ArrayList<>(items);
         } else {
-            mFileTypes = null;
+            mStorages = null;
         }
 
-        if (mFileTypes != null && mFileTypes instanceof ObservableList){
-            ObservableList<FileType> observable = (ObservableList<FileType>) mFileTypes;
+        if (mStorages != null && mStorages instanceof ObservableList){
+            ObservableList<Storage> observable = (ObservableList<Storage>) mStorages;
             observable.addOnListChangedCallback(mOnListChangedCallback);
         }
         notifyDataSetChanged();
@@ -78,8 +78,8 @@ public class FilesPagerAdapter extends FragmentStatePagerAdapter implements Item
 
     @Override
     public BaseFilesListFragment getItem(int position) {
-        BaseFilesListFragment fragment = mFilesContentProvider.get(mFileTypes.get(position).getFilesType());
-        fragment.setArgsType(mFileTypes.get(position).getFilesType());
+        BaseFilesListFragment fragment = mFilesContentProvider.get(mStorages.get(position).getFiles());
+        fragment.setArgsType(mStorages.get(position).getFiles());
         fragment.setModuleUuid(mFilesModuleIds.get(position));
 
         int currentDataStateIndex = mDataStateIndex;
@@ -99,12 +99,12 @@ public class FilesPagerAdapter extends FragmentStatePagerAdapter implements Item
 
     @Override
     public int getCount() {
-        return mFileTypes == null ? 0 : mFileTypes.size();
+        return mStorages == null ? 0 : mStorages.size();
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return mFileTypes.get(position).getCaption();
+        return mStorages.get(position).getCaption();
     }
 
     @Nullable

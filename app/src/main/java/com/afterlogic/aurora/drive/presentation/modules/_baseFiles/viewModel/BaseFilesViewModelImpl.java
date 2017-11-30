@@ -8,7 +8,7 @@ import android.databinding.ObservableList;
 
 import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.model.FileType;
+import com.afterlogic.aurora.drive.model.Storage;
 import com.afterlogic.aurora.drive.presentation.common.modules.viewModel.BaseViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.BaseFilesModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.interactor.FilesInteractor;
@@ -40,7 +40,7 @@ public class BaseFilesViewModelImpl extends BaseViewModel implements BaseFilesVi
     private final ObservableBoolean mRefreshing = new ObservableBoolean(true);
     private final ObservableBoolean mLocked = new ObservableBoolean(false);
     private final ObservableInt mCurrentPosition = new ObservableInt(-1);
-    private final ObservableList<FileType> mFileTypes = new ObservableArrayList<>();
+    private final ObservableList<Storage> mStorages = new ObservableArrayList<>();
     private final ObservableBoolean mErrorState = new ObservableBoolean();
 
     private String mCurrentFileType = null;
@@ -56,8 +56,8 @@ public class BaseFilesViewModelImpl extends BaseViewModel implements BaseFilesVi
     }
 
     @Override
-    public ObservableList<FileType> getFileTypes() {
-        return mFileTypes;
+    public ObservableList<Storage> getStorages() {
+        return mStorages;
     }
 
     @Override
@@ -145,9 +145,9 @@ public class BaseFilesViewModelImpl extends BaseViewModel implements BaseFilesVi
                 );
     }
 
-    private void handleFileTypes(List<FileType> types) {
-        mFileTypes.clear();
-        mFileTypes.addAll(types);
+    private void handleFileTypes(List<Storage> types) {
+        mStorages.clear();
+        mStorages.addAll(types);
 
         updateCurrentPosition();
         updateLocked();
@@ -167,9 +167,9 @@ public class BaseFilesViewModelImpl extends BaseViewModel implements BaseFilesVi
 
 
     private void updateCurrentPosition(){
-        int position = Stream.of(mFileTypes)
-                .filter(type -> type.getFilesType().equals(mCurrentFileType))
-                .map(mFileTypes::indexOf)
+        int position = Stream.of(mStorages)
+                .filter(type -> type.getFiles().equals(mCurrentFileType))
+                .map(mStorages::indexOf)
                 .findFirst()
                 .orElse(-1);
         mCurrentPosition.set(position);

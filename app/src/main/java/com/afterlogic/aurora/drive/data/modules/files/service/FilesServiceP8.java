@@ -4,6 +4,7 @@ import com.afterlogic.aurora.drive.core.common.interfaces.ProgressListener;
 import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
 import com.afterlogic.aurora.drive.data.model.project8.FilesResponseP8;
 import com.afterlogic.aurora.drive.data.model.project8.UploadResultP8;
+import com.afterlogic.aurora.drive.data.modules.files.model.dto.P8StorageDto;
 import com.afterlogic.aurora.drive.data.modules.files.model.dto.ReplaceFileDto;
 import com.afterlogic.aurora.drive.model.DeleteFileInfo;
 import com.afterlogic.aurora.drive.model.FileInfo;
@@ -44,6 +45,6 @@ public interface FilesServiceP8 {
 
     Single<ApiResponseP8<Boolean>> copyFiles(String fromType, String toType, String fromPath, String toPath, List<ReplaceFileDto> files);
 
-    Single<ApiResponseP8<List<String>>> getAvailableStorages();
+    Single<ApiResponseP8<List<P8StorageDto>>> getAvailableStorages();
 
 }

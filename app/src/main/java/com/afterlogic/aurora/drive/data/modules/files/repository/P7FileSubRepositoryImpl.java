@@ -28,8 +28,10 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.FileInfo;
 import com.afterlogic.aurora.drive.model.Progressible;
+import com.afterlogic.aurora.drive.model.Storage;
 import com.afterlogic.aurora.drive.model.error.ApiResponseError;
 import com.afterlogic.aurora.drive.model.error.FileNotExistError;
+import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.StorageTypesMapper;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 
@@ -66,6 +68,8 @@ public class P7FileSubRepositoryImpl extends Repository implements FileSubReposi
 
     private final AppResources mAppResources;
 
+    private final StorageTypesMapper storageTypesMapper;
+
     @SuppressWarnings("WeakerAccess")
     @Inject
     P7FileSubRepositoryImpl(SharedObservableStore cache,
@@ -75,8 +79,10 @@ public class P7FileSubRepositoryImpl extends Repository implements FileSubReposi
                             SessionManager sessionManager,
                             UploadResultP7MapperFactory uploadResultP7MapperFactory,
                             AppResources appResources,
-                            AuthorizationResolver authorizationResolver) {
+                            AuthorizationResolver authorizationResolver,
+                            StorageTypesMapper storageTypesMapper) {
         super(cache, FILES_P_7);
+
         mFileNetToBlMapper = mapperFactory.netToBl();
         mFileBlToNetMapper = mapperFactory.blToNet();
         mCloudService = cloudService;
@@ -85,10 +91,12 @@ public class P7FileSubRepositoryImpl extends Repository implements FileSubReposi
         mUploadResultToBlMapper = uploadResultP7MapperFactory.p7toBl();
         mAppResources = appResources;
         this.authorizationResolver = authorizationResolver;
+        this.storageTypesMapper = storageTypesMapper;
+
     }
 
     @Override
-    public Single<List<String>> getAvailableStorages() {
+    public Single<List<Storage>> getAvailableStorages() {
         return Single.fromCallable(() -> Stream.of(mAppResources.getStringArray(R.array.folder_types))
                 .map(type -> {
                     List<AuroraFile> files = getFiles(AuroraFile.parse("", type, true))
@@ -112,7 +120,12 @@ public class P7FileSubRepositoryImpl extends Repository implements FileSubReposi
                 .filter(ObjectsUtil::nonNull)
                 .collect(Collectors.toList())
         )//-----|
-                .doFinally(FileRepositoryUtil::startClearCheckedCountDown);
+                .doFinally(FileRepositoryUtil::startClearCheckedCountDown)
+                .map(types -> Stream.of(types)
+                        .map(storageTypesMapper::map)
+                        .withoutNulls()
+                        .toList()
+                );
     }
 
     @Override

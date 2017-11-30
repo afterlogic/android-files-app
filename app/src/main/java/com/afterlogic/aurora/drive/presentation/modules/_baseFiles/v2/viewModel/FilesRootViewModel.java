@@ -10,7 +10,7 @@ import com.afterlogic.aurora.drive.core.common.rx.OptionalDisposable;
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.model.FileType;
+import com.afterlogic.aurora.drive.model.Storage;
 import com.afterlogic.aurora.drive.presentation.common.binding.binder.Bindable;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnListChangedCallback;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.AsyncUiObservableField;
@@ -36,7 +36,7 @@ public class FilesRootViewModel<
 
     public final ObservableField<String> title = new ObservableField<>();
     public final ObservableBoolean fileTypesLocked = new ObservableBoolean(false);
-    public final ObservableList<FileType> fileTypes = new ObservableArrayList<>();
+    public final ObservableList<Storage> storages = new ObservableArrayList<>();
     public final Bindable<Integer> currentFileTypePosition = Bindable.create(0);
 
     public final ObservableField<ViewModelState> viewModelState = new SynchronizedUiObservableField<>(ViewModelState.LOADING);
@@ -124,7 +124,7 @@ public class FilesRootViewModel<
     }
 
     protected String getCurrentFileType() {
-        return fileTypes.get(currentFileTypePosition.get()).getFilesType();
+        return storages.get(currentFileTypePosition.get()).getFiles();
     }
 
     protected String getRootTitle() {
@@ -139,7 +139,7 @@ public class FilesRootViewModel<
     private void reloadFileTypes() {
         viewModelState.set(ViewModelState.LOADING);
 
-        fileTypes.clear();
+        storages.clear();
 
         interactor.getAvailableFileTypes()
                 .doOnError(error -> viewModelState.set(ViewModelState.ERROR))
@@ -148,9 +148,9 @@ public class FilesRootViewModel<
                 .subscribe(subscriber.subscribe(this::handleFileTypes));
     }
 
-    private void handleFileTypes(List<FileType> fileTypes) {
-        this.fileTypes.addAll(fileTypes);
-        viewModelState.set(this.fileTypes.size() > 0 ? ViewModelState.CONTENT : ViewModelState.EMPTY);
+    private void handleFileTypes(List<Storage> storages) {
+        this.storages.addAll(storages);
+        viewModelState.set(this.storages.size() > 0 ? ViewModelState.CONTENT : ViewModelState.EMPTY);
     }
 
     @Override

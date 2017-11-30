@@ -8,11 +8,11 @@
     <data>
         <import type="android.view.View"/>
         <import type="com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ItemsAdapter"/>
-        <import type="com.afterlogic.aurora.drive.model.FileType"/>
+        <import type="com.afterlogic.aurora.drive.model.Storage"/>
 
         <variable
             name="adapter"
-            type="ItemsAdapter&lt;FileType&gt;"/>
+            type="ItemsAdapter&lt;Storage&gt;"/>
 
         <variable
             name="viewModel"
@@ -42,7 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_gravity="bottom"
-                android:visibility="@{viewModel.locked || viewModel.fileTypes.size() == 0 ? View.GONE : View.VISIBLE}"
+                android:visibility="@{viewModel.locked || viewModel.storages.size() == 0 ? View.GONE : View.VISIBLE}"
                 app:layout_scrollFlags="scroll|enterAlways"/>
 
         </android.support.design.widget.AppBarLayout>
@@ -80,7 +80,7 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             bind:adapter="@{adapter}"
-            bind:items="@{viewModel.fileTypes}"
+            bind:items="@{viewModel.storages}"
             bind:currentItem="@{viewModel.currentPagePosition}"
             bind:swipeEnabled="@{!viewModel.locked}"/>
 

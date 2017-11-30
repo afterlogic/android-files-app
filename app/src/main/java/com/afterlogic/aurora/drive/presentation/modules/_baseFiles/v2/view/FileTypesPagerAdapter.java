@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.afterlogic.aurora.drive.model.FileType;
+import com.afterlogic.aurora.drive.model.Storage;
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ItemsAdapter;
 
 import java.util.List;
@@ -14,9 +14,9 @@ import java.util.List;
  * mail: mail@sunnydaydev.me
  */
 
-public abstract class FileTypesPagerAdapter extends FragmentPagerAdapter implements ItemsAdapter<FileType> {
+public abstract class FileTypesPagerAdapter extends FragmentPagerAdapter implements ItemsAdapter<Storage> {
 
-    private List<FileType> fileTypes;
+    private List<Storage> storages;
 
     public FileTypesPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -24,22 +24,22 @@ public abstract class FileTypesPagerAdapter extends FragmentPagerAdapter impleme
 
     @Override
     public int getCount() {
-        return fileTypes == null ? 0 : fileTypes.size();
+        return storages == null ? 0 : storages.size();
     }
     @Override
-    public void setItems(List<FileType> items) {
-        fileTypes = items;
+    public void setItems(List<Storage> items) {
+        storages = items;
         notifyDataSetChanged();
     }
 
     @Override
     public Fragment getItem(int position) {
-        return getFilesListFragment(fileTypes.get(position).getFilesType());
+        return getFilesListFragment(storages.get(position).getFiles());
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return fileTypes.get(position).getCaption();
+        return storages.get(position).getCaption();
     }
 
     @Override
