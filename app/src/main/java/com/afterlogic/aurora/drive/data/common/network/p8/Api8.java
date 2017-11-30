@@ -8,6 +8,7 @@ import com.afterlogic.aurora.drive.data.model.project8.GetUserParametersDto;
 import com.afterlogic.aurora.drive.data.model.project8.LoginParametersDto;
 import com.afterlogic.aurora.drive.data.model.project8.UploadResultP8;
 import com.afterlogic.aurora.drive.data.model.project8.UserP8;
+import com.afterlogic.aurora.drive.data.modules.files.model.dto.P8StorageDto;
 import com.afterlogic.aurora.drive.model.AuthToken;
 
 import java.util.List;
@@ -83,6 +84,7 @@ public interface Api8 {
         String UPLOAD_FILE = "UploadFile";
         String CREATE_PUBLIC_LINK = "CreatePublicLink";
         String DELETE_PUBLIC_LINK = "DeletePublicLink";
+        String GET_STORAGES = "GetStorages";
         String COPY = "Copy";
         String MOVE = "Move";
         String GET_USER = "GetUser";
@@ -217,6 +219,10 @@ public interface Api8 {
     @Headers(ApiHeader.AUTHORISATION)
     Single<ApiResponseP8<Boolean>> replaceFiles(@FieldMap Map<String, Object> fields);
 
+    @POST(API)
+    @FormUrlEncoded
+    @Headers(ApiHeader.AUTHORISATION)
+    Single<ApiResponseP8<List<P8StorageDto>>> getAvailableStorages(@FieldMap Map<String, Object> fields);
 
     @POST(API)
     @FormUrlEncoded

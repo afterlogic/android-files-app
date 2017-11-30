@@ -7,6 +7,7 @@ import com.afterlogic.aurora.drive.data.model.UploadResult;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.FileInfo;
 import com.afterlogic.aurora.drive.model.Progressible;
+import com.afterlogic.aurora.drive.model.Storage;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ import okhttp3.ResponseBody;
 
 public interface FileSubRepository {
 
-    Single<List<String>> getAvailableFileTypes();
+    Single<List<Storage>> getAvailableStorages();
 
     Single<List<AuroraFile>> getFiles(AuroraFile folder);
 
@@ -53,4 +54,5 @@ public interface FileSubRepository {
     Completable replaceFiles(AuroraFile targetFolder, List<AuroraFile> files);
 
     Completable copyFiles(AuroraFile targetFolder, List<AuroraFile> files);
+
 }

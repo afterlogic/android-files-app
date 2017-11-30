@@ -7,7 +7,7 @@ import android.databinding.ObservableList;
 import android.support.v4.widget.SwipeRefreshLayout;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.model.FileType;
+import com.afterlogic.aurora.drive.model.Storage;
 import com.afterlogic.aurora.drive.presentation.common.modules.viewModel.ViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.BaseFilesModel;
 
@@ -18,7 +18,7 @@ import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.BaseFil
 
 public interface BaseFilesViewModel extends SwipeRefreshLayout.OnRefreshListener, ViewModel{
 
-    ObservableList<FileType> getFileTypes();
+    ObservableList<Storage> getStorages();
 
     BaseFilesModel getModel();
 
@@ -33,4 +33,5 @@ public interface BaseFilesViewModel extends SwipeRefreshLayout.OnRefreshListener
     ObservableBoolean getErrorState();
 
     void onCurrentFolderChanged(AuroraFile folder);
+
 }

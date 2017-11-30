@@ -38,7 +38,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:layout_gravity="bottom"
                 app:pager="@{viewpager}"
-                android:visibility="@{vm.fileTypesLocked || vm.fileTypes.size() == 0 ? View.GONE : View.VISIBLE}"
+                android:visibility="@{vm.fileTypesLocked || vm.storages.size() &lt; 2 ? View.GONE : View.VISIBLE}"
                 app:layout_scrollFlags="scroll|enterAlways"/>
 
         </android.support.design.widget.AppBarLayout>
@@ -86,7 +86,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                    app:upload_fileTypesAdapter="@{vm.fileTypes}"
+                    app:upload_fileTypesAdapter="@{vm.storages}"
                     app:currentItem="@{vm.currentFileTypePosition}"
                     app:swipeEnabled="@{!vm.fileTypesLocked}"/>
 

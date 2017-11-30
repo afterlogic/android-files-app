@@ -1,17 +1,19 @@
 package com.afterlogic.aurora.drive.model;
 
+import android.support.annotation.NonNull;
+
 /**
  * Created by sashka on 03.02.17.<p/>
  * mail: sunnyday.development@gmail.com
  */
 
-public class FileType {
+public class Storage {
 
     private String mCaption;
-    private String mFilesType;
+    private String mType;
 
-    public FileType(String type, String caption) {
-        mFilesType = type;
+    public Storage(@NonNull String type, @NonNull String caption) {
+        mType = type;
         mCaption = caption;
     }
 
@@ -19,7 +21,8 @@ public class FileType {
         return mCaption;
     }
 
-    public String getFilesType() {
-        return mFilesType;
+    public String getFiles() {
+        return mType;
     }
+
 }

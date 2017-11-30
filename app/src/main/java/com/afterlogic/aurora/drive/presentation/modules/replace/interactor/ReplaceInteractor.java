@@ -1,6 +1,5 @@
 package com.afterlogic.aurora.drive.presentation.modules.replace.interactor;
 
-import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.FilesRootInteractor;
@@ -21,8 +20,8 @@ public class ReplaceInteractor extends FilesRootInteractor {
     private final FilesRepository filesRepository;
 
     @Inject
-    ReplaceInteractor(FilesRepository filesRepository, AppResources appResources) {
-        super(filesRepository, appResources);
+    ReplaceInteractor(FilesRepository filesRepository) {
+        super(filesRepository);
         this.filesRepository = filesRepository;
     }
 
@@ -33,4 +32,5 @@ public class ReplaceInteractor extends FilesRootInteractor {
     public Completable copyFiles(AuroraFile targetFolder, List<AuroraFile> source) {
         return filesRepository.copyFiles(targetFolder, source);
     }
+
 }

@@ -7,7 +7,6 @@ import android.net.NetworkInfo;
 import com.afterlogic.aurora.drive.core.common.util.AppUtil;
 import com.afterlogic.aurora.drive.core.consts.Const;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
-import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.auth.AuthenticatorService;
 import com.afterlogic.aurora.drive.data.modules.cleaner.DataCleaner;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
@@ -34,12 +33,11 @@ public class MainInteractor extends FilesRootInteractor {
 
     @Inject
     MainInteractor(FilesRepository filesRepository,
-                   AppResources appResources,
                    AuthenticatorService authenticatorService,
                    DataCleaner dataCleaner,
                    SessionManager sessionManager,
                    Context appContext) {
-        super(filesRepository, appResources);
+        super(filesRepository);
         this.authenticatorService = authenticatorService;
         this.dataCleaner = dataCleaner;
         this.sessionManager = sessionManager;

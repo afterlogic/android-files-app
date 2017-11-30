@@ -1,10 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor;
 
-import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
-import com.afterlogic.aurora.drive.data.common.mapper.MapperUtil;
-import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
-import com.afterlogic.aurora.drive.model.FileType;
+import com.afterlogic.aurora.drive.model.Storage;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.interactor.InteractorUtil;
 
 import java.util.List;
@@ -22,17 +19,14 @@ public class FilesRootInteractor {
 
     private final FilesRepository filesRepository;
 
-    private final Mapper<FileType, String> typesMapper;
-
     @Inject
-    protected FilesRootInteractor(FilesRepository filesRepository, AppResources appResources) {
+    protected FilesRootInteractor(FilesRepository filesRepository) {
         this.filesRepository = filesRepository;
-        typesMapper = new TypesMapper(appResources);
     }
 
-    public Single<List<FileType>> getAvailableFileTypes() {
-        return filesRepository.getAvailableFileTypes()
-                .map(availableTypes -> MapperUtil.listOrEmpty(availableTypes, typesMapper))
+    public Single<List<Storage>> getAvailableFileTypes() {
+        return filesRepository.getAvailableStorages()
                 .compose(upstream -> InteractorUtil.retryIfNotAuthError(3, upstream));
     }
+
 }

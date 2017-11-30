@@ -9,7 +9,7 @@ import android.databinding.ObservableList;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.model.FileType;
+import com.afterlogic.aurora.drive.model.Storage;
 import com.afterlogic.aurora.drive.presentation.common.modules.viewModel.BaseViewModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.BaseFilesModel;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.presenter.FilesPresenter;
@@ -30,7 +30,7 @@ public class BaseFilesBiModel extends BaseViewModel implements BaseFilesModel, B
     private final ObservableBoolean mRefreshing = new ObservableBoolean(true);
     private final ObservableBoolean mLocked = new ObservableBoolean(false);
     private final ObservableInt mCurrentPosition = new ObservableInt(-1);
-    private final ObservableList<FileType> mFileTypes = new ObservableArrayList<>();
+    private final ObservableList<Storage> mStorages = new ObservableArrayList<>();
     private final ObservableBoolean mErrorState = new ObservableBoolean();
 
     private String mCurrentFileType = null;
@@ -40,8 +40,8 @@ public class BaseFilesBiModel extends BaseViewModel implements BaseFilesModel, B
     }
 
     @Override
-    public ObservableList<FileType> getFileTypes() {
-        return mFileTypes;
+    public ObservableList<Storage> getStorages() {
+        return mStorages;
     }
 
     @Override
@@ -81,9 +81,9 @@ public class BaseFilesBiModel extends BaseViewModel implements BaseFilesModel, B
     }
 
     @Override
-    public void setFileTypes(List<FileType> types) {
-        mFileTypes.clear();
-        mFileTypes.addAll(types);
+    public void setFileTypes(List<Storage> types) {
+        mStorages.clear();
+        mStorages.addAll(types);
 
         updateCurrentPosition();
         updateLocked();
@@ -113,9 +113,9 @@ public class BaseFilesBiModel extends BaseViewModel implements BaseFilesModel, B
     }
 
     private void updateCurrentPosition(){
-        int position = Stream.of(mFileTypes)
-                .filter(type -> type.getFilesType().equals(mCurrentFileType))
-                .map(mFileTypes::indexOf)
+        int position = Stream.of(mStorages)
+                .filter(type -> type.getFiles().equals(mCurrentFileType))
+                .map(mStorages::indexOf)
                 .findFirst()
                 .orElse(-1);
         mCurrentPosition.set(position);

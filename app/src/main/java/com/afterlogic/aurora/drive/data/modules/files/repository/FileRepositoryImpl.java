@@ -22,6 +22,7 @@ import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.FileInfo;
 import com.afterlogic.aurora.drive.model.OfflineType;
 import com.afterlogic.aurora.drive.model.Progressible;
+import com.afterlogic.aurora.drive.model.Storage;
 import com.afterlogic.aurora.drive.model.error.FileAlreadyExistError;
 import com.afterlogic.aurora.drive.model.error.FileNotExistError;
 import com.annimon.stream.Stream;
@@ -85,8 +86,8 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
     }
 
     @Override
-    public Single<List<String>> getAvailableFileTypes() {
-        return subRepo.getAvailableFileTypes();
+    public Single<List<Storage>> getAvailableStorages() {
+        return subRepo.getAvailableStorages();
     }
 
     @Override

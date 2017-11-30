@@ -5,13 +5,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.afterlogic.aurora.drive.R;
-import com.afterlogic.aurora.drive.data.modules.AuthorizationResolver;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.rx.SimpleObservableSource;
 import com.afterlogic.aurora.drive.core.common.util.FileUtil;
 import com.afterlogic.aurora.drive.core.common.util.IOUtil;
-import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.data.common.cache.SharedObservableStore;
 import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
 import com.afterlogic.aurora.drive.data.common.mapper.MapperUtil;
@@ -20,6 +17,7 @@ import com.afterlogic.aurora.drive.data.common.repository.Repository;
 import com.afterlogic.aurora.drive.data.model.UploadResult;
 import com.afterlogic.aurora.drive.data.model.project8.AuroraFileP8;
 import com.afterlogic.aurora.drive.data.model.project8.FilesResponseP8;
+import com.afterlogic.aurora.drive.data.modules.AuthorizationResolver;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.files.FilesDataModule;
 import com.afterlogic.aurora.drive.data.modules.files.model.dto.ReplaceFileDto;
@@ -30,7 +28,7 @@ import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.DeleteFileInfo;
 import com.afterlogic.aurora.drive.model.FileInfo;
 import com.afterlogic.aurora.drive.model.Progressible;
-import com.afterlogic.aurora.drive.model.error.ApiResponseError;
+import com.afterlogic.aurora.drive.model.Storage;
 import com.afterlogic.aurora.drive.model.error.FileNotExistError;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
@@ -45,12 +43,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.reactivex.Completable;
-import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import okhttp3.ResponseBody;
 
-import static com.afterlogic.aurora.drive.data.modules.files.repository.FileRepositoryUtil.CHECKED_TYPES;
 
 /**
  * Created by sashka on 19.10.16.<p/>
@@ -121,30 +117,16 @@ public class P8FilesSubRepositoryImpl extends Repository implements FileSubRepos
     }
 
     @Override
-    public Single<List<String>> getAvailableFileTypes() {
-        return Single.fromCallable(() -> Stream.of(appResources.getStringArray(R.array.folder_types))
-                .map(type -> {
-                    List<AuroraFile> files = getFiles(AuroraFile.parse("", type, true))
-                            .toMaybe()
-                            .onErrorResumeNext(error -> {
-                                if (error instanceof ApiResponseError){
-                                    return Maybe.empty();
-                                } else {
-                                    return Maybe.error(error);
-                                }
-                            })
-                            .blockingGet();
-                    if (files != null) {
-                        CHECKED_TYPES.put(type, files);
-                        return type;
-                    } else {
-                        return null;
-                    }
-                })
-                .filter(ObjectsUtil::nonNull)
-                .collect(Collectors.toList())
-        )//-----|
-                .doFinally(FileRepositoryUtil::startClearCheckedCountDown);
+    public Single<List<Storage>> getAvailableStorages() {
+
+        return filesService.getAvailableStorages()
+                .compose(Repository::withNetMapper)
+                .compose(authorizationResolver::checkAuth)
+                .map(dtos -> Stream.of(dtos)
+                        .map(dto -> new Storage(dto.getType(), dto.getDisplayName()))
+                        .toList()
+                );
+
     }
 
     @Override
@@ -154,17 +136,10 @@ public class P8FilesSubRepositoryImpl extends Repository implements FileSubRepos
 
     @Override
     public Single<List<AuroraFile>> getFiles(AuroraFile folder, @Nullable String pattern) {
-        return Single.defer(() -> {
-            if (TextUtils.isEmpty(pattern) && "".equals(folder.getFullPath()) && CHECKED_TYPES.containsKey(folder.getType())){
-                List<AuroraFile> cached = CHECKED_TYPES.remove(folder.getType());
-                return Single.just(cached);
-            } else {
-                return filesService.getFiles(folder.getType(), folder.getFullPath(), pattern)
-                        .compose(Repository::withNetMapper)
-                        .compose(authorizationResolver::checkAuth)
-                        .map(this::mapFilesResponse);
-            }
-        });
+        return filesService.getFiles(folder.getType(), folder.getFullPath(), pattern)
+                .compose(Repository::withNetMapper)
+                .compose(authorizationResolver::checkAuth)
+                .map(this::mapFilesResponse);
     }
 
     private List<AuroraFile> mapFilesResponse(FilesResponseP8 response) {

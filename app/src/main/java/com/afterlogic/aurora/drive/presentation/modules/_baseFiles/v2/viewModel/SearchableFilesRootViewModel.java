@@ -5,7 +5,7 @@ import android.text.TextUtils;
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.model.FileType;
+import com.afterlogic.aurora.drive.model.Storage;
 import com.afterlogic.aurora.drive.presentation.common.binding.binder.Bindable;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnPropertyChangedCallback;
 import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.FilesRootInteractor;
@@ -59,8 +59,8 @@ public class SearchableFilesRootViewModel<
         if (fileTypesLocked.get() && !TextUtils.isEmpty(query)) {
             setSearchQueryForType(getCurrentFileType(), query);
         } else {
-            Stream.of(fileTypes)
-                    .map(FileType::getFilesType)
+            Stream.of(storages)
+                    .map(Storage::getFiles)
                     .forEach(type -> setSearchQueryForType(type, query));
         }
     }

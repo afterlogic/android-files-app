@@ -12,6 +12,7 @@ import com.afterlogic.aurora.drive.data.common.network.p8.CloudServiceP8;
 import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
 import com.afterlogic.aurora.drive.data.model.project8.FilesResponseP8;
 import com.afterlogic.aurora.drive.data.model.project8.UploadResultP8;
+import com.afterlogic.aurora.drive.data.modules.files.model.dto.P8StorageDto;
 import com.afterlogic.aurora.drive.data.modules.files.model.dto.ReplaceFileDto;
 import com.afterlogic.aurora.drive.model.DeleteFileInfo;
 import com.afterlogic.aurora.drive.model.FileInfo;
@@ -19,6 +20,7 @@ import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 import com.google.gson.Gson;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -222,6 +224,17 @@ public class FilesServiceP8Impl extends CloudServiceP8 implements FilesServiceP8
             Map<String, Object> fields = getDefaultFields(Api8.Method.COPY, params);
             return mApi.copyFiles(fields);
         });
+    }
+
+    @Override
+    public Single<ApiResponseP8<List<P8StorageDto>>> getAvailableStorages() {
+
+        Map<String, Object> fields = getDefaultFields(
+                Api8.Method.GET_STORAGES, Collections.emptyMap()
+        );
+
+        return mApi.getAvailableStorages(fields);
+
     }
 
 

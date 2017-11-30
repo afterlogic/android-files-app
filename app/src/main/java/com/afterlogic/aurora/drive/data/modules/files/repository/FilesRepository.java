@@ -4,6 +4,7 @@ import android.net.Uri;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
+import com.afterlogic.aurora.drive.model.Storage;
 
 import java.io.File;
 import java.util.List;
@@ -19,7 +20,7 @@ import io.reactivex.Single;
  */
 public interface FilesRepository {
 
-    Single<List<String>> getAvailableFileTypes();
+    Single<List<Storage>> getAvailableStorages();
 
     Single<List<AuroraFile>> getFiles(AuroraFile folder);
 

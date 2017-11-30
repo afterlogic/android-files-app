@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules._baseFiles.model;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.model.FileType;
+import com.afterlogic.aurora.drive.model.Storage;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface BaseFilesModel {
 
-    void setFileTypes(List<FileType> types);
+    void setFileTypes(List<Storage> types);
 
     void setCurrentFolder(AuroraFile folder);
 
