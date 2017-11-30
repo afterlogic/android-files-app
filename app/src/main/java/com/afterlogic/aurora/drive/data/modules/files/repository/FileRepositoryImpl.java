@@ -86,7 +86,7 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
 
     @Override
     public Single<List<String>> getAvailableFileTypes() {
-        return subRepo.getAvailableFileTypes();
+        return subRepo.getAvailableStorages();
     }
 
     @Override

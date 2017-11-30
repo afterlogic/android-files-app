@@ -43,4 +43,7 @@ public interface FilesServiceP8 {
     Single<ApiResponseP8<Boolean>> replaceFiles(String fromType, String toType, String fromPath, String toPath, List<ReplaceFileDto> files);
 
     Single<ApiResponseP8<Boolean>> copyFiles(String fromType, String toType, String fromPath, String toPath, List<ReplaceFileDto> files);
+
+    Single<ApiResponseP8<List<String>>> getAvailableStorages();
+
 }

@@ -83,6 +83,7 @@ public interface Api8 {
         String UPLOAD_FILE = "UploadFile";
         String CREATE_PUBLIC_LINK = "CreatePublicLink";
         String DELETE_PUBLIC_LINK = "DeletePublicLink";
+        String GET_STORAGES = "GetStorages";
         String COPY = "Copy";
         String MOVE = "Move";
         String GET_USER = "GetUser";
@@ -216,6 +217,12 @@ public interface Api8 {
     @FormUrlEncoded
     @Headers(ApiHeader.AUTHORISATION)
     Single<ApiResponseP8<Boolean>> replaceFiles(@FieldMap Map<String, Object> fields);
+
+
+    @POST(API)
+    @FormUrlEncoded
+    @Headers(ApiHeader.AUTHORISATION)
+    Single<ApiResponseP8<List<String>>> getAvailableStorages(@FieldMap Map<String, Object> fields);
 
 
     @POST(API)

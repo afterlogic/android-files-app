@@ -22,7 +22,7 @@ import okhttp3.ResponseBody;
 
 public interface FileSubRepository {
 
-    Single<List<String>> getAvailableFileTypes();
+    Single<List<String>> getAvailableStorages();
 
     Single<List<AuroraFile>> getFiles(AuroraFile folder);
 

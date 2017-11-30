@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
-import android.support.v4.content.IntentCompat;
 
 import com.afterlogic.aurora.drive.BuildConfig;
 
@@ -24,7 +23,7 @@ public class IntentUtil {
     }
 
     public static Intent makeRestartTask(Intent intent){
-        Intent result = IntentCompat.makeRestartActivityTask(intent.getComponent());
+        Intent result = Intent.makeRestartActivityTask(intent.getComponent());
         result.putExtras(intent);
         result.setAction(intent.getAction());
         result.setType(intent.getType());

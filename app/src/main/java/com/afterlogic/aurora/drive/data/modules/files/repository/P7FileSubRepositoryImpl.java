@@ -88,7 +88,7 @@ public class P7FileSubRepositoryImpl extends Repository implements FileSubReposi
     }
 
     @Override
-    public Single<List<String>> getAvailableFileTypes() {
+    public Single<List<String>> getAvailableStorages() {
         return Single.fromCallable(() -> Stream.of(mAppResources.getStringArray(R.array.folder_types))
                 .map(type -> {
                     List<AuroraFile> files = getFiles(AuroraFile.parse("", type, true))

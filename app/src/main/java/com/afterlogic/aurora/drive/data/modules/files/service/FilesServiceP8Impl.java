@@ -19,6 +19,7 @@ import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 import com.google.gson.Gson;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -222,6 +223,17 @@ public class FilesServiceP8Impl extends CloudServiceP8 implements FilesServiceP8
             Map<String, Object> fields = getDefaultFields(Api8.Method.COPY, params);
             return mApi.copyFiles(fields);
         });
+    }
+
+    @Override
+    public Single<ApiResponseP8<List<String>>> getAvailableStorages() {
+
+        Map<String, Object> fields = getDefaultFields(
+                Api8.Method.GET_STORAGES, Collections.emptyMap()
+        );
+
+        return mApi.getAvailableStorages(fields);
+
     }
 
 
