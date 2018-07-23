@@ -1,8 +1,8 @@
 package com.afterlogic.aurora.drive.data.modules.auth;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.util.Pair;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.util.Pair;
 
 import com.afterlogic.aurora.drive.core.consts.Const;
 import com.afterlogic.aurora.drive.model.AuthorizedAuroraSession;

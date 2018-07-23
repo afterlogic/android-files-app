@@ -11,7 +11,7 @@ import com.afterlogic.aurora.drive.data.modules.auth.AuthenticatorService;
 import com.afterlogic.aurora.drive.data.modules.cleaner.DataCleaner;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraSession;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.FilesRootInteractor;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.interactor.FilesRootInteractor;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.view.FileObserverService;
 
 import javax.inject.Inject;

@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.common.modules.view;
 
-import android.support.annotation.StringRes;
+import androidx.annotation.StringRes;
 
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.annotations.Repeat;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.annotations.RepeatPolicy;

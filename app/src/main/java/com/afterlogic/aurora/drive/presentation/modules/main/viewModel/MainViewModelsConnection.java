@@ -1,10 +1,10 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.viewModel;
 
-import android.support.v4.util.Pair;
+import androidx.core.util.Pair;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
 import com.afterlogic.aurora.drive.core.common.rx.RxVariable;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.ViewModelsConnection;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.viewModel.ViewModelsConnection;
 
 import java.util.List;
 

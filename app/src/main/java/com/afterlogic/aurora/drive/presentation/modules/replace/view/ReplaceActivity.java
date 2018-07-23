@@ -1,16 +1,16 @@
 package com.afterlogic.aurora.drive.presentation.modules.replace.view;
 
-import android.arch.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
-import android.databinding.ObservableField;
-import android.databinding.ViewDataBinding;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ObservableField;
+import androidx.databinding.ViewDataBinding;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.SearchView;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 

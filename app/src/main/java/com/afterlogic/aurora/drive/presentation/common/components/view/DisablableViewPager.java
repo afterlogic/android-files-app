@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.common.components.view;
 
 import android.content.Context;
-import android.support.v4.view.ViewPager;
+import androidx.viewpager.widget.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
@@ -9,7 +9,7 @@ import android.view.MotionEvent;
  * Created by sashka on 22.03.16.
  * mail: sunnyday.development@gmail.com
  */
-public class DisablableViewPager extends ViewPager{
+public class DisablableViewPager extends ViewPager {
 
     private boolean mIsEnabled = true;
 

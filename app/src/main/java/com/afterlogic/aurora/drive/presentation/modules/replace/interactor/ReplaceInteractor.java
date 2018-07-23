@@ -2,7 +2,7 @@ package com.afterlogic.aurora.drive.presentation.modules.replace.interactor;
 
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.FilesRootInteractor;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.interactor.FilesRootInteractor;
 
 import java.util.List;
 

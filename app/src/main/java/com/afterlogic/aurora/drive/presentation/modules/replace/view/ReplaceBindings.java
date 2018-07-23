@@ -1,15 +1,15 @@
 package com.afterlogic.aurora.drive.presentation.modules.replace.view;
 
-import android.databinding.BindingAdapter;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.RecyclerView;
+import androidx.databinding.BindingAdapter;
+import androidx.databinding.library.baseAdapters.BR;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.model.Storage;
 import com.afterlogic.aurora.drive.presentation.modules.replace.viewModel.ReplaceFileViewModel;
-import com.android.databinding.library.baseAdapters.BR;
 import com.github.nitrico.lastadapter.LastAdapter;
 
 import java.util.List;

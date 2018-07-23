@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.start.view;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.MVPActivity;

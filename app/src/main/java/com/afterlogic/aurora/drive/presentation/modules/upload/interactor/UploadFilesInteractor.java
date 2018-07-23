@@ -5,7 +5,7 @@ import android.net.Uri;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.FilesListInteractor;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.interactor.FilesListInteractor;
 
 import java.util.List;
 

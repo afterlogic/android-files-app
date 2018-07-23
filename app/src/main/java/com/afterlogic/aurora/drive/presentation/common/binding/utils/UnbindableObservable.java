@@ -1,10 +1,10 @@
 package com.afterlogic.aurora.drive.presentation.common.binding.utils;
 
-import android.databinding.Observable;
-import android.databinding.ObservableBoolean;
-import android.databinding.ObservableField;
-import android.databinding.ObservableInt;
-import android.support.annotation.NonNull;
+import androidx.databinding.Observable;
+import androidx.databinding.ObservableBoolean;
+import androidx.databinding.ObservableField;
+import androidx.databinding.ObservableInt;
+import androidx.annotation.NonNull;
 
 import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
 import com.annimon.stream.Stream;

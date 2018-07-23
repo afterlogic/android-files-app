@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v4.widget.SwipeRefreshLayout
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -33,13 +33,13 @@
                     android:id="@+id/filelist_state"
                     app:vmState="@{vm.viewModelState}"/>
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/list"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:paddingBottom="72dp"
                     android:clipToPadding="false"
-                    app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:main_filesAdapter="@{vm.items}"
                     android:visibility="@{!vm.viewModelState.isError() ? View.VISIBLE : View.GONE}"
                     tools:listitem="@layout/main_item_list_file"/>
@@ -47,7 +47,7 @@
             </FrameLayout>
 
 
-        </android.support.v4.widget.SwipeRefreshLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </LinearLayout>
 </layout>

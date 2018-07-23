@@ -1,10 +1,10 @@
 package com.afterlogic.aurora.drive.presentation.common.modules.v3.view;
 
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
-import android.databinding.ViewDataBinding;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.databinding.ViewDataBinding;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.MenuItem;
 
 import com.afterlogic.aurora.drive.BR;

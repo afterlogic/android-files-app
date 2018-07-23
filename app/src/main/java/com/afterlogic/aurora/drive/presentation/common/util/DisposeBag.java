@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.common.util;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.annimon.stream.Stream;
 

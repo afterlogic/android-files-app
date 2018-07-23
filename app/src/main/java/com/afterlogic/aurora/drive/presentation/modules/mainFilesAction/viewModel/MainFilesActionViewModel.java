@@ -1,10 +1,10 @@
 package com.afterlogic.aurora.drive.presentation.modules.mainFilesAction.viewModel;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.OnLifecycleEvent;
-import android.databinding.ObservableArrayList;
-import android.databinding.ObservableField;
-import android.databinding.ObservableList;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.databinding.ObservableArrayList;
+import androidx.databinding.ObservableField;
+import androidx.databinding.ObservableList;
 import android.view.View;
 
 import com.afterlogic.aurora.drive.R;

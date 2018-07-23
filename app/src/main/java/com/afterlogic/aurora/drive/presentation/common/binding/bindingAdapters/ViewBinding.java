@@ -1,9 +1,9 @@
 package com.afterlogic.aurora.drive.presentation.common.binding.bindingAdapters;
 
-import android.databinding.BindingAdapter;
-import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.view.ViewCompat;
+import androidx.databinding.BindingAdapter;
+import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.view.ViewCompat;
 import android.view.View;
 import android.view.ViewGroup;
 

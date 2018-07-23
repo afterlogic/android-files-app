@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.data.common.network;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 

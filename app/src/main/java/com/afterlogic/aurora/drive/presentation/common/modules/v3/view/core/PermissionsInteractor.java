@@ -1,8 +1,8 @@
 package com.afterlogic.aurora.drive.presentation.common.modules.v3.view.core;
 
 import android.app.Activity;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 
 import com.afterlogic.aurora.drive.application.ActivityTracker;
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.PresentationScope;

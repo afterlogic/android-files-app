@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.choise.view;
 
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesListFragment;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.view.BaseFilesListFragment;
 import com.afterlogic.aurora.drive.presentation.modules.choise.model.presenter.ChoiseFilesPresenter;
 import com.afterlogic.aurora.drive.presentation.modules.choise.viewModel.ChoiseFilesViewModel;
 

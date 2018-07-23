@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel;
 
-import android.databinding.ObservableField;
-import android.support.annotation.Nullable;
+import androidx.databinding.ObservableField;
+import androidx.annotation.Nullable;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
 

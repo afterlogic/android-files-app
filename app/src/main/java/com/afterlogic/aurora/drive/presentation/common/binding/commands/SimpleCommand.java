@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.common.binding.commands;
 
-import android.databinding.BaseObservable;
+import androidx.databinding.BaseObservable;
 
 /**
  * Created by sunny on 05.09.17.

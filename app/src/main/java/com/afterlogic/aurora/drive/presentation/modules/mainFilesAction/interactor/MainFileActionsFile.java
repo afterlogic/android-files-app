@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.mainFilesAction.interactor;
 
-import android.databinding.ObservableBoolean;
-import android.databinding.ObservableField;
+import androidx.databinding.ObservableBoolean;
+import androidx.databinding.ObservableField;
 import android.net.Uri;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;

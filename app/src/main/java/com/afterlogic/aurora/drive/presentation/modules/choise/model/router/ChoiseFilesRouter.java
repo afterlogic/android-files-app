@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.choise.model.router;
 
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router.FilesRouter;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.model.router.FilesRouter;
 
 import java.io.File;
 

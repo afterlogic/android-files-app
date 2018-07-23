@@ -1,12 +1,12 @@
 package com.afterlogic.aurora.drive.presentation.modules.fileView.viewModel;
 
-import android.databinding.ObservableArrayList;
-import android.databinding.ObservableBoolean;
-import android.databinding.ObservableField;
-import android.databinding.ObservableInt;
-import android.databinding.ObservableList;
-import android.support.annotation.Nullable;
-import android.support.v4.view.ViewPager;
+import androidx.databinding.ObservableArrayList;
+import androidx.databinding.ObservableBoolean;
+import androidx.databinding.ObservableField;
+import androidx.databinding.ObservableInt;
+import androidx.databinding.ObservableList;
+import androidx.annotation.Nullable;
+import androidx.viewpager.widget.ViewPager;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.ModuleScope;
 import com.afterlogic.aurora.drive.core.common.streams.ExtCollectors;

@@ -3,7 +3,7 @@ package com.afterlogic.aurora.drive.presentation.modules._util;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
+import androidx.fragment.app.FragmentActivity;
 
 import com.afterlogic.aurora.drive.application.assembly.Injectable;
 import com.afterlogic.aurora.drive.application.navigation.AppNavigator;

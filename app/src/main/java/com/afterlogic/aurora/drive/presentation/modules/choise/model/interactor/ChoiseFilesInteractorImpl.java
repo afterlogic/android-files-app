@@ -6,7 +6,7 @@ import com.afterlogic.aurora.drive.data.modules.files.FilesDataModule;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.interactor.BaseFilesListInteractor;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.model.interactor.BaseFilesListInteractor;
 
 import java.io.File;
 

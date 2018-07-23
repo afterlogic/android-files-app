@@ -1,16 +1,16 @@
 package com.afterlogic.aurora.drive.presentation.modules.choise.view;
 
-import android.databinding.DataBindingUtil;
-import android.databinding.ViewDataBinding;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.common.binding.SimpleListener;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesActivity;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BaseFilesListFragment;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.view.BaseFilesActivity;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.view.BaseFilesListFragment;
 import com.afterlogic.aurora.drive.presentation.modules.choise.model.presenter.ChoisePresenter;
 import com.afterlogic.aurora.drive.presentation.modules.choise.viewModel.ChoiseViewModel;
 

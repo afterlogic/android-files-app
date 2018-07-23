@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.data.model.project7;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 

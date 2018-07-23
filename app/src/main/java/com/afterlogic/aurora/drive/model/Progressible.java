@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.model;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * Created by sashka on 08.02.17.<p/>

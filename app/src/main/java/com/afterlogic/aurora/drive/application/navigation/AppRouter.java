@@ -31,14 +31,14 @@ public class AppRouter extends Router {
     }
 
     public void navigateToWithResult(String screenKey, int requestId, Object data) {
-        executeCommand(new ForwardWithResult(screenKey, requestId, data));
+        executeCommands(new ForwardWithResult(screenKey, requestId, data));
     }
 
     public void navigateTo(String screenKey, Object data, Consumer<Throwable> onError) {
-        executeCommand(new ForwardWithErrorHandling(screenKey, onError, data));
+        executeCommands(new ForwardWithErrorHandling(screenKey, onError, data));
     }
 
     public void navigateTo(String screenKey, Consumer<Throwable> onError) {
-        executeCommand(new ForwardWithErrorHandling(screenKey, onError, null));
+        executeCommands(new ForwardWithErrorHandling(screenKey, onError, null));
     }
 }

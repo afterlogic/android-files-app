@@ -1,9 +1,9 @@
 package com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter;
 
-import android.databinding.DataBindingUtil;
-import android.databinding.ObservableList;
-import android.databinding.ViewDataBinding;
-import android.support.annotation.LayoutRes;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ObservableList;
+import androidx.databinding.ViewDataBinding;
+import androidx.annotation.LayoutRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

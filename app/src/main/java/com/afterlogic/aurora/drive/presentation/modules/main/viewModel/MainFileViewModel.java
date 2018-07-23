@@ -1,8 +1,8 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.viewModel;
 
-import android.databinding.ObservableBoolean;
-import android.databinding.ObservableField;
-import android.databinding.ObservableInt;
+import androidx.databinding.ObservableBoolean;
+import androidx.databinding.ObservableField;
+import androidx.databinding.ObservableInt;
 import android.net.Uri;
 
 import com.afterlogic.aurora.drive.R;
@@ -12,7 +12,7 @@ import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnPropertyChangedCallback;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.OnActionListener;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.AuroraFileViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.viewModel.AuroraFileViewModel;
 
 /**
  * Created by aleksandrcikin on 11.07.17.

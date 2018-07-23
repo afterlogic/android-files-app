@@ -1,14 +1,14 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.viewModel;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.OnLifecycleEvent;
 import android.content.ActivityNotFoundException;
-import android.databinding.ObservableArrayList;
-import android.databinding.ObservableBoolean;
-import android.databinding.ObservableField;
-import android.databinding.ObservableList;
+import androidx.databinding.ObservableArrayList;
+import androidx.databinding.ObservableBoolean;
+import androidx.databinding.ObservableField;
+import androidx.databinding.ObservableList;
 import android.net.Uri;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.application.navigation.AppRouter;
@@ -32,11 +32,11 @@ import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnPro
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.OnActionListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ViewModelState;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.MessageDialogViewModel;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileListArgs;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFileListViewModel;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.rx.FileProgressTransformer;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.rx.IndeterminateProgressTransformer;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.rx.TrackInMapTransformer;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.view.FileListArgs;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.viewModel.SearchableFileListViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.viewModel.rx.FileProgressTransformer;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.viewModel.rx.IndeterminateProgressTransformer;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.viewModel.rx.TrackInMapTransformer;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewArgs;
 import com.afterlogic.aurora.drive.presentation.modules.main.interactor.MainFilesListInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.mainFilesAction.interactor.MainFileAction;

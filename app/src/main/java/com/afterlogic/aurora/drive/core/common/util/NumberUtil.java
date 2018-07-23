@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.core.common.util;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
 /**

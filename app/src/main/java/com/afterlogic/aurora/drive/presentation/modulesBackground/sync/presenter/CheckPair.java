@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modulesBackground.sync.presenter;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
 

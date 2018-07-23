@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.choise.viewModel;
 
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFileItemViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.viewModel.BaseFileItemViewModel;
 
 /**
  * Created by sashka on 11.02.17.<p/>

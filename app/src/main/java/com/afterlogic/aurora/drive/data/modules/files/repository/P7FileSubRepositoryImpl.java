@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.data.modules.files.repository;
 
 import android.net.Uri;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.afterlogic.aurora.drive.R;
@@ -31,7 +31,7 @@ import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.model.Storage;
 import com.afterlogic.aurora.drive.model.error.ApiResponseError;
 import com.afterlogic.aurora.drive.model.error.FileNotExistError;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.StorageTypesMapper;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.interactor.StorageTypesMapper;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 

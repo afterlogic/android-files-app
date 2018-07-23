@@ -1,8 +1,8 @@
 package com.afterlogic.aurora.drive.presentation.modules.fileView.view;
 
-import android.databinding.ObservableList;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import androidx.databinding.ObservableList;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import android.view.ViewGroup;
 
 import com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter.ItemsAdapter;

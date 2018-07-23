@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.data.modules.auth;
 
-import android.support.v4.util.Pair;
+import androidx.core.util.Pair;
 
 import com.afterlogic.aurora.drive.core.consts.Const;
 import com.afterlogic.aurora.drive.data.model.project8.UserP8;

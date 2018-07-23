@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter;
 
-import android.support.annotation.LayoutRes;
+import androidx.annotation.LayoutRes;
 
 /**
  * Created by sashka on 07.02.17.<p/>

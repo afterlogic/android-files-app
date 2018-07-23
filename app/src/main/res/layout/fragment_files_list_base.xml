@@ -6,13 +6,13 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="com.afterlogic.aurora.drive.presentation.modules._baseFiles.view.BindHelper"
+        <import type="com.afterlogic.aurora.drive.presentation.modules.baseFiles.view.BindHelper"
                 alias="bindHelper"/>
         <import type="com.afterlogic.aurora.drive.presentation.common.binding.bindingAdapters.RecyclerViewBinding"
                 alias="recyclerBinding"/>
         <variable
             name="viewModel"
-            type="com.afterlogic.aurora.drive.presentation.modules._baseFiles.viewModel.BaseFilesListViewModel"/>
+            type="com.afterlogic.aurora.drive.presentation.modules.baseFiles.viewModel.BaseFilesListViewModel"/>
     </data>
 
     <LinearLayout
@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v4.widget.SwipeRefreshLayout
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -28,7 +28,7 @@
             bind:onRefresh="@{viewModel}"
             bind:colorSchemeResources="@{@intArray/swipe_refresh_color_scheme}">
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -39,7 +39,7 @@
                 bind:items="@{viewModel.items}"
                 tools:listitem="@layout/main_item_list_file"/>
 
-        </android.support.v4.widget.SwipeRefreshLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </LinearLayout>
 

@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.offline.di;
 
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModel;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.SubModuleScope;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.ViewModelKey;

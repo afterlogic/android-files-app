@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.upload.di;
 
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModel;
 
 import com.afterlogic.aurora.drive.presentation.assembly.modules.ViewModelKey;
 import com.afterlogic.aurora.drive.presentation.modules.upload.viewModel.UploadFileListViewModel;

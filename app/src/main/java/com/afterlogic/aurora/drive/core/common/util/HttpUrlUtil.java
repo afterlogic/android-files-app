@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.core.common.util;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
 
 import okhttp3.HttpUrl;

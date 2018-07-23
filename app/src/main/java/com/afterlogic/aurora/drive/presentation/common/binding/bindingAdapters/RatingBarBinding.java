@@ -1,8 +1,8 @@
 package com.afterlogic.aurora.drive.presentation.common.binding.bindingAdapters;
 
-import android.databinding.BindingAdapter;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.databinding.BindingAdapter;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.widget.RatingBar;
 
 import com.afterlogic.aurora.drive.R;

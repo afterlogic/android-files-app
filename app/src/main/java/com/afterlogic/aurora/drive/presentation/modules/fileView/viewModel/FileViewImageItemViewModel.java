@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.fileView.viewModel;
 
-import android.databinding.ObservableBoolean;
-import android.databinding.ObservableField;
+import androidx.databinding.ObservableBoolean;
+import androidx.databinding.ObservableField;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 

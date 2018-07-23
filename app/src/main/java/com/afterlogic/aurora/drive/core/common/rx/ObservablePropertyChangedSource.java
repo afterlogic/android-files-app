@@ -15,7 +15,7 @@ import io.reactivex.Observable;
 
 public class ObservablePropertyChangedSource {
 
-    public static <T extends android.databinding.Observable> Observable<T> create(T field) {
+    public static <T extends androidx.databinding.Observable> Observable<T> create(T field) {
         List<Runnable> finalizers = new ArrayList<>();
         return Observable.<T>create(emitter -> {
             SimpleOnPropertyChangedCallback callback = new SimpleOnPropertyChangedCallback(() -> emitter.onNext(field));
@@ -26,7 +26,7 @@ public class ObservablePropertyChangedSource {
                 .doFinally(() -> Stream.of(finalizers).forEach(Runnable::run));
     }
 
-    public static <T extends android.databinding.Observable> Observable<T> createWithValue(T field) {
+    public static <T extends androidx.databinding.Observable> Observable<T> createWithValue(T field) {
         return create(field).startWith(field);
     }
 }

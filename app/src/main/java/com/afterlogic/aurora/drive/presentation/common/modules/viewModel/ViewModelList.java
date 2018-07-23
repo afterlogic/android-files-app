@@ -1,8 +1,8 @@
 package com.afterlogic.aurora.drive.presentation.common.modules.viewModel;
 
-import android.databinding.ObservableArrayList;
-import android.databinding.ObservableList;
-import android.support.annotation.Nullable;
+import androidx.databinding.ObservableArrayList;
+import androidx.databinding.ObservableList;
+import androidx.annotation.Nullable;
 
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;

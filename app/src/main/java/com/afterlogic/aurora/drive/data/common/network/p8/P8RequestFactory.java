@@ -9,7 +9,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Locale;
 
-import javax.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import retrofit2.Converter;
 import retrofit2.Retrofit;

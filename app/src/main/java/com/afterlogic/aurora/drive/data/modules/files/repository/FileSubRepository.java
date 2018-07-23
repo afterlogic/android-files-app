@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.data.modules.files.repository;
 
 import android.net.Uri;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.afterlogic.aurora.drive.data.model.UploadResult;
 import com.afterlogic.aurora.drive.model.AuroraFile;

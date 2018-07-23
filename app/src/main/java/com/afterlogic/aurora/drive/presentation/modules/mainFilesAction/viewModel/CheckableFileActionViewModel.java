@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.mainFilesAction.viewModel;
 
-import android.databinding.Bindable;
+import androidx.databinding.Bindable;
 
 import com.afterlogic.aurora.drive.BR;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;

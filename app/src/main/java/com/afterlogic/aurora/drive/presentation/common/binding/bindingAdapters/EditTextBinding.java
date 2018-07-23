@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.common.binding.bindingAdapters;
 
-import android.databinding.BindingAdapter;
-import android.support.annotation.Nullable;
+import androidx.databinding.BindingAdapter;
+import androidx.annotation.Nullable;
 import android.widget.EditText;
 
 import com.afterlogic.aurora.drive.presentation.common.binding.models.EditorEvent;
