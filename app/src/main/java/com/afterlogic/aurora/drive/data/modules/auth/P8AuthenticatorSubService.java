@@ -36,7 +36,7 @@ class P8AuthenticatorSubService implements AuthenticatorSubService {
                         .map(userInfo -> new AuthorizedData(authToken, userInfo))
                 )
                 .map(auth -> new AuthorizedAuroraSession(
-                        auth.getUser().getPublicId(),
+                        auth.getUser().getName(),
                         "APP_TOKEN_STUB",
                         auth.getToken(),
                         auth.getAccountId(),
@@ -51,16 +51,27 @@ class P8AuthenticatorSubService implements AuthenticatorSubService {
     public Single<AuthorizedAuroraSession> byToken(String host, String token) {
 
         return service.getUser(host, token)
-                .map(userData -> new AuthorizedAuroraSession(
-                        userData.second.getPublicId(),
-                        "APP_TOKEN_STUB",
-                        token,
-                        userData.first,
-                        null,
-                        null,
-                        HttpUrl.parse(host),
-                        Const.ApiVersion.API_P8
-                ));
+                .map(userData -> {
+
+                    UserP8 user = userData.second;
+                    Long id = userData.first;
+
+                    if (user == null || id == null) {
+                        throw new IllegalArgumentException("User and id must be not null.");
+                    }
+
+                    return new AuthorizedAuroraSession(
+                            user.getName(),
+                            "APP_TOKEN_STUB",
+                            token,
+                            id,
+                            null,
+                            null,
+                            HttpUrl.parse(host),
+                            Const.ApiVersion.API_P8
+                    );
+
+                });
 
     }
 

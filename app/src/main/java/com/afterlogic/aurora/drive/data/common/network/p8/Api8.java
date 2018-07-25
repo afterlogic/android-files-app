@@ -87,13 +87,14 @@ public interface Api8 {
         String GET_STORAGES = "GetStorages";
         String COPY = "Copy";
         String MOVE = "Move";
-        String GET_USER = "GetUser";
+        String AUTHENTICATED_ACCOUNT = "GetAuthenticatedAccount";
         String IS_AVAILABLE = "IsAvailable";
 
         String HEADER_PING= HEADER + PING;
         String HEADER_LOGIN= HEADER + LOGIN;
-        String HEADER_GET_USER = HEADER + GET_USER;
+        String HEADER_GET_AUTHENTICATED_ACCOUNT = HEADER + AUTHENTICATED_ACCOUNT;
         String HEADER_IS_AVAILABLE = HEADER + IS_AVAILABLE;
+
     }
 
     interface Param {
@@ -147,7 +148,7 @@ public interface Api8 {
     @FormUrlEncoded
     @Headers({
             Module.HEADER_CORE,
-            Method.HEADER_GET_USER
+            Method.HEADER_GET_AUTHENTICATED_ACCOUNT
     })
     Single<ApiResponseP8<UserP8>> getUser(
             @Url String host,
