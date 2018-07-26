@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.fileView.router;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router.FilesRouter;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.model.router.FilesRouter;
 
 import java.io.File;
 

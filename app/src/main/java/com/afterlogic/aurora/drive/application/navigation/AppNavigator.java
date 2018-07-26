@@ -1,12 +1,13 @@
 package com.afterlogic.aurora.drive.application.navigation;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.FileProvider;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.core.content.FileProvider;
 
 import com.afterlogic.aurora.drive.application.navigation.args.ExternalOpenFileArgs;
 import com.afterlogic.aurora.drive.application.navigation.args.ExternalShareFileArgs;
@@ -70,15 +71,21 @@ public class AppNavigator extends SupportAppNavigator {
             }
 
             if (command instanceof ForwardWithResult) {
+
                 ForwardWithResult forwardWithResult = (ForwardWithResult) command;
 
-                Intent activityIntent = createActivityIntent(forwardWithResult.getScreenKey(), forwardWithResult.getTransitionData());
+                Intent activityIntent = createActivityIntent(
+                        activity,
+                        forwardWithResult.getScreenKey(),
+                        forwardWithResult.getTransitionData()
+                );
 
                 // Start activity
                 if (activityIntent != null) {
                     activity.startActivityForResult(activityIntent, forwardWithResult.getRequestCode());
                     return;
                 }
+
             }
 
             if (command instanceof Forward) {
@@ -113,7 +120,7 @@ public class AppNavigator extends SupportAppNavigator {
     }
 
     @Override
-    protected Intent createActivityIntent(String screenKey, Object data) {
+    protected Intent createActivityIntent(Context context, String screenKey, Object data) {
         switch (screenKey) {
 
             case AppRouter.MAIN: return MainActivity.intent(activity);

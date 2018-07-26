@@ -14,25 +14,25 @@
             type="ReplaceViewModel"/>
     </data>
 
-    <android.support.design.widget.CoordinatorLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         android:layout_width="match_parent">
 
-        <android.support.design.widget.AppBarLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:theme="@style/AppTheme.AppBarOverlay">
 
-            <android.support.v7.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
                 app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
-            <android.support.design.widget.TabLayout
+            <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
@@ -41,7 +41,7 @@
                 android:visibility="@{vm.fileTypesLocked || vm.storages.size() &lt; 2 ? View.GONE : View.VISIBLE}"
                 app:layout_scrollFlags="scroll|enterAlways"/>
 
-        </android.support.design.widget.AppBarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
         <TextView
             android:layout_width="match_parent"
@@ -53,7 +53,7 @@
             android:visibility="@{vm.viewModelState.isError() ? View.VISIBLE : View.GONE}"/>
 
         <!-- SwipeRefresh for refreshing on error and progress indication-->
-        <android.support.v4.widget.SwipeRefreshLayout
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -68,7 +68,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="20dp"/>
             </ScrollView>
-        </android.support.v4.widget.SwipeRefreshLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <com.afterlogic.aurora.drive.presentation.common.components.view.DisablableViewPager
             android:id="@+id/viewpager"
@@ -89,5 +89,5 @@
             android:visibility="@{vm.viewModelState.isContent() ? View.VISIBLE : View.GONE}"
             tools:ignore="RtlHardcoded" />
 
-    </android.support.design.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

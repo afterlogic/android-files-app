@@ -1,10 +1,10 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.view;
 
-import android.arch.lifecycle.ViewModelProvider;
-import android.databinding.DataBindingUtil;
-import android.databinding.ViewDataBinding;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -12,7 +12,7 @@ import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.BindingUtil;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMFragment;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileListArgs;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.view.FileListArgs;
 import com.afterlogic.aurora.drive.presentation.modules.main.viewModel.MainFilesListViewModel;
 
 /**

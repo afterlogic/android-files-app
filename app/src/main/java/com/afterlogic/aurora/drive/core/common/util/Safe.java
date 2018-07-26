@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.core.common.util;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.core.common.interfaces.Creator;

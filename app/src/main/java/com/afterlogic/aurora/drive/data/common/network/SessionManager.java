@@ -10,7 +10,7 @@ import com.afterlogic.aurora.drive.core.common.contextWrappers.account.AccountHe
 import com.afterlogic.aurora.drive.core.common.util.AppUtil;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 
-import javax.annotation.Nullable;
+import androidx.annotation.Nullable;
 import javax.inject.Inject;
 
 /**

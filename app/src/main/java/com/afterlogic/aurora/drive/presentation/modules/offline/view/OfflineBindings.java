@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.offline.view;
 
-import android.databinding.BindingAdapter;
-import android.support.v7.widget.RecyclerView;
+import androidx.databinding.BindingAdapter;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.afterlogic.aurora.drive.BR;
 import com.afterlogic.aurora.drive.R;

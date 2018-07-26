@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.core.common.rx;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 import com.afterlogic.aurora.drive.R;

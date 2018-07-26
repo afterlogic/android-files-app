@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.replace.viewModel;
 
-import android.databinding.ObservableField;
+import androidx.databinding.ObservableField;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
@@ -8,8 +8,8 @@ import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.ProgressViewModel;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.AsyncUiObservableField;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFilesRootViewModel;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.ViewModelsConnection;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.viewModel.SearchableFilesRootViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.viewModel.ViewModelsConnection;
 import com.afterlogic.aurora.drive.presentation.modules.replace.interactor.ReplaceInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.replace.view.ReplaceArgs;
 

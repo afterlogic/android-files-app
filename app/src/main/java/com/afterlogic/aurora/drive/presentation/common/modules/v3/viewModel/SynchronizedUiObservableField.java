@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel;
 
-import android.databinding.ObservableField;
+import androidx.databinding.ObservableField;
 import android.os.Handler;
 import android.os.Looper;
 

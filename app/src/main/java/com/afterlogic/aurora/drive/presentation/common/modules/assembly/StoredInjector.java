@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.common.modules.assembly;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.afterlogic.aurora.drive.presentation.common.modules.view.StoreableMVVMView;
 import com.afterlogic.aurora.drive.presentation.assembly.assemblies.ModulesComponentCreator;

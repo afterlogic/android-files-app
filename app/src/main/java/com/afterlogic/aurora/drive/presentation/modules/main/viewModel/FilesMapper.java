@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.viewModel;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;

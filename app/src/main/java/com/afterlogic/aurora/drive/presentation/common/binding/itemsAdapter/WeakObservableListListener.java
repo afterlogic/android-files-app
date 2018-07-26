@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter;
 
-import android.databinding.ObservableList;
+import androidx.databinding.ObservableList;
 
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;

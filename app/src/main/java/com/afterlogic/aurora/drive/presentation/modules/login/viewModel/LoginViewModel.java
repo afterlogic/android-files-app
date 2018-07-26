@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.login.viewModel;
 
-import android.databinding.ObservableBoolean;
-import android.databinding.ObservableField;
+import androidx.databinding.ObservableBoolean;
+import androidx.databinding.ObservableField;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;

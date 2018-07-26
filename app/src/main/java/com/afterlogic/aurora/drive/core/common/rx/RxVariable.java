@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.core.common.rx;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;

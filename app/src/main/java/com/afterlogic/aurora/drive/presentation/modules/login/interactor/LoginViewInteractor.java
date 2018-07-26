@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.login.interactor;
 
 import android.app.Activity;
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.application.ActivityTracker;

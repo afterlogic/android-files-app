@@ -4,8 +4,8 @@ import android.net.Uri;
 
 import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.FilesRootInteractor;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.FilesRootViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.interactor.FilesRootInteractor;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.viewModel.FilesRootViewModel;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.common.binding;
 
-import android.databinding.Observable;
+import androidx.databinding.Observable;
 
 /**
  * Created by sashka on 07.02.17.<p/>

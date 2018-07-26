@@ -1,9 +1,9 @@
 package com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter;
 
-import android.databinding.ObservableList;
-import android.databinding.ViewDataBinding;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
+import androidx.databinding.ObservableList;
+import androidx.databinding.ViewDataBinding;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.afterlogic.aurora.drive.BR;
 import com.afterlogic.aurora.drive.core.common.interfaces.Provider;

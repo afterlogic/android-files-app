@@ -4,6 +4,7 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.Application;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
@@ -28,6 +29,7 @@ import com.crashlytics.android.core.CrashlyticsCore;
 
 import javax.inject.Inject;
 
+import androidx.multidex.MultiDex;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
@@ -63,6 +65,12 @@ public class App extends Application implements HasActivityInjector, HasBroadcas
 
     @Inject
     protected DataCleaner dataCleaner;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        MultiDex.install(base);
+        super.attachBaseContext(base);
+    }
 
     @Override
     public void onCreate() {

@@ -1,8 +1,9 @@
 package com.afterlogic.aurora.drive.data.modules.auth;
 
-import android.support.v4.util.Pair;
+import androidx.core.util.Pair;
 
 import com.afterlogic.aurora.drive.data.common.network.p8.Api8;
+import com.afterlogic.aurora.drive.data.common.network.p8.requestparams.EmptyParameters;
 import com.afterlogic.aurora.drive.data.common.network.util.ApiUtil;
 import com.afterlogic.aurora.drive.data.model.project8.GetUserParametersDto;
 import com.afterlogic.aurora.drive.data.model.project8.LoginParametersDto;
@@ -28,7 +29,7 @@ class P8AuthenticatorNetworkService {
     }
 
     Single<String> ping(String host){
-        return api.ping(Api8.completeUrl(host))
+        return api.ping(Api8.completeUrl(host), new EmptyParameters())
                 .compose(ApiUtil::checkResponseAndGetData);
     }
 
@@ -44,8 +45,9 @@ class P8AuthenticatorNetworkService {
     }
 
     Single<Boolean> checkExternalLoginFormsAvailable(String host) {
-        return api.checkExternalClientLoginFormAvailable(Api8.completeUrl(host))
-                .compose(ApiUtil::checkResponseAndGetData);
+        return api.checkExternalClientLoginFormAvailable(
+                Api8.completeUrl(host), new EmptyParameters()
+        ).compose(ApiUtil::checkResponseAndGetData);
     }
 
 }

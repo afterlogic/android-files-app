@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog;
 
-import android.databinding.ObservableField;
+import androidx.databinding.ObservableField;
 
 /**
  * Created by aleksandrcikin on 17.07.17.

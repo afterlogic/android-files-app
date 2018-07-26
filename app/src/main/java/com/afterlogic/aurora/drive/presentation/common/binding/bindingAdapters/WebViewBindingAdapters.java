@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.common.binding.bindingAdapters;
 
-import android.databinding.BindingAdapter;
+import androidx.databinding.BindingAdapter;
 import android.webkit.WebView;
 
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;

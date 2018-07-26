@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.assembly;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.afterlogic.aurora.drive.presentation.assembly.assemblies.ModulesComponentCreator;
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.OldBaseInjector;

@@ -2,11 +2,11 @@ package com.afterlogic.aurora.drive.presentation.modules.fileView.router;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v4.content.FileProvider;
+import androidx.core.content.FileProvider;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.ViewState;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.router.BaseFileRouter;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.model.router.BaseFileRouter;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewPresentationView;
 
 import java.io.File;

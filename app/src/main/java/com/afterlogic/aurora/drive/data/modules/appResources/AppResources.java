@@ -2,9 +2,9 @@ package com.afterlogic.aurora.drive.data.modules.appResources;
 
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.support.annotation.ArrayRes;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.StringRes;
+import androidx.annotation.ArrayRes;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.StringRes;
 
 /**
  * Created by sashka on 09.11.16.<p/>

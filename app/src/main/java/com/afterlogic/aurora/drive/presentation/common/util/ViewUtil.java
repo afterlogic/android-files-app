@@ -3,7 +3,7 @@ package com.afterlogic.aurora.drive.presentation.common.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.View;
 
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;

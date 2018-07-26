@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.common.binding.binder;
 
-import android.databinding.BindingConversion;
+import androidx.databinding.BindingConversion;
 
 /**
  * Created by sashka on 23.12.16.<p/>

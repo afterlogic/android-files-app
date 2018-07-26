@@ -14,8 +14,8 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.core.PermissionRequest;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.core.PermissionsInteractor;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.SearchableFilesListInteractor;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.rx.WakeLockTransformer;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.interactor.SearchableFilesListInteractor;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.interactor.rx.WakeLockTransformer;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncListener;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.view.SyncService;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
@@ -175,7 +175,7 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
     public Completable createPublicLink(AuroraFile file) {
         return filesRepository.createPublicLink(file)
                 .doOnSuccess(clipboardHelper::put)
-                .toCompletable();
+                .ignoreElement();
     }
 
     public Completable deletePublicLink(AuroraFile file) {
@@ -201,7 +201,7 @@ public class MainFilesListInteractor extends SearchableFilesListInteractor {
         return upstream.startWith(
                 permissionsInteractor.requirePermission(PermissionRequest.READ_AND_WRITE_STORAGE)
                         .observeOn(Schedulers.io())
-                        .toCompletable()
+                        .ignoreElement()
                         .toObservable()
         )//-----|
                 .compose(wakeLockFactory.create());

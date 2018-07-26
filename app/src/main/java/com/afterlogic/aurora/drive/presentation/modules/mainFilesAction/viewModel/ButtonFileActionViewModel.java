@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.mainFilesAction.viewModel;
 
-import android.databinding.BaseObservable;
+import androidx.databinding.BaseObservable;
 import android.net.Uri;
 import android.view.View;
 

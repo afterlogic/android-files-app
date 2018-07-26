@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.common.binding.binder;
 
-import android.databinding.BindingAdapter;
+import androidx.databinding.BindingAdapter;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;

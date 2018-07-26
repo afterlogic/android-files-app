@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.common.binding.itemsAdapter;
 
-import android.databinding.ObservableList;
+import androidx.databinding.ObservableList;
 
 /**
  * Created by sashka on 06.02.17.<p/>

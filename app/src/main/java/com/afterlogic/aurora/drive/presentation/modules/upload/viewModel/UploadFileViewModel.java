@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.upload.viewModel;
 
-import android.databinding.ObservableField;
+import androidx.databinding.ObservableField;
 import android.net.Uri;
 
 import com.afterlogic.aurora.drive.R;
@@ -9,7 +9,7 @@ import com.afterlogic.aurora.drive.core.common.util.ObjectsUtil;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.OnActionListener;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.AuroraFileViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.viewModel.AuroraFileViewModel;
 
 /**
  * Created by aleksandrcikin on 21.07.17.

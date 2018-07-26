@@ -2,6 +2,7 @@ package com.afterlogic.aurora.drive.data.common.network.p8.apiAnnotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.util.Locale;
 
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;

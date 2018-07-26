@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.common.binding.utils;
 
-import android.databinding.Observable;
+import androidx.databinding.Observable;
 
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.annimon.stream.Stream;

@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.core.common;
 
 import android.os.FileObserver;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;

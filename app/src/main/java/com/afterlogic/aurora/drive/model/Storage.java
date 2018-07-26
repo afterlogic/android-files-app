@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.model;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Created by sashka on 03.02.17.<p/>

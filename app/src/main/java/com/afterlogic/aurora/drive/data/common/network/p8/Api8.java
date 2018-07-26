@@ -1,25 +1,34 @@
 package com.afterlogic.aurora.drive.data.common.network.p8;
 
 import com.afterlogic.aurora.drive.data.common.network.p8.apiAnnotations.FormatHeader;
-import com.afterlogic.aurora.drive.data.common.network.p8.apiAnnotations.JsonField;
+import com.afterlogic.aurora.drive.data.common.network.p8.apiAnnotations.ApiRequest;
+import com.afterlogic.aurora.drive.data.common.network.p8.apiAnnotations.ToString;
+import com.afterlogic.aurora.drive.data.common.network.p8.requestparams.CreateFolderParameters;
+import com.afterlogic.aurora.drive.data.common.network.p8.requestparams.CreatePublicLinkParameters;
+import com.afterlogic.aurora.drive.data.common.network.p8.requestparams.DeleteFilesParameters;
+import com.afterlogic.aurora.drive.data.common.network.p8.requestparams.EmptyParameters;
+import com.afterlogic.aurora.drive.data.common.network.p8.requestparams.GetFileThumbnailParameters;
+import com.afterlogic.aurora.drive.data.common.network.p8.requestparams.GetFilesParameters;
+import com.afterlogic.aurora.drive.data.common.network.p8.requestparams.MoveFilesParameters;
+import com.afterlogic.aurora.drive.data.common.network.p8.requestparams.RenameFileParameters;
+import com.afterlogic.aurora.drive.data.common.network.p8.requestparams.UploadFileParameters;
+import com.afterlogic.aurora.drive.data.common.network.p8.requestparams.ViewFileParameters;
 import com.afterlogic.aurora.drive.data.model.project8.ApiResponseP8;
 import com.afterlogic.aurora.drive.data.model.project8.FilesResponseP8;
 import com.afterlogic.aurora.drive.data.model.project8.GetUserParametersDto;
 import com.afterlogic.aurora.drive.data.model.project8.LoginParametersDto;
+import com.afterlogic.aurora.drive.data.common.network.p8.requestparams.DeletePublicLinkParameters;
 import com.afterlogic.aurora.drive.data.model.project8.UploadResultP8;
 import com.afterlogic.aurora.drive.data.model.project8.UserP8;
 import com.afterlogic.aurora.drive.data.modules.files.model.dto.P8StorageDto;
 import com.afterlogic.aurora.drive.model.AuthToken;
 
 import java.util.List;
-import java.util.Map;
 
 import io.reactivex.Single;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
-import retrofit2.http.Field;
-import retrofit2.http.FieldMap;
-import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Body;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
@@ -52,25 +61,19 @@ public interface Api8 {
         String NAME_AUTHORISATION = "Authorization";
         String VALUE_AUTHORISATION = "Bearer " + AUTH_TOKEN;
         String AUTHORISATION = NAME_AUTHORISATION + ": " + VALUE_AUTHORISATION;
+        String CONTENT_TYPE_X_FORM_URL_ENCODED =
+                "Content-Type: application/x-www-form-urlencoded";
     }
 
     interface Module {
 
-        String HEADER = DEFAULT_FIELD_CRUNCH + "Module: ";
-
         String CORE = "Core";
         String FILES = "Files";
-        String STANDARD_AUTH = "StandardAuth";
         String EXTERNAL_CLIENTS_LOGIN_FORM_WEBCLIENT = "ExternalClientsLoginFormWebclient";
 
-        String HEADER_CORE = HEADER + "Core";
-        String HEADER_EXTERNAL_CLIENTS_LOGIN_FORM_WEBCLIENT = HEADER
-                + EXTERNAL_CLIENTS_LOGIN_FORM_WEBCLIENT;
     }
 
     interface Method {
-
-        String HEADER = DEFAULT_FIELD_CRUNCH + "Method: ";
 
         String PING = "Ping";
         String LOGIN = "Login";
@@ -87,19 +90,12 @@ public interface Api8 {
         String GET_STORAGES = "GetStorages";
         String COPY = "Copy";
         String MOVE = "Move";
-        String GET_USER = "GetUser";
         String IS_AVAILABLE = "IsAvailable";
+        String GET_AUTHENTICATED_ACCOUNT = "GetAuthenticatedAccount";
 
-        String HEADER_PING= HEADER + PING;
-        String HEADER_LOGIN= HEADER + LOGIN;
-        String HEADER_GET_USER = HEADER + GET_USER;
-        String HEADER_IS_AVAILABLE = HEADER + IS_AVAILABLE;
     }
 
     interface Param {
-
-        String HEADER = DEFAULT_FIELD_CRUNCH + "Parameters: ";
-
         String LOGIN = "Login";
         String PASSWORD = "Password";
         String SIGN_ME = "SignMe";
@@ -119,6 +115,7 @@ public interface Api8 {
         String TO_PATH = "ToPath";
         String FILES = "Files";
         String SIZE = "Size";
+
     }
 
     static String completeUrl(String host) {
@@ -126,106 +123,131 @@ public interface Api8 {
     }
 
     @POST
-    @Headers({
-            Module.HEADER_CORE,
-            Method.HEADER_PING
-    })
-    Single<ApiResponseP8<String>> ping(@Url String url);
+    @Headers(ApiHeader.CONTENT_TYPE_X_FORM_URL_ENCODED)
+    @ApiRequest(module = Module.CORE, method = Method.PING)
+    Single<ApiResponseP8<String>> ping(@Url String url, @Body EmptyParameters parameters);
 
     @POST
-    @FormUrlEncoded
-    @Headers({
-            Module.HEADER_CORE,
-            Method.HEADER_LOGIN
-    })
+    @Headers(ApiHeader.CONTENT_TYPE_X_FORM_URL_ENCODED)
+    @ApiRequest(module = Module.CORE, method = Method.LOGIN)
     Single<ApiResponseP8<AuthToken>> login(
             @Url String url,
-            @Field(ApiField.PARAMS) @JsonField LoginParametersDto params
+            @Body LoginParametersDto params
     );
 
     @POST
-    @FormUrlEncoded
-    @Headers({
-            Module.HEADER_CORE,
-            Method.HEADER_GET_USER
-    })
+    @Headers(ApiHeader.CONTENT_TYPE_X_FORM_URL_ENCODED)
+    @ApiRequest(module = Module.CORE, method = Method.GET_AUTHENTICATED_ACCOUNT)
     Single<ApiResponseP8<UserP8>> getUser(
             @Url String host,
             @Header(ApiHeader.NAME_AUTHORISATION) @FormatHeader("Bearer %s") String token,
-            @Field("Parameters") @JsonField GetUserParametersDto params
+            @Body GetUserParametersDto params
     );
 
     @POST
+    @Headers(ApiHeader.CONTENT_TYPE_X_FORM_URL_ENCODED)
+    @ApiRequest(module = Module.EXTERNAL_CLIENTS_LOGIN_FORM_WEBCLIENT, method = Method.IS_AVAILABLE)
+    Single<ApiResponseP8<Boolean>> checkExternalClientLoginFormAvailable(
+            @Url String host, @Body EmptyParameters params);
+
+    @POST(API)
     @Headers({
-            Module.HEADER_EXTERNAL_CLIENTS_LOGIN_FORM_WEBCLIENT,
-            Method.HEADER_IS_AVAILABLE
+            ApiHeader.AUTHORISATION,
+            ApiHeader.CONTENT_TYPE_X_FORM_URL_ENCODED
     })
-    Single<ApiResponseP8<Boolean>> checkExternalClientLoginFormAvailable(@Url String host);
-
-    @POST(API)
-    @FormUrlEncoded
-    @Headers(ApiHeader.AUTHORISATION)
-    Single<ApiResponseP8<FilesResponseP8>> getFiles(@FieldMap Map<String, Object> fields);
+    @ApiRequest(module = Module.FILES, method = Method.GET_FILES)
+    Single<ApiResponseP8<FilesResponseP8>> getFiles(@Body GetFilesParameters params);
 
 
     @POST(API)
-    @FormUrlEncoded
-    @Headers(ApiHeader.AUTHORISATION)
-    Single<ResponseBody> getFileThumbnail(@FieldMap Map<String, Object> fields);
+    @Headers({
+            ApiHeader.AUTHORISATION,
+            ApiHeader.CONTENT_TYPE_X_FORM_URL_ENCODED
+    })
+    @ApiRequest(module = Module.FILES, method = Method.GET_FILE_THUMBNAIL)
+    Single<ResponseBody> getFileThumbnail(@Body GetFileThumbnailParameters params);
 
     @POST(API)
-    @FormUrlEncoded
-    @Headers(ApiHeader.AUTHORISATION)
+    @Headers({
+            ApiHeader.AUTHORISATION,
+            ApiHeader.CONTENT_TYPE_X_FORM_URL_ENCODED
+    })
+    @ApiRequest(module = Module.FILES, method = Method.VIEW_FILE)
     @Streaming
-    Single<ResponseBody> getFile(@FieldMap Map<String, Object> fields);
-
+    Single<ResponseBody> viewFile(@Body ViewFileParameters params);
 
     @POST(API)
-    @FormUrlEncoded
+    @Headers({
+            ApiHeader.AUTHORISATION,
+            ApiHeader.CONTENT_TYPE_X_FORM_URL_ENCODED
+    })
+    @ApiRequest(module = Module.FILES, method = Method.CREATE_FOLDER)
+    Single<ApiResponseP8<Boolean>> createFolder(@Body CreateFolderParameters params);
+
+    @POST(API)
+    @Headers({
+            ApiHeader.AUTHORISATION,
+            ApiHeader.CONTENT_TYPE_X_FORM_URL_ENCODED
+    })
+    @ApiRequest(module = Module.FILES, method = Method.RENAME)
+    Single<ApiResponseP8<Boolean>> rename(@Body RenameFileParameters params);
+
+    @POST(API)
+    @Headers({
+            ApiHeader.AUTHORISATION,
+            ApiHeader.CONTENT_TYPE_X_FORM_URL_ENCODED
+    })
+    @ApiRequest(module = Module.FILES, method = Method.DELETE)
+    Single<ApiResponseP8<Boolean>> delete(@Body DeleteFilesParameters params);
+
+    @POST(API)
+    @Headers({
+            ApiHeader.AUTHORISATION,
+            ApiHeader.CONTENT_TYPE_X_FORM_URL_ENCODED
+    })
+    @ApiRequest(module = Module.FILES, method = Method.CREATE_PUBLIC_LINK)
+    Single<ApiResponseP8<String>> createPublicLink(@Body CreatePublicLinkParameters link);
+
+    @POST(API)
+    @Headers({
+            ApiHeader.AUTHORISATION,
+            ApiHeader.CONTENT_TYPE_X_FORM_URL_ENCODED
+    })
+    @ApiRequest(module = Module.FILES, method = Method.DELETE_PUBLIC_LINK)
+    Single<ApiResponseP8<Boolean>> deletePublicLink(@Body DeletePublicLinkParameters link);
+
+    @POST(API)
+    @Headers({
+            ApiHeader.AUTHORISATION,
+            ApiHeader.CONTENT_TYPE_X_FORM_URL_ENCODED
+    })
+    @ApiRequest(module = Module.FILES, method = Method.GET_STORAGES)
+    Single<ApiResponseP8<List<P8StorageDto>>> getAvailableStorages(@Body EmptyParameters request);
+
+    @POST(API)
+    @Headers({
+            ApiHeader.AUTHORISATION,
+            ApiHeader.CONTENT_TYPE_X_FORM_URL_ENCODED
+    })
+    @ApiRequest(module = Module.FILES, method = Method.MOVE)
+    Single<ApiResponseP8<Boolean>> moveFiles(@Body MoveFilesParameters files);
+
+    @POST(API)
+    @Headers({
+            ApiHeader.AUTHORISATION,
+            ApiHeader.CONTENT_TYPE_X_FORM_URL_ENCODED
+    })
+    @ApiRequest(module = Module.FILES, method = Method.COPY)
+    Single<ApiResponseP8<Boolean>> copyFiles(@Body MoveFilesParameters files);
+
+    @POST(API)
     @Headers(ApiHeader.AUTHORISATION)
-    Single<ApiResponseP8<Boolean>> createFolder(@FieldMap Map<String, Object> fields);
-
-    @POST(API)
-    @FormUrlEncoded
-    @Headers(ApiHeader.AUTHORISATION)
-    Single<ApiResponseP8<Boolean>> rename(@FieldMap Map<String, Object> fields);
-
-    @POST(API)
-    @FormUrlEncoded
-    @Headers(ApiHeader.AUTHORISATION)
-    Single<ApiResponseP8<Boolean>> delete(@FieldMap Map<String, Object> fields);
-
-    @POST(API)
-    @FormUrlEncoded
-    @Headers(ApiHeader.AUTHORISATION)
-    Single<ApiResponseP8<String>> createPublicLink(@FieldMap Map<String, Object> fields);
-
-    @POST(API)
-    @FormUrlEncoded
-    @Headers(ApiHeader.AUTHORISATION)
-    Single<ApiResponseP8<Boolean>> deletePublicLink(@FieldMap Map<String, Object> fields);
-
-
-    @POST(API)
     @Multipart
-    @Headers(ApiHeader.AUTHORISATION)
     Single<ApiResponseP8<UploadResultP8>> upload(
-            @Part List<MultipartBody.Part> fields,
+            @Part(ApiField.MODULE) @ToString String module, // Module.FILES
+            @Part(ApiField.METHOD) @ToString String method, // Method.UPLOAD_FILE
+            @Part(ApiField.PARAMS) UploadFileParameters params,
             @Part MultipartBody.Part file
     );
 
-    @POST(API)
-    @FormUrlEncoded
-    @Headers(ApiHeader.AUTHORISATION)
-    Single<ApiResponseP8<Boolean>> replaceFiles(@FieldMap Map<String, Object> fields);
-
-    @POST(API)
-    @FormUrlEncoded
-    @Headers(ApiHeader.AUTHORISATION)
-    Single<ApiResponseP8<List<P8StorageDto>>> getAvailableStorages(@FieldMap Map<String, Object> fields);
-
-    @POST(API)
-    @FormUrlEncoded
-    @Headers(ApiHeader.AUTHORISATION)
-    Single<ApiResponseP8<Boolean>> copyFiles(@FieldMap Map<String, Object> fields);
 }

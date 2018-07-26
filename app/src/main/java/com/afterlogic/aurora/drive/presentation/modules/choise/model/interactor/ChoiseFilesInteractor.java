@@ -2,7 +2,7 @@ package com.afterlogic.aurora.drive.presentation.modules.choise.model.interactor
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.model.interactor.FilesListInteractor;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.model.interactor.FilesListInteractor;
 
 import java.io.File;
 

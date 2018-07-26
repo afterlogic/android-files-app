@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.common.view;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.ViewParent;
 

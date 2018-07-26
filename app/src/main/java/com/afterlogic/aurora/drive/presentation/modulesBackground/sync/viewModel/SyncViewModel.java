@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel;
 
-import android.databinding.ObservableField;
+import androidx.databinding.ObservableField;
 
 /**
  * Created by sashka on 15.02.17.<p/>

@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.upload.viewModel;
 
-import android.databinding.ObservableField;
+import androidx.databinding.ObservableField;
 import android.net.Uri;
 
 import com.afterlogic.aurora.drive.R;
@@ -15,9 +15,9 @@ import com.afterlogic.aurora.drive.model.error.FileAlreadyExistError;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.OnActionListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.MessageDialogViewModel;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.ProgressViewModel;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.rx.WakeLockTransformer;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.FileListViewModel;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.rx.FileProgressTransformer;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.interactor.rx.WakeLockTransformer;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.viewModel.FileListViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.viewModel.rx.FileProgressTransformer;
 import com.afterlogic.aurora.drive.presentation.modules.upload.interactor.UploadFilesInteractor;
 import com.annimon.stream.Stream;
 
@@ -126,7 +126,7 @@ public class UploadFileListViewModel extends FileListViewModel<UploadFileListVie
                             }
 
                         })
-                        .toCompletable()
+                        .ignoreElement()
                         .onErrorComplete()
                 )
                 .collect(Observables.Collectors.concatCompletable())

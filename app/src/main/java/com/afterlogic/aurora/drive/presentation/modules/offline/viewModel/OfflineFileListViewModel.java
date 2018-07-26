@@ -1,9 +1,9 @@
 package com.afterlogic.aurora.drive.presentation.modules.offline.viewModel;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.OnLifecycleEvent;
-import android.databinding.ObservableField;
-import android.support.v4.util.Pair;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.databinding.ObservableField;
+import androidx.core.util.Pair;
 import android.view.View;
 
 import com.afterlogic.aurora.drive.R;
@@ -20,8 +20,8 @@ import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.presentation.common.binding.commands.ContextMenuCommand;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.OnActionListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.MessageDialogViewModel;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFileListViewModel;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.ViewModelsConnection;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.viewModel.SearchableFileListViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.viewModel.ViewModelsConnection;
 import com.afterlogic.aurora.drive.presentation.modules.offline.interactor.OfflineFileListInteractor;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
 import com.annimon.stream.Stream;
@@ -205,7 +205,7 @@ public class OfflineFileListViewModel extends SearchableFileListViewModel<Offlin
                                 vm.setThumbnail(thumbnail);
                             }
                         })
-                        .toCompletable()
+                        .ignoreElement()
                         .onErrorComplete()
                 )
                 .collect(Observables.Collectors.concatCompletable())

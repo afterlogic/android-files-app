@@ -319,35 +319,35 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
 
     @Override
     public Completable replaceFiles(AuroraFile targetFolder, List<AuroraFile> files) {
-        // TODO: check source files size, path and type
-        return subRepo.replaceFiles(targetFolder, files);
+        return Completable.defer(() -> {
+            checkFilesHasOneType(files);
+            return subRepo.replaceFiles(targetFolder, files);
+        });
     }
 
     @Override
     public Completable copyFiles(AuroraFile targetFolder, List<AuroraFile> files) {
-        // TODO: check source files size, path and type
-        return subRepo.copyFiles(targetFolder, files);
-    }
-
-    private void checkFilesType(String type, List<AuroraFile> files) throws IllegalArgumentException{
-        boolean allInType = Stream.of(files)
-                .allMatch(file -> type.equals(file.getType()));
-        if (!allInType){
-            throw new IllegalArgumentException("All files must be in one type.");
-        }
+        return Completable.defer(() -> {
+            checkFilesHasOneType(files);
+            return subRepo.copyFiles(targetFolder, files);
+        });
     }
 
     // TODO: Replace checking is to downloads folder to interactors
-    private Observable<Progressible<File>> checkOfflineAndDownload(AuroraFile checked, File target) throws IOException{
+    private Observable<Progressible<File>> checkOfflineAndDownload(
+            AuroraFile checked, File target) {
 
         boolean toDownloads = target.getPath().startsWith(mDownloadsDir.getPath());
 
         File offlineFile = new File(mOfflineDir, checked.getPathSpec());
-        boolean actual = offlineFile.exists() && offlineFile.lastModified() >= checked.getLastModified();
+        boolean actual = offlineFile.exists() &&
+                offlineFile.lastModified() >= checked.getLastModified();
 
         if (!toDownloads && actual){
 
-            return Observable.just(new Progressible<>(offlineFile, 0, 0, checked.getName(), true));
+            Progressible<File> progressibleOffline = new Progressible<>(
+                    offlineFile, 0, 0, checked.getName(), true);
+            return Observable.just(progressibleOffline);
 
         } else {
 
@@ -359,12 +359,14 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
                         return progress;
                     });
 
-            Observable<Progressible<File>> copyFile = copyFile(checked.getName(), offlineFile, target)
-                    .map(progress -> {
-                        if (toDownloads && progress.getProgress() > 0){
-                            progress.setProgress((long) (progress.getMax() * 0.9f + progress.getProgress() * 0.1f));
+            Observable<Progressible<File>> copyFile = copyFile(
+                    checked.getName(), offlineFile, target
+            ) // copyFile
+                    .map(p -> {
+                        if (toDownloads && p.getProgress() > 0) {
+                            p.setProgress((long) (p.getMax() * 0.9f + p.getProgress() * 0.1f));
                         }
-                        return progress;
+                        return p;
                     });
 
             return Observable.concat(
@@ -376,7 +378,7 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
     }
 
     // TODO: Copy file from cache to target dir
-    private Observable<Progressible<File>> checkCacheAndDownload(AuroraFile file, File target) throws IOException{
+    private Observable<Progressible<File>> checkCacheAndDownload(AuroraFile file, File target) {
 
         boolean toDownloads = target.getPath().startsWith(mDownloadsDir.getPath());
 
@@ -389,8 +391,9 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
                 return copyFile(file.getName(), localActual, target);
 
             } else {
-
-                return Observable.just(new Progressible<>(localActual, 0, 0, file.getName(), true));
+                Progressible<File> done = new Progressible<>(
+                        localActual, 0, 0, file.getName(), true);
+                return Observable.just(done);
 
             }
 
@@ -401,19 +404,35 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
         }
     }
 
-    private Observable<Progressible<File>> copyFile(String progressName, File source, File target) throws IOException{
+    private Observable<Progressible<File>> copyFile(String progressName, File source, File target) {
         return Observable.create(emitter -> {
+
             FileInputStream fis = null;
+
             try {
+
                 fis = new FileInputStream(source);
                 FileUtil.writeFile(fis, target, read -> emitter.onNext(
-                        new Progressible<>(null, source.length(), read, progressName, false)
+                        new Progressible<>(
+                                null, source.length(), read, progressName, false)
                 ));
+
+            } catch (Exception e) {
+
+                emitter.onError(e);
+                return;
+
             } finally {
+
                 IOUtil.closeQuietly(fis);
+
             }
-            emitter.onNext(new Progressible<>(target, source.length(), source.length(), progressName, true));
+
+            emitter.onNext(new Progressible<>(
+                    target, source.length(), source.length(), progressName, true));
+
             emitter.onComplete();
+
         });
     }
 
@@ -469,4 +488,30 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
         Collections.sort(files, FileUtil.AURORA_FILE_COMPARATOR);
         return files;
     }
+
+    private void checkFilesHasOneType(List<AuroraFile> files) {
+
+        boolean allSame = Stream.of(files)
+                .map(AuroraFile::getType)
+                .distinct()
+                .count() == 1;
+
+        if (!allSame) {
+            throw new IllegalArgumentException("All files must have same type.");
+        }
+
+    }
+
+    private void checkFilesType(
+            String type, List<AuroraFile> files) throws IllegalArgumentException {
+
+        boolean allInType = Stream.of(files)
+                .allMatch(file -> type.equals(file.getType()));
+
+        if (!allInType){
+            throw new IllegalArgumentException("All files must be in one type.");
+        }
+
+    }
+
 }

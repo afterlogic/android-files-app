@@ -1,9 +1,9 @@
 package com.afterlogic.aurora.drive.presentation.modules.replace.view;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileTypesPagerAdapter;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.view.FileTypesPagerAdapter;
 
 /**
  * Created by aleksandrcikin on 04.07.17.

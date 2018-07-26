@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.common.modules.viewModel.dialog;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * Created by sashka on 19.02.17.<p/>

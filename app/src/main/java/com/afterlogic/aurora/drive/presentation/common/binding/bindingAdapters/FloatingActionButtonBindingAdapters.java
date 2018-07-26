@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.common.binding.bindingAdapters;
 
-import android.databinding.BindingAdapter;
+import androidx.databinding.BindingAdapter;
 
 import com.afterlogic.aurora.drive.presentation.common.view.FloatingActionButton;
 
