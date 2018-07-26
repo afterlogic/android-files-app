@@ -5,7 +5,9 @@ import com.afterlogic.aurora.drive.data.modules.files.mapper.p7.file.factory.Aur
 import com.afterlogic.aurora.drive.data.modules.files.mapper.p7.file.factory.AuroraFileP7MapperFactoryImpl;
 import com.afterlogic.aurora.drive.data.modules.files.mapper.p7.uploadResult.factory.UploadResultP7MapperFactory;
 import com.afterlogic.aurora.drive.data.modules.files.mapper.p7.uploadResult.factory.UploadResultP7MapperFactoryImpl;
+import com.afterlogic.aurora.drive.data.modules.files.repository.FileRepositoryImpl;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FileSubRepository;
+import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.data.modules.files.repository.P7FileSubRepositoryImpl;
 import com.afterlogic.aurora.drive.data.modules.files.service.FilesServiceP7;
 import com.afterlogic.aurora.drive.data.modules.files.service.FilesServiceP7Impl;
@@ -26,8 +28,15 @@ public class P7FilesDataModule {
     }
 
     @Provides @P7
-    FileSubRepository provideFilesRepository(P7FileSubRepositoryImpl repository7){
+    FileSubRepository provideFilesSupRepository(P7FileSubRepositoryImpl repository7) {
         return repository7;
+    }
+
+    @P7
+    @Provides
+    FilesRepository provideFilesRepository(@P7 FileSubRepository subRepository,
+                                           FileRepositoryImpl.Factory factory) {
+        return factory.create(subRepository);
     }
 
     @Provides

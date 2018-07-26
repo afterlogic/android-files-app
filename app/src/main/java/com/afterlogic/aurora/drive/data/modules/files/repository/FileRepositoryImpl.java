@@ -13,7 +13,6 @@ import com.afterlogic.aurora.drive.data.common.mapper.Mapper;
 import com.afterlogic.aurora.drive.data.common.mapper.MapperUtil;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.common.repository.Repository;
-import com.afterlogic.aurora.drive.data.modules.files.FilesDataModule;
 import com.afterlogic.aurora.drive.data.modules.files.mapper.general.FilesMapperFactory;
 import com.afterlogic.aurora.drive.data.modules.files.model.db.OfflineFileInfoEntity;
 import com.afterlogic.aurora.drive.data.modules.files.service.FilesLocalService;
@@ -43,6 +42,10 @@ import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
+import static com.afterlogic.aurora.drive.data.modules.files.FilesDataModule.CACHE_DIR;
+import static com.afterlogic.aurora.drive.data.modules.files.FilesDataModule.DOWNLOADS_DIR;
+import static com.afterlogic.aurora.drive.data.modules.files.FilesDataModule.OFFLINE_DIR;
+
 /**
  * Created by sashka on 19.10.16.<p/>
  * mail: sunnyday.development@gmail.com
@@ -62,16 +65,17 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
 
     private final Mapper<AuroraFile, OfflineFileInfoEntity> mOfflineToBlMapper;
 
-    @Inject
-    FileRepositoryImpl(SharedObservableStore cache,
-                       Context appContext,
-                       FileSubRepository fileSubRepo,
-                       FilesLocalService localService,
-                       @Named(FilesDataModule.CACHE_DIR) File cacheDir,
-                       @Named(FilesDataModule.OFFLINE_DIR) File offlineDir,
-                       @Named(FilesDataModule.DOWNLOADS_DIR) File downloadsDir,
-                       FilesMapperFactory mapperFactory,
-                       SessionManager sessionManager) {
+    private FileRepositoryImpl(
+            SharedObservableStore cache,
+            Context appContext,
+            FileSubRepository fileSubRepo,
+            FilesLocalService localService,
+            File cacheDir,
+            File offlineDir,
+            File downloadsDir,
+            FilesMapperFactory mapperFactory,
+            SessionManager sessionManager
+    ) {
         super(cache, FILES);
         this.sessionManager = sessionManager;
         mAppContext = appContext;
@@ -83,6 +87,7 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
 
         BiMapper<AuroraFile, OfflineFileInfoEntity, File> offlineToBl = mapperFactory.offlineToBl();
         mOfflineToBlMapper = offlineFileInfo -> offlineToBl.map(offlineFileInfo, mOfflineDir);
+
     }
 
     @Override
@@ -510,6 +515,45 @@ public class FileRepositoryImpl extends Repository implements FilesRepository {
 
         if (!allInType){
             throw new IllegalArgumentException("All files must be in one type.");
+        }
+
+    }
+
+    public static class Factory {
+
+        private SharedObservableStore cache;
+        private Context appContext;
+        private FilesLocalService localService;
+        private File cacheDir;
+        private File offlineDir;
+        private File downloadsDir;
+        private FilesMapperFactory mapperFactory;
+        private SessionManager sessionManager;
+
+        @Inject
+        public Factory(SharedObservableStore cache,
+                       Context appContext,
+                       FilesLocalService localService,
+                       @Named(CACHE_DIR) File cacheDir,
+                       @Named(OFFLINE_DIR) File offlineDir,
+                       @Named(DOWNLOADS_DIR) File downloadsDir,
+                       FilesMapperFactory mapperFactory,
+                       SessionManager sessionManager) {
+            this.cache = cache;
+            this.appContext = appContext;
+            this.localService = localService;
+            this.cacheDir = cacheDir;
+            this.offlineDir = offlineDir;
+            this.downloadsDir = downloadsDir;
+            this.mapperFactory = mapperFactory;
+            this.sessionManager = sessionManager;
+        }
+
+        public FileRepositoryImpl create(FileSubRepository fileSubRepo) {
+            return new FileRepositoryImpl(
+                    cache, appContext, fileSubRepo, localService, cacheDir, offlineDir,
+                    downloadsDir, mapperFactory, sessionManager
+            );
         }
 
     }
