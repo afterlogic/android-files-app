@@ -71,9 +71,9 @@ public interface Api7 {
     }
 
     interface Links{
-        String FILE_DOWNLOAD_LINK = "?/Raw/FilesDownload/%d/%s/0/hash/%s"; //accountId/fileHash/authToken
-        String UPLOAD_FILE_URL = "Upload/File/%s%s/%s"; //type(Personal|Corporate)/Path/FileName
-        String THUMBNAIL_URL = "?/Raw/FilesThumbnail/%d/%s/0/hash/%s"; //accountId/fileHash/authToken
+        String FILE_DOWNLOAD_LINK = "?/Raw/FilesDownload/%d/%s/0/hash/%s"; //?/Raw/FilesDownload/{accountId}/{fileHash}/0/hash/{authToken}
+        String UPLOAD_FILE_URL = "Upload/File/%s%s/%s"; //Upload/File/{type}{Path}/{FileName}
+        String THUMBNAIL_URL = "?/Raw/FilesThumbnail/%d/%s/0/hash/%s"; //?/Raw/FilesThumbnail/{accountId}/{fileHash}/0/hash/{authToken}
     }
 
 

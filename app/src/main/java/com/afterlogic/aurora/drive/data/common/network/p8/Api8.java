@@ -2,6 +2,7 @@ package com.afterlogic.aurora.drive.data.common.network.p8;
 
 import com.afterlogic.aurora.drive.data.common.network.p8.apiAnnotations.FormatHeader;
 import com.afterlogic.aurora.drive.data.common.network.p8.apiAnnotations.ApiRequest;
+import com.afterlogic.aurora.drive.data.common.network.p8.apiAnnotations.ToString;
 import com.afterlogic.aurora.drive.data.common.network.p8.requestparams.CreateFolderParameters;
 import com.afterlogic.aurora.drive.data.common.network.p8.requestparams.CreatePublicLinkParameters;
 import com.afterlogic.aurora.drive.data.common.network.p8.requestparams.DeleteFilesParameters;
@@ -175,7 +176,6 @@ public interface Api8 {
     @Streaming
     Single<ResponseBody> viewFile(@Body ViewFileParameters params);
 
-
     @POST(API)
     @Headers({
             ApiHeader.AUTHORISATION,
@@ -242,12 +242,11 @@ public interface Api8 {
 
     @POST(API)
     @Headers(ApiHeader.AUTHORISATION)
+    @Multipart
     Single<ApiResponseP8<UploadResultP8>> upload(
-            @Part
-            @ApiRequest(
-                    module = Module.FILES,
-                    method = Method.UPLOAD_FILE)
-                    UploadFileParameters params,
+            @Part(ApiField.MODULE) @ToString String module, // Module.FILES
+            @Part(ApiField.METHOD) @ToString String method, // Method.UPLOAD_FILE
+            @Part(ApiField.PARAMS) UploadFileParameters params,
             @Part MultipartBody.Part file
     );
 

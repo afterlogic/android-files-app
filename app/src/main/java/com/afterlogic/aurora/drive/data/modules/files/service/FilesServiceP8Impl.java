@@ -4,11 +4,8 @@ import android.content.Context;
 import androidx.annotation.Nullable;
 
 import com.afterlogic.aurora.drive.core.common.interfaces.ProgressListener;
-import com.afterlogic.aurora.drive.data.common.annotations.P8;
 import com.afterlogic.aurora.drive.data.common.network.ExtRequestBody;
-import com.afterlogic.aurora.drive.data.common.network.ParamsBuilder;
 import com.afterlogic.aurora.drive.data.common.network.p8.Api8;
-import com.afterlogic.aurora.drive.data.common.network.p8.CloudServiceP8;
 import com.afterlogic.aurora.drive.data.common.network.p8.requestparams.CreateFolderParameters;
 import com.afterlogic.aurora.drive.data.common.network.p8.requestparams.CreatePublicLinkParameters;
 import com.afterlogic.aurora.drive.data.common.network.p8.requestparams.DeleteFilesParameters;
@@ -27,12 +24,8 @@ import com.afterlogic.aurora.drive.data.modules.files.model.dto.P8StorageDto;
 import com.afterlogic.aurora.drive.data.modules.files.model.dto.ShortFileDto;
 import com.afterlogic.aurora.drive.model.DeleteFileInfo;
 import com.afterlogic.aurora.drive.model.FileInfo;
-import com.annimon.stream.Collectors;
-import com.annimon.stream.Stream;
-import com.google.gson.Gson;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -157,7 +150,7 @@ public class FilesServiceP8Impl implements FilesServiceP8 {
             );
 
             UploadFileParameters params = new UploadFileParameters(type, path, fileInfo.getName());
-            return mApi.upload(params, filePart);
+            return mApi.upload(Api8.Module.FILES, Api8.Method.UPLOAD_FILE, params, filePart);
 
         });
 

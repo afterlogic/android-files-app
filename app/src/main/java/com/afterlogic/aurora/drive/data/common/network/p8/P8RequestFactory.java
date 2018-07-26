@@ -4,7 +4,9 @@ import com.afterlogic.aurora.drive.data.common.annotations.P8;
 import com.afterlogic.aurora.drive.data.common.network.p8.apiAnnotations.ApiRequest;
 import com.afterlogic.aurora.drive.data.common.network.p8.apiAnnotations.FormatHeader;
 import com.afterlogic.aurora.drive.data.common.network.p8.apiAnnotations.JsonField;
+import com.afterlogic.aurora.drive.data.common.network.p8.apiAnnotations.ToString;
 import com.afterlogic.aurora.drive.data.common.network.p8.converter.ApiRequestConverter;
+import com.afterlogic.aurora.drive.data.common.network.p8.converter.ToStringConverter;
 import com.annimon.stream.Optional;
 import com.annimon.stream.Stream;
 import com.google.gson.Gson;
@@ -54,6 +56,14 @@ class P8RequestFactory extends Converter.Factory {
             if (apiRequestConverter != null) {
                 return apiRequestConverter;
             }
+
+            Converter<?, RequestBody> toStringConverter =
+                    checkToStringConverter(parameterAnnotations);
+
+            if (toStringConverter != null) {
+                return toStringConverter;
+            }
+
             return super.requestBodyConverter(
                     type, parameterAnnotations, methodAnnotations, retrofit);
 
@@ -101,6 +111,21 @@ class P8RequestFactory extends Converter.Factory {
 
     }
 
+    @Nullable
+    private Converter<?, RequestBody> checkToStringConverter(Annotation[] parameterAnnotations) {
+
+        Optional<ToString> apiRequestAnnotation = Stream.of(Arrays.asList(parameterAnnotations))
+                .filter(a -> a instanceof ToString)
+                .map(a -> (ToString) a)
+                .findFirst();
+
+        if (apiRequestAnnotation.isPresent()) {
+            return ToStringConverter.create();
+        } else {
+            return null;
+        }
+
+    }
 
     @Nullable
     private Converter<?, RequestBody> checkApiRequestConverter(
