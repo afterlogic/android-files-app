@@ -144,11 +144,9 @@ dependencies {
 
     //Dagger - Dependency Injection
     implementation deps.core.dagger
-    annotationProcessor deps.core.daggerCompiler
     kapt deps.core.daggerCompiler
     implementation deps.core.daggerAndroid
     implementation deps.core.daggerAndroidSupport
-    annotationProcessor deps.core.daggerAndroidProcessor
     kapt deps.core.daggerAndroidProcessor
 
     //Compat
@@ -200,7 +198,7 @@ dependencies {
 
     implementation deps.androidx.lifecycle.runtime
     implementation deps.androidx.lifecycle.extensions
-    annotationProcessor deps.androidx.lifecycle.compiler
+    kapt deps.androidx.lifecycle.compiler
 
     // Navigation
     implementation deps.utils.cicerone
@@ -208,6 +206,6 @@ dependencies {
     implementation deps.dataBinding.lastAdapter
 
     implementation deps.utils.parceler.api
-    annotationProcessor deps.utils.parceler.compiler
+    kapt deps.utils.parceler.compiler
 
 }
