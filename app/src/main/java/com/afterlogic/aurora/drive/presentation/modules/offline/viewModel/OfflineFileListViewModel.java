@@ -205,7 +205,7 @@ public class OfflineFileListViewModel extends SearchableFileListViewModel<Offlin
                                 vm.setThumbnail(thumbnail);
                             }
                         })
-                        .toCompletable()
+                        .ignoreElement()
                         .onErrorComplete()
                 )
                 .collect(Observables.Collectors.concatCompletable())

@@ -8,38 +8,21 @@ import com.google.gson.annotations.SerializedName;
 
 public class UserP8 {
 
-    @SerializedName("@Object")
-    private String objectType;//@Object;
+    @SerializedName("Login")
+    private String mLogin;
 
-    @SerializedName("Name")
-    private String Name;
+    @SerializedName("IncomingLogin")
+    private String mIncomingLogin;
 
-    @SerializedName("PublicId")
-    private String PublicId;
-
-    @SerializedName("Role")
-    private int Role;
-
-    @SerializedName("WriteSeparateLog")
-    private boolean WriteSeparateLog;
-
-    public String getObjectType() {
-        return objectType;
-    }
+    @SerializedName("IdUser")
+    private String mPublicId;
 
     public String getName() {
-        return Name;
+        return mIncomingLogin != null ? mIncomingLogin : mLogin;
     }
 
     public String getPublicId() {
-        return PublicId;
+        return mPublicId;
     }
 
-    public int getRole() {
-        return Role;
-    }
-
-    public boolean getWriteSeparateLog() {
-        return WriteSeparateLog;
-    }
 }

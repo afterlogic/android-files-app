@@ -5,7 +5,7 @@ import com.afterlogic.aurora.drive.data.model.AuroraFilesResponse;
 import com.afterlogic.aurora.drive.data.model.project7.ApiResponseP7;
 import com.afterlogic.aurora.drive.data.model.project7.AuroraFileP7;
 import com.afterlogic.aurora.drive.data.model.project7.UploadResultP7;
-import com.afterlogic.aurora.drive.data.modules.files.model.dto.ReplaceFileDto;
+import com.afterlogic.aurora.drive.data.modules.files.model.dto.ShortFileDto;
 import com.afterlogic.aurora.drive.model.FileInfo;
 
 import java.util.List;
@@ -38,7 +38,7 @@ public interface FilesServiceP7 {
 
     Single<ApiResponseP7<Boolean>> deletePublicLink(String type, String path, String name);
 
-    Single<ApiResponseP7<Boolean>> replaceFiles(String fromType, String toType, String fromPath, String toPath, List<ReplaceFileDto> files);
+    Single<ApiResponseP7<Boolean>> replaceFiles(String fromType, String toType, String fromPath, String toPath, List<ShortFileDto> files);
 
-    Single<ApiResponseP7<Boolean>> copyFiles(String fromType, String toType, String fromPath, String toPath, List<ReplaceFileDto> files);
+    Single<ApiResponseP7<Boolean>> copyFiles(String fromType, String toType, String fromPath, String toPath, List<ShortFileDto> files);
 }
