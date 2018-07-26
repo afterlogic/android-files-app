@@ -18,8 +18,6 @@ object MultiApiUtil {
     fun <T> chooseByApiVersion(sessionManager: SessionManager,
                                p7: Provider<T>, p8: Provider<T>): T {
 
-        throw MultiApiServiceUnknownApiError()
-
         val session = sessionManager.session
                 ?: throw MultiApiServiceNotAuthorizedError()
 
