@@ -1,3 +1,6 @@
+Release 99:
+ - Opening an image fixed.
+
 Release 98:
  - Critical BUG - Not working on Android < 5.
  - BUG - Not working on P8.
