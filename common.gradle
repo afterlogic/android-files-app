@@ -16,7 +16,9 @@ ext.versions += [
         kotlin: '1.2.51',
         serialization: '0.6.0',
         reflectLite: '1.0.0',
-        ktx: '1.0.0-beta01'
+        ktx: [
+            core: '1.0.0-beta01'
+        ]
     ],
     androidx: [
         compat: '1.0.0-beta01',
@@ -108,7 +110,9 @@ ext.deps = [
         plugin: "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin.kotlin",
         extensionsPlugin: "org.jetbrains.kotlin:kotlin-android-extensions:$versions.kotlin.kotlin",
         serializationPlugin:  "org.jetbrains.kotlinx:kotlinx-gradle-serialization-plugin:$versions.kotlin.serialization",
-        ktx: "androidx.core:core-ktx:$versions.kotlin.ktx"
+        ktx: [
+            core: "androidx.core:core-ktx:$versions.kotlin.ktx.core"
+        ]
     ],
     firebase: [
         core: "com.google.firebase:firebase-core:$versions.firebase.core",

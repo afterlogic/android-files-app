@@ -79,6 +79,12 @@ public class MainViewModel extends SearchableFilesRootViewModel<MainFilesListVie
         );
 
         SimpleOnPropertyChangedCallback.addTo(viewModelState, this::onViewModelStateChanged);
+
+        interactor.getFilesRepositoryResolved()
+                .subscribe(subscriber.subscribe(resoleved -> {
+                    if (!resoleved) onLogout();
+                }));
+
     }
 
     private void onViewModelStateChanged() {
@@ -93,9 +99,11 @@ public class MainViewModel extends SearchableFilesRootViewModel<MainFilesListVie
     }
 
     public void onLogout() {
+
         interactor.logout()
                 .compose(subscriber::defaultSchedulers)
-                .subscribe(() -> router.newRootScreen(AppRouter.LOGIN));
+                .subscribe(subscriber.subscribe(() -> router.newRootScreen(AppRouter.LOGIN)));
+
     }
 
     public void onOpenOfflineMode() {

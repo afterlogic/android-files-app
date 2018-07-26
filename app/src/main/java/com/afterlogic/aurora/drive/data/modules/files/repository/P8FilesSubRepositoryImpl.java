@@ -18,7 +18,6 @@ import com.afterlogic.aurora.drive.data.model.UploadResult;
 import com.afterlogic.aurora.drive.data.model.project8.AuroraFileP8;
 import com.afterlogic.aurora.drive.data.model.project8.FilesResponseP8;
 import com.afterlogic.aurora.drive.data.modules.AuthorizationResolver;
-import com.afterlogic.aurora.drive.data.modules.files.FilesDataModule;
 import com.afterlogic.aurora.drive.data.modules.files.model.dto.ShortFileDto;
 import com.afterlogic.aurora.drive.data.modules.files.service.FilesServiceP8;
 import com.afterlogic.aurora.drive.model.Actions;
@@ -45,6 +44,9 @@ import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import okhttp3.ResponseBody;
+
+import static com.afterlogic.aurora.drive.data.modules.files.FilesDataModule.CACHE_DIR;
+import static com.afterlogic.aurora.drive.data.modules.files.FilesDataModule.THUMB_DIR;
 
 
 /**
@@ -100,8 +102,8 @@ public class P8FilesSubRepositoryImpl extends Repository implements FileSubRepos
     @Inject
     P8FilesSubRepositoryImpl(SharedObservableStore cache,
                              FilesServiceP8 filesService,
-                             @Named(FilesDataModule.THUMB_DIR) File thumbDir,
-                             @Named(FilesDataModule.CACHE_DIR) File cacheDir,
+                             @Named(THUMB_DIR) File thumbDir,
+                             @Named(CACHE_DIR) File cacheDir,
                              AuthorizationResolver authorizationResolver,
                              SessionManager sessionManager) {
         super(cache, FILES_P_8);

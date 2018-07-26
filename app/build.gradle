@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'org.greenrobot.greendao'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 project.ext.set("signingFolder", file("../signing").toString())
 apply from: '../signing/signings.gradle'
@@ -109,6 +111,18 @@ greendao {
 
 }
 
+kapt {
+
+    generateStubs true
+
+    javacOptions {
+        // Increase the max count of errors from annotation processors.
+        // Default is 100.
+        option("-Xmaxerrs", 500)
+    }
+
+}
+
 dependencies {
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -124,12 +138,18 @@ dependencies {
     // Optional -- Mockito framework
     testImplementation deps.testing.mockito
 
+    // Kotlin
+    implementation deps.kotlin.stdlib
+    implementation deps.kotlin.ktx.core
+
     //Dagger - Dependency Injection
     implementation deps.core.dagger
     annotationProcessor deps.core.daggerCompiler
+    kapt deps.core.daggerCompiler
     implementation deps.core.daggerAndroid
     implementation deps.core.daggerAndroidSupport
     annotationProcessor deps.core.daggerAndroidProcessor
+    kapt deps.core.daggerAndroidProcessor
 
     //Compat
     implementation deps.androidx.appcompat

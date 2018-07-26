@@ -2,7 +2,6 @@ package com.afterlogic.aurora.drive.presentation.modules.choise.model.interactor
 
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
 import com.afterlogic.aurora.drive.core.common.util.FileUtil;
-import com.afterlogic.aurora.drive.data.modules.files.FilesDataModule;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
@@ -14,6 +13,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import io.reactivex.Observable;
+
+import static com.afterlogic.aurora.drive.data.modules.files.FilesDataModule.CACHE_DIR;
 
 /**
  * Created by sashka on 11.02.17.<p/>
@@ -28,7 +29,7 @@ public class ChoiseFilesInteractorImpl extends BaseFilesListInteractor implement
     @Inject
     ChoiseFilesInteractorImpl(ObservableScheduler scheduler,
                               FilesRepository filesRepository,
-                              @Named(FilesDataModule.CACHE_DIR) File cacheDir) {
+                              @Named(CACHE_DIR) File cacheDir) {
         super(scheduler, filesRepository);
         mFilesRepository = filesRepository;
         mCacheDir = cacheDir;
