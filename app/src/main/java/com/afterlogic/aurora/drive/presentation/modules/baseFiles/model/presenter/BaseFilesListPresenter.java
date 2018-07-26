@@ -133,7 +133,7 @@ public abstract class BaseFilesListPresenter<V extends FilesListView> extends Ba
 
         return mInteractor.getThumbnail(file)
                 .doOnSuccess(thumb -> mModel.setThumbNail(file, thumb))
-                .toCompletable()
+                .ignoreElement()
                 .onErrorComplete();
     }
 

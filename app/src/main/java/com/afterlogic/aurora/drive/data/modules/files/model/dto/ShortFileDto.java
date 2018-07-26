@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
  * mail: mail@sunnydaydev.me
  */
 
-public class ReplaceFileDto {
+public class ShortFileDto {
 
     @SerializedName(Api8.Param.NAME)
     private String name;
@@ -16,8 +16,20 @@ public class ReplaceFileDto {
     @SerializedName(Api8.Param.IS_FOLDER)
     private boolean isFolder;
 
-    public ReplaceFileDto(String name, boolean isFolder) {
+    @SerializedName(Api8.Param.FROM_PATH)
+    private String fromPath;
+
+    @SerializedName(Api8.Param.FROM_TYPE)
+    private String fromType;
+
+    public ShortFileDto(String name, boolean isFolder, String path, String type) {
         this.name = name;
         this.isFolder = isFolder;
+        this.fromPath = path;
+        this.fromType = type;
+    }
+
+    public String getFromType() {
+        return fromType;
     }
 }

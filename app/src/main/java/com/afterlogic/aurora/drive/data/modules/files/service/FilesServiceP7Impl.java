@@ -13,7 +13,7 @@ import com.afterlogic.aurora.drive.data.model.AuroraFilesResponse;
 import com.afterlogic.aurora.drive.data.model.project7.ApiResponseP7;
 import com.afterlogic.aurora.drive.data.model.project7.AuroraFileP7;
 import com.afterlogic.aurora.drive.data.model.project7.UploadResultP7;
-import com.afterlogic.aurora.drive.data.modules.files.model.dto.ReplaceFileDto;
+import com.afterlogic.aurora.drive.data.modules.files.model.dto.ShortFileDto;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.FileInfo;
 import com.google.gson.Gson;
@@ -159,7 +159,7 @@ public class FilesServiceP7Impl extends AuthorizedServiceP7 implements FilesServ
     }
 
     @Override
-    public Single<ApiResponseP7<Boolean>> replaceFiles(String fromType, String toType, String fromPath, String toPath, List<ReplaceFileDto> files) {
+    public Single<ApiResponseP7<Boolean>> replaceFiles(String fromType, String toType, String fromPath, String toPath, List<ShortFileDto> files) {
         return Single.defer(() -> {
             Map<String, Object> fields = getDefaultParams(Api7.Actions.FILES_MOVE)
                     .put(Api7.Fields.FROM_PATH, fromPath)
@@ -173,7 +173,7 @@ public class FilesServiceP7Impl extends AuthorizedServiceP7 implements FilesServ
     }
 
     @Override
-    public Single<ApiResponseP7<Boolean>> copyFiles(String fromType, String toType, String fromPath, String toPath, List<ReplaceFileDto> files) {
+    public Single<ApiResponseP7<Boolean>> copyFiles(String fromType, String toType, String fromPath, String toPath, List<ShortFileDto> files) {
         return Single.defer(() -> {
             Map<String, Object> fields = getDefaultParams(Api7.Actions.FILES_COPY)
                     .put(Api7.Fields.FROM_PATH, fromPath)

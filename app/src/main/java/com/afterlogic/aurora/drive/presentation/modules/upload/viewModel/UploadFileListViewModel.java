@@ -126,7 +126,7 @@ public class UploadFileListViewModel extends FileListViewModel<UploadFileListVie
                             }
 
                         })
-                        .toCompletable()
+                        .ignoreElement()
                         .onErrorComplete()
                 )
                 .collect(Observables.Collectors.concatCompletable())

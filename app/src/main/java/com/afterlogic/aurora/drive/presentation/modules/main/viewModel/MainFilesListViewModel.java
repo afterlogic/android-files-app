@@ -668,7 +668,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                     MainFileViewModel vm = mapper.get(file);
                     if (vm != null) vm.setThumbnail(thumb);
                 })
-                .toCompletable()
+                .ignoreElement()
                 .onErrorComplete();
     }
 
@@ -678,7 +678,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                     MainFileViewModel vm = mapper.get(file);
                     if (vm != null) vm.isOffline.set(offline);
                 })
-                .toCompletable()
+                .ignoreElement()
                 .onErrorComplete();
     }
 

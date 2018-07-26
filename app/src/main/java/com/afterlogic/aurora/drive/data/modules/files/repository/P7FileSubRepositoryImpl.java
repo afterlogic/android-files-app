@@ -22,7 +22,7 @@ import com.afterlogic.aurora.drive.data.model.project7.UploadResultP7;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.files.mapper.p7.file.factory.AuroraFileP7MapperFactory;
 import com.afterlogic.aurora.drive.data.modules.files.mapper.p7.uploadResult.factory.UploadResultP7MapperFactory;
-import com.afterlogic.aurora.drive.data.modules.files.model.dto.ReplaceFileDto;
+import com.afterlogic.aurora.drive.data.modules.files.model.dto.ShortFileDto;
 import com.afterlogic.aurora.drive.data.modules.files.service.FilesServiceP7;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.AuroraSession;
@@ -159,7 +159,7 @@ public class P7FileSubRepositoryImpl extends Repository implements FileSubReposi
         )//-----|
                 .compose(Repository::withNetMapper)
                 .compose(authorizationResolver::checkAuth)
-                .toCompletable();
+                .ignoreElement();
     }
 
     @Override
@@ -198,7 +198,7 @@ public class P7FileSubRepositoryImpl extends Repository implements FileSubReposi
             return mCloudService.deleteFiles(type, mapped)
                     .compose(Repository::withNetMapper)
                     .compose(authorizationResolver::checkAuth)
-                    .toCompletable();
+                    .ignoreElement();
         });
     }
 
@@ -235,7 +235,7 @@ public class P7FileSubRepositoryImpl extends Repository implements FileSubReposi
         return mCloudService.createFolder(file.getType(), file.getPath(), file.getName())
                 .compose(Repository::withNetMapper)
                 .compose(authorizationResolver::checkAuth)
-                .toCompletable();
+                .ignoreElement();
     }
 
 
@@ -245,7 +245,7 @@ public class P7FileSubRepositoryImpl extends Repository implements FileSubReposi
                 .compose(Repository::withNetMapper)
                 .compose(authorizationResolver::checkAuth)
                 .map(mFileNetToBlMapper::map)
-                .toCompletable()
+                .ignoreElement()
                 .onErrorResumeNext(error -> {
                     if (error instanceof ApiResponseError && ((ApiResponseError) error).getErrorCode() == ApiResponseError.FILE_NOT_EXIST){
                         return Completable.error(FileNotExistError::new);
@@ -283,12 +283,12 @@ public class P7FileSubRepositoryImpl extends Repository implements FileSubReposi
         return mCloudService.deletePublicLink(file.getType(), file.getPath(), file.getName())
                 .compose(Repository::withNetMapper)
                 .compose(authorizationResolver::checkAuth)
-                .toCompletable();
+                .ignoreElement();
     }
 
     @Override
     public Completable replaceFiles(AuroraFile targetFolder, List<AuroraFile> files) {
-        Mapper<List<ReplaceFileDto>, Collection<AuroraFile>> mapper = MapperUtil.listOrEmpty(new FileToReplaceFileMapper());
+        Mapper<List<ShortFileDto>, Collection<AuroraFile>> mapper = MapperUtil.listOrEmpty(new FileToShortFileDtoMapper());
 
         return mCloudService.replaceFiles(
                 files.get(0).getType(),
@@ -297,12 +297,12 @@ public class P7FileSubRepositoryImpl extends Repository implements FileSubReposi
                 targetFolder.getFullPath(),
                 mapper.map(files)
         )//-----|
-                .toCompletable();
+                .ignoreElement();
     }
 
     @Override
     public Completable copyFiles(AuroraFile targetFolder, List<AuroraFile> files) {
-        Mapper<List<ReplaceFileDto>, Collection<AuroraFile>> mapper = MapperUtil.listOrEmpty(new FileToReplaceFileMapper());
+        Mapper<List<ShortFileDto>, Collection<AuroraFile>> mapper = MapperUtil.listOrEmpty(new FileToShortFileDtoMapper());
 
         return mCloudService.copyFiles(
                 files.get(0).getType(),
@@ -311,7 +311,7 @@ public class P7FileSubRepositoryImpl extends Repository implements FileSubReposi
                 targetFolder.getFullPath(),
                 mapper.map(files)
         )//-----|
-                .toCompletable();
+                .ignoreElement();
     }
 
     private String getCompleteUrl(String url){
