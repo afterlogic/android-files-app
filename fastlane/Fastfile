@@ -1,0 +1,172 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+fastlane_require "java-properties"
+
+default_platform(:android)
+
+platform :android do
+
+  VERSION_PROPERTIES = "../meta/version.properties"
+  RELEASE_NOTES = "../meta/releaseNotes.txt"
+
+  desc "Just check that fastlane available."
+  lane :check do
+    echo(message: "Checked!")
+  end
+
+  lane :next_release do |options|
+
+    desc "Create release branch. Increase version code and push to repository."
+
+    # Ensure that your git status is not dirty
+    ensure_git_status_clean
+
+    current_branch = git_branch
+
+    if current_branch != "develop" && !current_branch.match(/^release\//)
+      UI.user_error!("Commit release can be called only from develop or release/* branches.")
+    end
+
+    properties = JavaProperties.load(VERSION_PROPERTIES)
+
+    # Calculate version
+    versions = properties[:VERSION_NAME].split(".").map(&:to_i)
+    case options[:type]
+      when "minor", "mn"
+        versions[2] = versions[2] + 1
+      when "major", "mj"
+        versions[2] = 0
+        versions[1] = versions[1] + 1
+      when "global", "g"
+        versions[2] = 0
+        versions[1] = 0
+        versions[0] = versions[0] + 1
+      else
+
+        if current_branch == "develop"
+
+          begin
+            release_branches_output =
+              sh("git show-branch --list | grep -o '\\\[release.*\\\]'")
+          rescue
+            release_branches_output = ""
+          end
+
+          if release_branches_output.to_s.empty?
+
+            versions[2] = versions[2] + 1
+
+          else
+
+            versions = release_branches_output
+              .split("\n")
+              .map { |str| str[9..-1] }
+              .map { |str| str.split(".").map(&:to_i) }
+              .max
+
+          end
+
+        else
+          # Do nothing cause already on release branch,
+          # so need only increase version code
+        end
+
+    end
+    version = versions.join(".")
+
+    # Check release branch
+    release_branch = "release/#{version}"
+    if current_branch != release_branch
+      begin
+        sh("git checkout #{release_branch}")
+      rescue
+        sh("git checkout -B #{release_branch}")
+      end
+      sh("git merge --no-ff -s recursive -X ours #{current_branch}")
+    end
+
+    properties = JavaProperties.load(VERSION_PROPERTIES)
+
+    prev_version = properties[:VERSION_NAME]
+    version_changed = prev_version != version
+
+    # Increment build number and version
+    properties[:VERSION_CODE] = Integer(properties[:VERSION_CODE]) + 1
+    # Set calculate new version
+    properties[:VERSION_NAME] = version
+
+    JavaProperties.write(properties, VERSION_PROPERTIES)
+
+    echo(message: "Release version: #{version}(#{properties[:VERSION_CODE]})")
+
+    changelog = prompt(
+      text: "Changelog:\n",
+      multi_line_end_keyword: "END"
+    )
+
+    commit_message = ""
+
+    if !changelog.to_s.empty?
+      changelog = changelog.lines.map { |line| " - #{line}" } .join
+
+      changelog = "#{properties[:VERSION_CODE]}:\n#{changelog}"
+
+      if (version_changed || options[:resetChangelog] == true)
+        File.open(RELEASE_NOTES, 'w') { |file| file.write changelog }
+      elsif
+        prev_release_notes = File.open(RELEASE_NOTES) { |file| file.read  }
+        new_release_notes = "#{changelog}\n\n#{prev_release_notes}"
+        File.open(RELEASE_NOTES, 'w') { |file| file.write new_release_notes }
+      end
+
+      commit_message = "Increase version. | Update release notes."
+
+    else
+
+      commit_message = "Increase version."
+
+    end
+
+    # Commit the version bump
+    sh("git", "commit", "-a", "-m", commit_message)
+
+    if options[:deploy] == true
+      gradle(task: "clean :app:assembleRelease")
+      deploy_to_crashlytics
+    end
+
+    # Push the new commit and tag back to your git remote
+    if options[:push] == true
+      push_to_git_remote
+    end
+
+    if current_branch != release_branch
+      sh("git", "checkout", current_branch)
+    end
+
+  end
+
+  lane :deploy_to_crashlytics do |options|
+    properties = JavaProperties.load("../app/fabric.properties")
+    crashlytics(
+      api_token: properties[:apiKey],
+      build_sercret: properties[:apiSecret],
+      notes_path: RELEASE_NOTES,
+      groups: "aurora-android"
+    )
+  end
+
+end
