@@ -22,7 +22,7 @@
 
     <item
         android:id="@id/action_replace"
-        android:title="@string/prompt_action__replace"
+        android:title="@string/prompt_action__move"
         android:icon="@drawable/ic_content_cut"
         app:showAsAction="never"/>
 
