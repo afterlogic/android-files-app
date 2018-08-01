@@ -25,7 +25,7 @@ public class OfflineBindings {
                                         OfflineHeader header, ViewModelState state) {
         List<Object> items = new ArrayList<>();
 
-        if (files.isEmpty() && state.isContent()) {
+        if (state.isEmpty()) {
             items.add(new OfflineEmptyListItem());
         }
 

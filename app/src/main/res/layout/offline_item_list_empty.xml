@@ -16,4 +16,5 @@
             android:text="@string/prompt_offline_folder_is_empty"/>
 
     </LinearLayout>
+
 </layout>
