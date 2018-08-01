@@ -139,7 +139,7 @@ public class MainFilesActionViewModel extends LifecycleViewModel {
         }
 
         items.add(creator.button(
-                R.string.prompt_action__replace, R.drawable.ic_content_cut,
+                R.string.prompt_action__move, R.drawable.ic_content_cut,
                 () -> postAction(MainFileAction.REPLACE)
         ));
 

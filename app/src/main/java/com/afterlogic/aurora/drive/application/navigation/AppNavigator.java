@@ -127,12 +127,12 @@ public class AppNavigator extends SupportAppNavigator {
 
             case AppRouter.REPLACE: {
                 ReplaceScreenArgs args = (ReplaceScreenArgs) data;
-                return ReplaceActivity.newReplaceIntent(activity, args.getFiles());
+                return ReplaceActivity.Companion.newReplaceIntent(activity, args.getFiles());
             }
 
             case AppRouter.COPY: {
                 ReplaceScreenArgs args = (ReplaceScreenArgs) data;
-                return ReplaceActivity.newCopyIntent(activity, args.getFiles());
+                return ReplaceActivity.Companion.newCopyIntent(activity, args.getFiles());
             }
 
             case AppRouter.LOGIN:

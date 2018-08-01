@@ -4,11 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="com.afterlogic.aurora.drive.presentation.modules.replace.viewModel.ReplaceFileTypeViewModel"/>
+        <import type="com.afterlogic.aurora.drive.presentation.modules.replace.viewModel.ReplaceFileListViewModel"/>
 
         <variable
             name="vm"
-            type="ReplaceFileTypeViewModel"/>
+            type="ReplaceFileListViewModel"/>
+
     </data>
 
     <LinearLayout
