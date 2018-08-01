@@ -26,6 +26,11 @@ Just check that fastlane available.
 fastlane android next_release
 ```
 
+### android build_release
+```
+fastlane android build_release
+```
+
 ### android deploy_to_crashlytics
 ```
 fastlane android deploy_to_crashlytics
