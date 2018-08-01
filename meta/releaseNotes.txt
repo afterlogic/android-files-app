@@ -1,10 +1,3 @@
-Release 99:
- - Opening an image fixed.
-
-Release 98:
- - Critical BUG - Not working on Android < 5.
- - BUG - Not working on P8.
-
-Release 95:
- - Detect capability to login using social authorization
- - BUG - Files app doesn't intercept callback of Aurora page by Facebook
+100:
+ - BUG - Offline files names not visible.
+ - BUT - Folder replacing failed.
