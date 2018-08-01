@@ -114,10 +114,10 @@
     <string name="url_privacy_policy" translatable="false">http://afterlogic.com/privacy-policy</string>
     <string name="prompt_menu_about">About</string>
     <string name="main__prompt__actions_not_allowed_in_zip">Actions not allowed in zip or GoogleDrive folders.</string>
-    <string name="prompt_action__replace">Replace</string>
+    <string name="prompt_action__move">Move</string>
     <string name="prompt_action__copy">Copy</string>
 
-    <string name="prompt_title__replace">Replace to …</string>
+    <string name="prompt_title__move">Move to …</string>
     <string name="prompt_title__copy">Copy to …</string>
     <string name="action_paste">Paste</string>
     <string name="prompt_coping">Coping</string>

@@ -16,6 +16,10 @@ public class ShortFileDto {
     @SerializedName(Api8.Param.IS_FOLDER)
     private boolean isFolder;
 
+    // TODO: remove crunch
+    @SerializedName("isFolder")
+    private boolean isFolderCrunch;
+
     @SerializedName(Api8.Param.FROM_PATH)
     private String fromPath;
 
