@@ -141,7 +141,7 @@ public class OfflineFileListViewModel extends SearchableFileListViewModel<Offlin
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    protected void startListenSync() {
+    void startListenSync() {
         interactor.listenSyncProgress()
                 .compose(subscriber::defaultSchedulers)
                 .compose(syncListenerDisposable::disposeAndTrack)
@@ -151,7 +151,7 @@ public class OfflineFileListViewModel extends SearchableFileListViewModel<Offlin
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    protected void stopListenSync() {
+    void stopListenSync() {
         syncListenerDisposable.disposeAndClear();
     }
 
@@ -188,10 +188,15 @@ public class OfflineFileListViewModel extends SearchableFileListViewModel<Offlin
                 .compose(offlineStatusDisposable::disposeAndTrack)
                 .compose(globalDisposableBag::track)
                 .subscribe(subscriber.subscribe(statusPair -> {
-                    OfflineFileViewModel vm = mapper.get(statusPair.first);
-                    if (vm != null) {
-                        vm.syncProgress.set(-2);
-                    }
+
+                    AuroraFile file = statusPair.first;
+                    if (file == null) return;
+
+                    OfflineFileViewModel vm = mapper.get(file);
+                    if (vm == null) return;
+
+                    vm.syncProgress.set(-2);
+
                 }));
     }
 
@@ -214,4 +219,5 @@ public class OfflineFileListViewModel extends SearchableFileListViewModel<Offlin
                 .compose(globalDisposableBag::track)
                 .subscribe(subscriber.justSubscribe());
     }
+
 }
