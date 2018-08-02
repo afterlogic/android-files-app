@@ -37,9 +37,12 @@ public abstract class FileListViewModel<
         Args extends FileListArgs
 > extends LifecycleViewModel {
 
-    public final ObservableField<ViewModelState> viewModelState = new SynchronizedUiObservableField<>(ViewModelState.LOADING);
+    public final ObservableField<ViewModelState> viewModelState =
+            new SynchronizedUiObservableField<>(ViewModelState.LOADING);
+
     public final ObservableList<FileVM> items = new ObservableArrayList<>();
-    public final ObservableField<ProgressViewModel> progress = new AsyncUiObservableField<>(null);
+    public final ObservableField<ProgressViewModel> progress =
+            new AsyncUiObservableField<>(null);
 
     private final FilesListInteractor interactor;
     private final Subscriber subscriber;
@@ -58,11 +61,13 @@ public abstract class FileListViewModel<
     protected FileListViewModel(FilesListInteractor interactor,
                                 Subscriber subscriber,
                                 ViewModelsConnection<FileListVM> viewModelsConnection) {
+
         this.interactor = interactor;
         this.subscriber = subscriber;
         this.viewModelsConnection = viewModelsConnection;
 
         SimpleOnListChangedCallback.addTo(foldersStack, stack -> onRefresh());
+
     }
 
     public void setArgs(Args args) {
@@ -78,11 +83,13 @@ public abstract class FileListViewModel<
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void onStart() {
+
         if (!foldersStack.isEmpty()) {
             return;
         }
 
         foldersStack.add(AuroraFile.parse("", fileType, true));
+
     }
 
     public void onRefresh() {
@@ -145,4 +152,5 @@ public abstract class FileListViewModel<
         reloadDisposable.disposeAndClear();
         viewModelsConnection.unregister((FileListVM) this);
     }
+
 }
