@@ -40,7 +40,7 @@ public class MultiChoiceActionMode implements ActionMode.Callback {
 
         MenuItem offline = menu.findItem(R.id.action_offline);
 
-        UnbindableObservable.bindToValue(vm.multiChoiceCount, bag, count -> {
+        UnbindableObservable.bindToValue(vm.getMultiChoiceCount(), bag, count -> {
 
             String title = context.getString(R.string.title_action_selected, count);
             mode.setTitle(title);
@@ -48,14 +48,14 @@ public class MultiChoiceActionMode implements ActionMode.Callback {
 
         });
 
-        UnbindableObservable.bindToValue(vm.multiChoiceDownloadable, bag, downloadable ->
+        UnbindableObservable.bindToValue(vm.getMultiChoiceDownloadable(), bag, downloadable ->
                 Stream.of(R.id.action_offline, R.id.action_download, R.id.action_share)
                         .map(menu::findItem)
                         .filter(ObjectsUtil::nonNull)
                         .forEach(item -> item.setVisible(downloadable))
         );
 
-        UnbindableObservable.bindToValue(vm.multiChoiceOfflineEnabled, bag, offline::setChecked);
+        UnbindableObservable.bindToValue(vm.getMultiChoiceOfflineEnabled(), bag, offline::setChecked);
 
         return true;
     }
@@ -109,7 +109,7 @@ public class MultiChoiceActionMode implements ActionMode.Callback {
 
         optionalMultiChoice.set(null);
         bag.unbindAndClear();
-        vm.multiChoiceMode.set(false);
+        vm.getMultiChoiceMode().set(false);
 
     }
 

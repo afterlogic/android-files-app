@@ -114,7 +114,7 @@ public class BaseFilesBiModel extends BaseViewModel implements BaseFilesModel, B
 
     private void updateCurrentPosition(){
         int position = Stream.of(mStorages)
-                .filter(type -> type.getFiles().equals(mCurrentFileType))
+                .filter(type -> type.getType().equals(mCurrentFileType))
                 .map(mStorages::indexOf)
                 .findFirst()
                 .orElse(-1);
