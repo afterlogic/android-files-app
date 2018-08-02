@@ -71,7 +71,7 @@ public class FilesRootViewModel<
         viewModelsConnection.fileClickedPublisher
                 .observeOn(AndroidSchedulers.mainThread())
                 .compose(fileClickDisposable::track)
-                .subscribe(this::onFileClicked);
+                .subscribe(subscriber.subscribe(this::onFileClicked));
 
         reloadFileTypes();
 
@@ -89,6 +89,7 @@ public class FilesRootViewModel<
     }
 
     public void onBackPressed() {
+
         if (fileTypesLocked.get() && getCurrentFileType() != null) {
             FileListVM vm = viewModelsConnection.get(getCurrentFileType());
             if (vm != null) {
@@ -97,6 +98,11 @@ public class FilesRootViewModel<
             }
         }
 
+        onExit();
+
+    }
+
+    protected void onExit() {
         router.exit();
     }
 
@@ -124,7 +130,7 @@ public class FilesRootViewModel<
     }
 
     protected String getCurrentFileType() {
-        return storages.get(currentFileTypePosition.get()).getFiles();
+        return storages.get(currentFileTypePosition.get()).getType();
     }
 
     protected String getRootTitle() {
@@ -148,7 +154,7 @@ public class FilesRootViewModel<
                 .subscribe(subscriber.subscribe(this::handleFileTypes));
     }
 
-    private void handleFileTypes(List<Storage> storages) {
+    protected void handleFileTypes(List<Storage> storages) {
         this.storages.addAll(storages);
         viewModelState.set(this.storages.size() > 0 ? ViewModelState.CONTENT : ViewModelState.EMPTY);
     }
@@ -159,4 +165,5 @@ public class FilesRootViewModel<
         viewModelsConnection.setListener(null);
         fileClickDisposable.disposeAndClear();
     }
+
 }

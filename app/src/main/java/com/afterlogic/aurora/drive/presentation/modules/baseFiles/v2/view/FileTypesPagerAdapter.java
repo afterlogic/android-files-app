@@ -34,7 +34,7 @@ public abstract class FileTypesPagerAdapter extends FragmentPagerAdapter impleme
 
     @Override
     public Fragment getItem(int position) {
-        return getFilesListFragment(storages.get(position).getFiles());
+        return getFilesListFragment(storages.get(position).getType());
     }
 
     @Override

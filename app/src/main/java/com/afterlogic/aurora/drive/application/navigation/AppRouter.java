@@ -1,5 +1,7 @@
 package com.afterlogic.aurora.drive.application.navigation;
 
+import android.app.Activity;
+
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 
 import ru.terrakok.cicerone.Router;
@@ -25,6 +27,8 @@ public class AppRouter extends Router {
     public static final String EXTERNAL_OPEN_FILE = "externalOpenFile";
     public static final String EXTERNAL_CHOOSE_FILE_FOR_UPLOAD = "externalChooseFileForUpload";
     public static final String EXTERNAL_SHARE = "externalShare";
+
+    public static final int RESULT_CODE_REPLACE = 1000;
 
     public void navigateToWithResult(String screenKey, int requestId) {
         navigateToWithResult(screenKey, requestId, null);

@@ -78,8 +78,8 @@ public class FilesPagerAdapter extends FragmentStatePagerAdapter implements Item
 
     @Override
     public BaseFilesListFragment getItem(int position) {
-        BaseFilesListFragment fragment = mFilesContentProvider.get(mStorages.get(position).getFiles());
-        fragment.setArgsType(mStorages.get(position).getFiles());
+        BaseFilesListFragment fragment = mFilesContentProvider.get(mStorages.get(position).getType());
+        fragment.setArgsType(mStorages.get(position).getType());
         fragment.setModuleUuid(mFilesModuleIds.get(position));
 
         int currentDataStateIndex = mDataStateIndex;

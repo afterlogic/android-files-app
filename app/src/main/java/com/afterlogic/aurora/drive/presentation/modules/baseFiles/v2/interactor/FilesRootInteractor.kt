@@ -19,6 +19,7 @@ constructor(private val filesRepository: MultiApiService<FilesRepository>) {
 
     open val availableFileTypes: Single<List<Storage>>
         get() = filesRepository.single { availableStorages }
+                .map { it.distinctBy { it.type } }
                 .compose { InteractorUtil.retryIfNotAuthError(3, it) }
 
 }

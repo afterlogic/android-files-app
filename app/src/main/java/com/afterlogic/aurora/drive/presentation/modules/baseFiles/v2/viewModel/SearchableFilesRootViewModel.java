@@ -60,7 +60,7 @@ public class SearchableFilesRootViewModel<
             setSearchQueryForType(getCurrentFileType(), query);
         } else {
             Stream.of(storages)
-                    .map(Storage::getFiles)
+                    .map(Storage::getType)
                     .forEach(type -> setSearchQueryForType(type, query));
         }
     }
@@ -77,4 +77,5 @@ public class SearchableFilesRootViewModel<
             searchQuery.set("");
         }
     }
+
 }
