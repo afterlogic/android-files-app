@@ -131,12 +131,12 @@ dependencies {
     implementation deps.androidx.multidex.instrumentation
 
     //For test
-    androidTestImplementation(deps.testing.espresso, {
+    androidTestImplementation(deps.tests.espresso, {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    testImplementation deps.testing.junit
+    testImplementation deps.tests.junit
     // Optional -- Mockito framework
-    testImplementation deps.testing.mockito
+    testImplementation deps.tests.mockito
 
     // Kotlin
     implementation deps.kotlin.stdlib
@@ -151,12 +151,12 @@ dependencies {
 
     //Compat
     implementation deps.androidx.appcompat
-    implementation deps.androidx.design
+    implementation deps.androidx.material
     implementation deps.androidx.recyclerView
     implementation deps.androidx.constraintLayout
 
     //Observable and Stream
-    implementation deps.utils.streams
+    implementation deps.utils.annimonStreams
     implementation deps.rx.java
     implementation deps.rx.android
     implementation deps.rx.modern
