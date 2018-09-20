@@ -1,3 +1,6 @@
+102:
+ - Dependency updated. No code changes.
+
 101:
  - Fixed files moving/coping between storages.
  - When copy/move files start with same storage.
