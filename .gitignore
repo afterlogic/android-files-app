@@ -54,3 +54,7 @@ gradle/
 fabric.properties
 
 \.DS_Store
+
+Gemfile\.lock
+
+fastlane/report\.xml

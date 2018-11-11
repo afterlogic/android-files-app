@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.common.modules.viewModel.dialog;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 

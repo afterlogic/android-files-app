@@ -4,7 +4,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.CoreScope;
 import com.afterlogic.aurora.drive.model.AuroraSession;

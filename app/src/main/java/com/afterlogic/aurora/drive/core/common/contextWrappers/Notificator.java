@@ -9,9 +9,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.core.common.annotation.scopes.AppScope;
@@ -73,7 +73,6 @@ public class Notificator {
                 .build();
 
         notificationManagerCompat.notify(UUID.randomUUID().toString(), ID_DOWNLOADS, notification);
-        notificationManagerCompat.notify(ID_DOWNLOADS, notification);
     }
 
     public void notifyMessage(@Nullable String tag, String title, String message) {
@@ -97,6 +96,7 @@ public class Notificator {
                 .setProgress(100, progress.getProgress(), progress.getProgress() == -1)
                 .setContentText(progress.getFileName())
                 .setSmallIcon(R.drawable.ic_notify)
+                .setDefaults(0)
                 .setOngoing(true);
 
         notificationManagerCompat.notify(ID_SYNC_PROGRESS, notifyBuilder.build());

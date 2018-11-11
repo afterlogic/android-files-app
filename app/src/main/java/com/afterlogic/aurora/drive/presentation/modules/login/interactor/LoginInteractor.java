@@ -112,9 +112,9 @@ public class LoginInteractor {
         });
     }
 
-    public Single<AuthResult> handleAuth(String authToken, HttpUrl host) {
+    public Single<AuthResult> handleAuth(String authToken, String host) {
 
-        return authenticatorService.createSession(host.toString(), authToken)
+        return authenticatorService.createSession(host, authToken)
                 .flatMap(this::handleSession);
 
     }
@@ -128,6 +128,10 @@ public class LoginInteractor {
 
     public Observable<Boolean> listenNetworkState() {
         return networkStateHelper.listenNetworkState();
+    }
+
+    public Single<Boolean> isExternalLoginFormsAllowed(String host) {
+        return authenticatorService.checkExternalLoginFormsEnabled(host);
     }
 
     private Single<AuthResult> handleSession(AuthorizedAuroraSession session) {

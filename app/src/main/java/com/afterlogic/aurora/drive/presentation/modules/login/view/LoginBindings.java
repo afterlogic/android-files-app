@@ -2,11 +2,11 @@ package com.afterlogic.aurora.drive.presentation.modules.login.view;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.databinding.BindingAdapter;
+import androidx.databinding.BindingAdapter;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Build;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -83,10 +83,13 @@ public class LoginBindings {
 
     @BindingAdapter("login_url")
     public static void bindUrl(WebView webView, String url) {
+
         String currentUrl = webView.getUrl();
+
         if (currentUrl == null || !currentUrl.equals(url)) {
             webView.loadUrl(url);
         }
+
     }
 
     @SuppressLint("SetJavaScriptEnabled")

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <string name="value_webView_localization">ru-RU</string>
+
     <string name="app_name">Aurora.Файлы</string>
     <string name="prompt_downloaded_file_description">Из Aurora.Файлы</string>
 
@@ -106,9 +109,9 @@
     <string name="prompt_about_version">Версия: %1$s (%2$d)</string>
     <string name="prompt_about_privacy_policy_title">Политика конфиденциальности:</string>
     <string name="prompt_menu_about">О приложении</string>
-    <string name="prompt_action__replace">Переместить</string>
+    <string name="prompt_action__move">Переместить</string>
     <string name="prompt_action__copy">Копировать</string>
-    <string name="prompt_title__replace">Переместить в …</string>
+    <string name="prompt_title__move">Переместить в …</string>
     <string name="prompt_title__copy">Скопировать в …</string>
     <string name="action_paste">Вставить</string>
     <string name="prompt_coping">Копирование</string>
@@ -139,5 +142,7 @@
     </plurals>
     <string name="prompt_error_occurred_pull_to_refresh">Произошла ошибка.\nПотяните вниз, чтобы попробовать снова.</string>
     <string name="prompt_additional_auth_web_failed">Не удалось получить данные дополнительных вариантов авторизации.</string>
+    <string name="prompt_login_next">Далее</string>
+    <string name="prompt__login__prepare_form">Подготовка формы авторизации…</string>
 
 </resources>

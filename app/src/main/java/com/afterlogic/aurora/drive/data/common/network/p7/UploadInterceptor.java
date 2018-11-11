@@ -22,7 +22,6 @@ public class UploadInterceptor implements Interceptor {
     static final String QUERY_FILENAME = "fileName";
     private static final String QUERY_INTERCEPT= "interceptUpload";
     static final String INTERCEPT_UPLOAD = "index.php?" + QUERY_INTERCEPT + "=true";
-    private static final String LINK = Api7.Links.UPLOAD_FILE_URL.replace("?", "");
 
     public UploadInterceptor() {
 
@@ -34,7 +33,9 @@ public class UploadInterceptor implements Interceptor {
 
         HttpUrl url = request.url();
 
-        boolean interceptUpload = NumberUtil.parseBoolean(url.queryParameter(QUERY_INTERCEPT), false);
+        String interceptUploadQuery = url.queryParameter(QUERY_INTERCEPT);
+        boolean interceptUpload =interceptUploadQuery != null
+                && NumberUtil.parseBoolean(interceptUploadQuery, false);
 
         if (interceptUpload) {
 
@@ -49,7 +50,9 @@ public class UploadInterceptor implements Interceptor {
                         .removeAllQueryParameters(QUERY_PATH)
                         .removeAllQueryParameters(QUERY_FILENAME)
                         .removeAllQueryParameters(QUERY_INTERCEPT)
-                        .query(String.format(Locale.US, LINK, type, path, fileName))
+                        .query(String.format(Locale.US,
+                                Api7.Links.UPLOAD_FILE_URL, type, path, fileName
+                        ))
                         .build();
 
                 request = request.newBuilder()
@@ -59,6 +62,9 @@ public class UploadInterceptor implements Interceptor {
                 throw new IOException("Intercepted upload params non complete!");
             }
         }
+
         return chain.proceed(request);
+
     }
+
 }

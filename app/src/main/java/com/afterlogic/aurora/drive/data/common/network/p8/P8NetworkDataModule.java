@@ -50,9 +50,13 @@ public class P8NetworkDataModule {
 
         //Add logging for debug
         if (BuildConfig.DEBUG) {
-            HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor();
-            logInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-            clientBuilder.addInterceptor(logInterceptor);
+            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+            interceptor.setLevel(
+                    BuildConfig.DEBUG_HTTP
+                            ? HttpLoggingInterceptor.Level.BODY
+                            : HttpLoggingInterceptor.Level.HEADERS
+            );
+            clientBuilder.addInterceptor(interceptor);
         }
 
         return clientBuilder

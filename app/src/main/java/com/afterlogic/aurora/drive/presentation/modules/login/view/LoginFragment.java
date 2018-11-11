@@ -1,12 +1,12 @@
 package com.afterlogic.aurora.drive.presentation.modules.login.view;
 
-import android.arch.lifecycle.ViewModelProvider;
-import android.databinding.DataBindingUtil;
-import android.databinding.ViewDataBinding;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -76,7 +76,7 @@ public class LoginFragment
     protected void bindCreated(LoginViewModel vm, UnbindableObservable.Bag bag) {
         super.bindCreated(vm, bag);
 
-        UnbindableObservable.bind(vm.loginState, bag, field -> {
+        UnbindableObservable.bind(vm.viewModelState, bag, field -> {
 
             FragmentManager fm = getChildFragmentManager();
             Fragment currentFragment = fm.findFragmentById(binding.contentContainer.getId());
@@ -89,6 +89,17 @@ public class LoginFragment
 
                     fm.beginTransaction()
                             .replace(binding.contentContainer.getId(), HostFragment.newInstance())
+                            .commitAllowingStateLoss();
+                    fm.executePendingTransactions();
+
+                    break;
+
+                case LOGIN_INITIALIZATION:
+
+                    if (currentFragment instanceof LoginInitializationFragment) return;
+
+                    fm.beginTransaction()
+                            .replace(binding.contentContainer.getId(), LoginInitializationFragment.newInstance())
                             .commitAllowingStateLoss();
                     fm.executePendingTransactions();
 

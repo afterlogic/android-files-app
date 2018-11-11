@@ -57,6 +57,11 @@ public class AuthenticatorService {
                 .firstOrError();
     }
 
+    public Single<Boolean> checkExternalLoginFormsEnabled(String host) {
+        return getAuthenticatorService(host)
+                .flatMap(service -> service.isExternalClientLoginFormsAvailable(host));
+    }
+
     private Single<AuthenticatorSubService> getAuthenticatorService(String host) {
         return getApiVersion(host)
                 .map(version -> version == Const.ApiVersion.API_P7

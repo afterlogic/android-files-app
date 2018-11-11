@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.assembly;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.afterlogic.aurora.drive.presentation.common.modules.assembly.MVVMComponent;
 import com.annimon.stream.Stream;

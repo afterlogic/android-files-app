@@ -1,16 +1,18 @@
 package com.afterlogic.aurora.drive.presentation.modules.fileView.viewModel;
 
-import android.databinding.ObservableBoolean;
-import android.databinding.ObservableField;
+import androidx.databinding.ObservableBoolean;
+import androidx.databinding.ObservableField;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.view.View;
+import androidx.annotation.Nullable;
 
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.interfaces.Stoppable;
 import com.afterlogic.aurora.drive.presentation.common.util.LazyProvider;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.presenter.FileViewImageItemModel;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.presenter.FileViewImageItemPresenter;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.target.Target;
 
 import javax.inject.Inject;
@@ -73,8 +75,10 @@ public class FileViewImageItemBiModel implements FileViewImageItemViewModel, Fil
     }
 
     @Override
-    public void onClick(View view) {
+    public void toggleFullscreen() {
+
         mRootViewModel.onItemClick();
+
     }
 
     @Override
@@ -100,20 +104,27 @@ public class FileViewImageItemBiModel implements FileViewImageItemViewModel, Fil
     }
 
     @Override
-    public boolean onException(Exception e, Uri model, Target<GlideDrawable> target, boolean isFirstResource) {
+    public boolean onLoadFailed(@Nullable GlideException e,
+                                Object model,
+                                Target<Drawable> target,
+                                boolean isFirstResource) {
+
         mError.set(true);
         mProgress.set(false);
+
         return false;
     }
 
     @Override
-    public boolean onResourceReady(GlideDrawable resource, Uri model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+    public boolean onResourceReady(Drawable resource,
+                                   Object model,
+                                   Target<Drawable> target,
+                                   DataSource dataSource,
+                                   boolean isFirstResource) {
+
         mProgress.set(false);
+
         return false;
     }
 
-    @Override
-    public void onViewTap(View view, float x, float y) {
-        mRootViewModel.onItemClick();
-    }
 }

@@ -1,12 +1,10 @@
 package com.afterlogic.aurora.drive.presentation.common.modules.v3.view;
 
-import android.arch.lifecycle.LifecycleRegistry;
-import android.arch.lifecycle.LifecycleRegistryOwner;
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
-import android.databinding.ViewDataBinding;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.databinding.ViewDataBinding;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.MenuItem;
 
 import com.afterlogic.aurora.drive.BR;
@@ -24,9 +22,7 @@ import javax.inject.Inject;
 
 public abstract class InjectableMVVMActivity<VM extends LifecycleViewModel>
         extends AppCoreActivity
-        implements LifecycleRegistryOwner, Injectable {
-
-    private LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
+        implements Injectable {
 
     private UnbindableObservable.Bag startedBindingsBag = new UnbindableObservable.Bag();
     private UnbindableObservable.Bag createdBindingsBag = new UnbindableObservable.Bag();
@@ -92,11 +88,6 @@ public abstract class InjectableMVVMActivity<VM extends LifecycleViewModel>
             }
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public LifecycleRegistry getLifecycle() {
-        return lifecycleRegistry;
     }
 
     public <T extends ViewDataBinding> T getBinding() {

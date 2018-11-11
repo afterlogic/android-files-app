@@ -1,155 +1,211 @@
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'org.greenrobot.greendao'
-
-apply from: '../artifacts.gradle'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 project.ext.set("signingFolder", file("../signing").toString())
 apply from: '../signing/signings.gradle'
 
 android {
 
-    compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    compileSdkVersion versions.compileSdk
+    buildToolsVersion versions.buildTools
 
     defaultConfig {
 
-        //prepareVersions()
+        buildConfigField "boolean", "DEBUG_HTTP", "true"
 
         applicationId "com.afterlogic.aurora.files"
-        minSdkVersion 15
-        targetSdkVersion 26
+        minSdkVersion versions.minSdk
+        targetSdkVersion versions.targetSdk
 
-        versionCode getIncrementalVersionCode()
-        versionName getIncrementalVersionName()
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
+
+        Properties versionProperties = new Properties()
+        File propsFile = new File("$project.rootProject.projectDir/meta/version.properties")
+        if(propsFile.exists()) {
+            versionProperties.load(new FileInputStream(propsFile))
+        } else {
+            throw new IllegalStateException(
+                    "Version properties file not exist: $propsFile.absolutePath")
+        }
+
+        versionCode versionProperties.VERSION_CODE.toInteger()
+        versionName versionProperties.VERSION_NAME
+
+        multiDexEnabled true
+
     }
 
     dataBinding{
+
         enabled true
+
     }
 
     compileOptions {
+
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+
     }
 
     dexOptions {
+
         javaMaxHeapSize "2g"
         jumboMode true
+
     }
 
     buildTypes {
 
         release {
+
             signingConfig signingConfigs.sign
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
         }
 
         debug {
+
+            if (project.hasProperty("debug.nohttp")) {
+
+                buildConfigField "boolean", "DEBUG_HTTP", "false"
+
+            }
+
             signingConfig signingConfigs.sign
             minifyEnabled false
             ext.enableCrashlytics = false
+
         }
 
         releaseBeta {
+
             signingConfig signingConfigs.sign
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
             ext.betaDistributionGroupAliases = "aurora-android"
-            ext.betaDistributionReleaseNotesFilePath = projectDir.absolutePath + "/lastBetaBuildNotes.txt"
+            ext.betaDistributionReleaseNotesFilePath =
+                    "$project.rootProject.projectDir/meta/releaseNotes.txt"
+
         }
     }
 
     packagingOptions {
+
         exclude 'META-INF/rxjava.properties'
+
     }
+
 }
 
 greendao {
+
     schemaVersion 1
+
+}
+
+kapt {
+
+    generateStubs true
+
+    javacOptions {
+        // Increase the max count of errors from annotation processors.
+        // Default is 100.
+        option("-Xmaxerrs", 500)
+    }
+
 }
 
 dependencies {
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
+    implementation deps.androidx.multidex.api
+    implementation deps.androidx.multidex.instrumentation
+
     //For test
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestImplementation(deps.tests.espresso, {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    testImplementation 'junit:junit:4.12'
+    testImplementation deps.tests.junit
     // Optional -- Mockito framework
-    testImplementation 'org.mockito:mockito-core:2.7.19'
+    testImplementation deps.tests.mockito
+
+    // Kotlin
+    implementation deps.kotlin.stdlib
+    implementation deps.kotlin.ktx.core
 
     //Dagger - Dependency Injection
-    implementation "com.google.dagger:dagger:${rootProject.daggerVersion}"
-    annotationProcessor "com.google.dagger:dagger-compiler:${rootProject.daggerVersion}"
-    implementation "com.google.dagger:dagger-android:${rootProject.daggerVersion}"
-    implementation "com.google.dagger:dagger-android-support:${rootProject.daggerVersion}"
-    annotationProcessor "com.google.dagger:dagger-android-processor:${rootProject.daggerVersion}"
+    implementation deps.core.dagger
+    kapt deps.core.daggerCompiler
+    implementation deps.core.daggerAndroid
+    implementation deps.core.daggerAndroidSupport
+    kapt deps.core.daggerAndroidProcessor
 
     //Compat
-    implementation "com.android.support:appcompat-v7:${rootProject.compatVersion}"
-    implementation "com.android.support:design:${rootProject.compatVersion}"
-    implementation "com.android.support:recyclerview-v7:${rootProject.compatVersion}"
-    //implementation "com.android.support:customtabs:${rootProject.compatVersion}"
-    implementation "com.android.support.constraint:constraint-layout:${rootProject.constraintLayoutVersion}"
+    implementation deps.androidx.appcompat
+    implementation deps.androidx.material
+    implementation deps.androidx.recyclerView
+    implementation deps.androidx.constraintLayout
 
     //Observable and Stream
-    implementation "com.annimon:stream:${rootProject.streamVersion}"
-    implementation "io.reactivex.rxjava2:rxjava:${rootProject.rxJavaVersion}"
-    implementation "io.reactivex.rxjava2:rxandroid:${rootProject.rxJavaAndroidVersion}"
+    implementation deps.utils.annimonStreams
+    implementation deps.rx.java
+    implementation deps.rx.android
+    implementation deps.rx.modern
 
     //[START Api helpers]
-    implementation "com.squareup.retrofit2:retrofit:${rootProject.retrofitVersion}"
-    implementation "com.squareup.retrofit2:converter-gson:${rootProject.retrofitVersion}"
-    implementation "com.squareup.retrofit2:converter-scalars:${rootProject.retrofitVersion}"
-    implementation "com.squareup.retrofit2:adapter-rxjava2:${rootProject.retrofitVersion}"
-    implementation "com.squareup.okhttp3:okhttp:${rootProject.okHttpVersion}"
-    implementation "com.squareup.okhttp3:logging-interceptor:${rootProject.okHttpVersion}"
-    implementation "com.google.code.gson:gson:${rootProject.gsonVersion}"
+    implementation deps.network.retrofit
+    implementation deps.network.gson
+    implementation deps.network.converterScalars
+    implementation deps.network.converterGson
+    implementation deps.network.rxAdapter
+    implementation deps.network.okhttp
+    implementation deps.network.logging
     //[END Api helpers]
 
     //Floating action button
-    implementation "com.getbase:floatingactionbutton:${rootProject.fabVersion}"
+    implementation deps.view.fab
     //Material progress bar
-    implementation "me.zhanghai.android.materialprogressbar:library:$rootProject.materialProgressBarVersion"
+    implementation deps.view.materialProgressBar
 
     //DB
-    implementation "org.greenrobot:greendao:${rootProject.greenDaoVersion}"
+    implementation deps.greendao.dao
 
     //EventBus
-    implementation "org.greenrobot:eventbus:${rootProject.eventBusVersion}"
+    implementation deps.greendao.eventbus
 
     //Pictures load
-    implementation "com.github.bumptech.glide:glide:${rootProject.glideVersion}"
-    implementation "com.github.chrisbanes:PhotoView:${rootProject.photoViewVersion}"
+    implementation deps.network.glide
+    implementation deps.view.photoView
 
     //Preferences
-    implementation "net.grandcentrix.tray:tray:${rootProject.trayPrefsVersion}"
+    implementation deps.utils.prefs
 
     //Crash and use analytics
-    implementation("com.crashlytics.sdk.android:crashlytics:${rootProject.crashlyticsVersion}") {
+    implementation(deps.debug.crashlytics) {
         transitive = true
     }
 
-    implementation "com.android.support.constraint:constraint-layout:$rootProject.constraintLayoutVersion"
+    implementation deps.androidx.constraintLayout
 
-    implementation "android.arch.lifecycle:runtime:$rootProject.architectureComponentsVersion"
-    implementation "android.arch.lifecycle:extensions:$rootProject.architectureComponentsVersion"
-    annotationProcessor "android.arch.lifecycle:compiler:$rootProject.architectureComponentsVersion"
+    implementation deps.androidx.lifecycle.runtime
+    implementation deps.androidx.lifecycle.extensions
+    kapt deps.androidx.lifecycle.compiler
 
     // Navigation
-    implementation "ru.terrakok.cicerone:cicerone:$rootProject.ciceroneVersion"
+    implementation deps.utils.cicerone
 
+    implementation deps.dataBinding.lastAdapter
 
-    implementation "com.github.nitrico.lastadapter:lastadapter:$rootProject.lastAdapterVersion"
+    implementation deps.utils.parceler.api
+    kapt deps.utils.parceler.compiler
 
-    implementation "org.parceler:parceler-api:$rootProject.parcellerVersion"
-    annotationProcessor "org.parceler:parceler:$rootProject.parcellerVersion"
 }

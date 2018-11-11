@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.common.modules.view;
 
-import android.support.annotation.FloatRange;
+import androidx.annotation.FloatRange;
 
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.annotations.Repeat;
 import com.afterlogic.aurora.drive.presentation.common.modules.view.viewState.annotations.RepeatPolicy;

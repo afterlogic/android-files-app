@@ -1,14 +1,15 @@
 package com.afterlogic.aurora.drive.presentation.modules.login.view;
 
 import android.animation.ValueAnimator;
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
-import android.databinding.DataBindingUtil;
-import android.databinding.ViewDataBinding;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import android.os.Bundle;
-import android.support.annotation.FloatRange;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
+import androidx.annotation.FloatRange;
+import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -17,6 +18,7 @@ import com.afterlogic.aurora.drive.databinding.LoginAuthFragmentBinding;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMFragment;
 import com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.login.viewModel.LoginWebViewState;
 
 /**
  * Created by aleksandrcikin on 11.08.17.
@@ -57,9 +59,33 @@ public class AuthFragment extends InjectableMVVMFragment<LoginViewModel> {
     protected void bindCreated(LoginViewModel vm, UnbindableObservable.Bag bag) {
         super.bindCreated(vm, bag);
 
-        UnbindableObservable.bind(vm.loginWebViewFullscreen, bag, field ->
-                updateWebViewPercentSize(field.get() ? 1f : 0.5f)
-        );
+        UnbindableObservable.bindToValue(vm.webViewState, bag, state -> {
+
+            LoginAuthFragmentBinding binding = getBinding();
+
+            if (state == LoginWebViewState.NOT_AVAILABLE) {
+
+                ((ConstraintLayout.LayoutParams) binding.inputGuideLine.getLayoutParams()).guidePercent = 1f;
+                ((ConstraintLayout.LayoutParams) binding.webViewGuideLine.getLayoutParams()).guidePercent = 1f;
+
+            } else {
+
+                ((ConstraintLayout.LayoutParams) binding.inputGuideLine.getLayoutParams()).guidePercent = 0.5f;
+
+                isFirstWebViewSizeAction = true;
+                updateWebViewPercentSize(vm.loginWebViewFullscreen.get() ? 1f : 0.5f);
+
+            }
+
+        });
+
+        UnbindableObservable.bindToValue(vm.loginWebViewFullscreen, bag, fullscreen -> {
+
+            if (vm.webViewState.get() == LoginWebViewState.NOT_AVAILABLE) return;
+
+            updateWebViewPercentSize(fullscreen ? 1f : 0.5f);
+
+        });
 
     }
 

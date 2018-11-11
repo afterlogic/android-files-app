@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.assembly.modules;
 
-import android.arch.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProvider;
 
 import dagger.Binds;
 import dagger.Module;

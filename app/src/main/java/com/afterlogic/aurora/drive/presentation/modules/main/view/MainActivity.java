@@ -1,16 +1,16 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.view;
 
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
-import android.databinding.ObservableField;
-import android.databinding.ViewDataBinding;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.view.ActionMode;
-import android.support.v7.widget.SearchView;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ObservableField;
+import androidx.databinding.ViewDataBinding;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.view.ActionMode;
+import androidx.appcompat.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -82,7 +82,7 @@ public class MainActivity extends InjectableMVVMActivity<MainViewModel> implemen
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
         logoutMenuItem = menu.findItem(R.id.action_logout);
-        logoutMenuItem.setTitle(getViewModel().logoutButtonText.get());
+        logoutMenuItem.setTitle(getViewModel().getLogoutButtonText().get());
 
         MenuItem searchMenuItem = menu.findItem(R.id.action_search);
         searchView.set((SearchView) searchMenuItem.getActionView());
@@ -103,14 +103,14 @@ public class MainActivity extends InjectableMVVMActivity<MainViewModel> implemen
 
         BindingUtil.bindSearchView(searchView, vm.searchQuery, vm.showSearch, bag);
 
-        UnbindableObservable.bind(vm.showBackButton, bag, showBack -> {
+        UnbindableObservable.bind(vm.getShowBackButton(), bag, showBack -> {
             ActionBar ab = getSupportActionBar();
             if (ab != null) {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(showBack.get());
             }
         });
 
-        UnbindableObservable.bind(vm.logoutButtonText, bag, logoutText -> {
+        UnbindableObservable.bind(vm.getLogoutButtonText(), bag, logoutText -> {
             if (logoutMenuItem == null) return;
             logoutMenuItem.setTitle(logoutText.get());
         });
@@ -156,7 +156,7 @@ public class MainActivity extends InjectableMVVMActivity<MainViewModel> implemen
     private void bindMultiChoice(MainViewModel vm, UnbindableObservable.Bag bag) {
         Optional<ActionMode> optionalMultiChoice = new Optional<>();
 
-        UnbindableObservable.bind(vm.multiChoiceMode, bag, mode -> {
+        UnbindableObservable.bind(vm.getMultiChoiceMode(), bag, mode -> {
             if (!mode.get()) {
                 optionalMultiChoice.ifPresent(ActionMode::finish);
             } else {

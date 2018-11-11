@@ -44,9 +44,14 @@ public class P7NetworkDataModule {
         //Add logging for debug
         if (BuildConfig.DEBUG) {
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            interceptor.setLevel(
+                    BuildConfig.DEBUG_HTTP
+                    ? HttpLoggingInterceptor.Level.BODY
+                    : HttpLoggingInterceptor.Level.HEADERS
+            );
             clientBuilder.addInterceptor(interceptor);
         }
+
         return clientBuilder
                 .connectTimeout(1, TimeUnit.MINUTES)
                 .readTimeout(1, TimeUnit.MINUTES)

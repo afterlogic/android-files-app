@@ -1,14 +1,14 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.viewModel;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.OnLifecycleEvent;
 import android.content.ActivityNotFoundException;
-import android.databinding.ObservableArrayList;
-import android.databinding.ObservableBoolean;
-import android.databinding.ObservableField;
-import android.databinding.ObservableList;
+import androidx.databinding.ObservableArrayList;
+import androidx.databinding.ObservableBoolean;
+import androidx.databinding.ObservableField;
+import androidx.databinding.ObservableList;
 import android.net.Uri;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.afterlogic.aurora.drive.R;
 import com.afterlogic.aurora.drive.application.navigation.AppRouter;
@@ -29,14 +29,14 @@ import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnListChangedCallback;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.SimpleOnPropertyChangedCallback;
-import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.OnActionListener;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ViewModelState;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.MessageDialogViewModel;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.view.FileListArgs;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFileListViewModel;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.rx.FileProgressTransformer;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.rx.IndeterminateProgressTransformer;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.rx.TrackInMapTransformer;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.view.FileListArgs;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.viewModel.SearchableFileListViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.viewModel.rx.FileProgressTransformer;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.viewModel.rx.IndeterminateProgressTransformer;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.viewModel.rx.TrackInMapTransformer;
 import com.afterlogic.aurora.drive.presentation.modules.fileView.view.FileViewArgs;
 import com.afterlogic.aurora.drive.presentation.modules.main.interactor.MainFilesListInteractor;
 import com.afterlogic.aurora.drive.presentation.modules.mainFilesAction.interactor.MainFileAction;
@@ -47,6 +47,8 @@ import com.annimon.stream.Stream;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,6 +91,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     private OptionalDisposable thumbsDisposable = new OptionalDisposable();
     private OptionalDisposable offlineStatusDisposable = new OptionalDisposable();
     private OptionalDisposable syncProgressDisposable = new OptionalDisposable();
+    private OptionalDisposable onFolderContentChangedDisposable = new OptionalDisposable();
 
     private PublishSubject<String> setFileTypePublisher = PublishSubject.create();
 
@@ -122,7 +125,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
         this.viewModelsConnection = viewModelsConnection;
         this.notificator = notificator;
 
-        mapper.setOnLongClickListener((position, item) -> onFileLongClick(item));
+        mapper.setOnLongClickListener(this::onFileLongClick);
 
         viewModelsConnection.getMultiChoiceMode()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -146,6 +149,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
         SimpleOnListChangedCallback.addTo(selectedFiles, this::onSelectedFilesChanged);
 
         SimpleOnPropertyChangedCallback.addTo(viewModelState, this::onViewModelStateChanged);
+
     }
 
     // region Base
@@ -156,7 +160,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     }
 
     @Override
-    protected MainFileViewModel mapFileItem(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener) {
+    protected MainFileViewModel mapFileItem(AuroraFile file, OnActionListener<AuroraFile> onItemClickListener) {
         return mapper.mapAndStore(file, onItemClickListener);
     }
 
@@ -169,7 +173,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
             reloadCurrentFolder();
         }
 
-        Stream.of(items).forEach(vm -> vm.syncProgress.set(-1));
+        Stream.of(items).forEach(vm -> vm.getSyncProgress().set(-1));
 
         interactor.getSyncProgress()
                 .compose(subscriber::defaultSchedulers)
@@ -183,6 +187,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
         syncProgressDisposable.disposeAndClear();
     }
 
+    @SuppressWarnings("WeakerAccess")
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     protected void checkFilesOfflineStatus() {
         Stream.of(mapper.getKeys())
@@ -217,6 +222,18 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
         files = null;
         selectedFiles.clear();
         super.reloadCurrentFolder();
+
+        onFolderContentChangedDisposable.disposeAndClear();
+
+        if (foldersStack.size() == 0) return;
+
+        AuroraFile folder = foldersStack.get(foldersStack.size() - 1);
+
+        viewModelsConnection.lisetenFolderChanges(folder.getType(), folder.getFullPath())
+                .compose(subscriber::defaultSchedulers)
+                .compose(onFolderContentChangedDisposable::track)
+                .subscribe(subscriber.subscribe(f -> onRefresh()));
+
     }
 
     @Override
@@ -282,20 +299,20 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     // region MultiChoice actions
 
     private void onFileClickedInMultiChoiceMode(AuroraFile file) {
+
         MainFileViewModel vm = mapper.get(file);
         if (vm == null) return;
 
-        boolean selected = !vm.selected.get();
-        vm.selected.set(selected);
+        boolean selected = !vm.getSelected().get();
+        vm.getSelected().set(selected);
         if (selected) {
             if (!selectedFiles.contains(file)) {
                 selectedFiles.add(file);
             }
         } else {
-            if (selectedFiles.contains(file)) {
-                selectedFiles.remove(file);
-            }
+            selectedFiles.remove(file);
         }
+
     }
 
     private void onSelectedFilesChanged(List<AuroraFile> selectedFiles) {
@@ -303,7 +320,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                 .map(file -> {
                     // TODO: Maybe getAndClear from interactor?
                     MainFileViewModel vm = mapper.get(file);
-                    return new MultiChoiceFile(file, vm != null && vm.isOffline.get());
+                    return new MultiChoiceFile(file, vm != null && vm.isOffline().get());
                 })
                 .toList();
 
@@ -380,12 +397,13 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                 .collectInto(new ArrayList<File>(), List::add)
                 .subscribe(subscriber.subscribe(results -> {
                     ExternalShareFilesArgs args = new ExternalShareFilesArgs(results);
-                    router.navigateTo(AppRouter.EXTERNAL_SHARE, args, error -> {
-                        MessageDialogViewModel.set(
-                                messageDialog, null,
-                                appResources.getString(R.string.prompt_cant_open_file
-                                ));
-                    });
+                    router.navigateTo(
+                            AppRouter.EXTERNAL_SHARE,
+                            args,
+                            error -> MessageDialogViewModel.set(
+                                    messageDialog, null,
+                                    appResources.getString(R.string.prompt_cant_open_file))
+                    );
                 }));
     }
 
@@ -402,7 +420,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                                         .doOnComplete(() -> {
                                             MainFileViewModel vm = mapper.get(file);
                                             if (vm != null) {
-                                                vm.isOffline.set(offline);
+                                                vm.isOffline().set(offline);
                                             }
                                         })
                                 )
@@ -413,13 +431,11 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     }
 
     private void multiChoiceReplace(List<AuroraFile> files) {
-        reloadAtStart = true;
-        router.navigateTo(AppRouter.REPLACE, new ReplaceScreenArgs(files));
+        navigateToReplace(true, files);
     }
 
     private void multiChoiceCopy(List<AuroraFile> files) {
-        reloadAtStart = true;
-        router.navigateTo(AppRouter.COPY, new ReplaceScreenArgs(files));
+        navigateToReplace(false, files);
     }
 
     // endregion
@@ -481,7 +497,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
         MainFileViewModel fileVM = mapper.get(file);
         if (fileVM == null) return;
 
-        filesActionsInteractor.setFileForAction(new MainFileActionsFile(file, fileVM.icon, fileVM.isOffline))
+        filesActionsInteractor.setFileForAction(new MainFileActionsFile(file, fileVM.getIcon(), fileVM.isOffline()))
                 .firstElement()
                 .compose(subscriber::defaultSchedulers)
                 .doOnSubscribe(disposable -> {
@@ -528,7 +544,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
         if (vm != null) {
             items.remove(vm);
 
-            MainFileViewModel newVM = mapper.mapAndStore(newFile, (p, item) -> onFileClick(item));
+            MainFileViewModel newVM = mapper.mapAndStore(newFile, this::onFileClick);
 
             int newPosition = Stream.of(mapper.getKeys())
                     .sorted(FileUtil.AURORA_FILE_COMPARATOR)
@@ -573,12 +589,11 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                 .compose(subscriber::defaultSchedulers)
                 .compose(cancellableLoadProgress(appResources.getString(R.string.dialog_files_title_dowloading)))
                 .filter(Progressible::isDone)
+                .lastElement()
                 .map(Progressible::getData)
-                .subscribe(subscriber.subscribe(local -> {
-                    notificator.notifyDownloadedToDownloads(
-                            null, file.getName()
-                    );
-                }));
+                .subscribe(subscriber.subscribe(local -> notificator.notifyDownloadedToDownloads(
+                        null, file.getName()
+                )));
     }
 
     private void shareFile(AuroraFile file) {
@@ -587,14 +602,12 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                 .compose(cancellableLoadProgress(appResources.getString(R.string.dialog_files_title_dowloading)))
                 .filter(Progressible::isDone)
                 .map(Progressible::getData)
-                .subscribe(subscriber.subscribe(local ->router.navigateTo(
-                        AppRouter.EXTERNAL_SHARE, new ExternalShareFileArgs(file, local), error -> {
-                            MessageDialogViewModel.set(
-                                    messageDialog, null,
-                                    appResources.getString(R.string.prompt_cant_open_file
-                                    ));
-                        }
-                )));
+                .subscribe(subscriber.subscribe(local -> router.navigateTo(
+                        AppRouter.EXTERNAL_SHARE,
+                        new ExternalShareFileArgs(file, local),
+                        error -> MessageDialogViewModel.set(
+                                messageDialog, null,
+                                appResources.getString(R.string.prompt_cant_open_file)))));
     }
 
     private void toggleOffline(AuroraFile file) {
@@ -607,26 +620,32 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                 .subscribe(subscriber.subscribe(offline -> {
                     MainFileViewModel vm = mapper.get(file);
                     if (vm != null) {
-                        vm.isOffline.set(offline);
+                        vm.isOffline().set(offline);
                     }
                 }));
     }
 
     private void togglePublicLink(AuroraFile file) {
+
         if (file.isShared()) {
+
             interactor.deletePublicLink(file)
                     .compose(subscriber::defaultSchedulers)
                     .compose(new TrackInMapTransformer<>(file, publicLinkDisposables))
-                    .subscribe(() -> {
+                    .subscribe(subscriber.subscribe(() -> {
                         file.setShared(false);
                         MainFileViewModel vm = mapper.get(file);
                         if (vm != null) {
-                            vm.shared.set(false);
+                            vm.getShared().set(false);
                         }
-                    });
+                    }));
+
         } else {
+
             createPublicLink(file, R.string.prompt_public_link_created);
+
         }
+
     }
 
     private void copyPublicLink(AuroraFile file) {
@@ -634,28 +653,51 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
     }
 
     private void replaceTo(AuroraFile file) {
-        reloadAtStart = true;
-        router.navigateTo(AppRouter.REPLACE, new ReplaceScreenArgs(file));
+        navigateToReplace(true, Collections.singletonList(file));
+
     }
 
     private void copyTo(AuroraFile file) {
-        reloadAtStart = true;
-        router.navigateTo(AppRouter.COPY, new ReplaceScreenArgs(file));
+        navigateToReplace(false, Collections.singletonList(file));
+    }
+
+    private void navigateToReplace(boolean replace, List<AuroraFile> files) {
+
+        String screenName = replace ? AppRouter.REPLACE: AppRouter.COPY;
+
+        router.navigateToWithResult(
+                screenName, AppRouter.RESULT_CODE_REPLACE, new ReplaceScreenArgs(files));
+
+        router.setResultListener(AppRouter.RESULT_CODE_REPLACE, resultData -> {
+            router.removeResultListener(AppRouter.RESULT_CODE_REPLACE);
+
+            if (!(resultData instanceof AuroraFile)) return;
+
+            AuroraFile replaceTarget = (AuroraFile) resultData;
+            viewModelsConnection.onFolderContentChanged(replaceTarget);
+
+            if (replace) {
+                AuroraFile currentFolder = foldersStack.get(foldersStack.size() - 1);
+                viewModelsConnection.onFolderContentChanged(currentFolder);
+            }
+
+        });
+
     }
 
     private void createPublicLink(AuroraFile file, int messageTestId) {
         interactor.createPublicLink(file)
                 .compose(subscriber::defaultSchedulers)
                 .compose(new TrackInMapTransformer<>(file, publicLinkDisposables))
-                .subscribe(() -> {
+                .subscribe(subscriber.subscribe(() -> {
                     file.setShared(true);
                     MainFileViewModel vm = mapper.get(file);
                     if (vm != null) {
-                        vm.shared.set(true);
+                        vm.getShared().set(true);
                     }
 
                     toaster.showShort(messageTestId);
-                });
+                }));
     }
 
     // endregion
@@ -669,7 +711,7 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
                     MainFileViewModel vm = mapper.get(file);
                     if (vm != null) vm.setThumbnail(thumb);
                 })
-                .toCompletable()
+                .ignoreElement()
                 .onErrorComplete();
     }
 
@@ -677,15 +719,15 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
         return interactor.getOfflineStatus(file)
                 .doOnSuccess(offline -> {
                     MainFileViewModel vm = mapper.get(file);
-                    if (vm != null) vm.isOffline.set(offline);
+                    if (vm != null) vm.isOffline().set(offline);
                 })
-                .toCompletable()
+                .ignoreElement()
                 .onErrorComplete();
     }
 
     private void handleSyncProgress(SyncProgress progress) {
         MainFileViewModel vm = mapper.get(progress.getFilePathSpec());
-        if (vm != null) vm.syncProgress.set(progress.isDone() ? -1 : progress.getProgress());
+        if (vm != null) vm.getSyncProgress().set(progress.isDone() ? -1 : progress.getProgress());
     }
 
     private void onMultiChoiceModeChanged(boolean multiChoice) {
@@ -693,8 +735,8 @@ public class MainFilesListViewModel extends SearchableFileListViewModel<MainFile
             selectedFiles.clear();
         } else {
             Stream.of(items)
-                    .filter(item -> item.selected.get())
-                    .forEach(item -> item.selected.set(false));
+                    .filter(item -> item.getSelected().get())
+                    .forEach(item -> item.getSelected().set(false));
         }
     }
 

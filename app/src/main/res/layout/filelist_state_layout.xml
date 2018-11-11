@@ -5,7 +5,7 @@
 
     <data>
         <import type="android.view.View"/>
-        <import type="android.databinding.ObservableField"/>
+        <import type="androidx.databinding.ObservableField"/>
         <import type="com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.ViewModelState"/>
 
         <variable

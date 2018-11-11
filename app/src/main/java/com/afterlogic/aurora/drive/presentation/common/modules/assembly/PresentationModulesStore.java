@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.common.modules.assembly;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.afterlogic.aurora.drive.presentation.common.modules.view.PresentationView;
 

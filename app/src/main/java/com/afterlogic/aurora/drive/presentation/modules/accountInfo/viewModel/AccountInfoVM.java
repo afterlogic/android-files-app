@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modules.accountInfo.viewModel;
 
-import android.databinding.ObservableField;
+import androidx.databinding.ObservableField;
 
 import com.afterlogic.aurora.drive.presentation.common.modules.viewModel.ViewModel;
 

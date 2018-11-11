@@ -1576,6 +1576,10 @@ public class SystemAppData {
         private List<?> mRegistrationDomains;
         @SerializedName("RegistrationQuestions")
         private List<?> mRegistrationQuestions;
+
+        @SerializedName("AllowExternalClientCustomAuthentication")
+        private boolean mAllowExternalClientCustomAuthentication;
+
         /**
          * name : English
          * value : English
@@ -1978,6 +1982,10 @@ public class SystemAppData {
 
         public void setDateFormats(List<String> dateFormats) {
             mDateFormats = dateFormats;
+        }
+
+        public boolean isAllowExternalClientCustomAuthentication() {
+            return mAllowExternalClientCustomAuthentication;
         }
 
         public static class Languages {

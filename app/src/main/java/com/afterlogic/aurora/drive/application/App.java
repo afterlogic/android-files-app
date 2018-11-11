@@ -4,6 +4,7 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.Application;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
@@ -14,10 +15,12 @@ import com.afterlogic.aurora.drive.core.common.contextWrappers.account.AccountHe
 import com.afterlogic.aurora.drive.core.common.logging.CrashlyticsLogger;
 import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.core.common.logging.ToCrashlyticsLogger;
+import com.afterlogic.aurora.drive.core.common.util.AppUtil;
 import com.afterlogic.aurora.drive.data.common.network.SessionManager;
 import com.afterlogic.aurora.drive.data.modules.cleaner.DataCleaner;
 import com.afterlogic.aurora.drive.data.modules.prefs.AppPrefs;
 import com.afterlogic.aurora.drive.data.modules.prefs.Pref;
+import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.presentation.assembly.modules.InjectorsComponent;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.accountAction.AccountActionReceiver;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.view.FileObserverService;
@@ -26,6 +29,7 @@ import com.crashlytics.android.core.CrashlyticsCore;
 
 import javax.inject.Inject;
 
+import androidx.multidex.MultiDex;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
@@ -63,6 +67,12 @@ public class App extends Application implements HasActivityInjector, HasBroadcas
     protected DataCleaner dataCleaner;
 
     @Override
+    protected void attachBaseContext(Context base) {
+        MultiDex.install(base);
+        super.attachBaseContext(base);
+    }
+
+    @Override
     public void onCreate() {
         super.onCreate();
 
@@ -77,6 +87,12 @@ public class App extends Application implements HasActivityInjector, HasBroadcas
         activityTracker.register(this);
 
         sessionManager.start();
+
+        AuroraSession session = sessionManager.getSession();
+        if (session == null) {
+            stopService(new Intent(this, FileObserverService.class));
+            AppUtil.setComponentEnabled(FileObserverService.class, false, this);
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 

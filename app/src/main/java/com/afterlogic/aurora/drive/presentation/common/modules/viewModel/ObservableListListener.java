@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.common.modules.viewModel;
 
-import android.databinding.ObservableList;
+import androidx.databinding.ObservableList;
 
 import com.afterlogic.aurora.drive.core.common.util.OptWeakRef;
 

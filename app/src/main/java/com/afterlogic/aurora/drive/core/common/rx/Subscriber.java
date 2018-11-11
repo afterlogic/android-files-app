@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.core.common.rx;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 import com.afterlogic.aurora.drive.R;
@@ -17,13 +17,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Completable;
-import io.reactivex.CompletableObserver;
 import io.reactivex.Maybe;
-import io.reactivex.MaybeObserver;
 import io.reactivex.Observable;
-import io.reactivex.Observer;
 import io.reactivex.Single;
-import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -113,7 +109,7 @@ public class Subscriber {
 
         Consumer<Throwable> onError = error -> handleError(error, errorHandler, rootError);
 
-        return new AnyObserver<>(onSubscribe, onResult, onComplete, onError);
+        return new AnyObserverImpl<>(onSubscribe, onResult, onComplete, onError);
     }
 
     public Completable defaultSchedulers(Completable completable) {
@@ -181,7 +177,7 @@ public class Subscriber {
         void onSubscribe(Disposable disposable);
     }
 
-    private class AnyObserver<T> implements CompletableObserver, MaybeObserver<T>, SingleObserver<T>, Observer<T> {
+    private class AnyObserverImpl<T> implements AnyObserver<T> {
 
         private final OnSubscribeAction onSubscribe;
         private final Consumer<T> onResult;
@@ -190,7 +186,7 @@ public class Subscriber {
 
         private boolean onCompleteHandled = false;
 
-        AnyObserver(OnSubscribeAction onSubscribe, Consumer<T> onResult, Runnable onComplete, Consumer<Throwable> onError) {
+        AnyObserverImpl(OnSubscribeAction onSubscribe, Consumer<T> onResult, Runnable onComplete, Consumer<Throwable> onError) {
             this.onSubscribe = onSubscribe;
             this.onResult = onResult;
             this.onComplete = onComplete;

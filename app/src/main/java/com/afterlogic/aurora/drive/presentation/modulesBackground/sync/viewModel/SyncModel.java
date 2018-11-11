@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * Created by sashka on 15.02.17.<p/>

@@ -1,12 +1,12 @@
 package com.afterlogic.aurora.drive.presentation.modules.offline.viewModel;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.view.View;
 
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
-import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.OnActionListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +34,7 @@ class FileMapper {
         this.appResources = appResources;
     }
 
-    OfflineFileViewModel map(AuroraFile auroraFile, OnItemClickListener<AuroraFile> onItemClickListener) {
+    OfflineFileViewModel map(AuroraFile auroraFile, OnActionListener<AuroraFile> onItemClickListener) {
         String pathSpec = auroraFile.getPathSpec();
         long id;
         if (stableIds.containsKey(pathSpec)) {

@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel;
 
-import android.arch.lifecycle.LifecycleObserver;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.ViewModel;
 
 /**
  * Created by aleksandrcikin on 29.06.17.

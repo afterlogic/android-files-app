@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.modules.main.view;
 
 import android.content.Context;
-import android.support.v7.view.ActionMode;
+import androidx.appcompat.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -25,7 +25,7 @@ public class MultiChoiceActionMode implements ActionMode.Callback {
     private final MainViewModel vm;
     private final Context context;
 
-    public MultiChoiceActionMode(Optional<ActionMode> optionalMultiChoice, MainViewModel vm, Context context) {
+    MultiChoiceActionMode(Optional<ActionMode> optionalMultiChoice, MainViewModel vm, Context context) {
         this.optionalMultiChoice = optionalMultiChoice;
         this.vm = vm;
         this.context = context;
@@ -33,27 +33,30 @@ public class MultiChoiceActionMode implements ActionMode.Callback {
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+
         optionalMultiChoice.set(mode);
+
         mode.getMenuInflater().inflate(R.menu.menu_multichoise, menu);
 
         MenuItem offline = menu.findItem(R.id.action_offline);
 
-        UnbindableObservable.bind(vm.multiChoiceCount, bag, count -> {
-            String title = context.getString(R.string.title_action_selected, count.get());
+        UnbindableObservable.bindToValue(vm.getMultiChoiceCount(), bag, count -> {
+
+            String title = context.getString(R.string.title_action_selected, count);
             mode.setTitle(title);
-            offline.setCheckable(count.get() > 0);
+            offline.setCheckable(count > 0);
+
         });
 
-        UnbindableObservable.bind(vm.multiChoiceHasFolder, bag, hasFolder -> {
-            Stream.of(R.id.action_offline, R.id.action_download, R.id.action_share)
-                    .map(menu::findItem)
-                    .filter(ObjectsUtil::nonNull)
-                    .forEach(item -> item.setVisible(!hasFolder.get()));
-        });
+        UnbindableObservable.bindToValue(vm.getMultiChoiceDownloadable(), bag, downloadable ->
+                Stream.of(R.id.action_offline, R.id.action_download, R.id.action_share)
+                        .map(menu::findItem)
+                        .filter(ObjectsUtil::nonNull)
+                        .forEach(item -> item.setVisible(downloadable))
+        );
 
-        UnbindableObservable.bind(vm.multiChoiceOfflineEnabled, bag, offlineEnabled -> {
-            offline.setChecked(offlineEnabled.get());
-        });
+        UnbindableObservable.bindToValue(vm.getMultiChoiceOfflineEnabled(), bag, offline::setChecked);
+
         return true;
     }
 
@@ -64,6 +67,7 @@ public class MultiChoiceActionMode implements ActionMode.Callback {
 
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+
         switch (item.getItemId()) {
 
             case R.id.action_delete:
@@ -95,13 +99,18 @@ public class MultiChoiceActionMode implements ActionMode.Callback {
                 return true;
 
         }
+
         return false;
+
     }
 
     @Override
     public void onDestroyActionMode(ActionMode mode) {
+
         optionalMultiChoice.set(null);
         bag.unbindAndClear();
-        vm.multiChoiceMode.set(false);
+        vm.getMultiChoiceMode().set(false);
+
     }
+
 }

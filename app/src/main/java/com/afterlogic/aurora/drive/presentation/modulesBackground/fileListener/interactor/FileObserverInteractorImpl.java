@@ -3,7 +3,6 @@ package com.afterlogic.aurora.drive.presentation.modulesBackground.fileListener.
 import android.content.Context;
 
 import com.afterlogic.aurora.drive.core.common.rx.ObservableScheduler;
-import com.afterlogic.aurora.drive.data.modules.files.FilesDataModule;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.presentation.common.modules.model.interactor.BaseInteractor;
@@ -19,6 +18,8 @@ import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 
+import static com.afterlogic.aurora.drive.data.modules.files.FilesDataModule.OFFLINE_DIR;
+
 /**
  * Created by sashka on 16.02.17.<p/>
  * mail: sunnyday.development@gmail.com
@@ -31,7 +32,7 @@ public class FileObserverInteractorImpl extends BaseInteractor implements FileOb
     private final FilesRepository mFilesRepository;
 
     @Inject FileObserverInteractorImpl(ObservableScheduler scheduler,
-                                       @Named(FilesDataModule.OFFLINE_DIR) File offlineDir,
+                                       @Named(OFFLINE_DIR) File offlineDir,
                                        Context appContext,
                                        FilesRepository filesRepository) {
         super(scheduler);

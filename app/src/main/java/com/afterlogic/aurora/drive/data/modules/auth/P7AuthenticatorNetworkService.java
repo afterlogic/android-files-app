@@ -1,9 +1,11 @@
 package com.afterlogic.aurora.drive.data.modules.auth;
 
-import android.support.v4.util.Pair;
+import androidx.core.util.Pair;
 
 import com.afterlogic.aurora.drive.data.common.network.p7.Api7;
 import com.afterlogic.aurora.drive.data.common.network.util.ApiUtil;
+import com.afterlogic.aurora.drive.data.model.ApiResponse;
+import com.afterlogic.aurora.drive.data.model.project7.ApiResponseP7;
 import com.afterlogic.aurora.drive.model.AuthToken;
 import com.afterlogic.aurora.drive.model.SystemAppData;
 
@@ -27,28 +29,17 @@ class P7AuthenticatorNetworkService {
         this.api = api;
     }
 
-    public Single<Pair<Long, SystemAppData>> getSystemAppData(String host) {
-        return getSystemAppData(host, null);
+    Single<SystemAppData> getSystemAppData(String host) {
+        return getSystemAppData(host, null)
+                .map(ApiResponse::getResult);
     }
 
-    public Single<Pair<Long, SystemAppData>> getSystemAppData(String host, String authToken) {
-        return Single.defer(() -> {
-
-            HashMap<String, Object> fields = new HashMap<>();
-
-            fields.put(Api7.Fields.ACTION, Api7.Actions.SYSTEM_GET_APP_DATA);
-            if (authToken != null) {
-                fields.put(Api7.Fields.AUTH_TOKEN, authToken);
-            }
-
-            return api.getSystemAppData(Api7.completeUrl(host), fields);
-
-        })//--->
-                .compose(ApiUtil::checkResponse)
+    Single<Pair<Long, SystemAppData>> getLoggedSystemAppData(String host, String authToken) {
+        return getSystemAppData(host, authToken)
                 .map(response -> new Pair<>(response.getAccountId(), response.getData()));
     }
 
-    public Single<AuthToken> login(String host, String login, String pass) {
+    Single<AuthToken> login(String host, String login, String pass) {
         return Single.defer(() -> {
 
             HashMap<String, Object> fields = new HashMap<>();
@@ -66,6 +57,22 @@ class P7AuthenticatorNetworkService {
                     token.userId = response.getAccountId();
                     return token;
                 });
+    }
+
+    private Single<ApiResponseP7<SystemAppData>> getSystemAppData(String host, String authToken) {
+        return Single.defer(() -> {
+
+            HashMap<String, Object> fields = new HashMap<>();
+
+            fields.put(Api7.Fields.ACTION, Api7.Actions.SYSTEM_GET_APP_DATA);
+            if (authToken != null) {
+                fields.put(Api7.Fields.AUTH_TOKEN, authToken);
+            }
+
+            return api.getSystemAppData(Api7.completeUrl(host), fields);
+
+        })//--->
+                .compose(ApiUtil::checkResponse);
     }
 
 }

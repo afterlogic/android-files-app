@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.common.binding.bindingAdapters;
 
-import android.databinding.BindingAdapter;
-import android.databinding.Observable;
+import androidx.databinding.BindingAdapter;
+import androidx.databinding.Observable;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;

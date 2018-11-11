@@ -36,6 +36,7 @@ public class ApiUtil {
 
     private static boolean isAuthError(int errorCode) {
         return errorCode == ApiResponseError.AUTH_FAILED
-                || errorCode == 108;
+                || errorCode == 108 || errorCode == 4004;
     }
+
 }

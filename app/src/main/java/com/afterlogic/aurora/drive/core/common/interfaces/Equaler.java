@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.core.common.interfaces;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Created by sashka on 30.11.16.<p/>

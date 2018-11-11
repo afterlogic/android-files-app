@@ -20,6 +20,7 @@ import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Query;
+import retrofit2.http.Streaming;
 import retrofit2.http.Url;
 
 /**
@@ -70,9 +71,9 @@ public interface Api7 {
     }
 
     interface Links{
-        String FILE_DOWNLOAD_LINK = "?/Raw/FilesDownload/%d/%s/0/hash/%s"; //accountId/fileHash/authToken
-        String UPLOAD_FILE_URL = "Upload/File/%s%s/%s"; //type(Personal|Corporate)/Path/FileName
-        String THUMBNAIL_URL = "?/Raw/FilesThumbnail/%d/%s/0/hash/%s"; //accountId/fileHash/authToken
+        String FILE_DOWNLOAD_LINK = "?/Raw/FilesDownload/%d/%s/0/hash/%s"; //?/Raw/FilesDownload/{accountId}/{fileHash}/0/hash/{authToken}
+        String UPLOAD_FILE_URL = "Upload/File/%s%s/%s"; //Upload/File/{type}{Path}/{FileName}
+        String THUMBNAIL_URL = "?/Raw/FilesThumbnail/%d/%s/0/hash/%s"; //?/Raw/FilesThumbnail/{accountId}/{fileHash}/0/hash/{authToken}
     }
 
 
@@ -125,6 +126,7 @@ public interface Api7 {
     Single<ApiResponseP7<Boolean>> copyFiles(@FieldMap Map<String, Object> fields);
 
     @GET(DownloadInterceptor.INTERCEPT_DOWNLOAD)
+    @Streaming
     Single<ResponseBody> downloadFile(@Query(DownloadInterceptor.QUERY_ACCOUNT_ID) long accountId,
                                           @Query(DownloadInterceptor.QUERY_HASH) String sharedHash,
                                           @Query(DownloadInterceptor.QUERY_AUTH_TOKEN) String authToken);

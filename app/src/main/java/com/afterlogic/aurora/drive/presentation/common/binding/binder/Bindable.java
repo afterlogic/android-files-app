@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.presentation.common.binding.binder;
 
-import android.databinding.BaseObservable;
-import android.support.annotation.NonNull;
+import androidx.databinding.BaseObservable;
+import androidx.annotation.NonNull;
 
 import com.afterlogic.aurora.drive.core.common.interfaces.Consumer;
 import com.afterlogic.aurora.drive.core.common.interfaces.Provider;

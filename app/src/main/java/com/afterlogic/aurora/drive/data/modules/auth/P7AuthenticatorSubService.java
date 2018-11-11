@@ -1,8 +1,8 @@
 package com.afterlogic.aurora.drive.data.modules.auth;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.util.Pair;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.util.Pair;
 
 import com.afterlogic.aurora.drive.core.consts.Const;
 import com.afterlogic.aurora.drive.model.AuthorizedAuroraSession;
@@ -28,33 +28,49 @@ class P7AuthenticatorSubService implements AuthenticatorSubService {
 
     @Inject
     P7AuthenticatorSubService(P7AuthenticatorNetworkService service) {
+
         this.service = service;
+
     }
 
     @Override
     public Single<AuthorizedAuroraSession> login(String host, String email, String pass) {
+
         return service.login(host, email, pass)
-                .flatMap(authToken -> service.getSystemAppData(host, authToken.token)
+                .flatMap(authToken -> service.getLoggedSystemAppData(host, authToken.token)
                         .map(systemAppData -> new LoginResult(authToken.token, systemAppData))
                 )
                 .map(loginResult -> handleLoginResult(loginResult, host, email, pass));
+
     }
 
     @Override
     public Single<AuthorizedAuroraSession> byToken(String host, String token) {
-        return service.getSystemAppData(host, token)
+
+        return service.getLoggedSystemAppData(host, token)
                 .map(authPair -> new LoginResult(token, authPair))
                 .map(loginResult -> handleLoginResult(loginResult, host, null, null));
+
+    }
+
+    @Override
+    public Single<Boolean> isExternalClientLoginFormsAvailable(String host) {
+
+        return service.getSystemAppData(host)
+                .map(data -> data.getApp().isAllowExternalClientCustomAuthentication());
+
     }
 
     @Override
     public Maybe<Integer> getApiVersion(String host) {
+
         return service.getSystemAppData(host)
                 .toMaybe()
                 .onErrorResumeNext(error -> isIncorrectApiVersionError(error)
                         ? Maybe.empty() : Maybe.error(error)
                 )
                 .map(systemAppData -> Const.ApiVersion.API_P7);
+
     }
 
     private AuthorizedAuroraSession handleLoginResult(@NonNull LoginResult loginResult,

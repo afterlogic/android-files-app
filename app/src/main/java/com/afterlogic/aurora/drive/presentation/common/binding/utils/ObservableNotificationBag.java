@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.presentation.common.binding.utils;
 
-import android.databinding.BaseObservable;
+import androidx.databinding.BaseObservable;
 
 import com.annimon.stream.Stream;
 

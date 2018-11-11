@@ -1,6 +1,6 @@
 package com.afterlogic.aurora.drive.model;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * Created by sashka on 08.02.17.<p/>
@@ -10,19 +10,19 @@ import android.support.annotation.Nullable;
 public class Progressible<T> {
 
     private T mData;
-    private long mMax;
-    private long mProgress;
+    private long max;
+    private long progress;
 
     @Nullable
-    private String mName;
-    private boolean mDone;
+    private String name;
+    private boolean done;
 
     public Progressible(T data, long max, long progress, @Nullable String name, boolean done) {
         mData = data;
-        mMax = max;
-        mProgress = Math.min(progress, max);
-        mDone = done;
-        mName = name;
+        this.max = max;
+        this.progress = Math.min(progress, max);
+        this.done = done;
+        this.name = name;
     }
 
     public T getData() {
@@ -30,33 +30,39 @@ public class Progressible<T> {
     }
 
     public long getMax() {
-        return mMax;
+        return max;
     }
 
     public long getProgress() {
-        return mProgress;
+        return progress;
     }
 
     public void setMax(long max) {
-        mMax = max;
+        this.max = max;
     }
 
     public void setProgress(long progress) {
-        mProgress = progress;
+        this.progress = progress;
     }
 
     public boolean isDone(){
-        return mDone;
+        return done;
     }
 
     @Nullable
     public String getName() {
-        return mName;
+        return name;
     }
 
     public <R> Progressible<R> map(R value){
         return new Progressible<>(
-                value, mMax, mProgress, mName, mDone
+                value, max, progress, name, done
         );
+    }
+
+    @Override
+    public String toString() {
+        return "[progress: " + progress + ", max: " + max +
+                ", done: " + done + ", name: " + name + "]";
     }
 }

@@ -1,7 +1,7 @@
 package com.afterlogic.aurora.drive.data.modules.files.repository;
 
 import android.net.Uri;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.afterlogic.aurora.drive.R;
@@ -22,14 +22,16 @@ import com.afterlogic.aurora.drive.data.model.project7.UploadResultP7;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.data.modules.files.mapper.p7.file.factory.AuroraFileP7MapperFactory;
 import com.afterlogic.aurora.drive.data.modules.files.mapper.p7.uploadResult.factory.UploadResultP7MapperFactory;
-import com.afterlogic.aurora.drive.data.modules.files.model.dto.ReplaceFileDto;
+import com.afterlogic.aurora.drive.data.modules.files.model.dto.ShortFileDto;
 import com.afterlogic.aurora.drive.data.modules.files.service.FilesServiceP7;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.AuroraSession;
 import com.afterlogic.aurora.drive.model.FileInfo;
 import com.afterlogic.aurora.drive.model.Progressible;
+import com.afterlogic.aurora.drive.model.Storage;
 import com.afterlogic.aurora.drive.model.error.ApiResponseError;
 import com.afterlogic.aurora.drive.model.error.FileNotExistError;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.interactor.StorageTypesMapper;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 
@@ -66,6 +68,8 @@ public class P7FileSubRepositoryImpl extends Repository implements FileSubReposi
 
     private final AppResources mAppResources;
 
+    private final StorageTypesMapper storageTypesMapper;
+
     @SuppressWarnings("WeakerAccess")
     @Inject
     P7FileSubRepositoryImpl(SharedObservableStore cache,
@@ -75,8 +79,10 @@ public class P7FileSubRepositoryImpl extends Repository implements FileSubReposi
                             SessionManager sessionManager,
                             UploadResultP7MapperFactory uploadResultP7MapperFactory,
                             AppResources appResources,
-                            AuthorizationResolver authorizationResolver) {
+                            AuthorizationResolver authorizationResolver,
+                            StorageTypesMapper storageTypesMapper) {
         super(cache, FILES_P_7);
+
         mFileNetToBlMapper = mapperFactory.netToBl();
         mFileBlToNetMapper = mapperFactory.blToNet();
         mCloudService = cloudService;
@@ -85,10 +91,12 @@ public class P7FileSubRepositoryImpl extends Repository implements FileSubReposi
         mUploadResultToBlMapper = uploadResultP7MapperFactory.p7toBl();
         mAppResources = appResources;
         this.authorizationResolver = authorizationResolver;
+        this.storageTypesMapper = storageTypesMapper;
+
     }
 
     @Override
-    public Single<List<String>> getAvailableFileTypes() {
+    public Single<List<Storage>> getAvailableStorages() {
         return Single.fromCallable(() -> Stream.of(mAppResources.getStringArray(R.array.folder_types))
                 .map(type -> {
                     List<AuroraFile> files = getFiles(AuroraFile.parse("", type, true))
@@ -112,7 +120,12 @@ public class P7FileSubRepositoryImpl extends Repository implements FileSubReposi
                 .filter(ObjectsUtil::nonNull)
                 .collect(Collectors.toList())
         )//-----|
-                .doFinally(FileRepositoryUtil::startClearCheckedCountDown);
+                .doFinally(FileRepositoryUtil::startClearCheckedCountDown)
+                .map(types -> Stream.of(types)
+                        .map(storageTypesMapper::map)
+                        .withoutNulls()
+                        .toList()
+                );
     }
 
     @Override
@@ -146,7 +159,7 @@ public class P7FileSubRepositoryImpl extends Repository implements FileSubReposi
         )//-----|
                 .compose(Repository::withNetMapper)
                 .compose(authorizationResolver::checkAuth)
-                .toCompletable();
+                .ignoreElement();
     }
 
     @Override
@@ -185,7 +198,7 @@ public class P7FileSubRepositoryImpl extends Repository implements FileSubReposi
             return mCloudService.deleteFiles(type, mapped)
                     .compose(Repository::withNetMapper)
                     .compose(authorizationResolver::checkAuth)
-                    .toCompletable();
+                    .ignoreElement();
         });
     }
 
@@ -222,7 +235,7 @@ public class P7FileSubRepositoryImpl extends Repository implements FileSubReposi
         return mCloudService.createFolder(file.getType(), file.getPath(), file.getName())
                 .compose(Repository::withNetMapper)
                 .compose(authorizationResolver::checkAuth)
-                .toCompletable();
+                .ignoreElement();
     }
 
 
@@ -232,7 +245,7 @@ public class P7FileSubRepositoryImpl extends Repository implements FileSubReposi
                 .compose(Repository::withNetMapper)
                 .compose(authorizationResolver::checkAuth)
                 .map(mFileNetToBlMapper::map)
-                .toCompletable()
+                .ignoreElement()
                 .onErrorResumeNext(error -> {
                     if (error instanceof ApiResponseError && ((ApiResponseError) error).getErrorCode() == ApiResponseError.FILE_NOT_EXIST){
                         return Completable.error(FileNotExistError::new);
@@ -270,12 +283,12 @@ public class P7FileSubRepositoryImpl extends Repository implements FileSubReposi
         return mCloudService.deletePublicLink(file.getType(), file.getPath(), file.getName())
                 .compose(Repository::withNetMapper)
                 .compose(authorizationResolver::checkAuth)
-                .toCompletable();
+                .ignoreElement();
     }
 
     @Override
     public Completable replaceFiles(AuroraFile targetFolder, List<AuroraFile> files) {
-        Mapper<List<ReplaceFileDto>, Collection<AuroraFile>> mapper = MapperUtil.listOrEmpty(new FileToReplaceFileMapper());
+        Mapper<List<ShortFileDto>, Collection<AuroraFile>> mapper = MapperUtil.listOrEmpty(new FileToShortFileDtoMapper());
 
         return mCloudService.replaceFiles(
                 files.get(0).getType(),
@@ -284,12 +297,12 @@ public class P7FileSubRepositoryImpl extends Repository implements FileSubReposi
                 targetFolder.getFullPath(),
                 mapper.map(files)
         )//-----|
-                .toCompletable();
+                .ignoreElement();
     }
 
     @Override
     public Completable copyFiles(AuroraFile targetFolder, List<AuroraFile> files) {
-        Mapper<List<ReplaceFileDto>, Collection<AuroraFile>> mapper = MapperUtil.listOrEmpty(new FileToReplaceFileMapper());
+        Mapper<List<ShortFileDto>, Collection<AuroraFile>> mapper = MapperUtil.listOrEmpty(new FileToShortFileDtoMapper());
 
         return mCloudService.copyFiles(
                 files.get(0).getType(),
@@ -298,7 +311,7 @@ public class P7FileSubRepositoryImpl extends Repository implements FileSubReposi
                 targetFolder.getFullPath(),
                 mapper.map(files)
         )//-----|
-                .toCompletable();
+                .ignoreElement();
     }
 
     private String getCompleteUrl(String url){

@@ -13,12 +13,12 @@
 
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/domain_wrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,6 +31,7 @@
             app:layout_constraintVertical_chainStyle="packed">
 
             <AutoCompleteTextView
+
                 android:id="@+id/domain"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -39,14 +40,17 @@
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
                 android:singleLine="true"
+                android:imeOptions="actionNext"
                 app:bindableText="@{vm.host}"
                 app:error="@{vm.hostError}"
                 app:focusCommand="@{vm.focus}"
                 app:focusTag='@{"host"}'
+                app:onEditorEvent="@{vm::onHostEditorEvent}"
                 tools:hint="@null"
-                tools:text="http://aurora.com" />
+                tools:text="http://aurora.com"
+                />
 
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/email_sign_in_button"
@@ -59,14 +63,14 @@
             android:layout_marginTop="8dp"
             android:enabled="@{!vm.isInProgress}"
             android:onClick="@{() -> vm.onHostWritten()}"
-            android:text='@{vm.isInProgress ? "" : @string/action_sign_in}'
+            android:text='@{vm.isInProgress ? "" : @string/prompt_login_next}'
             android:textColor="@color/white"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/domain_wrapper"
-            tools:text="@string/action_sign_in" />
+            tools:text="@string/prompt_login_next" />
 
         <ProgressBar
             android:id="@+id/login_progress"
@@ -99,6 +103,6 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="8dp" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

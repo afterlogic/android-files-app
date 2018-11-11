@@ -5,8 +5,7 @@ import android.net.Uri;
 import com.afterlogic.aurora.drive.data.modules.files.repository.FilesRepository;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.interactor.FilesListInteractor;
-import com.annimon.stream.Stream;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.interactor.FilesListInteractor;
 
 import java.util.List;
 
@@ -27,8 +26,8 @@ public class UploadFilesInteractor extends FilesListInteractor {
     private final UploadFilesViewInteractor viewInteractor;
 
     @Inject
-    protected UploadFilesInteractor(FilesRepository filesRepository,
-                                    UploadFilesViewInteractor viewInteractor) {
+    UploadFilesInteractor(FilesRepository filesRepository,
+                          UploadFilesViewInteractor viewInteractor) {
         super(filesRepository);
         this.filesRepository = filesRepository;
         this.viewInteractor = viewInteractor;
@@ -36,11 +35,7 @@ public class UploadFilesInteractor extends FilesListInteractor {
 
     @Override
     public Single<List<AuroraFile>> getFiles(AuroraFile folder) {
-        return super.getFiles(folder)
-                .map(files -> Stream.of(files)
-                        .filter(AuroraFile::isFolder)
-                        .toList()
-                );
+        return super.getFiles(folder);
     }
 
     public Maybe<String> getCreateFolderName() {
@@ -56,4 +51,9 @@ public class UploadFilesInteractor extends FilesListInteractor {
     public Observable<Progressible<AuroraFile>> uploadFile(AuroraFile folder, Uri file) {
         return filesRepository.uploadFile(folder, file);
     }
+
+    public Single<Uri> getThumbnail(AuroraFile file) {
+        return filesRepository.getFileThumbnail(file);
+    }
+
 }

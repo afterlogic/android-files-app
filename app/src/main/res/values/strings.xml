@@ -1,10 +1,11 @@
 <resources>
 
+    <string name="value_webView_localization">en-GB</string>
+
     <string name="shared_user_label" translatable="false" >Afterlogic.Aurora</string>
 
     <string name="app_name">Aurora.Files</string>
     <string name="prompt_downloaded_file_description">From Aurora.Files</string>
-
 
     <string name="app_name_global" translatable="false">Aurora</string>
 
@@ -113,10 +114,10 @@
     <string name="url_privacy_policy" translatable="false">http://afterlogic.com/privacy-policy</string>
     <string name="prompt_menu_about">About</string>
     <string name="main__prompt__actions_not_allowed_in_zip">Actions not allowed in zip or GoogleDrive folders.</string>
-    <string name="prompt_action__replace">Replace</string>
+    <string name="prompt_action__move">Move</string>
     <string name="prompt_action__copy">Copy</string>
 
-    <string name="prompt_title__replace">Replace to …</string>
+    <string name="prompt_title__move">Move to …</string>
     <string name="prompt_title__copy">Copy to …</string>
     <string name="action_paste">Paste</string>
     <string name="prompt_coping">Coping</string>
@@ -126,6 +127,8 @@
     <string name="prompt_relogin_dialog_change_account">Are you sure you wish to login as a different user? All app data stored locally will be lost.\nCurrent username: %1$s\nNew username: %2$s</string>
     <string name="prompt_relogin_notification">The session is expired. You need to relogin.</string>
     <string name="prompt_additional_auth_web_failed">Failed to retrieve data for additional authorization options.</string>
+    <string name="prompt_login_next">Next</string>
+    <string name="prompt__login__prepare_form">Preparing of auth form…</string>
 
     <plurals name="dialog_files_success_downloaded">
         <item quantity="one">%d file success downloaded.</item>

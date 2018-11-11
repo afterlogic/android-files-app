@@ -1,9 +1,9 @@
 package com.afterlogic.aurora.drive.presentation.modules.offline.viewModel;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.OnLifecycleEvent;
-import android.databinding.ObservableField;
-import android.support.v4.util.Pair;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.databinding.ObservableField;
+import androidx.core.util.Pair;
 import android.view.View;
 
 import com.afterlogic.aurora.drive.R;
@@ -17,11 +17,11 @@ import com.afterlogic.aurora.drive.core.common.rx.Subscriber;
 import com.afterlogic.aurora.drive.data.modules.appResources.AppResources;
 import com.afterlogic.aurora.drive.model.AuroraFile;
 import com.afterlogic.aurora.drive.model.Progressible;
-import com.afterlogic.aurora.drive.presentation.common.interfaces.OnItemClickListener;
-import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.MessageDialogViewModel;
 import com.afterlogic.aurora.drive.presentation.common.binding.commands.ContextMenuCommand;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.SearchableFileListViewModel;
-import com.afterlogic.aurora.drive.presentation.modules._baseFiles.v2.viewModel.ViewModelsConnection;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.OnActionListener;
+import com.afterlogic.aurora.drive.presentation.common.modules.v3.viewModel.dialog.MessageDialogViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.viewModel.SearchableFileListViewModel;
+import com.afterlogic.aurora.drive.presentation.modules.baseFiles.v2.viewModel.ViewModelsConnection;
 import com.afterlogic.aurora.drive.presentation.modules.offline.interactor.OfflineFileListInteractor;
 import com.afterlogic.aurora.drive.presentation.modulesBackground.sync.viewModel.SyncProgress;
 import com.annimon.stream.Stream;
@@ -86,7 +86,7 @@ public class OfflineFileListViewModel extends SearchableFileListViewModel<Offlin
     }
 
     @Override
-    protected OfflineFileViewModel mapFileItem(AuroraFile file, OnItemClickListener<AuroraFile> onItemClickListener) {
+    protected OfflineFileViewModel mapFileItem(AuroraFile file, OnActionListener<AuroraFile> onItemClickListener) {
         return mapper.map(file, onItemClickListener);
     }
 
@@ -141,7 +141,7 @@ public class OfflineFileListViewModel extends SearchableFileListViewModel<Offlin
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    protected void startListenSync() {
+    void startListenSync() {
         interactor.listenSyncProgress()
                 .compose(subscriber::defaultSchedulers)
                 .compose(syncListenerDisposable::disposeAndTrack)
@@ -151,7 +151,7 @@ public class OfflineFileListViewModel extends SearchableFileListViewModel<Offlin
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    protected void stopListenSync() {
+    void stopListenSync() {
         syncListenerDisposable.disposeAndClear();
     }
 
@@ -188,10 +188,15 @@ public class OfflineFileListViewModel extends SearchableFileListViewModel<Offlin
                 .compose(offlineStatusDisposable::disposeAndTrack)
                 .compose(globalDisposableBag::track)
                 .subscribe(subscriber.subscribe(statusPair -> {
-                    OfflineFileViewModel vm = mapper.get(statusPair.first);
-                    if (vm != null) {
-                        vm.syncProgress.set(-2);
-                    }
+
+                    AuroraFile file = statusPair.first;
+                    if (file == null) return;
+
+                    OfflineFileViewModel vm = mapper.get(file);
+                    if (vm == null) return;
+
+                    vm.syncProgress.set(-2);
+
                 }));
     }
 
@@ -205,7 +210,7 @@ public class OfflineFileListViewModel extends SearchableFileListViewModel<Offlin
                                 vm.setThumbnail(thumbnail);
                             }
                         })
-                        .toCompletable()
+                        .ignoreElement()
                         .onErrorComplete()
                 )
                 .collect(Observables.Collectors.concatCompletable())
@@ -214,4 +219,5 @@ public class OfflineFileListViewModel extends SearchableFileListViewModel<Offlin
                 .compose(globalDisposableBag::track)
                 .subscribe(subscriber.justSubscribe());
     }
+
 }

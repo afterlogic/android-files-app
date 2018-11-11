@@ -1,8 +1,9 @@
 package com.afterlogic.aurora.drive.data.modules.auth;
 
-import android.support.v4.util.Pair;
+import androidx.core.util.Pair;
 
 import com.afterlogic.aurora.drive.data.common.network.p8.Api8;
+import com.afterlogic.aurora.drive.data.common.network.p8.requestparams.EmptyParameters;
 import com.afterlogic.aurora.drive.data.common.network.util.ApiUtil;
 import com.afterlogic.aurora.drive.data.model.project8.GetUserParametersDto;
 import com.afterlogic.aurora.drive.data.model.project8.LoginParametersDto;
@@ -27,20 +28,26 @@ class P8AuthenticatorNetworkService {
         this.api = api;
     }
 
-    public Single<String> ping(String host){
-        return api.ping(Api8.completeUrl(host))
+    Single<String> ping(String host){
+        return api.ping(Api8.completeUrl(host), new EmptyParameters())
                 .compose(ApiUtil::checkResponseAndGetData);
     }
 
-    public Single<Pair<Long, UserP8>> getUser(String host, String token) {
+    Single<Pair<Long, UserP8>> getUser(String host, String token) {
         return api.getUser(Api8.completeUrl(host), token, new GetUserParametersDto(token))
                 .compose(ApiUtil::checkResponse)
                 .map(response -> new Pair<>(response.getAccountId(), response.getResult()));
     }
 
-    public Single<AuthToken> login(String host, String login, String password) {
+    Single<AuthToken> login(String host, String login, String password) {
         return api.login(Api8.completeUrl(host), new LoginParametersDto(login, password))
                 .compose(ApiUtil::checkResponseAndGetData);
+    }
+
+    Single<Boolean> checkExternalLoginFormsAvailable(String host) {
+        return api.checkExternalClientLoginFormAvailable(
+                Api8.completeUrl(host), new EmptyParameters()
+        ).compose(ApiUtil::checkResponseAndGetData);
     }
 
 }

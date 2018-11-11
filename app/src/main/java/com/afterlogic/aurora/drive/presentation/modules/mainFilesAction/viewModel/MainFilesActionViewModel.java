@@ -1,10 +1,10 @@
 package com.afterlogic.aurora.drive.presentation.modules.mainFilesAction.viewModel;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.OnLifecycleEvent;
-import android.databinding.ObservableArrayList;
-import android.databinding.ObservableField;
-import android.databinding.ObservableList;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.databinding.ObservableArrayList;
+import androidx.databinding.ObservableField;
+import androidx.databinding.ObservableList;
 import android.view.View;
 
 import com.afterlogic.aurora.drive.R;
@@ -88,19 +88,24 @@ public class MainFilesActionViewModel extends LifecycleViewModel {
                 R.string.prompt_rename, R.drawable.ic_edit,
                 () -> postAction(MainFileAction.RENAME)
         ));
+
         items.add(creator.button(
                 R.string.prompt_delete, R.drawable.ic_delete,
                 () -> postAction(MainFileAction.DELETE)
         ));
-        if (!file.isFolder()) {
+
+        if (!(file.isFolder() || file.isLink())) {
+
             items.add(creator.button(
                     R.string.prompt_action_download, R.drawable.ic_download_black,
                     () -> postAction(MainFileAction.DOWNLOAD)
             ));
+
             items.add(creator.button(
                     R.string.prompt_send, R.drawable.ic_action_share,
                     () -> postAction(MainFileAction.SHARE)
             ));
+
         }
 
         if (!file.isLink()) {
@@ -109,6 +114,7 @@ public class MainFilesActionViewModel extends LifecycleViewModel {
                     R.string.prompt_offline_mode, R.drawable.ic_offline, fileForAction.getOffline().get(),
                     checked -> postAction(MainFileAction.OFFLINE)
             );
+
             items.add(offline);
 
             offlineUnbindable = UnbindableObservable.create(fileForAction.getOffline())
@@ -120,22 +126,28 @@ public class MainFilesActionViewModel extends LifecycleViewModel {
                     R.string.prompt_action_public_link, R.drawable.ic_action_public_link, file.isShared(),
                     checked -> postAction(MainFileAction.PUBLIC_LINK)
             ));
+
             if (file.isShared()) {
+
                 items.add(creator.button(
                         R.string.prompt_action_public_link_copy, View.NO_ID,
                         () -> postAction(MainFileAction.COPY_PUBLIC_LINK)
                 ));
+
             }
+
         }
 
         items.add(creator.button(
-                R.string.prompt_action__replace, R.drawable.ic_content_cut,
+                R.string.prompt_action__move, R.drawable.ic_content_cut,
                 () -> postAction(MainFileAction.REPLACE)
         ));
+
         items.add(creator.button(
                 R.string.prompt_action__copy, R.drawable.ic_action_copy,
                 () -> postAction(MainFileAction.COPY)
         ));
+
     }
 
     private void postAction(MainFileAction action) {
