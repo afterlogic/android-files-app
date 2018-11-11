@@ -1,7 +1,11 @@
-Release 98:
- - Critical BUG - Not working on Android < 5.
- - BUG - Not working on P8.
+102:
+ - Dependency updated. No code changes.
 
-Release 95:
- - Detect capability to login using social authorization
- - BUG - Files app doesn't intercept callback of Aurora page by Facebook
+101:
+ - Fixed files moving/coping between storages.
+ - When copy/move files start with same storage.
+ - Some fixed of a public link creation.
+
+100:
+ - BUG - Offline files names not visible.
+ - BUT - Folder replacing failed.
