@@ -2,7 +2,9 @@ package com.afterlogic.aurora.drive.presentation.modules.login.view;
 
 import android.animation.ValueAnimator;
 
+import android.webkit.WebSettings;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.Guideline;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.databinding.DataBindingUtil;
@@ -14,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.afterlogic.aurora.drive.R;
+import com.afterlogic.aurora.drive.core.common.logging.MyLog;
 import com.afterlogic.aurora.drive.databinding.LoginAuthFragmentBinding;
 import com.afterlogic.aurora.drive.presentation.common.binding.utils.UnbindableObservable;
 import com.afterlogic.aurora.drive.presentation.common.modules.v3.view.InjectableMVVMFragment;
@@ -96,28 +99,17 @@ public class AuthFragment extends InjectableMVVMFragment<LoginViewModel> {
 
             isFirstWebViewSizeAction = false;
 
-            setWebViewGuideLinePercent(value);
+            animateWebViewGuideLine(value, false);
 
         } else {
 
-            animateWebViewGuideLine(value);
+            animateWebViewGuideLine(value, true);
 
         }
 
     }
 
-    private void setWebViewGuideLinePercent(float value) {
-
-        LoginAuthFragmentBinding binding = getBinding();
-        ConstraintLayout.LayoutParams guideLineLp = (ConstraintLayout.LayoutParams)
-                binding.webViewGuideLine.getLayoutParams();
-
-        guideLineLp.guidePercent = value;
-        binding.webViewGuideLine.requestLayout();
-
-    }
-
-    private void animateWebViewGuideLine(float targetValue) {
+    private void animateWebViewGuideLine(float targetValue, boolean animate) {
 
         if (webViewAnimator != null) {
             webViewAnimator.cancel();
@@ -125,27 +117,28 @@ public class AuthFragment extends InjectableMVVMFragment<LoginViewModel> {
         }
 
         LoginAuthFragmentBinding binding = getBinding();
-        ConstraintLayout.LayoutParams guideLineLp = (ConstraintLayout.LayoutParams)
-                binding.webViewGuideLine.getLayoutParams();
+        Guideline guideline = binding.webViewGuideLine;
+        ConstraintLayout.LayoutParams guideLineLp = (ConstraintLayout.LayoutParams) guideline.getLayoutParams();
 
         float currentValue = guideLineLp.guidePercent;
 
         if (currentValue == targetValue) return;
 
-        webViewAnimator = ValueAnimator.ofFloat(currentValue, targetValue);
-        webViewAnimator.addUpdateListener(valueAnimator -> {
+        if (animate) {
 
-            guideLineLp.guidePercent = ((float) valueAnimator.getAnimatedValue());
-            binding.webViewGuideLine.requestLayout();
+            webViewAnimator = ValueAnimator.ofFloat(currentValue, targetValue);
+            webViewAnimator.addUpdateListener(
+                    valueAnimator -> guideline.setGuidelinePercent((float) valueAnimator.getAnimatedValue()));
 
-        });
+            long duration = (long) ((Math.max(currentValue, targetValue) - Math.min(currentValue, targetValue)) * 500);
 
-        long duration = (long) (
-                (Math.max(currentValue, targetValue) - Math.min(currentValue, targetValue)) * 500
-        );
+            webViewAnimator.setDuration(duration);
+            webViewAnimator.start();
 
-        webViewAnimator.setDuration(duration);
-        webViewAnimator.start();
+        } else {
+            guideline.setGuidelinePercent(targetValue);
+        }
 
     }
+
 }

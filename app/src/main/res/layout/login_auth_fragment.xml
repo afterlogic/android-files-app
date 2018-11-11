@@ -20,6 +20,7 @@
         android:background="@color/white">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/loginInputLayout"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@+id/inputGuideLine"
@@ -133,7 +134,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="0dp"
-            visibility="@{ vm.webViewState.isWebViewVisible() ? View.VISIBLE : View.GONE }"
+            app:visibility="@{ vm.webViewState.isWebViewVisible() ? View.VISIBLE : View.GONE }"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
