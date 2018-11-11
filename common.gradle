@@ -16,24 +16,24 @@ ext.versions += [
             dagger: '2.16'
     ],
     kotlin: [
-        kotlin: '1.3.0-rc-51',
+        kotlin: '1.3.0',
         reflectLite: '1.0.0',
         ktx: [
-            core: '1.0.0-rc02'
+            core: '1.0.0'
         ],
         serialization: [
             runtime: '0.8.0-rc13'
         ]
     ],
     androidx: [
-        compat: '1.0.0-rc02',
-        material: '1.0.0-rc02',
+        compat: '1.0.0',
+        material: '1.0.0',
         constraint: '1.1.3',
-        flex: '1.1.0-beta1',
-        viewPager: '1.0.0-rc02',
+        flex: '1.1.0',
+        viewPager: '1.0.0',
         multidex: '2.0.0',
-        lifeCycle: '2.0.0-rc01',
-        room: '2.0.0-rc01',
+        lifeCycle: '2.0.0',
+        room: '2.0.0',
         workmanager: '1.0.0-alpha09',
         navigation: '1.0.0-alpha05'
     ],
